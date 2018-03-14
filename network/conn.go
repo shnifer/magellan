@@ -5,31 +5,37 @@ import (
 	"net"
 	"bufio"
 	"sync"
+	"log"
 )
 
 //conn.Recv and Send channels buffer size
 const connBufSize = 128
 
+type action func()
+
 type conn struct{
-	c net.Conn
-	Recv <-chan string
-	Send chan<- string
+	nc   net.Conn
+	recv chan string
+	send chan string
+	onClose action
 }
 
-func connListener(conn net.Conn, recv chan string) {
-	defer close(recv)
-	scanner := bufio.NewScanner(conn)
+func connListener(c conn) {
+	defer close(c.recv)
+	scanner := bufio.NewScanner(c.nc)
 	for scanner.Scan() {
 		str := scanner.Text()
-		recv <- str
+		c.recv <- str
 	}
 	if err := scanner.Err(); err != nil {
+		log.Println(err)
 	}
+	c.close()
 }
 
-func connSender(conn net.Conn, send chan string) {
-	writer := bufio.NewWriter(conn)
-	for msg := range send {
+func connSender(c conn) {
+	writer := bufio.NewWriter(c.nc)
+	for msg := range c.send {
 		if _, err := writer.WriteString(msg + "\n"); err != nil {
 			break
 		}
@@ -39,24 +45,27 @@ func connSender(conn net.Conn, send chan string) {
 	}
 }
 
-func newConn(c net.Conn) conn {
+func newConn(c net.Conn, onClose action) conn {
 	outCh := make(chan string, connBufSize)
 	inCh := make(chan string, connBufSize)
 
-	go connListener(c, inCh)
-	go connSender(c, outCh)
-
 	res:=conn{
-		c: c,
-		Recv: inCh,
-		Send: outCh,
+		nc:   c,
+		recv: inCh,
+		send: outCh,
 	}
+	go connListener(res)
+	go connSender(res)
+
 	return res
 }
 
 func (c conn) close() {
-	close(c.Send)
-	c.c.Close()
+	close(c.send)
+	c.nc.Close()
+	if c.onClose!=nil {
+		c.onClose()
+	}
 }
 
 type Server struct{
@@ -81,8 +90,10 @@ func servAccepter(s *Server) {
 			break
 		}
 
+
+
 		s.mu.Lock()
-		conn:=newConn(c)
+		conn:=newConn(c,nil)
 		s.conns = append(s.conns, conn)
 		s.mu.Unlock()
 	}

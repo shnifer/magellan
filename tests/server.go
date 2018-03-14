@@ -9,16 +9,16 @@ import (
 )
 
 func main(){
-	for {
-		listener, err := net.Listen("tcp", "localhost:6666")
-		if err != nil {
-			log.Println(err)
-		}
+	listener, err := net.Listen("tcp", "localhost:6666")
+	if err != nil {
+		log.Println(err)
+	}
+	Server := network.NewServer(listener)
+	defer Server.Close()
+	log.Println("server created, num or routines: ", runtime.NumGoroutine())
 
-		Server := network.NewServer(listener)
-		log.Println("server created, num or routines: ", runtime.NumGoroutine())
-		time.Sleep(time.Second/4)
-		Server.Close()
-		log.Println("server closed, num or routines: ", runtime.NumGoroutine())
+	for {
+		time.Sleep(time.Second)
+		log.Println("num or routines: ", runtime.NumGoroutine())
 		}
 }
