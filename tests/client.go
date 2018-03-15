@@ -21,9 +21,13 @@ func main(){
 	body:=strings.NewReader(reqString)
 
 
-	req, err := http.NewRequest(http.MethodPost,"http://localhost:8000/test/" , body)
+	req, err := http.NewRequest(http.MethodPost,"http://192.168.0.1:8000/test/" , body)
 	if err != nil {
-		panic(err)
+		switch t:=err.(type){
+			default:
+				log.Println(t)
+				panic(err)
+		}
 	}
 
 	req.Header.Set("Content-Length", strconv.Itoa(body.Len()))
