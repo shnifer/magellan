@@ -18,25 +18,20 @@ func main(){
 		reqString=reqString+"my request"+strconv.Itoa(i)
 	}
 
+	log.Println(reqString, len(reqString))
 	body:=strings.NewReader(reqString)
-
-
 	req, err := http.NewRequest(http.MethodPost,"http://localhost:8000/test/" , body)
 	if err != nil {
 		panic(err)
 	}
 
-	req.Header.Set("Content-Length", strconv.Itoa(body.Len()))
 	resp,err:=client.Do(req)
 	if err!=nil{
 		panic(err)
 	}
 	defer resp.Body.Close()
 
-	l,err:=strconv.Atoi(resp.Header.Get("Content-Length"))
-	if err!=nil{
-		log.Println("can't read len")
-	}
+	l:=req.ContentLength
 	buf:=make([]byte,l)
 	resp.Body.Read(buf)
 
