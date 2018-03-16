@@ -6,27 +6,57 @@
 //package implements disconnect notification for all other clients in the same room
 package network
 
-import "net/http"
+import (
+	"net/http"
+	"io"
+)
 
 type Server struct{
 	mux *http.ServeMux
-	httpserv *http.Server
+	httpServ *http.Server
+	roomServ RoomGetSetter
+}
+
+type RoomGetSetter interface {
+	GetRoomCommon (room string) io.Reader
+	SetRoomCommon (room string, r io.Reader)
+}
+
+const roomAttr = "room"
+const roleAttr = "attr"
+
+func roomRole (r *http.Request) (room, role string){
+	room = r.Header.Get(roomAttr)
+	role = r.Header.Get(roleAttr)
+	return
+}
+
+
+func stateHandler(srv *Server) http.Handler {
+
+	f:=func (w http.ResponseWriter, r * http.Request) {
+		room, _ := roomRole(r)
+		if r.Method == http.MethodPost{
+			srv.roomServ.SetRoomCommon(room, r.Body)
+		}
+	}
+	return http.HandlerFunc(f)
 }
 
 //NewServer creates a server listening
-func NewServer(addr string) (*Server, error) {
+func NewServer(addr string, roomServ RoomGetSetter) (*Server, error) {
 	mux:=http.NewServeMux()
 	httpserv := &http.Server{Addr: addr, Handler: mux}
 	err:=httpserv.ListenAndServe()
 	if err!=nil{
 		return nil, err
 	}
-	return &Server{
-		httpserv: httpserv,
+	srv :=&Server{
+		httpServ: httpserv,
 		mux:mux,
-	},nil
-}
+		roomServ:roomServ,
+	}
+	mux.Handle("/state/", stateHandler(srv))
 
-func (s *Server) handleFunc(pattern string, handler func(http.ResponseWriter, *http.Request)){
-	s.mux.HandleFunc(pattern, handler)
+	return srv,nil
 }
