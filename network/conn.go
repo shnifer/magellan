@@ -1,4 +1,9 @@
-//package for in game client-server communication
+//package for in game client-server communication using http-requests
+//it has a lot of hard assumptions like room-role structure and is not supposed to be universal
+//req.header.values are used to pass room-role with each request, both GET and POST
+
+//clients must make send request eventually or be considered disconnected
+//package implements disconnect notification for all other clients in the same room
 package network
 
 import "net/http"
@@ -8,6 +13,7 @@ type Server struct{
 	httpserv *http.Server
 }
 
+//NewServer creates a server listening
 func NewServer(addr string) (*Server, error) {
 	mux:=http.NewServeMux()
 	httpserv := &http.Server{Addr: addr, Handler: mux}
@@ -21,6 +27,6 @@ func NewServer(addr string) (*Server, error) {
 	},nil
 }
 
-func (s *Server) HandleFunc(pattern string, handler func(http.ResponseWriter, *http.Request)){
+func (s *Server) handleFunc(pattern string, handler func(http.ResponseWriter, *http.Request)){
 	s.mux.HandleFunc(pattern, handler)
 }
