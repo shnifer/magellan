@@ -9,6 +9,7 @@ package network
 import (
 	"net/http"
 	"io"
+	"log"
 )
 
 type Server struct{
@@ -18,8 +19,8 @@ type Server struct{
 }
 
 type RoomGetSetter interface {
-	GetRoomCommon (room string) io.Reader
-	SetRoomCommon (room string, r io.Reader)
+	GetRoomCommon (room string) ([]byte,error)
+	SetRoomCommon (room string, r io.Reader) error
 }
 
 const roomAttr = "room"
@@ -37,7 +38,18 @@ func stateHandler(srv *Server) http.Handler {
 	f:=func (w http.ResponseWriter, r * http.Request) {
 		room, _ := roomRole(r)
 		if r.Method == http.MethodPost{
-			srv.roomServ.SetRoomCommon(room, r.Body)
+			err:=srv.roomServ.SetRoomCommon(room, r.Body)
+			if err!=nil{
+				log.Println("CANT POST in stateHandler for room", room)
+			}
+		}
+		buf, err:= srv.roomServ.GetRoomCommon(room)
+		if err!=nil{
+			log.Println("CANT GET in stateHandler for room", room)
+			return
+		} else {
+			//do not write responce if get failed
+			w.Write(buf)
 		}
 	}
 	return http.HandlerFunc(f)
