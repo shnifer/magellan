@@ -1,39 +1,74 @@
 package main
 
 import (
-	"net/http"
-	"time"
+	"github.com/Shnifer/magellan/network"
 	"log"
-	"strconv"
-	"strings"
+	"fmt"
+	"io/ioutil"
+	"encoding/json"
+	"bytes"
 )
 
-func main(){
-	client:=http.Client{
-		Timeout:time.Second,
-	}
+func discon(){
+	log.Println("lost connect")
+}
 
-	var reqString string
-	for i:=1;i<10000;i++{
-		reqString=reqString+"my request"+strconv.Itoa(i)
-	}
+func recon(){
+	log.Println("recon!")
+}
 
-	log.Println(reqString, len(reqString))
-	body:=strings.NewReader(reqString)
-	req, err := http.NewRequest(http.MethodPost,"http://localhost:8000/test/" , body)
-	if err != nil {
+func pause(){
+	log.Println("pause...")
+}
+
+func unpause(){
+	log.Println("...unpause!")
+}
+
+type TConf struct {
+	Room, Role string
+}
+
+func main() {
+	conf := TConf{}
+	buf, err:= ioutil.ReadFile("conf.txt")
+	if err!=nil{
+		conf.Room = "roomName"
+		conf.Role = "roleName"
+		b,err:=json.Marshal(conf)
+		if err!=nil{
+			panic(err)
+		}
+		var ib bytes.Buffer
+		json.Indent(&ib, b, "","\n    ")
+		ioutil.WriteFile("conf.txt",ib.Bytes(),0)
+		log.Println("no conf file found, created new. restart")
+		return
+	}
+	err=json.Unmarshal(buf,&conf)
+	if err!=nil{
+		log.Println("ERROR unmarshal conf")
 		panic(err)
 	}
 
-	resp,err:=client.Do(req)
+	Opts:=network.ClientOpts{
+		Addr: "http://localhost:8000",
+		Room: conf.Room,
+		Role: conf.Role,
+		OnReconnect:  recon,
+		OnDisconnect: discon,
+		OnPause: pause,
+		OnUnpause: unpause,
+	}
+
+	client,err:=network.NewClient(Opts)
 	if err!=nil{
 		panic(err)
 	}
-	defer resp.Body.Close()
 
-	l:=req.ContentLength
-	buf:=make([]byte,l)
-	resp.Body.Read(buf)
+	_ = client
 
-	log.Println(string(buf))
+	//waiting for enter to stop client
+	str:=""
+	fmt.Scanln(&str)
 }

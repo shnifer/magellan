@@ -1,31 +1,53 @@
 package main
 
 import (
-	"net/http"
-	"log"
 	"io/ioutil"
+	"log"
+	"github.com/Shnifer/magellan/network"
+	"io"
+	"fmt"
 )
 
-func testHandler (w http.ResponseWriter, r *http.Request){
-	str:="just русская responce"
-	buf:=[]byte(str)
-	w.Write(buf)
-	if r.Method==http.MethodPost{
-		l:=r.ContentLength
-		log.Println("req ContentLength",l)
+type roomDummy struct{}
+var neededRoles  = []string{"Pilot","Navigator"}
 
-		buf,err:=ioutil.ReadAll(r.Body)
-		if err!=nil{
-			log.Println("POST REQ read err:",err)
-		} else {
-			log.Println("loaded POST REQ", len(buf))
-		}
-		str:=string(buf)
-		log.Println(len(str), str)
-	}
+func (rd *roomDummy) GetRoomCommon(room string) ([]byte, error) {
+	log.Println("GetRoomCommon("+room+") ")
+	return []byte("dummy common state"),nil
 }
 
-func main(){
-	http.HandleFunc("/test/", testHandler)
-	http.ListenAndServe("localhost:8000",nil)
+func (rd *roomDummy) SetRoomCommon(room string, r io.Reader) error {
+	str,err:=ioutil.ReadAll(r)
+	if err!=nil{
+		log.Println("ERROR! roomDummy.SetRoomCommon cant read io.Reader")
+	}
+	log.Println("SetRoomCommon",room," ",str)
+	return nil
+}
+
+func (rd *roomDummy) CheckRoomFull(members network.RoomMembers) bool{
+	for _,role := range neededRoles{
+		if !members[role] {
+			return false
+		}
+	}
+	return true
+}
+
+func main() {
+	rooms:=&roomDummy{}
+
+	opts:=network.ServerOpts{
+		Addr:":8000",
+		RoomServ: rooms,
+	}
+	server,err:=network.NewServer(opts)
+	_ = server
+	if err!=nil{
+		panic(err)
+	}
+
+	//waiting for enter to stop server
+	str:=""
+	fmt.Scanln(&str)
 }
