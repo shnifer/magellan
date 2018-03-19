@@ -21,6 +21,14 @@ type ServerOpts struct {
 	RoomServ RoomCheckGetSetter
 }
 
+type RoomCheckGetSetter interface {
+	CheckRoomFull(members RoomMembers) bool
+	GetRoomCommon(room string) ([]byte, error)
+	SetRoomCommon(room string, r io.Reader) error
+
+}
+
+
 //for implementation of opts.RoomFull()
 type RoomMembers map[string]bool
 
@@ -45,18 +53,6 @@ type Server struct {
 	//mutex protect the map only
 	mu sync.Mutex
 	roomsConns map[string]tRoom
-}
-
-type RoomCheckGetSetter interface {
-	CheckRoomFull(members RoomMembers) bool
-	GetRoomCommon(room string) ([]byte, error)
-	SetRoomCommon(room string, r io.Reader) error
-}
-
-func roomRole(r *http.Request) (room, role string) {
-	room = r.Header.Get(roomAttr)
-	role = r.Header.Get(roleAttr)
-	return
 }
 
 func (s *Server) checkFullRoom(room tRoom) bool{
@@ -165,4 +161,11 @@ func NewServer(opts ServerOpts) (*Server, error) {
 
 func (s *Server) Close() error {
 	return s.httpServ.Close()
+}
+
+
+func roomRole(r *http.Request) (room, role string) {
+	room = r.Header.Get(roomAttr)
+	role = r.Header.Get(roleAttr)
+	return
 }
