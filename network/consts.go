@@ -16,7 +16,8 @@ const (
 	pingPattern = "/ping/"
 
 	ClientDefaultTimeout = time.Second/10
-	ClientPingPeriod = time.Second/5
+	ClientPingPeriod = time.Second/10
+
 	ServerRoomUpdatePeriod = time.Second/10
 	ServerLastSeenTimeout = 3*ServerRoomUpdatePeriod
 

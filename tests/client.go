@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"bytes"
+	"strconv"
 )
 
 func discon(){
@@ -25,12 +26,25 @@ func unpause(){
 	log.Println("...unpause!")
 }
 
+var FrameN int
+func commonSend() []byte{
+	FrameN++
+	return []byte(conf.Role+" "+strconv.Itoa(FrameN))
+}
+
+
+func commonRecv(buf []byte) {
+	log.Println("commonRecv",string(buf))
+}
+
+
 type TConf struct {
 	Room, Role string
 }
+var conf TConf
+
 
 func main() {
-	conf := TConf{}
 	buf, err:= ioutil.ReadFile("conf.txt")
 	if err!=nil{
 		conf.Room = "roomName"
@@ -59,6 +73,8 @@ func main() {
 		OnDisconnect: discon,
 		OnPause: pause,
 		OnUnpause: unpause,
+		OnCommonRecv: commonRecv,
+		OnCommonSend: commonSend,
 	}
 
 	client,err:=network.NewClient(Opts)

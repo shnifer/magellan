@@ -6,22 +6,40 @@ import (
 	"github.com/Shnifer/magellan/network"
 	"io"
 	"fmt"
+	"strings"
+	"sync"
 )
 
 type roomDummy struct{}
-var neededRoles  = []string{"Pilot","Navigator"}
+var neededRoles  = []string{"Pilot", "Navigator"}
+
+
+type RoomCommonState map[string]string
+
+var RoomMu sync.RWMutex
+var DummyRoomState RoomCommonState
 
 func (rd *roomDummy) GetRoomCommon(room string) ([]byte, error) {
-	log.Println("GetRoomCommon("+room+") ")
-	return []byte("dummy common state"),nil
+	RoomMu.RLock()
+	defer RoomMu.RUnlock()
+	str:=fmt.Sprintln(DummyRoomState)
+	log.Println("GetRoomCommon(",room,") ",str)
+	return []byte(str),nil
 }
 
 func (rd *roomDummy) SetRoomCommon(room string, r io.Reader) error {
-	str,err:=ioutil.ReadAll(r)
+	RoomMu.Lock()
+	defer RoomMu.Unlock()
+	b,err:=ioutil.ReadAll(r)
 	if err!=nil{
 		log.Println("ERROR! roomDummy.SetRoomCommon cant read io.Reader")
 	}
+	str:=string(b)
 	log.Println("SetRoomCommon",room," ",str)
+	parts:=strings.Split(str," ")
+	if len(parts)>1 {
+		DummyRoomState[parts[0]] = parts[1]
+	}
 	return nil
 }
 
@@ -36,11 +54,13 @@ func (rd *roomDummy) CheckRoomFull(members network.RoomMembers) bool{
 
 func main() {
 	rooms:=&roomDummy{}
+	DummyRoomState = make(map[string]string)
 
 	opts:=network.ServerOpts{
 		Addr:":8000",
 		RoomServ: rooms,
 	}
+
 	server,err:=network.NewServer(opts)
 	_ = server
 	if err!=nil{

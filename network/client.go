@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+	"bytes"
 )
 
 type ClientOpts struct {
@@ -19,13 +20,16 @@ type ClientOpts struct {
 
 	OnReconnect  func()
 	OnDisconnect func()
-	OnPause 	func()
-	OnUnpause func()
+	OnPause      func()
+	OnUnpause    func()
+
+	OnCommonSend func() []byte
+	OnCommonRecv func([]byte)
 }
 
 type Client struct {
-	httpCli http.Client
-	opts    ClientOpts
+	httpCli  http.Client
+	opts     ClientOpts
 	pingLost bool
 	roomFull bool
 }
@@ -54,9 +58,9 @@ func NewClient(opts ClientOpts) (*Client, error) {
 	return res, nil
 }
 
-func (c *Client) procLostPing(){
+func (c *Client) procLostPing() {
 	if !c.pingLost {
-		if c.opts.OnDisconnect !=nil {
+		if c.opts.OnDisconnect != nil {
 			c.opts.OnDisconnect()
 		}
 	}
@@ -64,60 +68,92 @@ func (c *Client) procLostPing(){
 	c.roomFull = false
 }
 
-func (c *Client) procGoodPing(){
+func (c *Client) procGoodPing() {
 	if c.pingLost {
-		if c.opts.OnReconnect!=nil {
+		if c.opts.OnReconnect != nil {
 			c.opts.OnReconnect()
 		}
 	}
 	c.pingLost = false
 }
 
-func (c *Client) procFullRoom(){
+func (c *Client) procFullRoom() {
 	c.procGoodPing()
-	if !c.roomFull{
-		if c.opts.OnUnpause!=nil{
+	if !c.roomFull {
+		if c.opts.OnUnpause != nil {
 			c.opts.OnUnpause()
 		}
 	}
 	c.roomFull = true
 }
 
-func (c *Client) procHalfRoom(){
+func (c *Client) procHalfRoom() {
 	c.procGoodPing()
-	if c.roomFull{
-		if c.opts.OnPause!=nil{
+	if c.roomFull {
+		if c.opts.OnPause != nil {
 			c.opts.OnPause()
 		}
 	}
 	c.roomFull = false
 }
 
+func (c *Client) readyToGetCommon()bool{
+	return c.roomFull && !c.pingLost
+}
+
 func clientPing(c *Client) {
 	tick := time.Tick(ClientPingPeriod)
 	for {
 		<-tick
-		resp, err := c.doReq(GET, pingPattern, nil)
-		if err!=nil {
-			//Anyway connection is not good!
-			c.procLostPing()
 
-			urlErr, ok := err.(*url.Error)
-			if !ok {
-				log.Println("network.clientPing: Strange non-URL error client ping", err)
-			} else if !urlErr.Timeout() {
-				log.Println("network.clientPing: Strange non-timeout error client ping", err)
+		//do Ping to check online and State
+		{
+			resp, err := c.doReq(GET, pingPattern, nil)
+			if err != nil {
+				//Anyway connection is not good!
+				c.procLostPing()
+
+				urlErr, ok := err.(*url.Error)
+				if !ok {
+					log.Println("network.clientPing: Strange non-URL error client ping", err)
+				} else if !urlErr.Timeout() {
+					log.Println("network.clientPing: Strange non-timeout error client ping", err)
+				}
+				continue
 			}
-			continue
+
+			switch string(resp) {
+			case MSG_FullRoom:
+				c.procFullRoom()
+			case MSG_HalfRoom:
+				c.procHalfRoom()
+			default:
+				log.Println("network.clientPing: strange ping resp!", string(resp))
+			}
 		}
 
-		switch string(resp) {
-		case MSG_FullRoom:
-			c.procFullRoom()
-		case MSG_HalfRoom:
-			c.procHalfRoom()
-		default:
-			log.Println("network.clientPing: strange ping resp!", string(resp))
+		//Maybe it is better to run GetCommonData loop as other routine but YAGNI
+		if c.readyToGetCommon(){
+			var sentData []byte
+			if c.opts.OnCommonSend!=nil {
+				sentData = c.opts.OnCommonSend()
+			}
+
+			method:=GET
+			var sentBuf io.Reader
+			if sentData != nil || len(sentData)==0{
+				method =POST
+				sentBuf=bytes.NewBuffer(sentData)
+			}
+
+			resp, err:= c.doReq(method, roomPattern, sentBuf)
+			if err!=nil{
+				log.Println("CANT SEND common room data request")
+				continue
+			}
+			if c.opts.OnCommonRecv!=nil{
+				c.opts.OnCommonRecv(resp)
+			}
 		}
 	}
 }

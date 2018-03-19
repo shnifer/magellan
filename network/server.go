@@ -59,6 +59,17 @@ func roomRole(r *http.Request) (room, role string) {
 	return
 }
 
+func (s *Server) checkFullRoom(room tRoom) bool{
+	res:=make(RoomMembers)
+	for key,val:=range room.online{
+		if val{
+			res[key] = true
+		}
+	}
+
+	return s.opts.RoomServ.CheckRoomFull(res)
+}
+
 func roomHandler(srv *Server) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
 		room, _ := roomRole(r)
@@ -82,17 +93,6 @@ func roomHandler(srv *Server) http.Handler {
 		}
 	}
 	return http.HandlerFunc(f)
-}
-
-func (s *Server) checkFullRoom(room tRoom) bool{
-	res:=make(RoomMembers)
-	for key,val:=range room.online{
-		if val{
-			res[key] = true
-		}
-	}
-
-	return s.opts.RoomServ.CheckRoomFull(res)
 }
 
 func pingHandler(srv *Server) http.Handler {
@@ -125,6 +125,7 @@ func pingHandler(srv *Server) http.Handler {
 }
 
 func serverRoomUpdater(serv *Server){
+
 	tick:=time.Tick(ServerRoomUpdatePeriod)
 	for {
 		<-tick
