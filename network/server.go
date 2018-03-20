@@ -32,15 +32,27 @@ type RoomCheckGetSetter interface {
 //for implementation of opts.RoomFull()
 type RoomMembers map[string]bool
 
-//in room map[role]isConnected
-type tRoom struct{
+type tRoomConns struct{
 	online map[string]bool
 	lastSeen map[string]time.Time
 }
-func newTRoom() tRoom{
-	return tRoom{
+func newTRoomConns() tRoomConns {
+	return tRoomConns{
 		online: make(map[string]bool),
 		lastSeen: make(map[string]time.Time),
+	}
+}
+
+type tRoomState struct{
+	//current state
+	current string
+	wanted string
+	//conns reported new state
+	reported map[string]string
+}
+func newTRoomStete()tRoomState{
+	return tRoomState{
+		reported:make(map[string]string),
 	}
 }
 
@@ -49,13 +61,12 @@ type Server struct {
 	httpServ *http.Server
 	opts     ServerOpts
 
-	//map [room]
-	//mutex protect the map only
 	mu sync.Mutex
-	roomsConns map[string]tRoom
+	roomsConns map[string]tRoomConns
+	roomsState map[string]tRoomState
 }
 
-func (s *Server) checkFullRoom(room tRoom) bool{
+func (s *Server) checkFullRoom(room tRoomConns) bool{
 	res:=make(RoomMembers)
 	for key,val:=range room.online{
 		if val{
@@ -100,7 +111,7 @@ func pingHandler(srv *Server) http.Handler {
 
 		room,ok:=srv.roomsConns[roomName]
 		if !ok{
-			room = newTRoom()
+			room = newTRoomConns()
 			srv.roomsConns[roomName] = room
 		}
 
@@ -147,7 +158,7 @@ func NewServer(opts ServerOpts) (*Server, error) {
 		httpServ:   httpServ,
 		mux:        mux,
 		opts:       opts,
-		roomsConns: make(map[string]tRoom),
+		roomsConns: make(map[string]tRoomConns),
 	}
 
 	mux.Handle(pingPattern, pingHandler(srv))

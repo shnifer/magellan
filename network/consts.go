@@ -24,3 +24,9 @@ const (
 	MSG_FullRoom = "FullRoom"
 	MSG_HalfRoom = "HalfRoom"
 )
+
+//network.Server - network.Client ping response
+type pingMSG struct {
+	isRoomFull bool
+
+}
