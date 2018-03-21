@@ -24,7 +24,6 @@ const (
 	ServerLastSeenTimeout  = 3 * ServerRoomUpdatePeriod
 	)
 
-//both room
 //network.Server - network.Client ping response
 type roomState struct {
 	isFull      bool
