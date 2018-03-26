@@ -25,7 +25,7 @@ func (rd *roomDummy) GetRoomCommon(room string) ([]byte, error) {
 	RoomMu.RLock()
 	defer RoomMu.RUnlock()
 	str := fmt.Sprintln(DummyRoomState)
-	log.Println("GetRoomCommon(", room, ") ", str)
+	//log.Println("GetRoomCommon(", room, ") ", str)
 	return []byte(str), nil
 }
 
@@ -37,7 +37,7 @@ func (rd *roomDummy) SetRoomCommon(room string, r io.Reader) error {
 		log.Println("ERROR! roomDummy.SetRoomCommon cant read io.Reader")
 	}
 	str := string(b)
-	log.Println("SetRoomCommon", room, " ", str)
+	//log.Println("SetRoomCommon", room, " ", str)
 	parts := strings.Split(str, " ")
 	if len(parts) > 1 {
 		DummyRoomState[parts[0]] = parts[1]
@@ -86,6 +86,6 @@ func main() {
 	}
 
 	//waiting for enter to stop server
-	str := ""
+	str:=""
 	fmt.Scanln(&str)
 }

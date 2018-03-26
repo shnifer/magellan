@@ -42,7 +42,7 @@ type ServRoomState struct {
 	online   map[string]bool
 	lastSeen map[string]time.Time
 
-	state roomState
+	state RoomState
 
 	//conns reported new state
 	reported map[string]string
@@ -59,15 +59,15 @@ func newServRoomState() *ServRoomState {
 //update coherency
 //do no set Mutex, must be called within critical section
 func (r *ServRoomState) updateState() {
-	if !r.state.isCoherent {
+	if !r.state.IsCoherent {
 		coherent := true
 		for _, state := range r.reported {
-			if state != r.state.wanted {
+			if state != r.state.Wanted {
 				coherent = false
 				break
 			}
 		}
-		r.state.isCoherent = coherent
+		r.state.IsCoherent = coherent
 	}
 }
 
@@ -89,7 +89,7 @@ func (s *Server) checkFullRoom(room *ServRoomState) {
 		}
 	}
 
-	room.state.isFull = s.opts.RoomServ.CheckRoomFull(res)
+	room.state.IsFull = s.opts.RoomServ.CheckRoomFull(res)
 }
 
 func requestStateData(srv *Server, roomName string, newState string) {
@@ -101,7 +101,7 @@ func requestStateData(srv *Server, roomName string, newState string) {
 	room := srv.roomsState[roomName]
 	room.mu.Lock()
 
-	room.state.rdyServData = true
+	room.state.RdyServData = true
 
 	room.mu.Unlock()
 	srv.mu.RUnlock()
@@ -123,19 +123,19 @@ func postStateHandler(srv *Server, w http.ResponseWriter, r *http.Request) {
 	room.mu.Lock()
 	defer room.mu.Unlock()
 
-	if !room.state.isCoherent {
+	if !room.state.IsCoherent {
 		sendErr(w, "already changing state!")
 		return
 	}
 
-	if room.state.wanted == newState {
+	if room.state.Wanted == newState {
 		sendErr(w, "state is the same")
 		return
 	}
 
-	room.state.isCoherent = false
-	room.state.wanted = newState
-	room.state.rdyServData = false
+	room.state.IsCoherent = false
+	room.state.Wanted = newState
+	room.state.RdyServData = false
 	go requestStateData(srv, roomName, newState)
 }
 
@@ -146,7 +146,7 @@ func getStateHandler(srv *Server, w http.ResponseWriter, r *http.Request) {
 
 	room := srv.roomsState[roomName]
 	room.mu.Lock()
-	if !room.state.rdyServData {
+	if !room.state.RdyServData {
 		sendErr(w, "Serv state Data is not Ready")
 		room.mu.Unlock()
 		return
@@ -231,6 +231,7 @@ func pingHandler(srv *Server) http.Handler {
 		if err != nil {
 			panic(err)
 		}
+
 		w.Write(b)
 	}
 	return http.HandlerFunc(f)
@@ -296,5 +297,5 @@ func roomRole(r *http.Request) (room, role string) {
 func sendErr(w http.ResponseWriter, err string) {
 	log.Println("Error : ", err)
 	w.Header().Set("error", "1")
-	http.Error(w, err, 1)
+	w.Write([]byte(err))
 }

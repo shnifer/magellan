@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"sync"
 	"time"
+	"strings"
 )
 
 type ClientOpts struct {
@@ -107,7 +108,7 @@ func (c *Client) setOnPause(pause bool) {
 	c.onPause = pause
 }
 
-func doPingReq(c *Client) (roomState, error) {
+func doPingReq(c *Client) (RoomState, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -123,19 +124,19 @@ func doPingReq(c *Client) (roomState, error) {
 		} else if !urlErr.Timeout() {
 			log.Println("network.clientPing: Strange non-timeout error client ping", err)
 		}
-		return roomState{}, err
+		return RoomState{}, err
 	}
 
 	c.setPingLost(false)
 
-	var pingResp roomState
+	var pingResp RoomState
 	err = json.Unmarshal(resp, &pingResp)
 	if err != nil {
-		return roomState{}, err
+		return RoomState{}, err
 	}
 
-	c.isFull = pingResp.isFull
-	c.isCoherent = pingResp.isCoherent
+	c.isFull = pingResp.IsFull
+	c.isCoherent = pingResp.IsCoherent
 
 	//check for pause
 	needPause := c.pingLost || !c.isFull || !c.isCoherent
@@ -144,12 +145,12 @@ func doPingReq(c *Client) (roomState, error) {
 	return pingResp, nil
 }
 
-func checkWantedState(c *Client, pingResp roomState) {
+func checkWantedState(c *Client, pingResp RoomState) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
 	//state changed
-	wanted := pingResp.wanted
+	wanted := pingResp.Wanted
 	if wanted != c.wantState {
 		c.wantState = wanted
 		//aware client about new state
@@ -160,7 +161,7 @@ func checkWantedState(c *Client, pingResp roomState) {
 
 	if c.wantState != c.curState {
 		//rdy to grab new state Data
-		if pingResp.rdyServData {
+		if pingResp.RdyServData {
 			resp, err := c.doReq(GET, statePattern, nil)
 			if err != nil {
 				//weird, but will try next ping circle
@@ -207,7 +208,7 @@ func clientPing(c *Client) {
 		//do Ping to check online and State
 		pingResp, err := doPingReq(c)
 		if err != nil {
-			log.Println(err)
+			//log.Println(err)
 			continue
 		}
 		checkWantedState(c, pingResp)
@@ -267,4 +268,9 @@ func (c *Client) PauseReason() PauseReason {
 		CurState:   c.curState,
 		WantState:  c.wantState,
 	}
+}
+
+func (c *Client) RequestNewState (wanted string){
+	buf:=strings.NewReader(wanted)
+	c.doReq(POST, statePattern, buf)
 }

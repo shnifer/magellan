@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"strconv"
+	"time"
 )
 
 func discon() {
@@ -34,7 +35,7 @@ func commonSend() []byte {
 }
 
 func commonRecv(buf []byte) {
-	log.Println("commonRecv", string(buf))
+	//log.Println("commonRecv", string(buf))
 }
 
 type TConf struct {
@@ -42,6 +43,14 @@ type TConf struct {
 }
 
 var conf TConf
+
+func stateChanged(wanted string){
+	log.Println("new state wanted", wanted)
+}
+
+func getStateData(data []byte){
+	log.Println("Loaded State Data", string(data))
+}
 
 func main() {
 	buf, err := ioutil.ReadFile("conf.txt")
@@ -74,6 +83,8 @@ func main() {
 		OnUnpause:    unpause,
 		OnCommonRecv: commonRecv,
 		OnCommonSend: commonSend,
+		OnStateChanged: stateChanged,
+		OnGetStateData: getStateData,
 	}
 
 	client, err := network.NewClient(Opts)
@@ -81,9 +92,25 @@ func main() {
 		panic(err)
 	}
 
+	go func(){
+		t:=time.Tick(time.Second*3)
+		for {
+			<-t
+			pr:=client.PauseReason()
+			log.Println("pingLost",pr.PingLost,"Full", pr.IsFull, "Coherent",pr.IsCoherent,
+				"Cur",pr.CurState, "Want",pr.WantState)
+		}
+	}()
+
 	_ = client
 
 	//waiting for enter to stop client
 	str := ""
-	fmt.Scanln(&str)
+	for {
+		fmt.Scanln(&str)
+		if str == "quit"{
+			return
+		}
+		client.RequestNewState(str)
+	}
 }

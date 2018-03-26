@@ -25,9 +25,13 @@ const (
 	)
 
 //network.Server - network.Client ping response
-type roomState struct {
-	isFull      bool
-	isCoherent  bool
-	rdyServData bool
-	wanted      string
+//IsFull - all needed roles are online
+//IsCoherent - state of room is confirmed by all roles
+//RdyServData - Server downloaded data for new state (needed while not coherent)
+//Wanted - Wanted state
+type RoomState struct {
+	IsFull      bool
+	IsCoherent  bool
+	RdyServData bool
+	Wanted      string
 }
