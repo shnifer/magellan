@@ -3,26 +3,24 @@ package main
 import (
 	"io"
 	"io/ioutil"
-	"math/rand"
 	"github.com/Shnifer/magellan/network"
 	"sync"
-	"time"
 	. "github.com/Shnifer/magellan/commons"
 	"errors"
 )
 
 type roomServer struct{
 	mu          sync.RWMutex
-	stateData   map[string]string
+	stateData   map[string]MapData
 
 	//map[roomName]commonDataMap
-	commonData  map[string]RoomCommonData
+	commonData  map[string]MapData
 	neededRoles []string
 }
 
 func newRoomServer() *roomServer{
-	stateData := make(map[string]string)
-	commonData := make(map[string]RoomCommonData)
+	stateData := make(map[string]MapData)
+	commonData := make(map[string]MapData)
 
 	return &roomServer{
 		stateData: stateData,
@@ -36,9 +34,8 @@ func (rd *roomServer) GetRoomCommon(room string) ([]byte, error) {
 	defer rd.mu.RUnlock()
 	commonData,ok := rd.commonData[room]
 	if !ok{
-		err:=errors.New("GetRoomCommon: Room "+room+" not found")
-		Log(LVL_ERROR, err)
-		return nil, err
+		commonData:=make(MapData)
+		rd.commonData[room] = commonData
 	}
 	return commonData.Encode()
 }
@@ -50,12 +47,17 @@ func (rd *roomServer) SetRoomCommon(room string, r io.Reader) error {
 	if err != nil {
 		Log(LVL_ERROR,"SetRoomCommon cant read io.Reader")
 	}
-	cd,err:=RoomCommonData{}.Decode(b)
+	cd,err:=MapData{}.Decode(b)
 	if err!=nil{
 		err:=errors.New("SetRoomCommon: Can't decode")
 		Log(LVL_ERROR, err)
 		return err
 	}
+
+	if _,ok:=rd.commonData[room];!ok {
+		rd.commonData[room] = make(MapData)
+	}
+
 	for key,val:=range cd {
 		rd.commonData[room][key] = val
 	}
@@ -73,15 +75,57 @@ func (rd *roomServer) CheckRoomFull(members network.RoomMembers) bool {
 }
 
 func (rd *roomServer) RdyStateData(room string, state string) {
-
-	//random delay for io operation with side projects like engineer DB
-	n := 1 + rand.Intn(3)
-	for i := 0; i < n; i++ {
-		time.Sleep(time.Second)
-	}
-	rd.stateData[room] = "dummy state = "+state
+	rd.stateData[room] = loadStateData(state)
 }
 
+func loadStateData(str string) MapData{
+	md:=make(MapData)
+	state:=State{}.Decode(str)
+	if state.ShipID!=""{
+		md[PART_BSP] = loadShipState(state.ShipID)
+	}
+	if state.GalaxyID!=""{
+		md[PART_Galaxy] = loadGalaxyState(state.GalaxyID)
+	}
+	return md
+}
+
+const DBPath = "res/server/DB/"
+
+//TODO: look in DB
+func loadShipState(shipID string) string{
+	buf, err:= ioutil.ReadFile(DBPath+"BSP_"+shipID+".json")
+	if err!=nil{
+		Log(LVL_ERROR, "Can't open file for ShipID ", shipID)
+		return ""
+	}
+	return string(buf)
+}
+
+//TODO: look in DB
+func loadGalaxyState(GalaxyID string) string{
+	buf, err:= ioutil.ReadFile(DBPath+"Galaxy_"+GalaxyID+".json")
+	if err!=nil{
+		Log(LVL_ERROR, "Can't open file for galaxyID ", GalaxyID)
+		return ""
+	}
+	return string(buf)
+}
+
+
 func (rd *roomServer) GetStateData(room string) []byte {
-	return []byte(rd.stateData[room])
+	rd.mu.RLock()
+	defer rd.mu.RUnlock()
+	commonData,ok := rd.stateData[room]
+	if !ok{
+		err:=errors.New("GetStateData: Room "+room+" not found")
+		Log(LVL_ERROR, err)
+		return nil
+	}
+	msg,err:= commonData.Encode()
+	if err!=nil{
+		Log(LVL_ERROR, err)
+		return nil
+	}
+	return msg
 }
