@@ -178,14 +178,14 @@ func roomHandler(srv *Server) http.Handler {
 		if r.Method == POST {
 			err := srv.opts.RoomServ.SetRoomCommon(room, r.Body)
 			if err != nil {
-				sendErr(w, "CANT POST in stateHandler for room"+room)
+				sendErr(w, "CANT POST in stateHandler for room"+room+err.Error())
 			}
 		}
 
 		//Response with new common state
 		buf, err := srv.opts.RoomServ.GetRoomCommon(room)
 		if err != nil {
-			sendErr(w, "CANT GET in stateHandler for room"+room)
+			sendErr(w, "CANT GET in stateHandler for room"+room+err.Error())
 			return
 		}
 

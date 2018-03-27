@@ -1,0 +1,9 @@
+{
+    "Port": "8000",
+    "NeededRoles": [
+        "Pilot",
+        "Navi",
+        "Engi",
+        "Cargo"
+    ]
+}
