@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+
 	roomServ := newRoomServer()
 
 	opts := network.ServerOpts{

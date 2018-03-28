@@ -65,7 +65,8 @@ func (rd *roomServer) SetRoomCommon(room string, r io.Reader) error {
 }
 
 func (rd *roomServer) CheckRoomFull(members network.RoomMembers) bool {
-
+	rd.mu.RLock()
+	defer rd.mu.RUnlock()
 	for _, role := range rd.neededRoles {
 		if !members[role] {
 			return false
@@ -75,6 +76,8 @@ func (rd *roomServer) CheckRoomFull(members network.RoomMembers) bool {
 }
 
 func (rd *roomServer) RdyStateData(room string, state string) {
+	rd.mu.Lock()
+	defer rd.mu.Unlock()
 	rd.stateData[room] = loadStateData(state)
 }
 
@@ -128,4 +131,9 @@ func (rd *roomServer) GetStateData(room string) []byte {
 		return nil
 	}
 	return msg
+}
+
+//save examples of DB data
+func init(){
+	SaveDataExamples(DBPath)
 }

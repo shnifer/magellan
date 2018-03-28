@@ -1,0 +1,14 @@
+{
+    "Objects": [
+        {
+            "ID": "sun",
+            "ParentID": "",
+            "Radius": 0,
+            "AngSpeed": 0,
+            "AngStart": 0,
+            "ObjType": "Yellow Star",
+            "Size": 100,
+            "ScienceData": ""
+        }
+    ]
+}

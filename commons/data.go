@@ -2,6 +2,8 @@ package commons
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"bytes"
 )
 
 // map[PartName]json_PartStruct
@@ -101,4 +103,18 @@ func (Galaxy) Decode(data []byte) Galaxy{
 	}
 
 	return galaxy
+}
+
+//creates examples of DB files
+func SaveDataExamples(path string) {
+	bsp:= []byte(BSP{}.New().Encode())
+	bufBsp := bytes.Buffer{}
+	json.Indent(&bufBsp, bsp, "","    ")
+	ioutil.WriteFile(path+"example_bsp.json", bufBsp.Bytes(), 0)
+
+	galaxy := Galaxy{}.New()
+	galaxy.Objects = append(galaxy.Objects, GalaxyObj{})
+	bufGalaxy := bytes.Buffer{}
+	json.Indent(&bufGalaxy, []byte(galaxy.Encode()), "","    ")
+	ioutil.WriteFile(path+"example_galaxy.json", bufGalaxy.Bytes(), 0)
 }
