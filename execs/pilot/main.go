@@ -5,6 +5,7 @@ import (
 	."github.com/Shnifer/magellan/commons"
 	"log"
 	"time"
+	"github.com/hajimehoshi/ebiten"
 )
 
 func main(){
