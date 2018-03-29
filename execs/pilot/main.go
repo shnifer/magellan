@@ -1,66 +1,40 @@
 package main
 
 import (
-	"github.com/Shnifer/magellan/network"
-	."github.com/Shnifer/magellan/commons"
-	"log"
 	"time"
 	"github.com/hajimehoshi/ebiten"
+	"log"
+	"fmt"
+	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/Shnifer/magellan/input"
 )
 
-func main(){
-	opts:=network.ClientOpts{
-		Addr: DEFVAL.Port,
-		Room:         DEFVAL.Room,
-		Role:         ROLE_Pilot,
-		OnReconnect:  recon,
-		OnDisconnect: discon,
-		OnPause:      pause,
-		OnUnpause:    unpause,
-		OnCommonRecv: commonRecv,
-		OnCommonSend: commonSend,
-		OnStateChanged: stateChanged,
-		OnGetStateData: getStateData,
-	}
+const resPath = "res/pilot/"
 
-	client,err:=network.NewClient(opts)
-	if err!=nil{
-		panic(err)
-	}
-	_ = client
+var last time.Time
 
-	for {
-		time.Sleep(time.Second)
-	}
-}
+func  mainLoop(window *ebiten.Image) error {
+	dt:=time.Since(last)
+	last = time.Now()
 
-func discon() {
-	log.Println("lost connect")
-}
+	window.Clear()
 
-func recon() {
-	log.Println("recon!")
-}
+	fps := ebiten.CurrentFPS()
+	msg := fmt.Sprintf("FPS: %v\ndt = %.2f", fps, dt.Seconds())
+	ebitenutil.DebugPrint(window, msg)
 
-func pause() {
-	log.Println("pause...")
-}
-
-func unpause() {
-	log.Println("...unpause!")
-}
-
-func commonSend() []byte {
 	return nil
 }
 
-func commonRecv(buf []byte) {
+func main(){
+	startClient()
+	input.LoadConf(resPath)
+
+	ebiten.SetFullscreen(DEFVAL.FullScreen)
+	ebiten.SetRunnableInBackground(true)
+	last=time.Now()
+	if err := ebiten.Run(mainLoop, DEFVAL.WinW, DEFVAL.WinH, 1, "PILOT"); err != nil {
+		log.Fatal(err)
+	}
 }
 
-func stateChanged(wanted string){
-	log.Println("new state wanted", wanted)
-}
-
-func getStateData(data []byte){
-	log.Println("Loaded State Data", string(data))
-}

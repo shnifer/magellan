@@ -12,6 +12,8 @@ const DefValPath = "res/pilot/"
 type tDefVals struct {
 	Port        string
 	Room string
+	FullScreen bool
+	WinW, WinH int
 
 }
 
@@ -21,6 +23,8 @@ func setDefDef() {
 	DEFVAL = tDefVals{
 		Port: "http://localhost:8000",
 		Room: "room101",
+		WinW:1024,
+		WinH:768,
 	}
 }
 
@@ -37,7 +41,7 @@ func init() {
 
 	fn := DefValPath + "defdata.json"
 
-	buf, err := ioutil.ReadFile(DefValPath + "defdata.json")
+	buf, err := ioutil.ReadFile(fn)
 	if err != nil {
 		log.Println("cant read ", fn, "using default")
 		return
