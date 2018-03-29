@@ -44,11 +44,11 @@ type TConf struct {
 
 var conf TConf
 
-func stateChanged(wanted string){
+func stateChanged(wanted string) {
 	log.Println("new state wanted", wanted)
 }
 
-func getStateData(data []byte){
+func getStateData(data []byte) {
 	log.Println("Loaded State Data", string(data))
 }
 
@@ -74,15 +74,15 @@ func main() {
 	}
 
 	Opts := network.ClientOpts{
-		Addr:         "http://localhost:8000",
-		Room:         conf.Room,
-		Role:         conf.Role,
-		OnReconnect:  recon,
-		OnDisconnect: discon,
-		OnPause:      pause,
-		OnUnpause:    unpause,
-		OnCommonRecv: commonRecv,
-		OnCommonSend: commonSend,
+		Addr:           "http://localhost:8000",
+		Room:           conf.Room,
+		Role:           conf.Role,
+		OnReconnect:    recon,
+		OnDisconnect:   discon,
+		OnPause:        pause,
+		OnUnpause:      unpause,
+		OnCommonRecv:   commonRecv,
+		OnCommonSend:   commonSend,
 		OnStateChanged: stateChanged,
 		OnGetStateData: getStateData,
 	}
@@ -92,13 +92,13 @@ func main() {
 		panic(err)
 	}
 
-	go func(){
-		t:=time.Tick(time.Second*3)
+	go func() {
+		t := time.Tick(time.Second * 3)
 		for {
 			<-t
-			pr:=client.PauseReason()
-			log.Println("pingLost",pr.PingLost,"Full", pr.IsFull, "Coherent",pr.IsCoherent,
-				"Cur",pr.CurState, "Want",pr.WantState)
+			pr := client.PauseReason()
+			log.Println("pingLost", pr.PingLost, "Full", pr.IsFull, "Coherent", pr.IsCoherent,
+				"Cur", pr.CurState, "Want", pr.WantState)
 		}
 	}()
 
@@ -108,7 +108,7 @@ func main() {
 	str := ""
 	for {
 		fmt.Scanln(&str)
-		if str == "quit"{
+		if str == "quit" {
 			return
 		}
 		client.RequestNewState(str)

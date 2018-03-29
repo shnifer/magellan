@@ -15,7 +15,7 @@ const (
 )
 
 func Log(level int, params ...interface{}) {
-	if level>=LOG_LEVEL {
+	if level >= LOG_LEVEL {
 		fmt.Println()
 	}
 }

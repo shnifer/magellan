@@ -86,6 +86,6 @@ func main() {
 	}
 
 	//waiting for enter to stop server
-	str:=""
+	str := ""
 	fmt.Scanln(&str)
 }

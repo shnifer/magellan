@@ -1,14 +1,14 @@
 package commons
 
-const(
+const (
 	ROLE_Pilot = "Pilot"
-	ROLE_Engi = "Engi"
-	ROLE_Navi = "Navi"
+	ROLE_Engi  = "Engi"
+	ROLE_Navi  = "Navi"
 	ROLE_Cargo = "Cargo"
 )
 
-const(
-	PART_BSP = "BSP"
-	PART_Galaxy = "galaxy"
+const (
+	PART_BSP       = "BSP"
+	PART_Galaxy    = "galaxy"
 	PART_StartData = "start"
 )

@@ -17,12 +17,12 @@ const (
 	pingPattern  = "/ping/"
 	statePattern = "/state/"
 
-	ClientDefaultTimeout = time.Second / 10
+	ClientDefaultTimeout = time.Second / 100
 	ClientPingPeriod     = time.Second / 10
 
 	ServerRoomUpdatePeriod = time.Second / 10
-	ServerLastSeenTimeout  = 3 * ServerRoomUpdatePeriod
-	)
+	ServerLastSeenTimeout  = 2 * ServerRoomUpdatePeriod
+)
 
 //network.Server - network.Client ping response
 //IsFull - all needed roles are online

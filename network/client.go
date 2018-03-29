@@ -9,9 +9,9 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 	"sync"
 	"time"
-	"strings"
 )
 
 type ClientOpts struct {
@@ -39,7 +39,7 @@ type ClientOpts struct {
 }
 
 type Client struct {
-	mu sync.Mutex
+	mu sync.RWMutex
 
 	httpCli http.Client
 	opts    ClientOpts
@@ -186,7 +186,7 @@ func doCommonReq(c *Client) {
 
 	method := GET
 	var sentBuf io.Reader
-	if sentData != nil || len(sentData) == 0 {
+	if sentData != nil && len(sentData) > 0 {
 		method = POST
 		sentBuf = bytes.NewBuffer(sentData)
 	}
@@ -258,8 +258,8 @@ type PauseReason struct {
 }
 
 func (c *Client) PauseReason() PauseReason {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 
 	return PauseReason{
 		PingLost:   c.pingLost,
@@ -270,7 +270,7 @@ func (c *Client) PauseReason() PauseReason {
 	}
 }
 
-func (c *Client) RequestNewState (wanted string){
-	buf:=strings.NewReader(wanted)
+func (c *Client) RequestNewState(wanted string) {
+	buf := strings.NewReader(wanted)
 	c.doReq(POST, statePattern, buf)
 }
