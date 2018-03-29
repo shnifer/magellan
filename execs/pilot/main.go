@@ -17,10 +17,16 @@ func  mainLoop(window *ebiten.Image) error {
 	dt:=time.Since(last)
 	last = time.Now()
 
+	input.Update()
+
 	window.Clear()
 
 	fps := ebiten.CurrentFPS()
-	msg := fmt.Sprintf("FPS: %v\ndt = %.2f", fps, dt.Seconds())
+	msg := fmt.Sprintf("FPS: %v\ndt = %.2f\n", fps, dt.Seconds())
+	if input.Get("forward") {
+		msg = msg + "forward!\n"
+	}
+	msg = msg + fmt.Sprint("Turn = ",input.GetF("turn"))
 	ebitenutil.DebugPrint(window, msg)
 
 	return nil

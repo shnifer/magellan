@@ -7,42 +7,122 @@ import (
 	"io/ioutil"
 	"log"
 	"strconv"
+	"math"
+	"github.com/pkg/errors"
+	"github.com/hajimehoshi/ebiten/inpututil"
 )
 
 const (
 	keyPressed = "KP"
 	keyJustPressed = "KJP"
+	keyJustReleased = "KJR"
 	joyAxis = "JA"
 	joyButtonPressed = "JBP"
 	joyButtonJustPressed = "JBJP"
+	joyButtonJustReleased = "JBJR"
 	mouseButtonPressed = "MBP"
 	mouseButtonJustPressed = "MBJP"
+	mouseButtonJustReleased = "MBJR"
 )
 
-type InputImpl struct{
-	InputName string
-	InputType string
-	Key ebiten.Key
-	JoyID int
-	JoyAxis int
-	JoyButton int
-	MouseButton ebiten.MouseButton
-}
 
 var inputState map[string]float64
 
 var conf []InputImpl
 
+func init(){
+	inputState = make(map[string]float64)
+}
+
+type InputImpl struct{
+	InputName string
+	InputType string
+	Key ebiten.Key
+	Val float64
+	JoyID int
+	JoyAxis int
+	MinAxis float64
+	JoyButton ebiten.GamepadButton
+	MouseButton ebiten.MouseButton
+}
+func (impl InputImpl) get() float64{
+	switch impl.InputType {
+	case keyPressed:
+		if ebiten.IsKeyPressed(impl.Key) {
+			if impl.Val==0 {
+				return 1
+			} else {
+				return impl.Val
+			}
+		}
+	case keyJustPressed:
+		if inpututil.IsKeyJustPressed(impl.Key) {
+			return 1
+		}
+	case keyJustReleased:
+		if inpututil.IsKeyJustReleased(impl.Key) {
+			return 1
+		}
+	case	joyAxis:
+		k:=impl.Val
+		if k==0{
+			k=1
+		}
+		axis:=ebiten.GamepadAxis(impl.JoyID, impl.JoyAxis)
+		if math.Abs(axis)<impl.MinAxis {
+			axis = 0
+		}
+		return k*axis
+	case	joyButtonPressed:
+		if ebiten.IsGamepadButtonPressed(impl.JoyID,impl.JoyButton) {
+			return 1
+		}
+	case    joyButtonJustPressed:
+		if inpututil.IsGamepadButtonJustPressed(impl.JoyID,impl.JoyButton) {
+			return 1
+		}
+	case    joyButtonJustReleased:
+		if inpututil.IsGamepadButtonJustReleased(impl.JoyID,impl.JoyButton) {
+			return 1
+		}
+	case	mouseButtonPressed:
+		if ebiten.IsMouseButtonPressed(impl.MouseButton){
+			return 1
+		}
+	case	mouseButtonJustPressed:
+		if inpututil.IsMouseButtonJustPressed(impl.MouseButton){
+			return 1
+		}
+	case	mouseButtonJustReleased:
+		if inpututil.IsMouseButtonJustReleased(impl.MouseButton){
+			return 1
+		}
+	default:
+		panic(errors.New("Unknown input type "+impl.InputType))
+	}
+	return 0
+}
+
 func Get(inputName string) bool{
-	return false
+	return inputState[inputName]>0
 }
 
 func GetF(inputName string) float64{
-	return 0.0
+	return inputState[inputName]
 }
 
 func Update(){
-
+	for key:=range inputState{
+		inputState[key]=0.0
+	}
+	for _,impl := range conf{
+		in:=impl.InputName
+		cur:=inputState[in]
+		new:=impl.get()
+		if math.Abs(new)>math.Abs(cur) {
+			inputState[impl.InputName] = new
+		}
+	}
 }
 
 var savedDef bool
@@ -90,11 +170,14 @@ func DefConf(filePath string){
 	}
 	add("keyPressed", keyPressed)
 	add("keyJustPressed", keyJustPressed)
+	add("keyJustReleased", keyJustReleased)
 	add("joyAxis", joyAxis)
 	add("joyButtonPressed", joyButtonPressed)
 	add("joyButtonJustPressed", joyButtonJustPressed)
+	add("joyButtonJustReleased", joyButtonJustReleased)
 	add("mouseButtonPressed", mouseButtonPressed)
 	add("mouseButtonJustPressed", mouseButtonJustPressed)
+	add("mouseButtonJustReleased", mouseButtonJustReleased)
 
 	add("","")
 
