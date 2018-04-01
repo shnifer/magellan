@@ -27,11 +27,7 @@ func mainLoop(window *ebiten.Image) error {
 
 	input.Update()
 
-	window.Clear()
-	Scenes.Update(dt)
-	if !ebiten.IsRunningSlowly() {
-		Scenes.Draw(window)
-	}
+	Scenes.UpdateAndDraw(dt,window,!ebiten.IsRunningSlowly())
 
 	if DEBUG {
 		fps := ebiten.CurrentFPS()
@@ -55,8 +51,9 @@ func main() {
 	WinW = DEFVAL.WinW
 	WinH = DEFVAL.WinH
 
-	startClient()
+	initClient()
 	input.LoadConf(resPath)
+
 	Scenes = scene.NewManager()
 
 	face,err:=graph.GetFace(fontPath+"phantom.ttf",20)
@@ -67,6 +64,7 @@ func main() {
 	Scenes.Install("pause", pauseScene)
 	Scenes.Activate("pause")
 
+	Client.Start()
 	ebiten.SetFullscreen(DEFVAL.FullScreen)
 	ebiten.SetRunnableInBackground(true)
 	last = time.Now()

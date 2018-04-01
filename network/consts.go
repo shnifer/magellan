@@ -19,9 +19,10 @@ const (
 
 	ClientDefaultTimeout = time.Second / 100
 	ClientPingPeriod     = time.Second / 10
+	ClientLostPingsNumber = 3
 
 	ServerRoomUpdatePeriod = time.Second / 10
-	ServerLastSeenTimeout  = 2 * ServerRoomUpdatePeriod
+	ServerLastSeenTimeout  = 3 * ServerRoomUpdatePeriod
 )
 
 //network.Server - network.Client ping response

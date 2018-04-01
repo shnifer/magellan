@@ -8,7 +8,7 @@ import (
 
 var Client *network.Client
 
-func startClient() {
+func initClient() {
 	opts := network.ClientOpts{
 		Addr:           DEFVAL.Port,
 		Room:           DEFVAL.Room,
@@ -17,10 +17,10 @@ func startClient() {
 		OnDisconnect:   discon,
 		OnPause:        pause,
 		OnUnpause:      unpause,
-		OnCommonRecv:   commonRecv,
-		OnCommonSend:   commonSend,
-		OnStateChanged: stateChanged,
-		OnGetStateData: getStateData,
+		OnCommonRecv:   Data.commonRecv,
+		OnCommonSend:   Data.commonSend,
+		OnStateChanged: Data.stateChanged,
+		OnGetStateData: Data.getStateData,
 	}
 
 	var err error
@@ -39,17 +39,11 @@ func recon() {
 }
 
 func pause() {
-	log.Println("pause...")
-
+	log.Println("pause")
+	Scenes.Activate("pause")
 }
 
 func unpause() {
-	log.Println("...unpause!")
-}
-
-func commonSend() []byte {
-	return nil
-}
-
-func commonRecv(buf []byte) {
+	log.Println("unpause")
+	Scenes.Activate("pause")
 }

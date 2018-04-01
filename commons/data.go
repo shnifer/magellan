@@ -3,6 +3,7 @@ package commons
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/Shnifer/magellan/graph"
 	"io/ioutil"
 )
 
@@ -43,7 +44,7 @@ func (BSP) New() BSP {
 func (bsp BSP) Encode() string {
 	buf, err := json.Marshal(bsp)
 	if err != nil {
-		Log(LVL_ERROR, "can't encode RoomCommonData")
+		Log(LVL_ERROR, "can't encode BSP")
 		return ""
 	}
 	return string(buf)
@@ -87,7 +88,7 @@ func (Galaxy) New() Galaxy {
 func (galaxy Galaxy) Encode() string {
 	buf, err := json.Marshal(galaxy)
 	if err != nil {
-		Log(LVL_ERROR, "can't encode RoomCommonData")
+		Log(LVL_ERROR, "can't encode Galaxy")
 		return ""
 	}
 	return string(buf)
@@ -116,4 +117,31 @@ func SaveDataExamples(path string) {
 	bufGalaxy := bytes.Buffer{}
 	json.Indent(&bufGalaxy, []byte(galaxy.Encode()), "", "    ")
 	ioutil.WriteFile(path+"example_galaxy.json", bufGalaxy.Bytes(), 0)
+}
+
+type ShipPos struct {
+	pos    graph.Point
+	ang    float64
+	vel    graph.Point
+	angVel float64
+}
+
+func (shipPos ShipPos) Encode() string {
+	buf, err := json.Marshal(shipPos)
+	if err != nil {
+		Log(LVL_ERROR, "can't encode ShipPos")
+		return ""
+	}
+	return string(buf)
+}
+
+func (ShipPos) Decode(data []byte) ShipPos {
+	shipPos := ShipPos{}
+	err := json.Unmarshal(data, &shipPos)
+	if err != nil {
+		Log(LVL_ERROR, "ShipPos.Decode can't Unmarshal")
+		panic(err)
+	}
+
+	return shipPos
 }

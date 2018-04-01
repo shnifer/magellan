@@ -35,7 +35,9 @@ type ClientOpts struct {
 	OnCommonRecv func([]byte)
 
 	OnStateChanged func(wanted string)
-	OnGetStateData func([]byte)
+
+	//async, must close result chan then done
+	OnGetStateData func([]byte) chan struct{}
 }
 
 type Client struct {
@@ -43,6 +45,9 @@ type Client struct {
 
 	httpCli http.Client
 	opts    ClientOpts
+
+	started bool
+	pingLostCounter int
 
 	//for hooks
 	pingLost bool
@@ -76,8 +81,6 @@ func NewClient(opts ClientOpts) (*Client, error) {
 		onPause:  true,
 	}
 
-	go clientPing(res)
-
 	return res, nil
 }
 
@@ -94,6 +97,8 @@ func (c *Client) setPingLost(lost bool) {
 	}
 	c.pingLost = lost
 }
+
+var pauseC int
 func (c *Client) setOnPause(pause bool) {
 	if pause && !c.onPause {
 		if c.opts.OnPause != nil {
@@ -106,6 +111,13 @@ func (c *Client) setOnPause(pause bool) {
 		}
 	}
 	c.onPause = pause
+
+	if pause {
+		pauseC++
+		log.Println("pause tick", pauseC)
+	} else {
+		pauseC = 0
+	}
 }
 
 func doPingReq(c *Client) (RoomState, error) {
@@ -114,9 +126,16 @@ func doPingReq(c *Client) (RoomState, error) {
 
 	resp, err := c.doReq(GET, pingPattern, nil)
 	if err != nil {
-		//Anyway connection is not good!
-		c.setPingLost(true)
-		c.setOnPause(true)
+		//Connection is not good if ClientLostPingsNumber in row
+		if !c.pingLost {
+			c.pingLostCounter++
+			log.Println("pingLostCounter", c.pingLostCounter)
+			if c.pingLostCounter>=ClientLostPingsNumber {
+				c.pingLostCounter = 0
+				c.setPingLost(true)
+				c.setOnPause(true)
+			}
+		}
 
 		urlErr, ok := err.(*url.Error)
 		if !ok {
@@ -145,12 +164,12 @@ func doPingReq(c *Client) (RoomState, error) {
 	return pingResp, nil
 }
 
-func checkWantedState(c *Client, pingResp RoomState) {
+func checkWantedState(c *Client, roomState RoomState) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
 	//state changed
-	wanted := pingResp.Wanted
+	wanted := roomState.Wanted
 	if wanted != c.wantState {
 		c.wantState = wanted
 		//aware client about new state
@@ -161,7 +180,7 @@ func checkWantedState(c *Client, pingResp RoomState) {
 
 	if c.wantState != c.curState {
 		//rdy to grab new state Data
-		if pingResp.RdyServData {
+		if roomState.RdyServData {
 			resp, err := c.doReq(GET, statePattern, nil)
 			if err != nil {
 				//weird, but will try next ping circle
@@ -170,30 +189,46 @@ func checkWantedState(c *Client, pingResp RoomState) {
 			}
 
 			//After successfully got and passed new StateData change cur state
-			if c.opts.OnGetStateData != nil {
-				c.opts.OnGetStateData(resp)
+			if c.opts.OnGetStateData == nil {
+				//set wanted state now
+				c.curState = c.wantState
+				//Get commonState after reading StateData
+				doCommonReq(c, true)
+			} else {
+				//run hook and wait for done chan close
+				stateDataDone:=c.opts.OnGetStateData(resp)
+				go func() {
+					<-stateDataDone
+					c.mu.Lock()
+					c.curState = c.wantState
+					//Get commonState after reading StateData
+					doCommonReq(c, true)
+					c.mu.Unlock()
+				}()
 			}
-			c.curState = c.wantState
 		}
 	}
 }
 
-func doCommonReq(c *Client) {
-	var sentData []byte
-	if c.opts.OnCommonSend != nil {
-		sentData = c.opts.OnCommonSend()
-	}
-
+func doCommonReq(c *Client, onlyGet bool) {
 	method := GET
 	var sentBuf io.Reader
-	if sentData != nil && len(sentData) > 0 {
-		method = POST
-		sentBuf = bytes.NewBuffer(sentData)
+
+	if !onlyGet {
+		var sentData []byte
+		if c.opts.OnCommonSend != nil {
+			sentData = c.opts.OnCommonSend()
+		}
+
+		if sentData != nil && len(sentData) > 0 {
+			method = POST
+			sentBuf = bytes.NewBuffer(sentData)
+		}
 	}
 
 	resp, err := c.doReq(method, roomPattern, sentBuf)
 	if err != nil {
-		log.Println("CANT SEND common room data request")
+		log.Println("CANT SEND common room data request", err)
 		return
 	}
 	if c.opts.OnCommonRecv != nil {
@@ -206,16 +241,16 @@ func clientPing(c *Client) {
 		<-tick
 
 		//do Ping to check online and State
-		pingResp, err := doPingReq(c)
+		RoomState, err := doPingReq(c)
 		if err != nil {
 			//log.Println(err)
 			continue
 		}
-		checkWantedState(c, pingResp)
+		checkWantedState(c, RoomState)
 
 		//Maybe it is better to run GetCommonData loop as other routine but YAGNI
 		if !c.onPause {
-			doCommonReq(c)
+			doCommonReq(c, false)
 		}
 	}
 }
@@ -273,4 +308,16 @@ func (c *Client) PauseReason() PauseReason {
 func (c *Client) RequestNewState(wanted string) {
 	buf := strings.NewReader(wanted)
 	c.doReq(POST, statePattern, buf)
+}
+
+func (c *Client) Start() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.started {
+		return
+	}
+
+	c.started = true
+	go clientPing(c)
 }

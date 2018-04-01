@@ -18,6 +18,7 @@ type Sprite struct {
 	col, row int
 	op       *ebiten.DrawImageOptions
 	//before and past cam parts of geom
+	dirty bool
 	g1, g2 ebiten.GeoM
 	//pos and rot point, in sprite before scale
 	//in pxls
@@ -76,50 +77,49 @@ func (s *Sprite) recalcColorM() {
 	s.op.ColorM.Reset()
 	r, g, b, a := s.color.RGBA()
 	s.op.ColorM.Scale(s.alpha*float64(r)/MaxColor, s.alpha*float64(g)/MaxColor, s.alpha*float64(b)/MaxColor, s.alpha*float64(a)/MaxColor)
-
 }
 
 func (s *Sprite) SetColor(color color.Color) {
 	s.color = color
-	s.recalcColorM()
+	s.dirty = true
 }
 
 func (s *Sprite) SetAlpha(a float64) {
 	s.alpha = a
-	s.recalcColorM()
+	s.dirty = true
 }
 
 func (s *Sprite) SetScale(x, y float64) {
 	s.sx = x
 	s.sy = y
-	s.calcGeom()
+	s.dirty = true
 }
 
 func (s *Sprite) SetSize(x, y float64) {
 	s.sx = x / float64(s.tex.sh)
 	s.sy = y / float64(s.tex.sw)
-	s.calcGeom()
+	s.dirty = true
 }
 
 func (s *Sprite) SetPivot(pivot Point) {
 	s.pivot = pivot
-	s.calcGeom()
+	s.dirty = true
 }
 
 func (s *Sprite) SetPos(pos Point) {
 	s.pos = pos
-	s.calcGeom()
+	s.dirty = true
 }
 
 func (s *Sprite) SetAng(angleDeg float64) {
 	s.angle = angleDeg * Deg2Rad
-	s.calcGeom()
+	s.dirty = true
 }
 
 func (s *Sprite) SetPosAng(pos Point, angle float64) {
 	s.pos = pos
 	s.angle = angle
-	s.calcGeom()
+	s.dirty = true
 }
 
 func (s *Sprite) calcGeom() {
@@ -135,6 +135,10 @@ func (s *Sprite) calcGeom() {
 
 //Copy options, so cam apply do not change
 func (s *Sprite) ImageOp() (*ebiten.Image, *ebiten.DrawImageOptions) {
+	if s.dirty {
+		s.calcGeom()
+		s.dirty = false
+	}
 	op := new(ebiten.DrawImageOptions)
 	*op = *s.op
 	G := s.g1

@@ -3,7 +3,6 @@ package scene
 import (
 	"github.com/hajimehoshi/ebiten"
 	"sync"
-	"errors"
 )
 
 type scene interface {
@@ -16,7 +15,7 @@ type scene interface {
 type Manager struct{
 	mu sync.RWMutex
 
-	//name of current scene
+	//name of current scene, change async
 	current string
 
 	scenes map[string]scene
@@ -37,7 +36,6 @@ func (m *Manager) Install(name string, Scene scene) {
 	}
 
 	m.scenes[name] = Scene
-	Scene.Init()
 }
 
 func (m *Manager) Delete(name string){
@@ -54,32 +52,30 @@ func (m *Manager) Delete(name string){
 	}
 }
 
-func (m *Manager) Activate(name string) error{
+func (m *Manager) Activate(name string){
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
 	if _,ok:=m.scenes[name]; !ok{
-		return errors.New("can't activate scene "+name)
+		panic("can't activate scene "+name)
 	}
 
 	m.current = name
-	return nil
 }
 
-func (m *Manager) Update (dt float64) {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-
-	if m.current!=""{
-		m.scenes[m.current].Update(dt)
+func (m *Manager) UpdateAndDraw (dt float64, image *ebiten.Image, doDraw bool) {
+	if m.current!="" {
+		return
 	}
-}
 
-func (m *Manager) Draw (image *ebiten.Image) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	if m.current!=""{
-		m.scenes[m.current].Draw(image)
+	scene:=m.scenes[m.current]
+
+	scene.Update(dt)
+	if doDraw {
+		image.Clear()
+		scene.Draw(image)
 	}
 }

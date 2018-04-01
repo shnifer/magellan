@@ -11,4 +11,5 @@ const (
 	PART_BSP       = "BSP"
 	PART_Galaxy    = "galaxy"
 	PART_StartData = "start"
+	PART_ShipPos   = "shipPos"
 )

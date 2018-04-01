@@ -49,7 +49,7 @@ func (rd *roomServer) SetRoomCommon(room string, r io.Reader) error {
 	}
 	cd, err := MapData{}.Decode(b)
 	if err != nil {
-		err := errors.New("SetRoomCommon: Can't decode")
+		err := errors.New("SetRoomCommon: Can't decode AS MapData")
 		Log(LVL_ERROR, err)
 		return err
 	}
@@ -87,9 +87,11 @@ func loadStateData(str string) MapData {
 	if state.ShipID != "" {
 		md[PART_BSP] = loadShipState(state.ShipID)
 	}
+
 	if state.GalaxyID != "" {
 		md[PART_Galaxy] = loadGalaxyState(state.GalaxyID)
 	}
+
 	return md
 }
 
