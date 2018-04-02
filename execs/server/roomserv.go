@@ -12,17 +12,17 @@ import (
 
 type roomServer struct {
 	mu        sync.RWMutex
-	stateData map[string]MapData
+	stateData map[string]CMapData
 	curState map[string]State
 
 	//map[roomName]commonDataMap
-	commonData  map[string]MapData
+	commonData  map[string]CMapData
 	neededRoles []string
 }
 
 func newRoomServer() *roomServer {
-	stateData := make(map[string]MapData)
-	commonData := make(map[string]MapData)
+	stateData := make(map[string]CMapData)
+	commonData := make(map[string]CMapData)
 	curState := make(map[string]State)
 
 	return &roomServer{
@@ -38,7 +38,7 @@ func (rd *roomServer) GetRoomCommon(room string) ([]byte, error) {
 	defer rd.mu.RUnlock()
 	commonData, ok := rd.commonData[room]
 	if !ok {
-		commonData := make(MapData)
+		commonData := make(CMapData)
 		rd.commonData[room] = commonData
 	}
 	return commonData.Encode()
@@ -51,15 +51,15 @@ func (rd *roomServer) SetRoomCommon(room string, r io.Reader) error {
 	if err != nil {
 		Log(LVL_ERROR, "SetRoomCommon cant read io.Reader")
 	}
-	cd, err := MapData{}.Decode(b)
+	cd, err := CMapData{}.Decode(b)
 	if err != nil {
-		err := errors.New("SetRoomCommon: Can't decode AS MapData")
+		err := errors.New("SetRoomCommon: Can't decode AS cMapData")
 		Log(LVL_ERROR, err)
 		return err
 	}
 
 	if _, ok := rd.commonData[room]; !ok {
-		rd.commonData[room] = make(MapData)
+		rd.commonData[room] = make(CMapData)
 	}
 
 	for key, val := range cd {
@@ -87,15 +87,15 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 	rd.stateData[room] = loadStateData(state)
 }
 
-func loadStateData(state State) MapData {
-	md := make(MapData)
+func loadStateData(state State) CMapData {
+	md := make(CMapData)
 
 	if state.ShipID != "" {
-		md[PART_BSP] = loadShipState(state.ShipID)
+		md[PARTSTATE_BSP] = loadShipState(state.ShipID)
 	}
 
 	if state.GalaxyID != "" {
-		md[PART_Galaxy] = loadGalaxyState(state.GalaxyID)
+		md[PARTSTATE_Galaxy] = loadGalaxyState(state.GalaxyID)
 	}
 
 	return md

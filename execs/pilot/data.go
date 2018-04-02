@@ -10,11 +10,11 @@ type pilotData struct {
 
 	//state data
 	state  State
-	bsp    BSP
-	galaxy Galaxy
+	bsp    CBSP
+	galaxy CGalaxy
 
 	//common data
-	ship ShipPos
+	ship CShipPos
 }
 
 var Data pilotData
@@ -27,26 +27,28 @@ func (pd pilotData) getStateData(data []byte) chan struct{} {
 		defer close(done)
 
 		//get state data
-		md, err := MapData{}.Decode(data)
+		md, err := CMapData{}.Decode(data)
 		if err != nil {
 			panic("Weird state data:")
 		}
 
 		pd.mu.Lock()
-		if bspDat, ok := md[PART_BSP]; ok {
-			pd.bsp = BSP{}.Decode([]byte(bspDat))
+		if bspDat, ok := md[PARTSTATE_BSP]; ok {
+			pd.bsp = CBSP{}.Decode([]byte(bspDat))
 		} else {
-			pd.bsp = BSP{}
+			pd.bsp = CBSP{}
 		}
 
-		if galaxyDat, ok := md[PART_Galaxy]; ok {
-			pd.galaxy = Galaxy{}.Decode([]byte(galaxyDat))
+		if galaxyDat, ok := md[PARTSTATE_Galaxy]; ok {
+			pd.galaxy = CGalaxy{}.Decode([]byte(galaxyDat))
 		} else {
-			pd.galaxy = Galaxy{}
+			pd.galaxy = CGalaxy{}
 		}
-		pd.mu.Unlock()
 
 		initSceneState()
+
+		pd.mu.Unlock()
+
 	}()
 
 	return done
@@ -57,8 +59,8 @@ func (pd pilotData) commonSend() []byte {
 	defer pd.mu.RUnlock()
 
 	dat := pd.ship.Encode()
-	md := make(MapData)
-	md[PART_ShipPos] = dat
+	md := make(CMapData)
+	md[PARTCOMMON_ShipPos] = dat
 	res, err := md.Encode()
 	if err != nil {
 		panic("CommonSend " + err.Error())
@@ -70,12 +72,12 @@ func (pd pilotData) commonRecv(buf []byte) {
 	pd.mu.Lock()
 	defer pd.mu.Unlock()
 
-	md, err := MapData{}.Decode(buf)
+	md, err := CMapData{}.Decode(buf)
 	if err != nil {
 		panic("pilotData.commonRecv Can't decode mapData " + err.Error())
 	}
 
-	if part, ok := md[PART_ShipPos]; ok {
-		pd.ship = ShipPos{}.Decode([]byte(part))
+	if part, ok := md[PARTCOMMON_ShipPos]; ok {
+		pd.ship = CShipPos{}.Decode([]byte(part))
 	}
 }

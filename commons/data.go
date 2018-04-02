@@ -8,9 +8,9 @@ import (
 )
 
 // map[PartName]json_PartStruct
-type MapData map[string]string
+type CMapData map[string]string
 
-func (md MapData) Encode() ([]byte, error) {
+func (md CMapData) Encode() ([]byte, error) {
 	buf, err := json.Marshal(md)
 	if err != nil {
 		Log(LVL_ERROR, "can't encode RoomCommonData")
@@ -20,8 +20,8 @@ func (md MapData) Encode() ([]byte, error) {
 }
 
 //static method!
-func (MapData) Decode(data []byte) (MapData, error) {
-	rcd := MapData{}
+func (CMapData) Decode(data []byte) (CMapData, error) {
+	rcd := CMapData{}
 	err := json.Unmarshal(data, &rcd)
 	if err != nil {
 		Log(LVL_ERROR, "can't decode RoomCommonData")
@@ -30,38 +30,38 @@ func (MapData) Decode(data []byte) (MapData, error) {
 	return rcd, nil
 }
 
-type BSP struct {
+type CBSP struct {
 	MaxSpeed float64
 	Systems  []float64
 }
 
-func (BSP) New() BSP {
-	return BSP{
+func (CBSP) New() CBSP {
+	return CBSP{
 		Systems: make([]float64, 8),
 	}
 }
 
-func (bsp BSP) Encode() string {
+func (bsp CBSP) Encode() string {
 	buf, err := json.Marshal(bsp)
 	if err != nil {
-		Log(LVL_ERROR, "can't encode BSP")
+		Log(LVL_ERROR, "can't encode CBSP")
 		return ""
 	}
 	return string(buf)
 }
 
-func (BSP) Decode(data []byte) BSP {
-	bsp := BSP{}
+func (CBSP) Decode(data []byte) CBSP {
+	bsp := CBSP{}
 	err := json.Unmarshal(data, &bsp)
 	if err != nil {
-		Log(LVL_ERROR, "BSP.Decode can't Unmarshal")
+		Log(LVL_ERROR, "CBSP.Decode can't Unmarshal")
 		panic(err)
 	}
 
 	return bsp
 }
 
-type GalaxyObj struct {
+type CGalaxyObj struct {
 	ID string
 
 	ParentID string
@@ -75,30 +75,30 @@ type GalaxyObj struct {
 	ScienceData string
 }
 
-type Galaxy struct {
-	Objects []GalaxyObj
+type CGalaxy struct {
+	Objects []CGalaxyObj
 }
 
-func (Galaxy) New() Galaxy {
-	return Galaxy{
-		Objects: make([]GalaxyObj, 0),
+func (CGalaxy) New() CGalaxy {
+	return CGalaxy{
+		Objects: make([]CGalaxyObj, 0),
 	}
 }
 
-func (galaxy Galaxy) Encode() string {
+func (galaxy CGalaxy) Encode() string {
 	buf, err := json.Marshal(galaxy)
 	if err != nil {
-		Log(LVL_ERROR, "can't encode Galaxy")
+		Log(LVL_ERROR, "can't encode CGalaxy")
 		return ""
 	}
 	return string(buf)
 }
 
-func (Galaxy) Decode(data []byte) Galaxy {
-	galaxy := Galaxy{}
+func (CGalaxy) Decode(data []byte) CGalaxy {
+	galaxy := CGalaxy{}
 	err := json.Unmarshal(data, &galaxy)
 	if err != nil {
-		Log(LVL_ERROR, "Galaxy.Decode can't Unmarshal")
+		Log(LVL_ERROR, "CGalaxy.Decode can't Unmarshal")
 		panic(err)
 	}
 
@@ -107,39 +107,39 @@ func (Galaxy) Decode(data []byte) Galaxy {
 
 //creates examples of DB files
 func SaveDataExamples(path string) {
-	bsp := []byte(BSP{}.New().Encode())
+	bsp := []byte(CBSP{}.New().Encode())
 	bufBsp := bytes.Buffer{}
 	json.Indent(&bufBsp, bsp, "", "    ")
 	ioutil.WriteFile(path+"example_bsp.json", bufBsp.Bytes(), 0)
 
-	galaxy := Galaxy{}.New()
-	galaxy.Objects = append(galaxy.Objects, GalaxyObj{})
+	galaxy := CGalaxy{}.New()
+	galaxy.Objects = append(galaxy.Objects, CGalaxyObj{})
 	bufGalaxy := bytes.Buffer{}
 	json.Indent(&bufGalaxy, []byte(galaxy.Encode()), "", "    ")
 	ioutil.WriteFile(path+"example_galaxy.json", bufGalaxy.Bytes(), 0)
 }
 
-type ShipPos struct {
+type CShipPos struct {
 	pos    graph.Point
 	ang    float64
 	vel    graph.Point
 	angVel float64
 }
 
-func (shipPos ShipPos) Encode() string {
+func (shipPos CShipPos) Encode() string {
 	buf, err := json.Marshal(shipPos)
 	if err != nil {
-		Log(LVL_ERROR, "can't encode ShipPos")
+		Log(LVL_ERROR, "can't encode CShipPos")
 		return ""
 	}
 	return string(buf)
 }
 
-func (ShipPos) Decode(data []byte) ShipPos {
-	shipPos := ShipPos{}
+func (CShipPos) Decode(data []byte) CShipPos {
+	shipPos := CShipPos{}
 	err := json.Unmarshal(data, &shipPos)
 	if err != nil {
-		Log(LVL_ERROR, "ShipPos.Decode can't Unmarshal")
+		Log(LVL_ERROR, "CShipPos.Decode can't Unmarshal")
 		panic(err)
 	}
 

@@ -19,24 +19,34 @@ func stateChanged(wanted string) {
 	Data.state = state
 	Data.mu.Unlock()
 
-	switch Data.state.Special {
+	switch state.Special {
 	case STATE_login:
 		Scenes.Activate(scene_login, true)
+	case STATE_cosmo:
+		scene:=newCosmoScene()
+		Scenes.Install(scene_main, scene, false)
+		Scenes.Activate(scene_main, true)
+	case STATE_warp:
 	}
 }
 
-
+//called within Data.Mutex
 func initSceneState(){
 	var sceneName string
 
 	switch Data.state.Special {
 	case STATE_login:
 		sceneName = scene_login
-	default:
+	case STATE_cosmo:
+		sceneName = scene_main
+	case STATE_warp:
 		sceneName = scene_main
 	}
-
-	Scenes.Init(sceneName)
+	if sceneName!="" {
+		Scenes.Init(sceneName)
+	} else {
+		log.Println("unknown scene to init for state = ",Data.state.Special)
+	}
 }
 
 

@@ -8,10 +8,13 @@ const (
 )
 
 const (
-	PART_BSP       = "BSP"
-	PART_Galaxy    = "galaxy"
-	PART_StartData = "start"
-	PART_ShipPos   = "shipPos"
+	PARTSTATE_BSP    = "CBSP"
+	PARTSTATE_Galaxy = "galaxy"
+)
+
+const (
+	PARTCOMMON_ShipPos   = "shipPos"
+	PARTCOMMON_EngiSys   = "engiSys"
 )
 
 const (

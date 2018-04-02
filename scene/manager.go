@@ -85,12 +85,12 @@ func (m *Manager) Init(name string) {
 }
 
 func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
 	if doDraw {
 		image.Clear()
 	}
-
-	m.mu.RLock()
-	defer m.mu.RUnlock()
 
 	if m.current == "" {
 		return

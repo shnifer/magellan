@@ -71,7 +71,7 @@ func main() {
 	}
 	pauseScene := scene.NewPauseScene(face, Client.PauseReason)
 	loginScene := NewLoginScene(face)
-	Scenes.Install(scene_main, pauseScene, true)
+	Scenes.Install(scene_main, pauseScene, false)
 	Scenes.Install(scene_pause, pauseScene, true)
 	Scenes.Install(scene_login, loginScene, false)
 	Scenes.SetOnPauseScene(scene_pause)
