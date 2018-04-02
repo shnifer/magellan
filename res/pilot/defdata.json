@@ -3,5 +3,7 @@
     "Room": "room101",
     "FullScreen": false,
     "WinW": 1024,
-    "WinH": 768
+    "WinH": 768,
+    "CpuProfFileName": "pilotcpu.prof",
+    "MemProfFileName": "pilotmem.prof"
 }

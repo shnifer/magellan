@@ -46,7 +46,7 @@ type Client struct {
 	httpCli http.Client
 	opts    ClientOpts
 
-	started bool
+	started         bool
 	pingLostCounter int
 
 	//for hooks
@@ -99,6 +99,7 @@ func (c *Client) setPingLost(lost bool) {
 }
 
 var pauseC int
+
 func (c *Client) setOnPause(pause bool) {
 	if pause && !c.onPause {
 		if c.opts.OnPause != nil {
@@ -130,7 +131,7 @@ func doPingReq(c *Client) (RoomState, error) {
 		if !c.pingLost {
 			c.pingLostCounter++
 			log.Println("pingLostCounter", c.pingLostCounter)
-			if c.pingLostCounter>=ClientLostPingsNumber {
+			if c.pingLostCounter >= ClientLostPingsNumber {
 				c.pingLostCounter = 0
 				c.setPingLost(true)
 				c.setOnPause(true)
@@ -184,7 +185,7 @@ func checkWantedState(c *Client, roomState RoomState) {
 			resp, err := c.doReq(GET, statePattern, nil)
 			if err != nil {
 				//weird, but will try next ping circle
-				log.Println("can't get new Serv Data")
+				log.Println("can't get new Serv Data", err)
 				return
 			}
 
@@ -196,7 +197,7 @@ func checkWantedState(c *Client, roomState RoomState) {
 				doCommonReq(c, true)
 			} else {
 				//run hook and wait for done chan close
-				stateDataDone:=c.opts.OnGetStateData(resp)
+				stateDataDone := c.opts.OnGetStateData(resp)
 				go func() {
 					<-stateDataDone
 					c.mu.Lock()
@@ -305,9 +306,11 @@ func (c *Client) PauseReason() PauseReason {
 	}
 }
 
-func (c *Client) RequestNewState(wanted string) {
+func (c *Client) RequestNewState(wanted string) error {
 	buf := strings.NewReader(wanted)
-	c.doReq(POST, statePattern, buf)
+	_, err := c.doReq(POST, statePattern, buf)
+	return err
+
 }
 
 func (c *Client) Start() {

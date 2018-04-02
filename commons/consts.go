@@ -13,3 +13,13 @@ const (
 	PART_StartData = "start"
 	PART_ShipPos   = "shipPos"
 )
+
+const (
+	STATE_login = "login"
+	STATE_cosmo = "cosmo"
+	STATE_warp = "star"
+)
+
+const (
+	START_Galaxy_ID = "solar"
+)

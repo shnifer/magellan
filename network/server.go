@@ -21,6 +21,7 @@ type ServerOpts struct {
 
 	//hooks for server implementation
 	RoomServ RoomCheckGetSetter
+	StartState string
 }
 
 type RoomCheckGetSetter interface {
@@ -29,6 +30,7 @@ type RoomCheckGetSetter interface {
 	//mb role separation needed, but now Common and State data get full and common
 	GetRoomCommon(room string) ([]byte, error)
 	SetRoomCommon(room string, r io.Reader) error
+	IsValidState(room string, state string) bool
 	RdyStateData(room string, state string)
 	GetStateData(room string) []byte
 }
@@ -115,6 +117,11 @@ func postStateHandler(srv *Server, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	newState := string(b)
+
+	if !srv.opts.RoomServ.IsValidState(roomName, newState) {
+		sendErr(w, "state is not valid "+newState)
+		return
+	}
 
 	srv.mu.RLock()
 	defer srv.mu.RUnlock()
@@ -210,6 +217,8 @@ func pingHandler(srv *Server) http.Handler {
 			room, ok = srv.roomsState[roomName]
 			if !ok {
 				room = newServRoomState()
+				room.state.Wanted = srv.opts.StartState
+				go requestStateData(srv, roomName, room.state.Wanted)
 				srv.roomsState[roomName] = room
 			}
 			srv.mu.Unlock()

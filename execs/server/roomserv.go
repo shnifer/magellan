@@ -7,11 +7,13 @@ import (
 	"io"
 	"io/ioutil"
 	"sync"
+	"os"
 )
 
 type roomServer struct {
 	mu        sync.RWMutex
 	stateData map[string]MapData
+	curState map[string]State
 
 	//map[roomName]commonDataMap
 	commonData  map[string]MapData
@@ -21,9 +23,11 @@ type roomServer struct {
 func newRoomServer() *roomServer {
 	stateData := make(map[string]MapData)
 	commonData := make(map[string]MapData)
+	curState := make(map[string]State)
 
 	return &roomServer{
 		stateData:   stateData,
+		curState:    curState,
 		commonData:  commonData,
 		neededRoles: DEFVAL.NeededRoles,
 	}
@@ -75,15 +79,17 @@ func (rd *roomServer) CheckRoomFull(members network.RoomMembers) bool {
 	return true
 }
 
-func (rd *roomServer) RdyStateData(room string, state string) {
+func (rd *roomServer) RdyStateData(room string, stateStr string) {
 	rd.mu.Lock()
 	defer rd.mu.Unlock()
+	state:=State{}.Decode(stateStr)
+	rd.curState[room] =  state
 	rd.stateData[room] = loadStateData(state)
 }
 
-func loadStateData(str string) MapData {
+func loadStateData(state State) MapData {
 	md := make(MapData)
-	state := State{}.Decode(str)
+
 	if state.ShipID != "" {
 		md[PART_BSP] = loadShipState(state.ShipID)
 	}
@@ -133,6 +139,51 @@ func (rd *roomServer) GetStateData(room string) []byte {
 	}
 	return msg
 }
+
+func (rd *roomServer) IsValidState(roomName string, stateStr string) bool {
+	rd.mu.RLock()
+	defer rd.mu.RUnlock()
+
+	state := State{}.Decode(stateStr)
+	switch state.Special {
+	case STATE_login:
+		return state.GalaxyID == "" && state.ShipID == ""
+	case STATE_cosmo:
+		return rd.isValidFlyShip(roomName, state.ShipID) && rd.isValidFlyGalaxy(state.GalaxyID)
+	case STATE_warp:
+		return rd.isValidFlyShip(roomName, state.ShipID) && rd.isValidFlyGalaxy(state.GalaxyID)
+	}
+	return false
+}
+
+//run internal mutex call
+func (rd *roomServer) isValidFlyShip(roomName string, shipID string) bool{
+	if roomName == "" || shipID =="" {
+		return false
+	}
+
+	for room, state:= range rd.curState {
+		if room!=roomName && state.ShipID == shipID {
+			return false
+		}
+	}
+
+	if _, err := os.Stat(DBPath + "BSP_" + shipID + ".json"); os.IsNotExist(err) {
+		return false
+	}
+
+	return true
+}
+
+//run internal mutex call
+func (rd *roomServer) isValidFlyGalaxy(galaxyID string) bool {
+	if _, err := os.Stat(DBPath + "Galaxy_" + galaxyID + ".json"); os.IsNotExist(err) {
+		return false
+	}
+
+	return true
+}
+
 
 //save examples of DB data
 func init() {

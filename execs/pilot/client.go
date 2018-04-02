@@ -19,7 +19,7 @@ func initClient() {
 		OnUnpause:      unpause,
 		OnCommonRecv:   Data.commonRecv,
 		OnCommonSend:   Data.commonSend,
-		OnStateChanged: Data.stateChanged,
+		OnStateChanged: stateChanged,
 		OnGetStateData: Data.getStateData,
 	}
 
@@ -36,14 +36,4 @@ func discon() {
 
 func recon() {
 	log.Println("recon!")
-}
-
-func pause() {
-	log.Println("pause")
-	Scenes.Activate("pause")
-}
-
-func unpause() {
-	log.Println("unpause")
-	Scenes.Activate("pause")
 }

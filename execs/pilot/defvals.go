@@ -14,6 +14,9 @@ type tDefVals struct {
 	Room       string
 	FullScreen bool
 	WinW, WinH int
+
+	CpuProfFileName string
+	MemProfFileName string
 }
 
 var DEFVAL tDefVals

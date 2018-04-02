@@ -18,7 +18,7 @@ type Sprite struct {
 	col, row int
 	op       *ebiten.DrawImageOptions
 	//before and past cam parts of geom
-	dirty bool
+	dirty  bool
 	g1, g2 ebiten.GeoM
 	//pos and rot point, in sprite before scale
 	//in pxls

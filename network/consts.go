@@ -17,8 +17,8 @@ const (
 	pingPattern  = "/ping/"
 	statePattern = "/state/"
 
-	ClientDefaultTimeout = time.Second / 100
-	ClientPingPeriod     = time.Second / 10
+	ClientDefaultTimeout  = time.Second / 100
+	ClientPingPeriod      = time.Second / 10
 	ClientLostPingsNumber = 3
 
 	ServerRoomUpdatePeriod = time.Second / 10
