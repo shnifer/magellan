@@ -60,6 +60,10 @@ type Client struct {
 	//for state machine
 	curState  string
 	wantState string
+
+	//mutex for PauseReaon only
+	prmu sync.RWMutex
+	pr PauseReason
 }
 
 func NewClient(opts ClientOpts) (*Client, error) {
@@ -248,6 +252,7 @@ func clientPing(c *Client) {
 		RoomState, err := doPingReq(c)
 		if err != nil {
 			//log.Println(err)
+			c.recalcPauseReason()
 			continue
 		}
 		checkWantedState(c, RoomState)
@@ -256,6 +261,7 @@ func clientPing(c *Client) {
 		if !c.onPause {
 			doCommonReq(c, false)
 		}
+		c.recalcPauseReason()
 	}
 }
 
@@ -296,17 +302,23 @@ type PauseReason struct {
 	WantState  string
 }
 
-func (c *Client) PauseReason() PauseReason {
-	c.mu.RLock()
-	defer c.mu.RUnlock()
-
-	return PauseReason{
+func (c *Client) recalcPauseReason(){
+	c.prmu.Lock()
+	c.pr = PauseReason{
 		PingLost:   c.pingLost,
 		IsFull:     c.isFull,
 		IsCoherent: c.isCoherent,
 		CurState:   c.curState,
 		WantState:  c.wantState,
 	}
+	c.prmu.Unlock()
+}
+
+func (c *Client) PauseReason() PauseReason {
+	c.prmu.RLock()
+	defer c.prmu.RUnlock()
+
+	return c.pr
 }
 
 func (c *Client) RequestNewState(wanted string) error {
