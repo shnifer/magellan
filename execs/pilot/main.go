@@ -17,6 +17,7 @@ import (
 const DEBUG = true
 const resPath = "res/pilot/"
 const fontPath = "res/fonts/"
+const texPath = "res/textures/"
 
 var (
 	WinW int
@@ -31,7 +32,9 @@ func mainLoop(window *ebiten.Image) error {
 
 	input.Update()
 
+	Data.mu.Lock()
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
+	Data.mu.Unlock()
 
 	if DEBUG {
 		fps := ebiten.CurrentFPS()
@@ -65,12 +68,8 @@ func main() {
 
 	Scenes = scene.NewManager()
 
-	face, err := graph.GetFace(fontPath+"phantom.ttf", 20)
-	if err != nil {
-		panic(err)
-	}
-	pauseScene := scene.NewPauseScene(face, Client.PauseReason)
-	loginScene := NewLoginScene(face)
+	pauseScene := scene.NewPauseScene(fonts[face_cap], Client.PauseReason)
+	loginScene := NewLoginScene()
 	Scenes.Install(scene_main, pauseScene, false)
 	Scenes.Install(scene_pause, pauseScene, true)
 	Scenes.Install(scene_login, loginScene, false)

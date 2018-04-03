@@ -120,10 +120,10 @@ func SaveDataExamples(path string) {
 }
 
 type CShipPos struct {
-	pos    graph.Point
-	ang    float64
-	vel    graph.Point
-	angVel float64
+	Pos    graph.Point
+	Ang    float64
+	Vel    graph.Point
+	AngVel float64
 }
 
 func (shipPos CShipPos) Encode() string {

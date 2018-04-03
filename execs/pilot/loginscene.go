@@ -22,9 +22,12 @@ type LoginScene struct {
 	inputText string
 }
 
-func NewLoginScene(face font.Face) *LoginScene {
+func NewLoginScene() *LoginScene {
 	const questionText = "Enter login ID:"
 	const errorText = "Wrong ID!"
+
+	face:=fonts[face_cap]
+
 	question := graph.NewText(questionText, face, colornames.Yellowgreen)
 	question.SetPosPivot(graph.ScrP(0.5, 0.3), graph.Center())
 

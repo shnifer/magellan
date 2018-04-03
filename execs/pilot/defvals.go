@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"github.com/Shnifer/magellan/commons"
 )
 
 const DefValPath = "res/pilot/"
@@ -12,6 +13,7 @@ const DefValPath = "res/pilot/"
 type tDefVals struct {
 	Port       string
 	Room       string
+	Role string
 	FullScreen bool
 	WinW, WinH int
 
@@ -25,6 +27,7 @@ func setDefDef() {
 	DEFVAL = tDefVals{
 		Port: "http://localhost:8000",
 		Room: "room101",
+		Role: commons.ROLE_Pilot,
 		WinW: 1024,
 		WinH: 768,
 	}

@@ -3,6 +3,7 @@ package main
 import (
 	. "github.com/Shnifer/magellan/commons"
 	"sync"
+	"log"
 )
 
 type pilotData struct {
@@ -17,11 +18,22 @@ type pilotData struct {
 	ship CShipPos
 }
 
-var Data pilotData
+var Data *pilotData
 
-func (pd pilotData) getStateData(data []byte) chan struct{} {
+func init() {
+	Data = new(pilotData)
+}
+
+func (pd *pilotData) setState(state State) {
+	log.Println("Data setState started")
+	pd.mu.Lock()
+	pd.state = state
+	pd.mu.Unlock()
+	log.Println("Data setState ended")
+}
+
+func (pd *pilotData) getStateData(data []byte) chan struct{} {
 	done := make(chan struct{})
-
 	go func() {
 		//anyway done, even with error
 		defer close(done)
@@ -45,7 +57,9 @@ func (pd pilotData) getStateData(data []byte) chan struct{} {
 			pd.galaxy = CGalaxy{}
 		}
 
+
 		initSceneState()
+
 
 		pd.mu.Unlock()
 
@@ -54,7 +68,10 @@ func (pd pilotData) getStateData(data []byte) chan struct{} {
 	return done
 }
 
-func (pd pilotData) commonSend() []byte {
+func (pd *pilotData) commonSend() []byte {
+	if DEFVAL.Role!=ROLE_Pilot{
+		return nil
+	}
 	pd.mu.RLock()
 	defer pd.mu.RUnlock()
 
@@ -68,7 +85,7 @@ func (pd pilotData) commonSend() []byte {
 	return []byte(res)
 }
 
-func (pd pilotData) commonRecv(buf []byte) {
+func (pd *pilotData) commonRecv(buf []byte) {
 	pd.mu.Lock()
 	defer pd.mu.Unlock()
 

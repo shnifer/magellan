@@ -15,9 +15,7 @@ func stateChanged(wanted string) {
 	log.Println("state changed : ",wanted)
 	state := State{}.Decode(wanted)
 
-	Data.mu.Lock()
-	Data.state = state
-	Data.mu.Unlock()
+	Data.setState(state)
 
 	switch state.Special {
 	case STATE_login:

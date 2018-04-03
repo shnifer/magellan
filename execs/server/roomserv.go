@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"sync"
 	"os"
+	"log"
 )
 
 type roomServer struct {
@@ -41,7 +42,10 @@ func (rd *roomServer) GetRoomCommon(room string) ([]byte, error) {
 		commonData := make(CMapData)
 		rd.commonData[room] = commonData
 	}
-	return commonData.Encode()
+
+	msg, err:= commonData.Encode()
+	log.Println(string(msg))
+	return msg, err
 }
 
 func (rd *roomServer) SetRoomCommon(room string, r io.Reader) error {
@@ -126,6 +130,7 @@ func loadGalaxyState(GalaxyID string) string {
 func (rd *roomServer) GetStateData(room string) []byte {
 	rd.mu.RLock()
 	defer rd.mu.RUnlock()
+
 	commonData, ok := rd.stateData[room]
 	if !ok {
 		err := errors.New("GetStateData: Room " + room + " not found")
@@ -137,6 +142,7 @@ func (rd *roomServer) GetStateData(room string) []byte {
 		Log(LVL_ERROR, err)
 		return nil
 	}
+
 	return msg
 }
 

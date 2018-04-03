@@ -199,11 +199,14 @@ func checkWantedState(c *Client, roomState RoomState) {
 				//run hook and wait for done chan close
 				stateDataDone := c.opts.OnGetStateData(resp)
 				go func() {
+					log.Println("Client: start waiting for stateDataDone")
 					<-stateDataDone
+					log.Println("Client: stateDataDone")
 					c.mu.Lock()
 					c.curState = c.wantState
 					//Get commonState after reading StateData
 					doCommonReq(c, true)
+					log.Println("Client: curstate = ", c.wantState)
 					c.mu.Unlock()
 				}()
 			}
@@ -307,6 +310,9 @@ func (c *Client) PauseReason() PauseReason {
 }
 
 func (c *Client) RequestNewState(wanted string) error {
+	if c.wantState != c.curState{
+		return errors.New("client is already changing state")
+	}
 	buf := strings.NewReader(wanted)
 	_, err := c.doReq(POST, statePattern, buf)
 	return err

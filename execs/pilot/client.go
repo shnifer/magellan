@@ -1,7 +1,6 @@
 package main
 
 import (
-	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/network"
 	"log"
 )
@@ -12,7 +11,7 @@ func initClient() {
 	opts := network.ClientOpts{
 		Addr:           DEFVAL.Port,
 		Room:           DEFVAL.Room,
-		Role:           ROLE_Pilot,
+		Role:           DEFVAL.Role,
 		OnReconnect:    recon,
 		OnDisconnect:   discon,
 		OnPause:        pause,
