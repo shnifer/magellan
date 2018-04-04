@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"sync"
 	"os"
-	"log"
 )
 
 type roomServer struct {
@@ -44,7 +43,6 @@ func (rd *roomServer) GetRoomCommon(room string) ([]byte, error) {
 	}
 
 	msg, err:= commonData.Encode()
-	log.Println(string(msg))
 	return msg, err
 }
 

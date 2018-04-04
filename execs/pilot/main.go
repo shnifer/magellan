@@ -12,6 +12,7 @@ import (
 	"runtime"
 	"runtime/pprof"
 	"time"
+	"github.com/Shnifer/magellan/commons"
 )
 
 const DEBUG = true
@@ -36,17 +37,12 @@ func mainLoop(window *ebiten.Image) error {
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
 	Data.mu.Unlock()
 
-	if DEBUG {
+	if commons.LOG_LEVEL<commons.LVL_ERROR {
 		fps := ebiten.CurrentFPS()
 		msg := fmt.Sprintf("FPS: %v\ndt = %.2f\n", fps, dt)
-		if input.Get("forward") {
-			msg = msg + "forward!\n"
-		}
-
 		if ebiten.IsRunningSlowly() {
 			msg = msg + "is running SLOWLY!\n"
 		}
-		msg = msg + fmt.Sprint("Turn = ", input.GetF("turn"))
 		ebitenutil.DebugPrint(window, msg)
 	}
 
@@ -73,7 +69,7 @@ func main() {
 	Scenes.Install(scene_main, pauseScene, false)
 	Scenes.Install(scene_pause, pauseScene, true)
 	Scenes.Install(scene_login, loginScene, false)
-	Scenes.SetOnPauseScene(scene_pause)
+	Scenes.SetAsPauseScene(scene_pause)
 	Scenes.Activate(scene_pause, false)
 
 	Client.Start()

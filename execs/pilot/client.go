@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/Shnifer/magellan/network"
-	"log"
 )
 
 var Client *network.Client
@@ -27,12 +26,4 @@ func initClient() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func discon() {
-	log.Println("lost connect")
-}
-
-func recon() {
-	log.Println("recon!")
 }

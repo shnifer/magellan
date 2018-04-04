@@ -102,8 +102,6 @@ func (c *Client) setPingLost(lost bool) {
 	c.pingLost = lost
 }
 
-var pauseC int
-
 func (c *Client) setOnPause(pause bool) {
 	if pause && !c.onPause {
 		if c.opts.OnPause != nil {
@@ -116,13 +114,6 @@ func (c *Client) setOnPause(pause bool) {
 		}
 	}
 	c.onPause = pause
-
-	if pause {
-		pauseC++
-		log.Println("pause tick", pauseC)
-	} else {
-		pauseC = 0
-	}
 }
 
 func doPingReq(c *Client) (RoomState, error) {
@@ -134,7 +125,6 @@ func doPingReq(c *Client) (RoomState, error) {
 		//Connection is not good if ClientLostPingsNumber in row
 		if !c.pingLost {
 			c.pingLostCounter++
-			log.Println("pingLostCounter", c.pingLostCounter)
 			if c.pingLostCounter >= ClientLostPingsNumber {
 				c.pingLostCounter = 0
 				c.setPingLost(true)
@@ -144,9 +134,9 @@ func doPingReq(c *Client) (RoomState, error) {
 
 		urlErr, ok := err.(*url.Error)
 		if !ok {
-			log.Println("network.clientPing: Strange non-URL error client ping", err)
+			log.Println("network.doPingReq: Strange non-URL error client ping", err)
 		} else if !urlErr.Timeout() {
-			log.Println("network.clientPing: Strange non-timeout error client ping", err)
+			log.Println("network.doPingReq: Strange non-timeout error client ping", err)
 		}
 		return RoomState{}, err
 	}
@@ -189,7 +179,7 @@ func checkWantedState(c *Client, roomState RoomState) {
 			resp, err := c.doReq(GET, statePattern, nil)
 			if err != nil {
 				//weird, but will try next ping circle
-				log.Println("can't get new Serv Data", err)
+				log.Println("can't get new ServData", err)
 				return
 			}
 
@@ -201,23 +191,20 @@ func checkWantedState(c *Client, roomState RoomState) {
 				doCommonReq(c, true)
 			} else {
 				//run hook and wait for done chan close
+				doCommonReq(c, true)
 				stateDataDone := c.opts.OnGetStateData(resp)
 				go func() {
-					log.Println("Client: start waiting for stateDataDone")
 					<-stateDataDone
-					log.Println("Client: stateDataDone")
 					c.mu.Lock()
 					c.curState = c.wantState
 					//Get commonState after reading StateData
-					doCommonReq(c, true)
-					log.Println("Client: curstate = ", c.wantState)
 					c.mu.Unlock()
 				}()
 			}
 		}
 	}
 }
-
+//TODO: do not send empty data
 func doCommonReq(c *Client, onlyGet bool) {
 	method := GET
 	var sentBuf io.Reader
@@ -243,6 +230,7 @@ func doCommonReq(c *Client, onlyGet bool) {
 		c.opts.OnCommonRecv(resp)
 	}
 }
+
 func clientPing(c *Client) {
 	tick := time.Tick(ClientPingPeriod)
 	for {
@@ -251,7 +239,6 @@ func clientPing(c *Client) {
 		//do Ping to check online and State
 		RoomState, err := doPingReq(c)
 		if err != nil {
-			//log.Println(err)
 			c.recalcPauseReason()
 			continue
 		}

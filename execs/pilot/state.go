@@ -12,6 +12,7 @@ const (
 )
 
 func stateChanged(wanted string) {
+	defer LogFunc("state.stateChanged")()
 	log.Println("state changed : ",wanted)
 	state := State{}.Decode(wanted)
 
@@ -30,6 +31,8 @@ func stateChanged(wanted string) {
 
 //called within Data.Mutex
 func initSceneState(){
+	defer LogFunc("state.initSceneState")()
+
 	var sceneName string
 
 	switch Data.state.Special {
@@ -49,11 +52,21 @@ func initSceneState(){
 
 
 func pause() {
-	log.Println("pause")
+	defer LogFunc("state.pause")()
+	Log(LVL_WARNING,"pause")
 	Scenes.SetPaused(true)
 }
 
 func unpause() {
-	log.Println("upause")
+	defer LogFunc("state.unpause")()
+	Log(LVL_WARNING,"upause")
 	Scenes.SetPaused(false)
+}
+
+func discon() {
+	Log(LVL_WARNING,"lost connect")
+}
+
+func recon() {
+	Log(LVL_WARNING,"recon!")
 }

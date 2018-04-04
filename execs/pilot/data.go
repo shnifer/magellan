@@ -3,7 +3,6 @@ package main
 import (
 	. "github.com/Shnifer/magellan/commons"
 	"sync"
-	"log"
 )
 
 type pilotData struct {
@@ -25,11 +24,9 @@ func init() {
 }
 
 func (pd *pilotData) setState(state State) {
-	log.Println("Data setState started")
 	pd.mu.Lock()
 	pd.state = state
 	pd.mu.Unlock()
-	log.Println("Data setState ended")
 }
 
 func (pd *pilotData) getStateData(data []byte) chan struct{} {

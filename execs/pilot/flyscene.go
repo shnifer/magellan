@@ -4,6 +4,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/Shnifer/magellan/graph"
 	"golang.org/x/image/colornames"
+	. "github.com/Shnifer/magellan/commons"
 )
 
 type cosmoScene struct{
@@ -33,9 +34,12 @@ func newCosmoScene() *cosmoScene{
 }
 
 func (*cosmoScene) Init() {
+	defer LogFunc("cosmoScene.Init")()
 }
 
 func (scene *cosmoScene) Update(dt float64) {
+	defer LogFunc("cosmoScene.Update")()
+
 	switch {
 	case ebiten.IsKeyPressed(ebiten.KeyW):
 		Data.ship.Pos.Y+=10
@@ -45,6 +49,8 @@ func (scene *cosmoScene) Update(dt float64) {
 }
 
 func (scene *cosmoScene) Draw(image *ebiten.Image) {
+	defer LogFunc("cosmoScene.Draw")()
+
 	scene.caption.Draw(image)
 	scene.ship.SetPos(Data.ship.Pos)
 	img, op:= scene.ship.ImageOp()
@@ -53,5 +59,3 @@ func (scene *cosmoScene) Draw(image *ebiten.Image) {
 
 func (*cosmoScene) Destroy() {
 }
-
-

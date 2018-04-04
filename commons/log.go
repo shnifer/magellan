@@ -11,11 +11,23 @@ const (
 )
 
 const (
-	LOG_LEVEL = LVL_DEBUG
+	LOG_LEVEL = LVL_WARNING
 )
 
 func Log(level int, params ...interface{}) {
 	if level >= LOG_LEVEL {
-		fmt.Println()
+		fmt.Println(params...)
+	}
+}
+
+//use as
+// func  myFunc{
+//     defer LogFunc("myFunc")()
+// ...
+//}
+func LogFunc(name string) func(){
+	Log(LVL_DEBUG, "Func: ",name,"start")
+	return func(){
+		Log(LVL_DEBUG, "Func: ",name,"ended")
 	}
 }

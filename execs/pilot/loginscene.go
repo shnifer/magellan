@@ -41,12 +41,13 @@ func NewLoginScene() *LoginScene {
 }
 
 func (p *LoginScene) Init() {
-	log.Println("Loginscene inited")
+	defer LogFunc("LoginScene.Init")()
 	p.inputText = ""
 	p.lastErrTime = time.Time{}
 }
 
 func (p *LoginScene) Update(float64) {
+	defer LogFunc("LoginScene.Update")()
 	var changed bool
 
 	input := ebiten.InputChars()
@@ -73,6 +74,8 @@ func (p *LoginScene) Update(float64) {
 }
 
 func (p *LoginScene) Draw(image *ebiten.Image) {
+	defer LogFunc("LoginScene.Draw")()
+
 	const ErrorShowtime = time.Second * 2
 
 	p.question.Draw(image)
@@ -90,6 +93,8 @@ func (p *LoginScene) Destroy() {
 }
 
 func (p *LoginScene) tryToStartFly() {
+	defer LogFunc("LoginScene.tryToStartFly")()
+
 	state :=State{
 		Special:  STATE_cosmo,
 		ShipID:   p.inputText,
