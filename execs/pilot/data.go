@@ -82,7 +82,7 @@ func (pd *pilotData) commonSend() []byte {
 	return []byte(res)
 }
 
-func (pd *pilotData) commonRecv(buf []byte) {
+func (pd *pilotData) commonRecv(buf []byte, readOwnPart bool) {
 	pd.mu.Lock()
 	defer pd.mu.Unlock()
 
@@ -91,7 +91,9 @@ func (pd *pilotData) commonRecv(buf []byte) {
 		panic("pilotData.commonRecv Can't decode mapData " + err.Error())
 	}
 
-	if part, ok := md[PARTCOMMON_ShipPos]; ok {
-		pd.ship = CShipPos{}.Decode([]byte(part))
+	if readOwnPart {
+		if part, ok := md[PARTCOMMON_ShipPos]; ok {
+			pd.ship = CShipPos{}.Decode([]byte(part))
+		}
 	}
 }

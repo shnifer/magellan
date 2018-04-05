@@ -32,7 +32,7 @@ type ClientOpts struct {
 	OnUnpause func()
 
 	OnCommonSend func() []byte
-	OnCommonRecv func([]byte)
+	OnCommonRecv func(data []byte, readOwnPart bool)
 
 	OnStateChanged func(wanted string)
 
@@ -54,12 +54,16 @@ type Client struct {
 	onPause  bool
 
 	//copy of last ping state
+	//TODO: refactor. this third-state-between PingResp.RoomState vs PauseReason
 	isFull     bool
 	isCoherent bool
 
 	//for state machine
 	curState  string
 	wantState string
+
+	//do wa need to RECIEVE our part of common
+	isMyPartActual bool
 
 	//mutex for PauseReaon only
 	prmu sync.RWMutex
@@ -167,6 +171,7 @@ func checkWantedState(c *Client, roomState RoomState) {
 	wanted := roomState.Wanted
 	if wanted != c.wantState {
 		c.wantState = wanted
+		c.isMyPartActual = false
 		//aware client about new state
 		if c.opts.OnStateChanged != nil {
 			c.opts.OnStateChanged(wanted)
@@ -188,10 +193,10 @@ func checkWantedState(c *Client, roomState RoomState) {
 				//set wanted state now
 				c.curState = c.wantState
 				//Get commonState after reading StateData
-				doCommonReq(c, true)
+				doCommonReq(c)
 			} else {
 				//run hook and wait for done chan close
-				doCommonReq(c, true)
+				doCommonReq(c)
 				stateDataDone := c.opts.OnGetStateData(resp)
 				go func() {
 					<-stateDataDone
@@ -204,12 +209,13 @@ func checkWantedState(c *Client, roomState RoomState) {
 		}
 	}
 }
+
 //TODO: do not send empty data
-func doCommonReq(c *Client, onlyGet bool) {
+func doCommonReq(c *Client) {
 	method := GET
 	var sentBuf io.Reader
 
-	if !onlyGet {
+	if c.isMyPartActual {
 		var sentData []byte
 		if c.opts.OnCommonSend != nil {
 			sentData = c.opts.OnCommonSend()
@@ -227,10 +233,11 @@ func doCommonReq(c *Client, onlyGet bool) {
 		return
 	}
 	if c.opts.OnCommonRecv != nil {
-		c.opts.OnCommonRecv(resp)
+		c.opts.OnCommonRecv(resp, !c.isMyPartActual)
 	}
-}
+	c.isMyPartActual = true
 
+}
 func clientPing(c *Client) {
 	tick := time.Tick(ClientPingPeriod)
 	for {
@@ -246,7 +253,7 @@ func clientPing(c *Client) {
 
 		//Maybe it is better to run GetCommonData loop as other routine but YAGNI
 		if !c.onPause {
-			doCommonReq(c, false)
+			doCommonReq(c)
 		}
 		c.recalcPauseReason()
 	}
