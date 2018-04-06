@@ -25,9 +25,9 @@ func Log(level int, params ...interface{}) {
 //     defer LogFunc("myFunc")()
 // ...
 //}
-func LogFunc(name string) func(){
-	Log(LVL_DEBUG, "Func: ",name,"start")
-	return func(){
-		Log(LVL_DEBUG, "Func: ",name,"ended")
+func LogFunc(name string) func() {
+	Log(LVL_DEBUG, "Func: ", name, "start")
+	return func() {
+		Log(LVL_DEBUG, "Func: ", name, "ended")
 	}
 }

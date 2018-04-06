@@ -20,7 +20,7 @@ type ServerOpts struct {
 	Addr string
 
 	//hooks for server implementation
-	RoomServ RoomCheckGetSetter
+	RoomServ   RoomCheckGetSetter
 	StartState string
 }
 

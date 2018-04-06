@@ -13,7 +13,7 @@ type PauseScene struct {
 	reason  network.PauseReason
 	caption *graph.Text
 
-	face     font.Face
+	face font.Face
 
 	getReason func() network.PauseReason
 }

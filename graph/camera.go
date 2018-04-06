@@ -15,8 +15,8 @@ type Camera struct {
 	g, r  ebiten.GeoM
 }
 
-func NewCamera()*Camera {
-	res:= &Camera{
+func NewCamera() *Camera {
+	res := &Camera{
 		Scale: 1,
 	}
 	res.Recalc()

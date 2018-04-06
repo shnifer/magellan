@@ -19,7 +19,7 @@ type Manager struct {
 	//name of current scene, change async
 	current string
 
-	paused bool
+	paused         bool
 	pauseSceneName string
 
 	scenes map[string]scene
@@ -29,17 +29,17 @@ type Manager struct {
 }
 
 func NewManager() *Manager {
-	res:=&Manager{
-		scenes: make(map[string]scene),
-		inited: make(map[string]bool),
-		actionQ: make(chan func(),3),
+	res := &Manager{
+		scenes:  make(map[string]scene),
+		inited:  make(map[string]bool),
+		actionQ: make(chan func(), 3),
 	}
 	go actionRun(res)
 	return res
 }
 
-func actionRun(m *Manager){
-	for f:=range m.actionQ{
+func actionRun(m *Manager) {
+	for f := range m.actionQ {
 		f()
 	}
 }
@@ -57,7 +57,7 @@ func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
 	}
 
 	actualScene := m.current
-	if m.paused && m.pauseSceneName!="" {
+	if m.paused && m.pauseSceneName != "" {
 		actualScene = m.pauseSceneName
 	}
 
@@ -74,38 +74,38 @@ func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
 	}
 }
 
-func (m *Manager) Install(name string, Scene scene, inited bool){
-	m.actionQ<-func(){
+func (m *Manager) Install(name string, Scene scene, inited bool) {
+	m.actionQ <- func() {
 		m.install(name, Scene, inited)
 	}
 }
 
 func (m *Manager) Delete(name string) {
-	m.actionQ<-func(){
+	m.actionQ <- func() {
 		m.delete(name)
 	}
 }
 
 func (m *Manager) Activate(name string, needReInit bool) {
-	m.actionQ<-func(){
+	m.actionQ <- func() {
 		m.activate(name, needReInit)
 	}
 }
 
 func (m *Manager) Init(name string) {
-	m.actionQ<-func(){
+	m.actionQ <- func() {
 		m.init(name)
 	}
 }
 
 func (m *Manager) SetAsPauseScene(pauseSceneName string) {
-	m.actionQ<-func(){
+	m.actionQ <- func() {
 		m.setAsPauseScene(pauseSceneName)
 	}
 }
 
 func (m *Manager) SetPaused(paused bool) {
-	m.actionQ<-func(){
+	m.actionQ <- func() {
 		m.setPaused(paused)
 	}
 }

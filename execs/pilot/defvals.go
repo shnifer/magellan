@@ -3,9 +3,9 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/Shnifer/magellan/commons"
 	"io/ioutil"
 	"log"
-	"github.com/Shnifer/magellan/commons"
 )
 
 const DefValPath = "res/pilot/"
@@ -13,7 +13,7 @@ const DefValPath = "res/pilot/"
 type tDefVals struct {
 	Port       string
 	Room       string
-	Role string
+	Role       string
 	FullScreen bool
 	WinW, WinH int
 

@@ -6,14 +6,14 @@ import (
 	"github.com/Shnifer/magellan/network"
 	"io"
 	"io/ioutil"
-	"sync"
 	"os"
+	"sync"
 )
 
 type roomServer struct {
 	mu        sync.RWMutex
 	stateData map[string]CMapData
-	curState map[string]State
+	curState  map[string]State
 
 	//map[roomName]commonDataMap
 	commonData  map[string]CMapData
@@ -42,7 +42,7 @@ func (rd *roomServer) GetRoomCommon(room string) ([]byte, error) {
 		rd.commonData[room] = commonData
 	}
 
-	msg, err:= commonData.Encode()
+	msg, err := commonData.Encode()
 	return msg, err
 }
 
@@ -84,8 +84,8 @@ func (rd *roomServer) CheckRoomFull(members network.RoomMembers) bool {
 func (rd *roomServer) RdyStateData(room string, stateStr string) {
 	rd.mu.Lock()
 	defer rd.mu.Unlock()
-	state:=State{}.Decode(stateStr)
-	rd.curState[room] =  state
+	state := State{}.Decode(stateStr)
+	rd.curState[room] = state
 	rd.stateData[room] = loadStateData(state)
 }
 
@@ -161,13 +161,13 @@ func (rd *roomServer) IsValidState(roomName string, stateStr string) bool {
 }
 
 //run internal mutex call
-func (rd *roomServer) isValidFlyShip(roomName string, shipID string) bool{
-	if roomName == "" || shipID =="" {
+func (rd *roomServer) isValidFlyShip(roomName string, shipID string) bool {
+	if roomName == "" || shipID == "" {
 		return false
 	}
 
-	for room, state:= range rd.curState {
-		if room!=roomName && state.ShipID == shipID {
+	for room, state := range rd.curState {
+		if room != roomName && state.ShipID == shipID {
 			return false
 		}
 	}
@@ -187,7 +187,6 @@ func (rd *roomServer) isValidFlyGalaxy(galaxyID string) bool {
 
 	return true
 }
-
 
 //save examples of DB data
 func init() {

@@ -54,9 +54,7 @@ func (pd *pilotData) getStateData(data []byte) chan struct{} {
 			pd.galaxy = CGalaxy{}
 		}
 
-
 		initSceneState()
-
 
 		pd.mu.Unlock()
 
@@ -66,7 +64,7 @@ func (pd *pilotData) getStateData(data []byte) chan struct{} {
 }
 
 func (pd *pilotData) commonSend() []byte {
-	if DEFVAL.Role!=ROLE_Pilot{
+	if DEFVAL.Role != ROLE_Pilot {
 		return nil
 	}
 	pd.mu.RLock()

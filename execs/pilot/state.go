@@ -13,7 +13,7 @@ const (
 
 func stateChanged(wanted string) {
 	defer LogFunc("state.stateChanged")()
-	log.Println("state changed : ",wanted)
+	log.Println("state changed : ", wanted)
 	state := State{}.Decode(wanted)
 
 	Data.setState(state)
@@ -22,7 +22,7 @@ func stateChanged(wanted string) {
 	case STATE_login:
 		Scenes.Activate(scene_login, true)
 	case STATE_cosmo:
-		scene:=newCosmoScene()
+		scene := newCosmoScene()
 		Scenes.Install(scene_main, scene, false)
 		Scenes.Activate(scene_main, true)
 	case STATE_warp:
@@ -30,7 +30,7 @@ func stateChanged(wanted string) {
 }
 
 //called within Data.Mutex
-func initSceneState(){
+func initSceneState() {
 	defer LogFunc("state.initSceneState")()
 
 	var sceneName string
@@ -43,30 +43,29 @@ func initSceneState(){
 	case STATE_warp:
 		sceneName = scene_main
 	}
-	if sceneName!="" {
+	if sceneName != "" {
 		Scenes.Init(sceneName)
 	} else {
-		log.Println("unknown scene to init for state = ",Data.state.Special)
+		log.Println("unknown scene to init for state = ", Data.state.Special)
 	}
 }
 
-
 func pause() {
 	defer LogFunc("state.pause")()
-	Log(LVL_WARNING,"pause")
+	Log(LVL_WARNING, "pause")
 	Scenes.SetPaused(true)
 }
 
 func unpause() {
 	defer LogFunc("state.unpause")()
-	Log(LVL_WARNING,"upause")
+	Log(LVL_WARNING, "upause")
 	Scenes.SetPaused(false)
 }
 
 func discon() {
-	Log(LVL_WARNING,"lost connect")
+	Log(LVL_WARNING, "lost connect")
 }
 
 func recon() {
-	Log(LVL_WARNING,"recon!")
+	Log(LVL_WARNING, "recon!")
 }

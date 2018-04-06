@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/input"
 	"github.com/Shnifer/magellan/scene"
@@ -12,7 +13,6 @@ import (
 	"runtime"
 	"runtime/pprof"
 	"time"
-	"github.com/Shnifer/magellan/commons"
 )
 
 const DEBUG = true
@@ -37,7 +37,7 @@ func mainLoop(window *ebiten.Image) error {
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
 	Data.mu.Unlock()
 
-	if commons.LOG_LEVEL<commons.LVL_ERROR {
+	if commons.LOG_LEVEL < commons.LVL_ERROR {
 		fps := ebiten.CurrentFPS()
 		msg := fmt.Sprintf("FPS: %v\ndt = %.2f\n", fps, dt)
 		if ebiten.IsRunningSlowly() {

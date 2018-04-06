@@ -67,7 +67,7 @@ type Client struct {
 
 	//mutex for PauseReaon only
 	prmu sync.RWMutex
-	pr PauseReason
+	pr   PauseReason
 }
 
 func NewClient(opts ClientOpts) (*Client, error) {
@@ -296,7 +296,7 @@ type PauseReason struct {
 	WantState  string
 }
 
-func (c *Client) recalcPauseReason(){
+func (c *Client) recalcPauseReason() {
 	c.prmu.Lock()
 	c.pr = PauseReason{
 		PingLost:   c.pingLost,
@@ -316,7 +316,7 @@ func (c *Client) PauseReason() PauseReason {
 }
 
 func (c *Client) RequestNewState(wanted string) error {
-	if c.wantState != c.curState{
+	if c.wantState != c.curState {
 		return errors.New("client is already changing state")
 	}
 	buf := strings.NewReader(wanted)

@@ -13,14 +13,14 @@ const (
 )
 
 const (
-	PARTCOMMON_ShipPos   = "shipPos"
-	PARTCOMMON_EngiSys   = "engiSys"
+	PARTCOMMON_ShipPos = "shipPos"
+	PARTCOMMON_EngiSys = "engiSys"
 )
 
 const (
 	STATE_login = "login"
 	STATE_cosmo = "cosmo"
-	STATE_warp = "star"
+	STATE_warp  = "star"
 )
 
 const (
