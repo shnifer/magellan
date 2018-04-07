@@ -77,7 +77,7 @@ func (pd *pilotData) commonSend() []byte {
 	if err != nil {
 		panic("CommonSend " + err.Error())
 	}
-	return []byte(res)
+	return res
 }
 
 func (pd *pilotData) commonRecv(buf []byte, readOwnPart bool) {

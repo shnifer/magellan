@@ -11,7 +11,7 @@ const (
 )
 
 const (
-	LOG_LEVEL = LVL_WARNING
+	LOG_LEVEL = LVL_DEBUG
 )
 
 func Log(level int, params ...interface{}) {

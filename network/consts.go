@@ -31,8 +31,40 @@ const (
 //RdyServData - Server downloaded data for new state (needed while not coherent)
 //Wanted - Wanted state
 type RoomState struct {
+	//room specific
 	IsFull      bool
 	IsCoherent  bool
 	RdyServData bool
 	Wanted      string
 }
+
+type PingResp struct {
+	Room                RoomState
+	LastCommandReceived int
+}
+
+type CommonReq struct {
+	DataSent bool
+	Data     string
+
+	//Command string first rune is service flag
+	//Client->Server
+	CommandsBaseN int
+	Commands      []string
+
+	//for Server<-Client
+	LastReceivedCommandN int
+}
+
+type CommonResp struct {
+	Data string
+
+	//Server->Client
+	CommandsBaseN int
+	Commands      []string
+}
+
+const (
+	COMMAND_CLIENT       = "C"
+	COMMAND_REQUESTSTATE = "S"
+)

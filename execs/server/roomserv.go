@@ -3,8 +3,6 @@ package main
 import (
 	"errors"
 	. "github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/network"
-	"io"
 	"io/ioutil"
 	"os"
 	"sync"
@@ -16,8 +14,7 @@ type roomServer struct {
 	curState  map[string]State
 
 	//map[roomName]commonDataMap
-	commonData  map[string]CMapData
-	neededRoles []string
+	commonData map[string]CMapData
 }
 
 func newRoomServer() *roomServer {
@@ -26,15 +23,16 @@ func newRoomServer() *roomServer {
 	curState := make(map[string]State)
 
 	return &roomServer{
-		stateData:   stateData,
-		curState:    curState,
-		commonData:  commonData,
-		neededRoles: DEFVAL.NeededRoles,
+		stateData:  stateData,
+		curState:   curState,
+		commonData: commonData,
 	}
 }
 
 func (rd *roomServer) GetRoomCommon(room string) ([]byte, error) {
+	defer LogFunc("GetRoomCommon")()
 	rd.mu.RLock()
+
 	defer rd.mu.RUnlock()
 	commonData, ok := rd.commonData[room]
 	if !ok {
@@ -46,14 +44,13 @@ func (rd *roomServer) GetRoomCommon(room string) ([]byte, error) {
 	return msg, err
 }
 
-func (rd *roomServer) SetRoomCommon(room string, r io.Reader) error {
+func (rd *roomServer) SetRoomCommon(room string, data []byte) error {
+	defer LogFunc("SetRoomCommon")()
+
 	rd.mu.Lock()
 	defer rd.mu.Unlock()
-	b, err := ioutil.ReadAll(r)
-	if err != nil {
-		Log(LVL_ERROR, "SetRoomCommon cant read io.Reader")
-	}
-	cd, err := CMapData{}.Decode(b)
+
+	cd, err := CMapData{}.Decode(data)
 	if err != nil {
 		err := errors.New("SetRoomCommon: Can't decode AS cMapData")
 		Log(LVL_ERROR, err)
@@ -70,18 +67,9 @@ func (rd *roomServer) SetRoomCommon(room string, r io.Reader) error {
 	return nil
 }
 
-func (rd *roomServer) CheckRoomFull(members network.RoomMembers) bool {
-	rd.mu.RLock()
-	defer rd.mu.RUnlock()
-	for _, role := range rd.neededRoles {
-		if !members[role] {
-			return false
-		}
-	}
-	return true
-}
-
 func (rd *roomServer) RdyStateData(room string, stateStr string) {
+	defer LogFunc("RdyStateData")()
+
 	rd.mu.Lock()
 	defer rd.mu.Unlock()
 	state := State{}.Decode(stateStr)
@@ -126,6 +114,8 @@ func loadGalaxyState(GalaxyID string) string {
 }
 
 func (rd *roomServer) GetStateData(room string) []byte {
+	defer LogFunc("GetStateData")()
+
 	rd.mu.RLock()
 	defer rd.mu.RUnlock()
 
@@ -186,6 +176,10 @@ func (rd *roomServer) isValidFlyGalaxy(galaxyID string) bool {
 	}
 
 	return true
+}
+
+func (rd *roomServer) OnCommand(room, role, command string) {
+	Log(LVL_DEBUG, "room", room, "role", role, "command", command)
 }
 
 //save examples of DB data
