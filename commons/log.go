@@ -6,8 +6,8 @@ const (
 	LVL_DEBUG int = iota
 	LVL_WARNING
 	LVL_ERROR
-	LVL_PANIC
-	LVL_NOLOG
+	//LVL_PANIC
+	//LVL_NOLOG
 )
 
 const (
