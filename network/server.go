@@ -205,30 +205,29 @@ func serverReceiveCommands(srv *Server, req CommonReq, room *ServRoomState, room
 
 func serverRecalcCommands(srv *Server, room *ServRoomState) {
 	var minN int
-	for _,role:=range srv.opts.NeededRoles {
-		lastN,ok:=room.lastCommandToClient[role]
-		if !ok{
+	for _, role := range srv.opts.NeededRoles {
+		lastN, ok := room.lastCommandToClient[role]
+		if !ok {
 			return
 		}
-		if minN==0 || lastN<minN {
+		if minN == 0 || lastN < minN {
 			minN = lastN
 		}
 	}
-	delta:=minN - room.baseCommandN +1
-	if delta<0 {
+	delta := minN - room.baseCommandN + 1
+	if delta < 0 {
 		log.Println("Strange! minimum lastCommandToClient < baseCommandN")
 	}
-	if delta<=0{
+	if delta <= 0 {
 		return
 	}
-	if delta>len(room.commands){
+	if delta > len(room.commands) {
 		log.Println("strange! delta>len(commands")
 		delta = len(room.commands)
 	}
-	room.baseCommandN+=delta
+	room.baseCommandN += delta
 	room.commands = room.commands[delta:]
 }
-
 
 func roomHandler(srv *Server) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
