@@ -201,6 +201,7 @@ func defConf(filePath string) {
 	}
 }
 
+//just for examples
 var keysNames = []string{
 	"Key0",
 	"Key1",

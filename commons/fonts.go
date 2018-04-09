@@ -1,4 +1,4 @@
-package main
+package commons
 
 import (
 	"github.com/Shnifer/magellan/graph"
@@ -6,16 +6,18 @@ import (
 )
 
 const (
-	face_cap = "caption"
+	Face_cap = "caption"
 )
 
-var fonts map[string]font.Face
+const fontPath = "res/fonts/"
+
+var Fonts map[string]font.Face
 
 func init() {
-	fonts = make(map[string]font.Face)
+	Fonts = make(map[string]font.Face)
 	face, err := graph.GetFace(fontPath+"phantom.ttf", 20)
 	if err != nil {
 		panic(err)
 	}
-	fonts[face_cap] = face
+	Fonts[Face_cap] = face
 }

@@ -14,7 +14,7 @@ type cosmoScene struct {
 }
 
 func newCosmoScene() *cosmoScene {
-	caption := graph.NewText("Fly scene", fonts[face_cap], colornames.Aliceblue)
+	caption := graph.NewText("Fly scene", Fonts[Face_cap], colornames.Aliceblue)
 	caption.SetPosPivot(graph.ScrP(0.1, 0.1), graph.TopLeft())
 
 	cam := graph.NewCamera()

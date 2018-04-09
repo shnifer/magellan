@@ -3,6 +3,7 @@ package main
 import (
 	. "github.com/Shnifer/magellan/commons"
 	"log"
+	"github.com/Shnifer/magellan/scene"
 )
 
 const (
@@ -10,6 +11,20 @@ const (
 	scene_pause = "pause"
 	scene_login = "login"
 )
+
+var Scenes *scene.Manager
+
+func createScenes(){
+	Scenes = scene.NewManager()
+
+	pauseScene := scene.NewPauseScene(Fonts[Face_cap], Client.PauseReason)
+	loginScene := NewLoginScene()
+	Scenes.Install(scene_main, pauseScene, false)
+	Scenes.Install(scene_pause, pauseScene, true)
+	Scenes.Install(scene_login, loginScene, false)
+	Scenes.SetAsPauseScene(scene_pause)
+	Scenes.Activate(scene_pause, false)
+}
 
 func stateChanged(wanted string) {
 	defer LogFunc("state.stateChanged")()

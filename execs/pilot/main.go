@@ -5,7 +5,6 @@ import (
 	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/input"
-	"github.com/Shnifer/magellan/scene"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"log"
@@ -17,7 +16,6 @@ import (
 
 const DEBUG = true
 const resPath = "res/pilot/"
-const fontPath = "res/fonts/"
 const texPath = "res/textures/"
 
 var (
@@ -49,7 +47,7 @@ func mainLoop(window *ebiten.Image) error {
 	return nil
 }
 
-var Scenes *scene.Manager
+
 
 func main() {
 	startProfile()
@@ -62,15 +60,7 @@ func main() {
 	initClient()
 	input.LoadConf(resPath)
 
-	Scenes = scene.NewManager()
-
-	pauseScene := scene.NewPauseScene(fonts[face_cap], Client.PauseReason)
-	loginScene := NewLoginScene()
-	Scenes.Install(scene_main, pauseScene, false)
-	Scenes.Install(scene_pause, pauseScene, true)
-	Scenes.Install(scene_login, loginScene, false)
-	Scenes.SetAsPauseScene(scene_pause)
-	Scenes.Activate(scene_pause, false)
+	createScenes()
 
 	Client.Start()
 	ebiten.SetFullscreen(DEFVAL.FullScreen)
