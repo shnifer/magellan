@@ -2,8 +2,8 @@ package main
 
 import (
 	. "github.com/Shnifer/magellan/commons"
-	"log"
 	"github.com/Shnifer/magellan/scene"
+	"log"
 )
 
 const (
@@ -14,7 +14,7 @@ const (
 
 var Scenes *scene.Manager
 
-func createScenes(){
+func createScenes() {
 	Scenes = scene.NewManager()
 
 	pauseScene := scene.NewPauseScene(Fonts[Face_cap], Client.PauseReason)

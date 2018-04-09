@@ -47,8 +47,6 @@ func mainLoop(window *ebiten.Image) error {
 	return nil
 }
 
-
-
 func main() {
 	startProfile()
 
