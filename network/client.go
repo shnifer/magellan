@@ -151,8 +151,10 @@ func checkWantedState(c *Client, pingResp PingResp) {
 	//state changed
 	wanted := pingResp.Room.Wanted
 	if wanted != c.wantState {
+		//Drop commands
 		c.sendCommandsBaseN += len(c.sendCommands)
 		c.sendCommands = c.sendCommands[:0]
+
 		c.wantState = wanted
 		c.isMyPartActual = false
 		//aware client about new state

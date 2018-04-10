@@ -66,6 +66,7 @@ func newServRoomState() *ServRoomState {
 		lastSeen:              make(map[string]time.Time),
 		reported:              make(map[string]string),
 		lastCommandFromClient: make(map[string]int),
+		baseCommandN:          1, //start from #1 server command
 		commands:              make([]string, 0),
 		lastCommandToClient:   make(map[string]int),
 	}
@@ -160,8 +161,11 @@ func setNewState(srv *Server, room *ServRoomState, roomName, newState string) bo
 	room.state.IsCoherent = false
 	room.state.Wanted = newState
 	room.state.RdyServData = false
+
+	//flush commands
 	room.baseCommandN += len(room.commands)
 	room.commands = room.commands[:0]
+
 	go requestStateData(srv, roomName, newState)
 	return true
 }
@@ -185,6 +189,11 @@ func serverReceiveCommands(srv *Server, req CommonReq, room *ServRoomState, room
 		command = command[1:]
 		switch prefix {
 		case COMMAND_CLIENT:
+			//Do not
+			if !room.state.IsCoherent {
+				log.Println("STRANGE: COMMAND_CLIENT received while non-coherent. Command: ", command)
+				break
+			}
 			room.commands = append(room.commands, command)
 			srv.opts.RoomServ.OnCommand(roomName, roleName, command)
 		case COMMAND_REQUESTSTATE:
@@ -222,7 +231,6 @@ func serverRecalcCommands(srv *Server, room *ServRoomState) {
 		return
 	}
 	if delta > len(room.commands) {
-		//TODO: check start state
 		log.Println("strange! delta>len(commands)", delta, "=", minN, "-", room.baseCommandN, "+1>", len(room.commands))
 		delta = len(room.commands)
 	}

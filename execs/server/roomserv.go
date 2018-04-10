@@ -6,7 +6,6 @@ import (
 	"errors"
 	. "github.com/Shnifer/magellan/commons"
 	"io/ioutil"
-	"log"
 	"os"
 	"sync"
 )
@@ -34,9 +33,10 @@ func newRoomServer() *roomServer {
 
 func (rd *roomServer) GetRoomCommon(room string) ([]byte, error) {
 	defer LogFunc("GetRoomCommon")()
-	rd.mu.RLock()
 
+	rd.mu.RLock()
 	defer rd.mu.RUnlock()
+
 	commonData, ok := rd.commonData[room]
 	if !ok {
 		commonData = CommonData{}.Empty()
@@ -44,7 +44,6 @@ func (rd *roomServer) GetRoomCommon(room string) ([]byte, error) {
 	}
 
 	msg := commonData.Encode()
-	log.Println(string(msg))
 	return msg, nil
 }
 
@@ -76,6 +75,7 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 
 	rd.mu.Lock()
 	defer rd.mu.Unlock()
+
 	state := State{}.Decode(stateStr)
 	rd.curState[room] = state
 	rd.stateData[room] = loadStateData(state)
@@ -90,10 +90,13 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 }
 
 func generateCommonData(prevCommon CommonData, newState State) CommonData {
+	defer LogFunc("generateCommonData")()
 	return prevCommon
 }
 
 func loadStateData(state State) StateData {
+	defer LogFunc("loadStateData")()
+
 	var md StateData
 
 	if state.ShipID != "" {
@@ -158,6 +161,7 @@ func (rd *roomServer) GetStateData(room string) []byte {
 	return msg
 }
 
+//TODO:Export for Clients
 func (rd *roomServer) IsValidState(roomName string, stateStr string) bool {
 	rd.mu.RLock()
 	defer rd.mu.RUnlock()
