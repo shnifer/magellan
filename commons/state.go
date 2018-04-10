@@ -3,7 +3,7 @@ package commons
 import "encoding/json"
 
 type State struct {
-	Special  string
+	StateID  string
 	ShipID   string
 	GalaxyID string
 }

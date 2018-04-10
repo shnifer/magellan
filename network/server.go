@@ -222,7 +222,8 @@ func serverRecalcCommands(srv *Server, room *ServRoomState) {
 		return
 	}
 	if delta > len(room.commands) {
-		log.Println("strange! delta>len(commands")
+		//TODO: check start state
+		log.Println("strange! delta>len(commands)", delta, "=", minN, "-", room.baseCommandN, "+1>", len(room.commands))
 		delta = len(room.commands)
 	}
 	room.baseCommandN += delta

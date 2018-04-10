@@ -11,7 +11,7 @@ func main() {
 	roomServ := newRoomServer()
 
 	startState := commons.State{
-		Special: commons.STATE_login,
+		StateID: commons.STATE_login,
 	}
 
 	opts := network.ServerOpts{

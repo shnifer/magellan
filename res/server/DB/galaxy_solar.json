@@ -1,14 +1,30 @@
 {
-    "Objects": [
+    "Points": [
         {
-            "ID": "sun",
+            "ID": "Sun",
             "ParentID": "",
-            "Radius": 0,
-            "AngSpeed": 0,
-            "AngStart": 0,
-            "ObjType": "Yellow Star",
-            "Size": 100,
-            "ScienceData": ""
+            "Pos": {
+                "X": 0,
+                "Y": 0
+            },
+            "Orbit": 0,
+            "Period": 0,
+            "DegStart": 0,
+            "Type": "star",
+            "Size": 30
+        },
+        {
+            "ID": "Earth",
+            "ParentID": "Sun",
+            "Pos": {
+                "X": 0,
+                "Y": 0
+            },
+            "Orbit": 200,
+            "Period": 20,
+            "DegStart": 0,
+            "Type": "planet",
+            "Size": 10
         }
     ]
 }

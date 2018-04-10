@@ -31,9 +31,9 @@ func mainLoop(window *ebiten.Image) error {
 
 	input.Update()
 
-	Data.mu.Lock()
+	Data.Mu.Lock()
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
-	Data.mu.Unlock()
+	Data.Mu.Unlock()
 
 	if commons.LOG_LEVEL < commons.LVL_ERROR {
 		fps := ebiten.CurrentFPS()

@@ -1,25 +1,28 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	. "github.com/Shnifer/magellan/commons"
 	"io/ioutil"
+	"log"
 	"os"
 	"sync"
 )
 
 type roomServer struct {
 	mu        sync.RWMutex
-	stateData map[string]CMapData
+	stateData map[string]StateData
 	curState  map[string]State
 
 	//map[roomName]commonDataMap
-	commonData map[string]CMapData
+	commonData map[string]CommonData
 }
 
 func newRoomServer() *roomServer {
-	stateData := make(map[string]CMapData)
-	commonData := make(map[string]CMapData)
+	stateData := make(map[string]StateData)
+	commonData := make(map[string]CommonData)
 	curState := make(map[string]State)
 
 	return &roomServer{
@@ -36,12 +39,13 @@ func (rd *roomServer) GetRoomCommon(room string) ([]byte, error) {
 	defer rd.mu.RUnlock()
 	commonData, ok := rd.commonData[room]
 	if !ok {
-		commonData := make(CMapData)
+		commonData = CommonData{}.Empty()
 		rd.commonData[room] = commonData
 	}
 
-	msg, err := commonData.Encode()
-	return msg, err
+	msg := commonData.Encode()
+	log.Println(string(msg))
+	return msg, nil
 }
 
 func (rd *roomServer) SetRoomCommon(room string, data []byte) error {
@@ -50,20 +54,20 @@ func (rd *roomServer) SetRoomCommon(room string, data []byte) error {
 	rd.mu.Lock()
 	defer rd.mu.Unlock()
 
-	cd, err := CMapData{}.Decode(data)
+	cd, err := CommonData{}.Decode(data)
 	if err != nil {
-		err := errors.New("SetRoomCommon: Can't decode AS cMapData")
+		err := errors.New("SetRoomCommon: Can't decode AS CommonData")
 		Log(LVL_ERROR, err)
 		return err
 	}
 
-	if _, ok := rd.commonData[room]; !ok {
-		rd.commonData[room] = make(CMapData)
+	dst, ok := rd.commonData[room]
+	if !ok {
+		dst = CommonData{}
 	}
+	cd.FillNotNil(&dst)
+	rd.commonData[room] = dst
 
-	for key, val := range cd {
-		rd.commonData[room][key] = val
-	}
 	return nil
 }
 
@@ -75,17 +79,29 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 	state := State{}.Decode(stateStr)
 	rd.curState[room] = state
 	rd.stateData[room] = loadStateData(state)
+
+	commonData, ok := rd.commonData[room]
+	if !ok {
+		commonData = CommonData{}.Empty()
+		rd.commonData[room] = commonData
+	}
+
+	rd.commonData[room] = generateCommonData(commonData, state)
 }
 
-func loadStateData(state State) CMapData {
-	md := make(CMapData)
+func generateCommonData(prevCommon CommonData, newState State) CommonData {
+	return prevCommon
+}
+
+func loadStateData(state State) StateData {
+	var md StateData
 
 	if state.ShipID != "" {
-		md[PARTSTATE_BSP] = loadShipState(state.ShipID)
+		md.BSP = loadShipState(state.ShipID)
 	}
 
 	if state.GalaxyID != "" {
-		md[PARTSTATE_Galaxy] = loadGalaxyState(state.GalaxyID)
+		md.Galaxy = loadGalaxyState(state.GalaxyID)
 	}
 
 	return md
@@ -94,23 +110,35 @@ func loadStateData(state State) CMapData {
 const DBPath = "res/server/DB/"
 
 //TODO: look in DB
-func loadShipState(shipID string) string {
+func loadShipState(shipID string) *BSP {
+	var res BSP
 	buf, err := ioutil.ReadFile(DBPath + "BSP_" + shipID + ".json")
 	if err != nil {
 		Log(LVL_ERROR, "Can't open file for ShipID ", shipID)
-		return ""
+		return nil
 	}
-	return string(buf)
+	err = json.Unmarshal(buf, &res)
+	if err != nil {
+		Log(LVL_ERROR, "can't unmarshal file for ship", shipID)
+		return nil
+	}
+	return &res
 }
 
 //TODO: look in DB
-func loadGalaxyState(GalaxyID string) string {
+func loadGalaxyState(GalaxyID string) *Galaxy {
+	var res Galaxy
 	buf, err := ioutil.ReadFile(DBPath + "Galaxy_" + GalaxyID + ".json")
 	if err != nil {
 		Log(LVL_ERROR, "Can't open file for galaxyID ", GalaxyID)
-		return ""
+		return nil
 	}
-	return string(buf)
+	err = json.Unmarshal(buf, &res)
+	if err != nil {
+		Log(LVL_ERROR, "can't unmarshal file for galaxy", GalaxyID)
+		return nil
+	}
+	return &res
 }
 
 func (rd *roomServer) GetStateData(room string) []byte {
@@ -125,11 +153,7 @@ func (rd *roomServer) GetStateData(room string) []byte {
 		Log(LVL_ERROR, err)
 		return nil
 	}
-	msg, err := commonData.Encode()
-	if err != nil {
-		Log(LVL_ERROR, err)
-		return nil
-	}
+	msg := commonData.Encode()
 
 	return msg
 }
@@ -139,7 +163,7 @@ func (rd *roomServer) IsValidState(roomName string, stateStr string) bool {
 	defer rd.mu.RUnlock()
 
 	state := State{}.Decode(stateStr)
-	switch state.Special {
+	switch state.StateID {
 	case STATE_login:
 		return state.GalaxyID == "" && state.ShipID == ""
 	case STATE_cosmo:
@@ -184,5 +208,20 @@ func (rd *roomServer) OnCommand(room, role, command string) {
 
 //save examples of DB data
 func init() {
-	SaveDataExamples(DBPath)
+	saveDataExamples(DBPath)
+}
+
+func saveDataExamples(path string) {
+	bsp, _ := json.Marshal(BSP{})
+
+	bufBsp := bytes.Buffer{}
+	json.Indent(&bufBsp, bsp, "", "    ")
+	ioutil.WriteFile(path+"example_bsp.json", bufBsp.Bytes(), 0)
+
+	galaxy := Galaxy{}
+	galaxy.Points = append(galaxy.Points, GalaxyPoint{})
+	galaxyStr, _ := json.Marshal(galaxy)
+	bufGalaxy := bytes.Buffer{}
+	json.Indent(&bufGalaxy, galaxyStr, "", "    ")
+	ioutil.WriteFile(path+"example_galaxy.json", bufGalaxy.Bytes(), 0)
 }

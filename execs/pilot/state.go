@@ -31,9 +31,9 @@ func stateChanged(wanted string) {
 	log.Println("state changed : ", wanted)
 	state := State{}.Decode(wanted)
 
-	Data.setState(state)
+	Data.SetState(state)
 
-	switch state.Special {
+	switch state.StateID {
 	case STATE_login:
 		Scenes.Activate(scene_login, true)
 	case STATE_cosmo:
@@ -50,7 +50,7 @@ func initSceneState() {
 
 	var sceneName string
 
-	switch Data.state.Special {
+	switch Data.State.StateID {
 	case STATE_login:
 		sceneName = scene_login
 	case STATE_cosmo:
@@ -61,7 +61,7 @@ func initSceneState() {
 	if sceneName != "" {
 		Scenes.Init(sceneName)
 	} else {
-		log.Println("unknown scene to init for state = ", Data.state.Special)
+		log.Println("unknown scene to init for state = ", Data.State.StateID)
 	}
 }
 

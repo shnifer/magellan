@@ -94,7 +94,7 @@ func (p *LoginScene) tryToStartFly() {
 	defer LogFunc("LoginScene.tryToStartFly")()
 
 	state := State{
-		Special:  STATE_cosmo,
+		StateID:  STATE_cosmo,
 		ShipID:   p.inputText,
 		GalaxyID: START_Galaxy_ID,
 	}.Encode()

@@ -42,9 +42,9 @@ func (scene *cosmoScene) Update(dt float64) {
 
 	switch {
 	case ebiten.IsKeyPressed(ebiten.KeyW):
-		Data.ship.Pos.Y += 10
+		Data.PilotData.Ship.Pos.Y += 10
 	case ebiten.IsKeyPressed(ebiten.KeyS):
-		Data.ship.Pos.Y -= 10
+		Data.PilotData.Ship.Pos.Y -= 10
 	}
 }
 
@@ -52,7 +52,7 @@ func (scene *cosmoScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
 	scene.caption.Draw(image)
-	scene.ship.SetPos(Data.ship.Pos)
+	scene.ship.SetPos(Data.PilotData.Ship.Pos)
 	img, op := scene.ship.ImageOp()
 	image.DrawImage(img, op)
 }
