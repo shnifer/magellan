@@ -32,7 +32,7 @@ func stateChanged(wanted string) {
 
 	state := State{}.Decode(wanted)
 
-	Data.SetState(state)
+	NetData.SetState(state)
 
 	switch state.StateID {
 	case STATE_login:
@@ -49,9 +49,9 @@ func stateChanged(wanted string) {
 func initSceneState() {
 	defer LogFunc("state.initSceneState")()
 
-	Data.Mu.RLock()
-	stateID := Data.StateID
-	Data.Mu.RUnlock()
+	NetData.Mu.RLock()
+	stateID := NetData.StateID
+	NetData.Mu.RUnlock()
 
 	var sceneName string
 
@@ -67,7 +67,7 @@ func initSceneState() {
 		Scenes.Init(sceneName)
 		Scenes.WaitDone()
 	} else {
-		log.Println("unknown scene to init for state = ", Data.State.StateID)
+		log.Println("unknown scene to init for state = ", NetData.State.StateID)
 	}
 }
 

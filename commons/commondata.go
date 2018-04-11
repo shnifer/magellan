@@ -101,3 +101,24 @@ func (CommonData) Empty() CommonData {
 		EngiData:  &EngiData{},
 	}
 }
+
+func (cd CommonData) Copy() (res CommonData) {
+	res = cd
+	if cd.PilotData != nil {
+		val := *cd.PilotData
+		res.PilotData = &val
+	}
+	if cd.NaviData != nil {
+		val := *cd.NaviData
+		res.NaviData = &val
+	}
+	if cd.EngiData != nil {
+		val := *cd.EngiData
+		res.EngiData = &val
+	}
+	if cd.CargoData != nil {
+		val := *cd.CargoData
+		res.CargoData = &val
+	}
+	return res
+}

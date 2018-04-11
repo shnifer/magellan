@@ -6,7 +6,7 @@ import (
 )
 
 var Client *network.Client
-var Data TData
+var NetData TData
 
 func initClient() {
 	opts := network.ClientOpts{
@@ -39,7 +39,7 @@ func getStateData(stateData []byte) {
 	if err != nil {
 		panic("Weird state stateData:" + err.Error())
 	}
-	Data.SetStateData(sd)
+	NetData.SetStateData(sd)
 
 	//first load data in scene, and only than count as done - so Client reports new state ready
 	initSceneState()
@@ -47,7 +47,7 @@ func getStateData(stateData []byte) {
 
 func commonSend() []byte {
 	defer LogFunc("commonSend")()
-	return Data.CommonPartEncoded(DEFVAL.Role)
+	return NetData.CommonPartEncoded(DEFVAL.Role)
 }
 
 func commonRecv(buf []byte, readOwnPart bool) {
@@ -56,5 +56,5 @@ func commonRecv(buf []byte, readOwnPart bool) {
 	if err != nil {
 		panic("commonRecv: Can't decode CommonData " + err.Error())
 	}
-	Data.LoadCommonData(cd, DEFVAL.Role, readOwnPart)
+	NetData.LoadCommonData(cd, DEFVAL.Role, readOwnPart)
 }

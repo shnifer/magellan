@@ -77,3 +77,16 @@ func (StateData) Decode(buf []byte) (sd StateData, err error) {
 	}
 	return sd, nil
 }
+
+func (sd StateData) Copy() (res StateData) {
+	res = sd
+	if sd.BSP != nil {
+		val := *sd.BSP
+		res.BSP = &val
+	}
+	if sd.Galaxy != nil {
+		val := *sd.Galaxy
+		res.Galaxy = &val
+	}
+	return res
+}

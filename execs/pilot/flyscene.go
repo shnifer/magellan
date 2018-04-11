@@ -42,21 +42,23 @@ func (scene *cosmoScene) Update(dt float64) {
 
 	switch {
 	case ebiten.IsKeyPressed(ebiten.KeyW):
-		Data.PilotData.Ship.Pos.Y += 100 * dt
+		LocalData.PilotData.Ship.Vel.Y = 100
 	case ebiten.IsKeyPressed(ebiten.KeyS):
-		Data.PilotData.Ship.Pos.Y -= 100 * dt
+		LocalData.PilotData.Ship.Vel.Y = -100
 	case ebiten.IsKeyPressed(ebiten.KeyA):
-		Data.PilotData.Ship.Ang -= 1 * dt
+		LocalData.PilotData.Ship.AngVel = -1
 	case ebiten.IsKeyPressed(ebiten.KeyD):
-		Data.PilotData.Ship.Ang += 1 * dt
+		LocalData.PilotData.Ship.AngVel = 1
 	}
+
+	LocalData.PilotData.Ship = LocalData.PilotData.Ship.Extrapolate(dt)
 }
 
 func (scene *cosmoScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
 	scene.caption.Draw(image)
-	scene.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
+	scene.ship.SetPosAng(LocalData.PilotData.Ship.Pos, LocalData.PilotData.Ship.Ang)
 	img, op := scene.ship.ImageOp()
 	image.DrawImage(img, op)
 }
