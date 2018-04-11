@@ -46,7 +46,7 @@ func actionRun(m *Manager) {
 	}
 }
 
-func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
+func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool, afterUpdate func()) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -71,6 +71,11 @@ func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
 	scene := m.scenes[actualScene]
 
 	scene.Update(dt)
+
+	if afterUpdate != nil {
+		afterUpdate()
+	}
+
 	if doDraw {
 		scene.Draw(image)
 	}

@@ -33,9 +33,7 @@ func mainLoop(window *ebiten.Image) error {
 
 	loadLocalData()
 
-	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
-
-	sendLocalData()
+	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly(), sendLocalData)
 
 	if commons.LOG_LEVEL <= commons.LVL_ERROR {
 		fps := ebiten.CurrentFPS()

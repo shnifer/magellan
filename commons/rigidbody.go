@@ -14,7 +14,7 @@ type RBData struct {
 
 func (rb RBData) Extrapolate(dt float64) (res RBData) {
 	res = rb
-	res.Pos.X += rb.Vel.Y * dt
+	res.Pos.X += rb.Vel.X * dt
 	res.Pos.Y += rb.Vel.Y * dt
 	res.Ang += rb.AngVel * dt
 	return res
