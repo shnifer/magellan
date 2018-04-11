@@ -11,7 +11,7 @@ const (
 )
 
 const (
-	LOG_LEVEL = LVL_WARNING
+	LOG_LEVEL = LVL_ERROR
 )
 
 func Log(level int, params ...interface{}) {
@@ -26,8 +26,8 @@ func Log(level int, params ...interface{}) {
 // ...
 //}
 func LogFunc(name string) func() {
-	Log(LVL_DEBUG, "Func: ", name, "start")
+	Log(LVL_WARNING, "Func: ", name, "start")
 	return func() {
-		Log(LVL_DEBUG, "Func: ", name, "ended")
+		Log(LVL_WARNING, "Func: ", name, "ended")
 	}
 }

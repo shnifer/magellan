@@ -14,7 +14,7 @@ type cosmoScene struct {
 }
 
 func newCosmoScene() *cosmoScene {
-	caption := graph.NewText("Fly scene", Fonts[Face_cap], colornames.Aliceblue)
+	caption := graph.NewText("Navi scene", Fonts[Face_cap], colornames.Aliceblue)
 	caption.SetPosPivot(graph.ScrP(0.1, 0.1), graph.TopLeft())
 
 	cam := graph.NewCamera()
@@ -40,16 +40,8 @@ func (*cosmoScene) Init() {
 func (scene *cosmoScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
 
-	switch {
-	case ebiten.IsKeyPressed(ebiten.KeyW):
-		Data.PilotData.Ship.Pos.Y += 100 * dt
-	case ebiten.IsKeyPressed(ebiten.KeyS):
-		Data.PilotData.Ship.Pos.Y -= 100 * dt
-	case ebiten.IsKeyPressed(ebiten.KeyA):
-		Data.PilotData.Ship.Ang -= 1 * dt
-	case ebiten.IsKeyPressed(ebiten.KeyD):
-		Data.PilotData.Ship.Ang += 1 * dt
-	}
+	//PilotData Rigid Body emulation
+	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
 }
 
 func (scene *cosmoScene) Draw(image *ebiten.Image) {

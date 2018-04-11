@@ -39,6 +39,8 @@ type Sprite struct {
 	denyCamScale bool
 }
 
+//TODO: animated spriteSheet?
+
 func NewSprite(tex Tex, cam *Camera, denyCamScale bool) *Sprite {
 	op := &ebiten.DrawImageOptions{}
 	op.Filter = tex.filter

@@ -39,8 +39,8 @@ type RoomState struct {
 }
 
 type PingResp struct {
-	Room                RoomState
 	LastCommandReceived int
+	Room                RoomState
 }
 
 type CommonReq struct {

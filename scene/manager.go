@@ -34,6 +34,7 @@ func NewManager() *Manager {
 		scenes:  make(map[string]scene),
 		inited:  make(map[string]bool),
 		actionQ: make(chan func(), 3),
+		paused:  true, //same as network client state
 	}
 	go actionRun(res)
 	return res
@@ -93,14 +94,10 @@ func (m *Manager) Activate(name string, needReInit bool) {
 	}
 }
 
-//Init is waiting for init to finish!
-func (m *Manager) Init(name string) (done chan struct{}) {
-	done = make(chan struct{})
+func (m *Manager) Init(name string) {
 	m.actionQ <- func() {
 		m.init(name)
-		close(done)
 	}
-	return done
 }
 
 func (m *Manager) SetAsPauseScene(pauseSceneName string) {
@@ -119,6 +116,14 @@ func (m *Manager) OnCommand(command string) {
 	m.actionQ <- func() {
 		m.onCommand(command)
 	}
+}
+
+func (m *Manager) WaitDone() {
+	done := make(chan struct{})
+	m.actionQ <- func() {
+		close(done)
+	}
+	<-done
 }
 
 func (m *Manager) install(name string, Scene scene, inited bool) {

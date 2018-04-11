@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-const resPath = "res/pilot/"
+const resPath = "res/navi/"
 const texPath = "res/textures/"
 
 var (
@@ -63,7 +63,7 @@ func main() {
 	ebiten.SetFullscreen(DEFVAL.FullScreen)
 	ebiten.SetRunnableInBackground(true)
 	last = time.Now()
-	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "PILOT"); err != nil {
+	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "NAVIGATOR"); err != nil {
 		log.Fatal(err)
 	}
 

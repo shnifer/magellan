@@ -3,6 +3,7 @@ package main
 import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/scene"
+	"golang.org/x/image/colornames"
 	"log"
 )
 
@@ -15,13 +16,16 @@ const (
 var Scenes *scene.Manager
 
 func createScenes() {
+	defer LogFunc("createScenes")()
+
 	Scenes = scene.NewManager()
 
 	pauseScene := scene.NewPauseScene(Fonts[Face_cap], Client.PauseReason)
-	loginScene := NewLoginScene()
+	loginScene := scene.NewCaptionSceneString(Fonts[Face_cap], colornames.Goldenrod,
+		"waiting for login on other terminal")
 	Scenes.Install(scene_main, pauseScene, false)
 	Scenes.Install(scene_pause, pauseScene, true)
-	Scenes.Install(scene_login, loginScene, false)
+	Scenes.Install(scene_login, loginScene, true)
 	Scenes.SetAsPauseScene(scene_pause)
 	Scenes.Activate(scene_pause, false)
 	Scenes.WaitDone()
@@ -41,7 +45,6 @@ func stateChanged(wanted string) {
 		newScene := newCosmoScene()
 		Scenes.Install(scene_main, newScene, false)
 		Scenes.Activate(scene_main, true)
-		Scenes.WaitDone()
 	case STATE_warp:
 	}
 }

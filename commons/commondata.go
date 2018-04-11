@@ -5,14 +5,6 @@ import (
 	"github.com/Shnifer/magellan/graph"
 )
 
-//just Rigid Body data
-type RBData struct {
-	Pos    graph.Point
-	Ang    float64
-	Vel    graph.Point
-	AngVel float64
-}
-
 type CommonData struct {
 	PilotData *PilotData
 	NaviData  *NaviData

@@ -25,7 +25,7 @@ func setDefDef() {
 	DEFVAL = tDefVals{
 		Port: "http://localhost:8000",
 		Room: "room101",
-		Role: commons.ROLE_Pilot,
+		Role: commons.ROLE_Navi,
 		WinW: 1024,
 		WinH: 768,
 	}
