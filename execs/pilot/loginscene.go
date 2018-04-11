@@ -7,7 +7,6 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
-	"log"
 	"time"
 )
 

@@ -177,15 +177,12 @@ func checkWantedState(c *Client, pingResp PingResp) {
 			if c.opts.OnGetStateData == nil {
 				//set wanted state now
 				c.curState = c.wantState
-				//Get commonState after reading StateData
 			} else {
 				//run hook and wait for done chan close
-				stateDataDone := c.opts.OnGetStateData(resp)
 				go func() {
-					<-stateDataDone
+					c.opts.OnGetStateData(resp)
 					c.mu.Lock()
 					c.curState = c.wantState
-					//Get commonState after reading StateData
 					c.mu.Unlock()
 				}()
 			}

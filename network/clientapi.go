@@ -28,7 +28,7 @@ type ClientOpts struct {
 	OnStateChanged func(wanted string)
 
 	//async, must close result chan then done
-	OnGetStateData func([]byte) chan struct{}
+	OnGetStateData func([]byte)
 
 	OnCommand func(command string)
 }

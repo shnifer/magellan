@@ -31,26 +31,18 @@ func initClient() {
 	}
 }
 
-func getStateData(stateData []byte) chan struct{} {
+func getStateData(stateData []byte) {
 	defer LogFunc("getStateData")()
 
-	done := make(chan struct{})
-	go func() {
-		//anyway done, even with error
-		defer close(done)
+	//get stateData
+	sd, err := StateData{}.Decode(stateData)
+	if err != nil {
+		panic("Weird state stateData:" + err.Error())
+	}
+	Data.SetStateData(sd)
 
-		//get stateData
-		sd, err := StateData{}.Decode(stateData)
-		if err != nil {
-			panic("Weird state stateData:" + err.Error())
-		}
-		Data.SetStateData(sd)
-
-		//first load data in scene, and only than count as done - so Client reports new state ready
-		initSceneState()
-	}()
-
-	return done
+	//first load data in scene, and only than count as done - so Client reports new state ready
+	initSceneState()
 }
 
 func commonSend() []byte {

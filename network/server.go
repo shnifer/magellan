@@ -388,7 +388,7 @@ func serverRoomUpdater(serv *Server) {
 }
 
 //NewServer creates a server listening
-func NewServer(opts ServerOpts) (*Server, error) {
+func NewServer(opts ServerOpts) *Server {
 	mux := http.NewServeMux()
 	httpServ := &http.Server{Addr: opts.Addr, Handler: mux}
 
@@ -402,11 +402,16 @@ func NewServer(opts ServerOpts) (*Server, error) {
 	mux.Handle(pingPattern, pingHandler(srv))
 	mux.Handle(roomPattern, roomHandler(srv))
 	mux.Handle(statePattern, stateHandler(srv))
-	go httpServ.ListenAndServe()
+	go func() {
+		err := httpServ.ListenAndServe()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	go serverRoomUpdater(srv)
 
-	return srv, nil
+	return srv
 }
 
 func (s *Server) Close() error {
