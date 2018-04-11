@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"sync"
+	"time"
 )
 
 type roomServer struct {
@@ -90,24 +91,26 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 }
 
 func generateCommonData(prevCommon CommonData, newState State) CommonData {
-	defer LogFunc("generateCommonData")()
+	defer LogFunc("generateCommonData " + newState.StateID + " " + newState.GalaxyID + " " + newState.ShipID)()
 	return prevCommon
 }
 
 func loadStateData(state State) StateData {
 	defer LogFunc("loadStateData")()
 
-	var md StateData
+	var sd StateData
+
+	sd.ServerTime = time.Now()
 
 	if state.ShipID != "" {
-		md.BSP = loadShipState(state.ShipID)
+		sd.BSP = loadShipState(state.ShipID)
 	}
 
 	if state.GalaxyID != "" {
-		md.Galaxy = loadGalaxyState(state.GalaxyID)
+		sd.Galaxy = loadGalaxyState(state.GalaxyID)
 	}
 
-	return md
+	return sd
 }
 
 const DBPath = "res/server/DB/"
@@ -161,21 +164,26 @@ func (rd *roomServer) GetStateData(room string) []byte {
 	return msg
 }
 
-//TODO:Export for Clients
 func (rd *roomServer) IsValidState(roomName string, stateStr string) bool {
 	rd.mu.RLock()
 	defer rd.mu.RUnlock()
 
+	var res bool
 	state := State{}.Decode(stateStr)
 	switch state.StateID {
 	case STATE_login:
-		return state.GalaxyID == "" && state.ShipID == ""
+		res = state.GalaxyID == "" && state.ShipID == ""
 	case STATE_cosmo:
-		return rd.isValidFlyShip(roomName, state.ShipID) && rd.isValidFlyGalaxy(state.GalaxyID)
+		res = rd.isValidFlyShip(roomName, state.ShipID) && rd.isValidFlyGalaxy(state.GalaxyID)
 	case STATE_warp:
-		return rd.isValidFlyShip(roomName, state.ShipID) && rd.isValidFlyGalaxy(state.GalaxyID)
+		res = rd.isValidFlyShip(roomName, state.ShipID) && rd.isValidFlyGalaxy(state.GalaxyID)
 	}
-	return false
+
+	if !res {
+		server.AddCommand(roomName, CMD_STATECHANGRFAIL)
+	}
+
+	return res
 }
 
 //run internal mutex call

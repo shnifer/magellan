@@ -27,8 +27,8 @@ func createScenes() {
 }
 
 func stateChanged(wanted string) {
-	defer LogFunc("state.stateChanged")()
-	log.Println("state changed : ", wanted)
+	defer LogFunc("state.stateChanged " + wanted)()
+
 	state := State{}.Decode(wanted)
 
 	Data.SetState(state)
@@ -37,20 +37,23 @@ func stateChanged(wanted string) {
 	case STATE_login:
 		Scenes.Activate(scene_login, true)
 	case STATE_cosmo:
-		scene := newCosmoScene()
-		Scenes.Install(scene_main, scene, false)
+		newScene := newCosmoScene()
+		Scenes.Install(scene_main, newScene, false)
 		Scenes.Activate(scene_main, true)
 	case STATE_warp:
 	}
 }
 
-//called within Data.Mutex
 func initSceneState() {
 	defer LogFunc("state.initSceneState")()
 
+	Data.Mu.RLock()
+	stateID := Data.StateID
+	Data.Mu.RUnlock()
+
 	var sceneName string
 
-	switch Data.State.StateID {
+	switch stateID {
 	case STATE_login:
 		sceneName = scene_login
 	case STATE_cosmo:
@@ -59,10 +62,15 @@ func initSceneState() {
 		sceneName = scene_main
 	}
 	if sceneName != "" {
-		Scenes.Init(sceneName)
+		done := Scenes.Init(sceneName)
+		<-done
 	} else {
 		log.Println("unknown scene to init for state = ", Data.State.StateID)
 	}
+}
+
+func onCommand(command string) {
+	Scenes.OnCommand(command)
 }
 
 func pause() {

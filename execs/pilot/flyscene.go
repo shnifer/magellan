@@ -57,5 +57,8 @@ func (scene *cosmoScene) Draw(image *ebiten.Image) {
 	image.DrawImage(img, op)
 }
 
+func (scene *cosmoScene) OnCommand(command string) {
+}
+
 func (*cosmoScene) Destroy() {
 }

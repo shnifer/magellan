@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+var server *network.Server
+
 func main() {
 
 	roomServ := newRoomServer()
@@ -21,7 +23,8 @@ func main() {
 		NeededRoles: DEFVAL.NeededRoles,
 	}
 
-	server, err := network.NewServer(opts)
+	var err error
+	server, err = network.NewServer(opts)
 	if err != nil {
 		panic(err)
 	}

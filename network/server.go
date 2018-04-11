@@ -97,6 +97,20 @@ type Server struct {
 	roomsState map[string]*ServRoomState
 }
 
+func (s *Server) AddCommand(roomName string, command string) {
+	go func() {
+		s.mu.RLock()
+		room, ok := s.roomsState[roomName]
+		s.mu.RUnlock()
+		if !ok {
+			return
+		}
+		room.mu.Lock()
+		room.commands = append(room.commands, command)
+		room.mu.Unlock()
+	}()
+}
+
 func (s *Server) checkFullRoom(room *ServRoomState) {
 	isFull := true
 	for _, roleName := range s.opts.NeededRoles {
@@ -145,16 +159,16 @@ func stateHandler(srv *Server) http.Handler {
 }
 
 func setNewState(srv *Server, room *ServRoomState, roomName, newState string) bool {
-	if !srv.opts.RoomServ.IsValidState(roomName, newState) {
-		log.Println("not valid state", newState)
-		return false
-	}
 	if !room.state.IsCoherent {
 		log.Println("already changing state!", newState)
 		return false
 	}
 	if room.state.Wanted == newState {
 		log.Println("state is the same")
+		return false
+	}
+	if !srv.opts.RoomServ.IsValidState(roomName, newState) {
+		log.Println("not valid state", newState)
 		return false
 	}
 
@@ -225,7 +239,7 @@ func serverRecalcCommands(srv *Server, room *ServRoomState) {
 	}
 	delta := minN - room.baseCommandN + 1
 	if delta < 0 {
-		log.Println("Strange! minimum lastCommandToClient < baseCommandN")
+		log.Println("Strange! minimum lastCommandToClient < baseCommandN", delta, "=", minN, "-", room.baseCommandN, "+1")
 	}
 	if delta <= 0 {
 		return

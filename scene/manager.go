@@ -10,6 +10,7 @@ type scene interface {
 	Init()
 	Update(dt float64)
 	Draw(image *ebiten.Image)
+	OnCommand(command string)
 	Destroy()
 }
 
@@ -57,12 +58,12 @@ func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
 	}
 
 	actualScene := m.current
-	if m.paused && m.pauseSceneName != "" {
+	if (m.paused || !m.inited[m.current]) && m.pauseSceneName != "" {
 		actualScene = m.pauseSceneName
 	}
 
 	if !m.inited[actualScene] {
-		log.Println("trying to update not inited scene", m.current)
+		log.Println("trying to update not inited scene", m.current, "while actual ", actualScene)
 		return
 	}
 
@@ -92,10 +93,14 @@ func (m *Manager) Activate(name string, needReInit bool) {
 	}
 }
 
-func (m *Manager) Init(name string) {
+//Init is waiting for init to finish!
+func (m *Manager) Init(name string) (done chan struct{}) {
+	done = make(chan struct{})
 	m.actionQ <- func() {
 		m.init(name)
+		close(done)
 	}
+	return done
 }
 
 func (m *Manager) SetAsPauseScene(pauseSceneName string) {
@@ -107,6 +112,12 @@ func (m *Manager) SetAsPauseScene(pauseSceneName string) {
 func (m *Manager) SetPaused(paused bool) {
 	m.actionQ <- func() {
 		m.setPaused(paused)
+	}
+}
+
+func (m *Manager) OnCommand(command string) {
+	m.actionQ <- func() {
+		m.onCommand(command)
 	}
 }
 
@@ -157,6 +168,16 @@ func (m *Manager) init(name string) {
 	if scene, ok := m.scenes[name]; ok {
 		scene.Init()
 		m.inited[name] = true
+	}
+}
+
+func (m *Manager) onCommand(command string) {
+	m.mu.Lock()
+	scene, ok := m.scenes[m.current]
+	m.mu.Unlock()
+
+	if ok {
+		scene.OnCommand(command)
 	}
 }
 

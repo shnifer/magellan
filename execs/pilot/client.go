@@ -21,6 +21,7 @@ func initClient() {
 		OnCommonSend:   commonSend,
 		OnStateChanged: stateChanged,
 		OnGetStateData: getStateData,
+		OnCommand:      onCommand,
 	}
 
 	var err error

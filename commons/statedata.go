@@ -3,11 +3,13 @@ package commons
 import (
 	"encoding/json"
 	"github.com/Shnifer/magellan/graph"
+	"time"
 )
 
 type StateData struct {
-	BSP    *BSP
-	Galaxy *Galaxy
+	ServerTime time.Time
+	BSP        *BSP
+	Galaxy     *Galaxy
 }
 
 type BSP struct {

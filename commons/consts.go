@@ -8,16 +8,6 @@ const (
 )
 
 const (
-	PARTSTATE_BSP    = "CBSP"
-	PARTSTATE_Galaxy = "galaxy"
-)
-
-const (
-	PARTCOMMON_ShipPos = "shipPos"
-	PARTCOMMON_EngiSys = "engiSys"
-)
-
-const (
 	STATE_login = "login"
 	STATE_cosmo = "cosmo"
 	STATE_warp  = "star"
@@ -25,4 +15,8 @@ const (
 
 const (
 	START_Galaxy_ID = "solar"
+)
+
+const (
+	CMD_STATECHANGRFAIL = "FailedStateChange"
 )

@@ -7,6 +7,7 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
+	"log"
 	"time"
 )
 
@@ -98,13 +99,12 @@ func (p *LoginScene) tryToStartFly() {
 		ShipID:   p.inputText,
 		GalaxyID: START_Galaxy_ID,
 	}.Encode()
-
 	Client.RequestNewState(state)
-	//TODO:Request responce
-	/*
-		if err != nil {
-			log.Println(err)
-			p.lastErrTime = time.Now()
-		}
-	*/
+}
+
+func (p *LoginScene) OnCommand(command string) {
+	defer LogFunc("LoginScene.OnCommand")()
+	if command == CMD_STATECHANGRFAIL {
+		p.lastErrTime = time.Now()
+	}
 }

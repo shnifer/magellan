@@ -35,22 +35,22 @@ func (p *PauseScene) Update(float64) {
 
 		//recalc caption
 		var str string
-		var color color.Color
+		var captionColor color.Color
 		switch {
 		case reason.PingLost:
 			str = "PING LOST!"
-			color = colornames.Red
+			captionColor = colornames.Red
 		case !reason.IsFull:
 			str = "other DISCONNECTED"
-			color = colornames.Yellow
+			captionColor = colornames.Yellow
 		case reason.WantState != reason.CurState:
 			str = "Loading new data..."
-			color = colornames.Yellowgreen
+			captionColor = colornames.Yellowgreen
 		case !reason.IsCoherent:
 			str = "waiting other loading..."
-			color = colornames.Green
+			captionColor = colornames.Green
 		}
-		p.caption = graph.NewText(str, p.face, color)
+		p.caption = graph.NewText(str, p.face, captionColor)
 		p.caption.SetPosPivot(graph.ScrP(0.5, 0.5), graph.Center())
 	}
 }
@@ -60,4 +60,7 @@ func (p *PauseScene) Draw(image *ebiten.Image) {
 }
 
 func (p *PauseScene) Destroy() {
+}
+
+func (PauseScene) OnCommand(command string) {
 }
