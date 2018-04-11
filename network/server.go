@@ -7,8 +7,6 @@
 package network
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"sync"
@@ -36,7 +34,7 @@ type RoomCheckGetSetter interface {
 	OnCommand(room string, role string, command string)
 }
 
-type ServRoomState struct {
+type servRoomState struct {
 	mu sync.Mutex
 	//map[role]isOnline
 	online   map[string]bool
@@ -60,8 +58,8 @@ type ServRoomState struct {
 	commands     []string
 }
 
-func newServRoomState() *ServRoomState {
-	return &ServRoomState{
+func newServRoomState() *servRoomState {
+	return &servRoomState{
 		online:                make(map[string]bool),
 		lastSeen:              make(map[string]time.Time),
 		reported:              make(map[string]string),
@@ -72,21 +70,6 @@ func newServRoomState() *ServRoomState {
 	}
 }
 
-//update coherency
-//do no set Mutex, must be called within critical section
-func (r *ServRoomState) updateState() {
-	if !r.state.IsCoherent {
-		coherent := true
-		for _, state := range r.reported {
-			if state != r.state.Wanted {
-				coherent = false
-				break
-			}
-		}
-		r.state.IsCoherent = coherent
-	}
-}
-
 type Server struct {
 	mux      *http.ServeMux
 	httpServ *http.Server
@@ -94,7 +77,7 @@ type Server struct {
 
 	//Write blocks only to add new room
 	mu         sync.RWMutex
-	roomsState map[string]*ServRoomState
+	roomsState map[string]*servRoomState
 }
 
 func (s *Server) AddCommand(roomName string, command string) {
@@ -109,18 +92,6 @@ func (s *Server) AddCommand(roomName string, command string) {
 		room.commands = append(room.commands, command)
 		room.mu.Unlock()
 	}()
-}
-
-func (s *Server) checkFullRoom(room *ServRoomState) {
-	isFull := true
-	for _, roleName := range s.opts.NeededRoles {
-		if !room.online[roleName] {
-			isFull = false
-			break
-		}
-	}
-
-	room.state.IsFull = isFull
 }
 
 func requestStateData(srv *Server, roomName string, newState string) {
@@ -158,7 +129,7 @@ func stateHandler(srv *Server) http.Handler {
 	return http.HandlerFunc(f)
 }
 
-func setNewState(srv *Server, room *ServRoomState, roomName, newState string) bool {
+func setNewState(srv *Server, room *servRoomState, roomName, newState string) bool {
 	if !room.state.IsCoherent {
 		log.Println("already changing state!", newState)
 		return false
@@ -182,184 +153,6 @@ func setNewState(srv *Server, room *ServRoomState, roomName, newState string) bo
 
 	go requestStateData(srv, roomName, newState)
 	return true
-}
-
-//room.mu must be already locked
-func serverReceiveCommands(srv *Server, req CommonReq, room *ServRoomState, roomName, roleName string) {
-
-	alreadyDoneN := room.lastCommandFromClient[roleName]
-
-	for i, command := range req.Commands {
-		commandN := req.CommandsBaseN + i
-		if commandN <= alreadyDoneN {
-			//already done
-			continue
-		}
-		if len(command) < 1 {
-			log.Println("empty command!")
-			continue
-		}
-		prefix := command[:1]
-		command = command[1:]
-		switch prefix {
-		case COMMAND_CLIENT:
-			//Do not
-			if !room.state.IsCoherent {
-				log.Println("STRANGE: COMMAND_CLIENT received while non-coherent. Command: ", command)
-				break
-			}
-			room.commands = append(room.commands, command)
-			srv.opts.RoomServ.OnCommand(roomName, roleName, command)
-		case COMMAND_REQUESTSTATE:
-			stateChanged := setNewState(srv, room, roomName, command)
-			if stateChanged {
-				break
-			}
-		default:
-			log.Println("Strange prefix", prefix)
-			continue
-		}
-	}
-
-	room.lastCommandFromClient[roleName] =
-		req.CommandsBaseN + len(req.Commands) - 1
-	room.lastCommandToClient[roleName] = req.LastReceivedCommandN
-}
-
-func serverRecalcCommands(srv *Server, room *ServRoomState) {
-	var minN int
-	for _, role := range srv.opts.NeededRoles {
-		lastN, ok := room.lastCommandToClient[role]
-		if !ok {
-			return
-		}
-		if minN == 0 || lastN < minN {
-			minN = lastN
-		}
-	}
-	delta := minN - room.baseCommandN + 1
-	if delta < 0 {
-		log.Println("Strange! minimum lastCommandToClient < baseCommandN", delta, "=", minN, "-", room.baseCommandN, "+1")
-	}
-	if delta <= 0 {
-		return
-	}
-	if delta > len(room.commands) {
-		log.Println("strange! delta>len(commands)", delta, "=", minN, "-", room.baseCommandN, "+1>", len(room.commands))
-		delta = len(room.commands)
-	}
-	room.baseCommandN += delta
-	room.commands = room.commands[delta:]
-}
-
-func roomHandler(srv *Server) http.Handler {
-	f := func(w http.ResponseWriter, r *http.Request) {
-		roomName, roleName := roomRole(r)
-
-		reqBuf, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			sendErr(w, "CANT readAll r.body")
-			return
-		}
-
-		var req CommonReq
-		err = json.Unmarshal(reqBuf, &req)
-		if err != nil {
-			sendErr(w, "CANT unmarshal r.body as CommonReq")
-			return
-		}
-
-		//Update room's common state if needed
-		if req.DataSent {
-			err := srv.opts.RoomServ.SetRoomCommon(roomName, []byte(req.Data))
-			if err != nil {
-				sendErr(w, "CANT POST in stateHandler for room"+roomName+err.Error())
-			}
-		}
-
-		//Response with new common state
-		buf, err := srv.opts.RoomServ.GetRoomCommon(roomName)
-		if err != nil {
-			sendErr(w, "CANT GET in stateHandler for room"+roomName+err.Error())
-			return
-		}
-
-		srv.mu.RLock()
-		room := srv.roomsState[roomName]
-		srv.mu.RUnlock()
-
-		room.mu.Lock()
-		defer room.mu.Unlock()
-
-		//receive new commands
-		serverReceiveCommands(srv, req, room, roomName, roleName)
-
-		serverRecalcCommands(srv, room)
-
-		resp := CommonResp{
-			Data:          string(buf),
-			CommandsBaseN: room.baseCommandN,
-			Commands:      room.commands,
-		}
-
-		respBody, err := json.Marshal(resp)
-		if err != nil {
-			sendErr(w, "can't marshal CommonResp"+err.Error())
-		}
-
-		//do not write response if get failed
-		w.Write(respBody)
-	}
-	return http.HandlerFunc(f)
-}
-
-func pingHandler(srv *Server) http.Handler {
-	f := func(w http.ResponseWriter, r *http.Request) {
-		srv.mu.RLock()
-		defer srv.mu.RUnlock()
-
-		clientState := r.Header.Get(stateAttr)
-		roomName, roleName := roomRole(r)
-
-		room, ok := srv.roomsState[roomName]
-		if !ok {
-			srv.mu.RUnlock()
-			srv.mu.Lock()
-			//DOUBLE check cz mutex RUnlock-Lock
-			room, ok = srv.roomsState[roomName]
-			if !ok {
-				room = newServRoomState()
-				room.state.Wanted = srv.opts.StartState
-				go requestStateData(srv, roomName, room.state.Wanted)
-				srv.roomsState[roomName] = room
-			}
-			srv.mu.Unlock()
-			srv.mu.RLock()
-		}
-
-		room.mu.Lock()
-		defer room.mu.Unlock()
-
-		room.online[roleName] = true
-		room.lastSeen[roleName] = time.Now()
-		srv.checkFullRoom(room)
-
-		room.reported[roleName] = clientState
-		room.updateState()
-
-		pingResp := PingResp{
-			Room:                room.state,
-			LastCommandReceived: room.lastCommandFromClient[roleName],
-		}
-
-		b, err := json.Marshal(pingResp)
-		if err != nil {
-			panic(err)
-		}
-
-		w.Write(b)
-	}
-	return http.HandlerFunc(f)
 }
 
 func serverRoomUpdater(serv *Server) {
@@ -396,7 +189,7 @@ func NewServer(opts ServerOpts) *Server {
 		httpServ:   httpServ,
 		mux:        mux,
 		opts:       opts,
-		roomsState: make(map[string]*ServRoomState),
+		roomsState: make(map[string]*servRoomState),
 	}
 
 	mux.Handle(pingPattern, pingHandler(srv))

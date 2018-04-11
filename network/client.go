@@ -26,7 +26,6 @@ type Client struct {
 	onPause  bool
 
 	//copy of last ping state
-	//TODO: refactor. this third-state-between PingResp.RoomState vs PauseReason
 	isFull     bool
 	isCoherent bool
 
