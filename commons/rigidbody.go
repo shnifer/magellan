@@ -12,10 +12,9 @@ type RBData struct {
 	AngVel float64
 }
 
-func (rb RBData) Extrapolate(dt float64) (res RBData) {
-	res = rb
-	res.Pos.X += rb.Vel.X * dt
-	res.Pos.Y += rb.Vel.Y * dt
-	res.Ang += rb.AngVel * dt
-	return res
+func (rb RBData) Extrapolate(dt float64) RBData {
+	rb.Pos.X += rb.Vel.X * dt
+	rb.Pos.Y += rb.Vel.Y * dt
+	rb.Ang += rb.AngVel * dt
+	return rb
 }
