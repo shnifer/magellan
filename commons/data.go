@@ -3,37 +3,95 @@ package commons
 import "sync"
 
 type TData struct {
-	Mu sync.RWMutex
+	//Main game loop will handle this
+	//Mu sync.RWMutex
 	State
 	StateData
 	CommonData
+
+	actionQ chan func()
+
+	mu         sync.Mutex
+	partToSend CommonData
 }
 
-func (d *TData) SetState(state State) {
-	d.Mu.Lock()
-	d.State = state
-	d.Mu.Unlock()
-}
-
-func (d *TData) SetStateData(stateData StateData) {
-	d.Mu.Lock()
-	d.StateData = stateData
-	d.Mu.Unlock()
-}
-
-func (d *TData) CommonPartEncoded(roleName string) []byte {
-	d.Mu.RLock()
-	defer d.Mu.RUnlock()
-	return d.Part(roleName).Encode()
-}
-
-func (d *TData) LoadCommonData(src CommonData, roleName string, readAll bool) {
-	d.Mu.Lock()
-	if !readAll {
-		src.ClearRole(roleName)
+func NewData() TData {
+	return TData{
+		CommonData: CommonData{}.Empty(),
+		actionQ:    make(chan func(), 4),
 	}
-	src.FillNotNil(&d.CommonData)
-	d.Mu.Unlock()
+}
+
+//Main cycle
+func (d *TData) Update(roleName string) {
+loop:
+	for {
+		select {
+		case f := <-d.actionQ:
+			f()
+		default:
+			break loop
+		}
+	}
+
+	d.mu.Lock()
+	d.partToSend = d.CommonData.Part(roleName).Copy()
+	d.mu.Unlock()
+}
+
+//Network cycle
+func (d *TData) SetState(state State) {
+	d.actionQ <- func() {
+		d.State = state
+	}
+}
+
+//Network cycle
+func (d *TData) SetStateData(stateData StateData) {
+	d.actionQ <- func() {
+		d.StateData = stateData
+	}
+}
+
+//Network cycle
+func (d *TData) LoadCommonData(src CommonData) {
+	d.actionQ <- func() {
+		src.FillNotNil(&d.CommonData)
+	}
+}
+
+//Network cycle
+func (d *TData) WaitDone() {
+	done := make(chan struct{})
+	d.actionQ <- func() {
+		close(done)
+	}
+	<-done
+}
+
+func (d *TData) GetState() State {
+	stateCh := make(chan State)
+	defer close(stateCh)
+	d.actionQ <- func() {
+		stateCh <- d.State
+	}
+	return <-stateCh
+}
+
+func (d *TData) GetStateData() StateData {
+	stateDataCh := make(chan StateData)
+	defer close(stateDataCh)
+	d.actionQ <- func() {
+		stateDataCh <- d.StateData.Copy()
+	}
+	return <-stateDataCh
+}
+
+//Network cycle
+func (d *TData) MyPartToSend() []byte {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return d.partToSend.Encode()
 }
 
 func (d TData) Encode() {

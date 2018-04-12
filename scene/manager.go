@@ -40,13 +40,15 @@ func NewManager() *Manager {
 	return res
 }
 
+//manager goroutine cycle
 func actionRun(m *Manager) {
 	for f := range m.actionQ {
 		f()
 	}
 }
 
-func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool, afterUpdate func()) {
+//main cycle
+func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -72,57 +74,61 @@ func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool, af
 
 	scene.Update(dt)
 
-	if afterUpdate != nil {
-		afterUpdate()
-	}
-
 	if doDraw {
 		scene.Draw(image)
 	}
 }
 
+//Main or Network loop
 func (m *Manager) Install(name string, Scene scene, inited bool) {
 	m.actionQ <- func() {
 		m.install(name, Scene, inited)
 	}
 }
 
+//Main or Network loop
 func (m *Manager) Delete(name string) {
 	m.actionQ <- func() {
 		m.delete(name)
 	}
 }
 
+//Main or Network loop
 func (m *Manager) Activate(name string, needReInit bool) {
 	m.actionQ <- func() {
 		m.activate(name, needReInit)
 	}
 }
 
+//Main or Network loop
 func (m *Manager) Init(name string) {
 	m.actionQ <- func() {
 		m.init(name)
 	}
 }
 
+//Main or Network loop
 func (m *Manager) SetAsPauseScene(pauseSceneName string) {
 	m.actionQ <- func() {
 		m.setAsPauseScene(pauseSceneName)
 	}
 }
 
+//Main or Network loop
 func (m *Manager) SetPaused(paused bool) {
 	m.actionQ <- func() {
 		m.setPaused(paused)
 	}
 }
 
+//Main or Network loop
 func (m *Manager) OnCommand(command string) {
 	m.actionQ <- func() {
 		m.onCommand(command)
 	}
 }
 
+//Main or Network loop
 func (m *Manager) WaitDone() {
 	done := make(chan struct{})
 	m.actionQ <- func() {
@@ -131,6 +137,7 @@ func (m *Manager) WaitDone() {
 	<-done
 }
 
+//manager goroutine cycle
 func (m *Manager) install(name string, Scene scene, inited bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -143,6 +150,7 @@ func (m *Manager) install(name string, Scene scene, inited bool) {
 	m.inited[name] = inited
 }
 
+//manager goroutine cycle
 func (m *Manager) delete(name string) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -157,6 +165,7 @@ func (m *Manager) delete(name string) {
 	}
 }
 
+//manager goroutine cycle
 func (m *Manager) activate(name string, needReInit bool) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -171,16 +180,19 @@ func (m *Manager) activate(name string, needReInit bool) {
 	}
 }
 
+//manager goroutine cycle
 func (m *Manager) init(name string) {
 	m.mu.Lock()
-	defer m.mu.Unlock()
+	scene, ok := m.scenes[name]
+	m.mu.Unlock()
 
-	if scene, ok := m.scenes[name]; ok {
+	if ok {
 		scene.Init()
 		m.inited[name] = true
 	}
 }
 
+//manager goroutine cycle
 func (m *Manager) onCommand(command string) {
 	m.mu.Lock()
 	scene, ok := m.scenes[m.current]
@@ -191,12 +203,14 @@ func (m *Manager) onCommand(command string) {
 	}
 }
 
+//manager goroutine cycle
 func (m *Manager) setAsPauseScene(pauseSceneName string) {
 	m.mu.Lock()
 	m.pauseSceneName = pauseSceneName
 	m.mu.Unlock()
 }
 
+//manager goroutine cycle
 func (m *Manager) setPaused(paused bool) {
 	m.mu.Lock()
 	m.paused = paused

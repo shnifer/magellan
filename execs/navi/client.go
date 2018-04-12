@@ -6,7 +6,6 @@ import (
 )
 
 var Client *network.Client
-var NetData TData
 
 func initClient() {
 	opts := network.ClientOpts{
@@ -31,6 +30,7 @@ func initClient() {
 	}
 }
 
+//Network cycle - handler in goroutine
 func getStateData(stateData []byte) {
 	defer LogFunc("getStateData")()
 
@@ -39,22 +39,28 @@ func getStateData(stateData []byte) {
 	if err != nil {
 		panic("Weird state stateData:" + err.Error())
 	}
-	NetData.SetStateData(sd)
+	Data.SetStateData(sd)
+	Data.WaitDone()
 
 	//first load data in scene, and only than count as done - so Client reports new state ready
 	initSceneState()
 }
 
+//Network cycle - direct handler
 func commonSend() []byte {
 	defer LogFunc("commonSend")()
-	return NetData.CommonPartEncoded(DEFVAL.Role)
+	return Data.MyPartToSend()
 }
 
+//Network cycle - direct handler
 func commonRecv(buf []byte, readOwnPart bool) {
 	defer LogFunc("commonRecv")()
 	cd, err := CommonData{}.Decode(buf)
 	if err != nil {
 		panic("commonRecv: Can't decode CommonData " + err.Error())
 	}
-	NetData.LoadCommonData(cd, DEFVAL.Role, readOwnPart)
+	if !readOwnPart {
+		cd.ClearRole(DEFVAL.Role)
+	}
+	Data.LoadCommonData(cd)
 }

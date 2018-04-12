@@ -23,7 +23,7 @@ var (
 )
 
 var last time.Time
-var LocalData commons.TData
+var Data commons.TData
 
 func mainLoop(window *ebiten.Image) error {
 	dt := time.Since(last).Seconds()
@@ -31,9 +31,9 @@ func mainLoop(window *ebiten.Image) error {
 
 	input.Update()
 
-	loadLocalData()
+	Data.Update(DEFVAL.Role)
 
-	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly(), sendLocalData)
+	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
 
 	if commons.LOG_LEVEL <= commons.LVL_ERROR {
 		fps := ebiten.CurrentFPS()
@@ -55,6 +55,8 @@ func main() {
 
 	graph.SetScreenSize(WinW, WinH)
 
+	Data = commons.NewData()
+
 	initClient()
 	input.LoadConf(resPath)
 
@@ -69,26 +71,6 @@ func main() {
 	}
 
 	stopProfile()
-}
-
-func loadLocalData() {
-	defer commons.LogFunc("loadLocalData")()
-
-	NetData.Mu.RLock()
-	if NetData.State != LocalData.State {
-		LocalData.State = NetData.State
-		LocalData.StateData = NetData.StateData.Copy()
-	}
-	LocalData.CommonData = NetData.CommonData.Copy()
-	NetData.Mu.RUnlock()
-}
-
-func sendLocalData() {
-	defer commons.LogFunc("sendLocalData")()
-
-	NetData.Mu.Lock()
-	LocalData.CommonData.Part(DEFVAL.Role).FillNotNil(&NetData.CommonData)
-	NetData.Mu.Unlock()
 }
 
 func startProfile() {

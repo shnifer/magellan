@@ -31,12 +31,13 @@ func createScenes() {
 	Scenes.WaitDone()
 }
 
+//Network cycle - direct handler
 func stateChanged(wanted string) {
 	defer LogFunc("state.stateChanged " + wanted)()
 
 	state := State{}.Decode(wanted)
 
-	NetData.SetState(state)
+	Data.SetState(state)
 
 	switch state.StateID {
 	case STATE_login:
@@ -49,12 +50,11 @@ func stateChanged(wanted string) {
 	}
 }
 
+//Network cycle - handler in goroutine
 func initSceneState() {
 	defer LogFunc("state.initSceneState")()
 
-	NetData.Mu.RLock()
-	stateID := NetData.StateID
-	NetData.Mu.RUnlock()
+	stateID := Data.GetState().StateID
 
 	var sceneName string
 
@@ -70,30 +70,35 @@ func initSceneState() {
 		Scenes.Init(sceneName)
 		Scenes.WaitDone()
 	} else {
-		log.Println("unknown scene to init for state = ", NetData.State.StateID)
+		log.Println("unknown scene to init for state = ", stateID)
 	}
 }
 
+//Network cycle - direct handler
 func onCommand(command string) {
 	Scenes.OnCommand(command)
 }
 
+//Network cycle - direct handler
 func pause() {
 	defer LogFunc("state.pause")()
 	Log(LVL_WARNING, "pause")
 	Scenes.SetPaused(true)
 }
 
+//Network cycle - direct handler
 func unpause() {
 	defer LogFunc("state.unpause")()
 	Log(LVL_WARNING, "upause")
 	Scenes.SetPaused(false)
 }
 
+//Network cycle - direct handler
 func discon() {
 	Log(LVL_WARNING, "lost connect")
 }
 
+//Network cycle - direct handler
 func recon() {
 	Log(LVL_WARNING, "recon!")
 }
