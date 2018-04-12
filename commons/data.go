@@ -94,10 +94,10 @@ func (d *TData) MyPartToSend() []byte {
 	return d.partToSend.Encode()
 }
 
-func (d TData) Encode() {
+func (d *TData) Encode() {
 	panic("Don't do it! use methods of embeded structs")
 }
 
-func (d TData) Decode() {
+func (d *TData) Decode() {
 	panic("Don't do it! use methods of embeded structs")
 }
