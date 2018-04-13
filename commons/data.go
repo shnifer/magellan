@@ -24,6 +24,7 @@ func NewData() TData {
 
 //Main cycle
 func (d *TData) Update(roleName string) {
+	defer LogFunc("Data.Update")()
 loop:
 	for {
 		select {
@@ -62,6 +63,7 @@ func (d *TData) LoadCommonData(src CommonData) {
 
 //Network cycle
 func (d *TData) WaitDone() {
+	defer LogFunc("Data.WaitDone")()
 	done := make(chan struct{})
 	d.actionQ <- func() {
 		close(done)

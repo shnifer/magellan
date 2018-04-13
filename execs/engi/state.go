@@ -3,12 +3,12 @@ package main
 import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/scene"
+	"golang.org/x/image/colornames"
 	"log"
 )
 
 const (
-	scene_cosmo = "cosmo"
-	scene_warp  = "warp"
+	scene_engi  = "engi"
 	scene_pause = "pause"
 	scene_login = "login"
 )
@@ -16,19 +16,24 @@ const (
 var Scenes *scene.Manager
 
 func createScenes() {
+	defer LogFunc("createScenes")()
+
 	Scenes = scene.NewManager()
 
 	pauseScene := scene.NewPauseScene(Fonts[Face_cap], Client.PauseReason)
-	loginScene := NewLoginScene()
-	cosmoScene := newCosmoScene()
+	loginScene := scene.NewCaptionSceneString(Fonts[Face_cap], colornames.Goldenrod,
+		"waiting for login on other terminal")
+
+	engiScene := newCosmoScene()
 	Scenes.Install(scene_pause, pauseScene, true)
-	Scenes.Install(scene_login, loginScene, false)
-	Scenes.Install(scene_cosmo, cosmoScene, false)
+	Scenes.Install(scene_login, loginScene, true)
+	Scenes.Install(scene_engi, engiScene, false)
 	Scenes.SetAsPauseScene(scene_pause)
 	Scenes.Activate(scene_pause, false)
 	Scenes.WaitDone()
 }
 
+//Network cycle - direct handler
 func stateChanged(wanted string) {
 	defer LogFunc("state.stateChanged " + wanted)()
 
@@ -40,12 +45,13 @@ func stateChanged(wanted string) {
 	case STATE_login:
 		Scenes.Activate(scene_login, true)
 	case STATE_cosmo:
-		Scenes.Activate(scene_cosmo, true)
+		Scenes.Activate(scene_engi, true)
 	case STATE_warp:
-		Scenes.Activate(scene_warp, true)
+		Scenes.Activate(scene_engi, true)
 	}
 }
 
+//Network cycle - handler in goroutine
 func initSceneState() {
 	defer LogFunc("state.initSceneState")()
 
@@ -57,9 +63,9 @@ func initSceneState() {
 	case STATE_login:
 		sceneName = scene_login
 	case STATE_cosmo:
-		sceneName = scene_cosmo
+		sceneName = scene_engi
 	case STATE_warp:
-		sceneName = scene_warp
+		sceneName = scene_engi
 	}
 	if sceneName != "" {
 		Scenes.Init(sceneName)
@@ -69,26 +75,31 @@ func initSceneState() {
 	}
 }
 
+//Network cycle - direct handler
 func onCommand(command string) {
 	Scenes.OnCommand(command)
 }
 
+//Network cycle - direct handler
 func pause() {
 	defer LogFunc("state.pause")()
 	Log(LVL_WARNING, "pause")
 	Scenes.SetPaused(true)
 }
 
+//Network cycle - direct handler
 func unpause() {
 	defer LogFunc("state.unpause")()
 	Log(LVL_WARNING, "upause")
 	Scenes.SetPaused(false)
 }
 
+//Network cycle - direct handler
 func discon() {
 	Log(LVL_WARNING, "lost connect")
 }
 
+//Network cycle - direct handler
 func recon() {
 	Log(LVL_WARNING, "recon!")
 }

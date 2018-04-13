@@ -7,14 +7,14 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-type cosmoScene struct {
+type engiScene struct {
 	ship    *graph.Sprite
 	caption *graph.Text
 	cam     *graph.Camera
 }
 
-func newCosmoScene() *cosmoScene {
-	caption := graph.NewText("Fly scene", Fonts[Face_cap], colornames.Aliceblue)
+func newCosmoScene() *engiScene {
+	caption := graph.NewText("Engi scene", Fonts[Face_cap], colornames.Aliceblue)
 	caption.SetPosPivot(graph.ScrP(0.1, 0.1), graph.TopLeft())
 
 	cam := graph.NewCamera()
@@ -26,36 +26,26 @@ func newCosmoScene() *cosmoScene {
 		panic(err)
 	}
 
-	return &cosmoScene{
+	return &engiScene{
 		caption: caption,
 		ship:    ship,
 		cam:     cam,
 	}
 }
 
-func (*cosmoScene) Init() {
-	defer LogFunc("cosmoScene.Init")()
+func (*engiScene) Init() {
+	defer LogFunc("engiScene.Init")()
 }
 
-func (scene *cosmoScene) Update(dt float64) {
-	defer LogFunc("cosmoScene.Update")()
+func (scene *engiScene) Update(dt float64) {
+	defer LogFunc("engiScene.Update")()
 
-	switch {
-	case ebiten.IsKeyPressed(ebiten.KeyW):
-		Data.PilotData.Ship.Vel.Y = 100
-	case ebiten.IsKeyPressed(ebiten.KeyS):
-		Data.PilotData.Ship.Vel.Y = -100
-	case ebiten.IsKeyPressed(ebiten.KeyA):
-		Data.PilotData.Ship.AngVel = -1
-	case ebiten.IsKeyPressed(ebiten.KeyD):
-		Data.PilotData.Ship.AngVel = 1
-	}
-
+	//PilotData Rigid Body emulation
 	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
 }
 
-func (scene *cosmoScene) Draw(image *ebiten.Image) {
-	defer LogFunc("cosmoScene.Draw")()
+func (scene *engiScene) Draw(image *ebiten.Image) {
+	defer LogFunc("engiScene.Draw")()
 
 	scene.caption.Draw(image)
 	scene.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
@@ -63,8 +53,8 @@ func (scene *cosmoScene) Draw(image *ebiten.Image) {
 	image.DrawImage(img, op)
 }
 
-func (scene *cosmoScene) OnCommand(command string) {
+func (scene *engiScene) OnCommand(command string) {
 }
 
-func (*cosmoScene) Destroy() {
+func (*engiScene) Destroy() {
 }
