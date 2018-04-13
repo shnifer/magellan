@@ -1,20 +1,19 @@
 package commons
 
 import (
-	"github.com/Shnifer/magellan/graph"
+	"github.com/Shnifer/magellan/v2"
 )
 
 //just Rigid Body data
 type RBData struct {
-	Pos    graph.Point
+	Pos    v2.V2
 	Ang    float64
-	Vel    graph.Point
+	Vel    v2.V2
 	AngVel float64
 }
 
 func (rb RBData) Extrapolate(dt float64) RBData {
-	rb.Pos.X += rb.Vel.X * dt
-	rb.Pos.Y += rb.Vel.Y * dt
+	rb.Pos.DoAddMul(rb.Vel, dt)
 	rb.Ang += rb.AngVel * dt
 	return rb
 }

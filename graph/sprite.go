@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"image"
 	"image/color"
@@ -8,10 +9,6 @@ import (
 )
 
 const Deg2Rad = math.Pi / 180
-
-type Point struct {
-	X, Y float64
-}
 
 type Sprite struct {
 	tex      Tex
@@ -22,11 +19,11 @@ type Sprite struct {
 	g1, g2 ebiten.GeoM
 	//pos and rot point, in sprite before scale
 	//in pxls
-	pivot Point
+	pivot v2.V2
 	//basic scale here
 	sx, sy float64
 	//place of center
-	pos Point
+	pos v2.V2
 	//in rad
 	angle float64
 	//alpha normed
@@ -54,7 +51,7 @@ func NewSprite(tex Tex, cam *Camera, denyCamScale bool) *Sprite {
 		op:           op,
 		sx:           1,
 		sy:           1,
-		pivot:        Point{w / 2, h / 2},
+		pivot:        v2.V2{X: w / 2, Y: h / 2},
 		color:        color.White,
 		alpha:        1,
 		cam:          cam,
@@ -103,12 +100,12 @@ func (s *Sprite) SetSize(x, y float64) {
 	s.dirty = true
 }
 
-func (s *Sprite) SetPivot(pivot Point) {
+func (s *Sprite) SetPivot(pivot v2.V2) {
 	s.pivot = pivot
 	s.dirty = true
 }
 
-func (s *Sprite) SetPos(pos Point) {
+func (s *Sprite) SetPos(pos v2.V2) {
 	s.pos = pos
 	s.dirty = true
 }
@@ -118,7 +115,7 @@ func (s *Sprite) SetAng(angleDeg float64) {
 	s.dirty = true
 }
 
-func (s *Sprite) SetPosAng(pos Point, angle float64) {
+func (s *Sprite) SetPosAng(pos v2.V2, angle float64) {
 	s.pos = pos
 	s.angle = angle
 	s.dirty = true
@@ -157,4 +154,9 @@ func (s *Sprite) ImageOp() (*ebiten.Image, *ebiten.DrawImageOptions) {
 	}
 	op.GeoM = G
 	return s.tex.image, op
+}
+
+func (s *Sprite) Draw(dest *ebiten.Image) {
+	img, op := s.ImageOp()
+	dest.DrawImage(img, op)
 }

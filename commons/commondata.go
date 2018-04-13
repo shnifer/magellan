@@ -2,7 +2,7 @@ package commons
 
 import (
 	"encoding/json"
-	"github.com/Shnifer/magellan/graph"
+	"github.com/Shnifer/magellan/v2"
 )
 
 type CommonData struct {
@@ -18,7 +18,7 @@ type PilotData struct {
 
 type NaviData struct {
 	ActiveMarker bool
-	MarkerPos    graph.Point
+	MarkerPos    v2.V2
 }
 type CargoData struct {
 	TurboBoost bool

@@ -11,6 +11,10 @@ type cosmoScene struct {
 	ship    *graph.Sprite
 	caption *graph.Text
 	cam     *graph.Camera
+	objects []*cosmoPoint
+}
+
+type cosmoPoint struct {
 }
 
 func newCosmoScene() *cosmoScene {
@@ -35,6 +39,7 @@ func newCosmoScene() *cosmoScene {
 
 func (*cosmoScene) Init() {
 	defer LogFunc("cosmoScene.Init")()
+
 }
 
 func (scene *cosmoScene) Update(dt float64) {
@@ -59,8 +64,7 @@ func (scene *cosmoScene) Draw(image *ebiten.Image) {
 
 	scene.caption.Draw(image)
 	scene.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
-	img, op := scene.ship.ImageOp()
-	image.DrawImage(img, op)
+	scene.ship.Draw(image)
 }
 
 func (scene *cosmoScene) OnCommand(command string) {

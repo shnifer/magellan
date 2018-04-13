@@ -2,7 +2,7 @@ package commons
 
 import (
 	"encoding/json"
-	"github.com/Shnifer/magellan/graph"
+	"github.com/Shnifer/magellan/v2"
 	"time"
 )
 
@@ -51,7 +51,7 @@ type GalaxyPoint struct {
 	ID       string
 	ParentID string
 
-	Pos graph.Point
+	Pos v2.V2
 
 	Orbit    float64
 	Period   float64

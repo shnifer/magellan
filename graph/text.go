@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	et "github.com/hajimehoshi/ebiten/text"
 	"golang.org/x/image/font"
@@ -8,11 +9,11 @@ import (
 	"image/color"
 )
 
-func TopLeft() Point {
-	return Point{0.0, 0.0}
+func TopLeft() v2.V2 {
+	return v2.V2{X: 0.0, Y: 0.0}
 }
-func Center() Point {
-	return Point{0.5, 0.5}
+func Center() v2.V2 {
+	return v2.V2{X: 0.5, Y: 0.5}
 }
 
 type Text struct {
@@ -24,9 +25,9 @@ type Text struct {
 	bounds image.Rectangle
 
 	//for Draw method
-	pos Point
+	pos v2.V2
 	//in parts of w/h [0...1]
-	pivot Point
+	pivot v2.V2
 
 	//for Image method
 	filter ebiten.Filter
@@ -49,7 +50,7 @@ func NewText(text string, face font.Face, color color.Color) *Text {
 	return &res
 }
 
-func (t *Text) SetPosPivot(pos, pivot Point) {
+func (t *Text) SetPosPivot(pos, pivot v2.V2) {
 	t.pos = pos
 	t.pivot = pivot
 }

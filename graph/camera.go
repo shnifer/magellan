@@ -1,13 +1,16 @@
 package graph
 
-import "github.com/hajimehoshi/ebiten"
+import (
+	"github.com/Shnifer/magellan/v2"
+	"github.com/hajimehoshi/ebiten"
+)
 
 //exec Recalc() after changes
 type Camera struct {
 	//center in world
-	Pos Point
+	Pos v2.V2
 	//center on screen
-	Center Point
+	Center v2.V2
 	//angle in deg, PLUS camera counterclock (image clockwise)
 	AngleDeg float64
 	//scale
@@ -26,14 +29,14 @@ func NewCamera() *Camera {
 func (c *Camera) Geom() ebiten.GeoM {
 	return c.g
 }
-func (c *Camera) Apply(p Point) Point {
+func (c *Camera) Apply(p v2.V2) v2.V2 {
 	x, y := c.g.Apply(p.X, p.Y)
-	return Point{x, y}
+	return v2.V2{x, y}
 }
 
-func (c *Camera) UnApply(p Point) Point {
+func (c *Camera) UnApply(p v2.V2) v2.V2 {
 	x, y := c.r.Apply(p.X, p.Y)
-	return Point{x, y}
+	return v2.V2{x, y}
 }
 
 func (c *Camera) Recalc() {
