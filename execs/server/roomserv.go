@@ -92,6 +92,7 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 
 func generateCommonData(prevCommon CommonData, newState State) CommonData {
 	defer LogFunc("generateCommonData " + newState.StateID + " " + newState.GalaxyID + " " + newState.ShipID)()
+	prevCommon.PilotData.SessionTime = time.Now()
 	return prevCommon
 }
 

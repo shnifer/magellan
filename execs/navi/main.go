@@ -26,8 +26,9 @@ var last time.Time
 var Data commons.TData
 
 func mainLoop(window *ebiten.Image) error {
-	dt := time.Since(last).Seconds()
-	last = time.Now()
+	t := time.Now()
+	dt := t.Sub(last).Seconds()
+	last = t
 
 	input.Update()
 

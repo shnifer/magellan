@@ -61,6 +61,7 @@ func initSceneState() {
 	case STATE_warp:
 		sceneName = scene_warp
 	}
+
 	if sceneName != "" {
 		Scenes.Init(sceneName)
 		Scenes.WaitDone()
