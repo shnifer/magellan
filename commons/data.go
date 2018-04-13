@@ -18,7 +18,7 @@ type TData struct {
 func NewData() TData {
 	return TData{
 		CommonData: CommonData{}.Empty(),
-		actionQ:    make(chan func(), 4),
+		actionQ:    make(chan func(), 8),
 	}
 }
 

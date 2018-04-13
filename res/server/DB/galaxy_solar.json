@@ -9,9 +9,8 @@
             },
             "Orbit": 0,
             "Period": 0,
-            "DegStart": 0,
             "Type": "star",
-            "Size": 30
+            "Size": 50
         },
         {
             "ID": "Earth",
@@ -20,10 +19,17 @@
                 "X": 0,
                 "Y": 0
             },
-            "Orbit": 200,
+            "Orbit": 400,
             "Period": 20,
-            "DegStart": 0,
             "Type": "planet",
+            "Size": 20
+        },
+        {
+            "ID": "Moon",
+            "ParentID": "Earth",
+            "Orbit": 100,
+            "Period": 8,
+            "Type": "asteroid",
             "Size": 10
         }
     ]

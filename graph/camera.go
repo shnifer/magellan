@@ -31,17 +31,17 @@ func (c *Camera) Geom() ebiten.GeoM {
 }
 func (c *Camera) Apply(p v2.V2) v2.V2 {
 	x, y := c.g.Apply(p.X, p.Y)
-	return v2.V2{x, y}
+	return v2.V2{X: x, Y: y}
 }
 
 func (c *Camera) UnApply(p v2.V2) v2.V2 {
 	x, y := c.r.Apply(p.X, p.Y)
-	return v2.V2{x, y}
+	return v2.V2{X: x, Y: y}
 }
 
 func (c *Camera) Recalc() {
 	G := ebiten.GeoM{}
-	//Translate relevante to camera
+	//Translate relevant to camera
 	G.Translate(-c.Pos.X, -c.Pos.Y)
 	//Rotate and scale
 	G.Rotate(-c.AngleDeg * Deg2Rad)

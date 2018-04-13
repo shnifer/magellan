@@ -2,6 +2,7 @@ package network
 
 import (
 	"bytes"
+	"encoding/gob"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -34,7 +35,7 @@ type Client struct {
 	wantState string
 
 	//do we need to RECEIVE our part of common
-	isMyPartActual bool
+	//	isMyPartActual bool
 
 	//commands to Send
 	//own mutex
@@ -155,7 +156,7 @@ func checkWantedState(c *Client, pingResp PingResp) {
 		c.sendCommands = c.sendCommands[:0]
 
 		c.wantState = wanted
-		c.isMyPartActual = false
+		//		c.isMyPartActual = false
 		//aware client about new state
 		if c.opts.OnStateChanged != nil {
 			c.opts.OnStateChanged(wanted)
@@ -179,7 +180,15 @@ func checkWantedState(c *Client, pingResp PingResp) {
 			} else {
 				//run hook and wait for done chan close
 				go func() {
-					c.opts.OnGetStateData(resp)
+					log.Println("recieved state+start data size = ", len(resp))
+					buf := bytes.NewBuffer(resp)
+					dec := gob.NewDecoder(buf)
+					var DataResp StateDataResp
+					dec.Decode(&DataResp)
+					c.opts.OnGetStateData(DataResp.StateData)
+					if c.opts.OnCommonRecv != nil {
+						c.opts.OnCommonRecv(DataResp.StartCommon, true)
+					}
 					c.mu.Lock()
 					c.curState = c.wantState
 					c.mu.Unlock()
@@ -238,16 +247,16 @@ func doCommonReq(c *Client) {
 	var req CommonReq
 	var sentData []byte
 
-	if c.isMyPartActual {
-		if c.opts.OnCommonSend != nil {
-			sentData = c.opts.OnCommonSend()
-		}
-
-		if sentData != nil && len(sentData) > 0 {
-			req.DataSent = true
-			req.Data = string(sentData)
-		}
+	//	if c.isMyPartActual {
+	if c.opts.OnCommonSend != nil {
+		sentData = c.opts.OnCommonSend()
 	}
+
+	if sentData != nil && len(sentData) > 0 {
+		req.DataSent = true
+		req.Data = string(sentData)
+	}
+	//	}
 
 	req.Commands = c.sendCommands
 	req.CommandsBaseN = c.sendCommandsBaseN
@@ -270,15 +279,16 @@ func doCommonReq(c *Client) {
 		log.Println("Can't unmarshal common resp")
 	}
 
-	if c.isMyPartActual {
-		clientReceiveCommands(c, resp)
-	}
+	//	if c.isMyPartActual {
+	clientReceiveCommands(c, resp)
+	//	}
 
 	if c.opts.OnCommonRecv != nil {
-		c.opts.OnCommonRecv([]byte(resp.Data), !c.isMyPartActual)
+		//		c.opts.OnCommonRecv([]byte(resp.Data), !c.isMyPartActual)
+		c.opts.OnCommonRecv([]byte(resp.Data), false)
 	}
 
-	c.isMyPartActual = true
+	//c.isMyPartActual = true
 
 }
 

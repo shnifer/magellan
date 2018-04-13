@@ -15,8 +15,9 @@ type Sprite struct {
 	col, row int
 	op       *ebiten.DrawImageOptions
 	//before and past cam parts of geom
-	dirty  bool
-	g1, g2 ebiten.GeoM
+	dirty      bool
+	colorDirty bool
+	g1, g2     ebiten.GeoM
 	//pos and rot point, in sprite before scale
 	//in pxls
 	pivot v2.V2
@@ -80,12 +81,12 @@ func (s *Sprite) recalcColorM() {
 
 func (s *Sprite) SetColor(color color.Color) {
 	s.color = color
-	s.dirty = true
+	s.colorDirty = true
 }
 
 func (s *Sprite) SetAlpha(a float64) {
 	s.alpha = a
-	s.dirty = true
+	s.colorDirty = true
 }
 
 func (s *Sprite) SetScale(x, y float64) {
@@ -117,7 +118,7 @@ func (s *Sprite) SetAng(angleDeg float64) {
 
 func (s *Sprite) SetPosAng(pos v2.V2, angle float64) {
 	s.pos = pos
-	s.angle = angle
+	s.angle = angle * Deg2Rad
 	s.dirty = true
 }
 
@@ -137,6 +138,10 @@ func (s *Sprite) ImageOp() (*ebiten.Image, *ebiten.DrawImageOptions) {
 	if s.dirty {
 		s.calcGeom()
 		s.dirty = false
+	}
+	if s.colorDirty {
+		s.recalcColorM()
+		s.colorDirty = false
 	}
 	op := new(ebiten.DrawImageOptions)
 	*op = *s.op

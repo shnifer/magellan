@@ -7,6 +7,7 @@
 package network
 
 import (
+	"encoding/gob"
 	"log"
 	"net/http"
 	"sync"
@@ -124,7 +125,20 @@ func stateHandler(srv *Server) http.Handler {
 		}
 		room.mu.Unlock()
 
-		w.Write(srv.opts.RoomServ.GetStateData(roomName))
+		StateData := srv.opts.RoomServ.GetStateData(roomName)
+		CommonData, err := srv.opts.RoomServ.GetRoomCommon(roomName)
+		if err != nil {
+			sendErr(w, "can't get fresh Common data to send with state data!")
+		}
+		SendData := StateDataResp{
+			StateData:   StateData,
+			StartCommon: CommonData,
+		}
+		enc := gob.NewEncoder(w)
+		err = enc.Encode(SendData)
+		if err != nil {
+			panic(err)
+		}
 	}
 	return http.HandlerFunc(f)
 }

@@ -92,7 +92,7 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 
 func generateCommonData(prevCommon CommonData, newState State) CommonData {
 	defer LogFunc("generateCommonData " + newState.StateID + " " + newState.GalaxyID + " " + newState.ShipID)()
-	prevCommon.PilotData.SessionTime = time.Now()
+	prevCommon.PilotData.SessionTime = time.Now().Sub(StartDateTime).Seconds()
 	return prevCommon
 }
 
@@ -101,7 +101,7 @@ func loadStateData(state State) StateData {
 
 	var sd StateData
 
-	sd.ServerTime = time.Now()
+	//sd.ServerTime = time.Now()
 
 	if state.ShipID != "" {
 		sd.BSP = loadShipState(state.ShipID)
@@ -154,13 +154,13 @@ func (rd *roomServer) GetStateData(room string) []byte {
 	rd.mu.RLock()
 	defer rd.mu.RUnlock()
 
-	commonData, ok := rd.stateData[room]
+	stateData, ok := rd.stateData[room]
 	if !ok {
 		err := errors.New("GetStateData: Room " + room + " not found")
 		Log(LVL_ERROR, err)
 		return nil
 	}
-	msg := commonData.Encode()
+	msg := stateData.Encode()
 
 	return msg
 }

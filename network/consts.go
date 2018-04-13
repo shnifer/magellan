@@ -64,6 +64,11 @@ type CommonResp struct {
 	Commands      []string
 }
 
+type StateDataResp struct {
+	StateData   []byte
+	StartCommon []byte
+}
+
 const (
 	COMMAND_CLIENT       = "C"
 	COMMAND_REQUESTSTATE = "S"

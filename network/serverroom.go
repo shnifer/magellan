@@ -123,7 +123,7 @@ func serverRecalcCommands(srv *Server, room *servRoomState) {
 	}
 	delta := minN - room.baseCommandN + 1
 	if delta < 0 {
-		log.Println("Strange! minimum lastCommandToClient < baseCommandN", delta, "=", minN, "-", room.baseCommandN, "+1")
+		log.Println("Strange! minimum lastCommandToClient < baseCommandN", delta, "=", minN, "-", room.baseCommandN, "+1 < 0")
 	}
 	if delta <= 0 {
 		return

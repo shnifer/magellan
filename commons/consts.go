@@ -1,5 +1,7 @@
 package commons
 
+import "time"
+
 const (
 	ROLE_Pilot = "Pilot"
 	ROLE_Engi  = "Engi"
@@ -19,4 +21,8 @@ const (
 
 const (
 	CMD_STATECHANGRFAIL = "FailedStateChange"
+)
+
+var (
+	StartDateTime = time.Date(2018, 01, 01, 01, 01, 01, 01, time.Local)
 )

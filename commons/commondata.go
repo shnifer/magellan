@@ -2,8 +2,8 @@ package commons
 
 import (
 	"encoding/json"
+	_ "encoding/json"
 	"github.com/Shnifer/magellan/v2"
-	"time"
 )
 
 type CommonData struct {
@@ -15,7 +15,7 @@ type CommonData struct {
 
 type PilotData struct {
 	Ship        RBData
-	SessionTime time.Time
+	SessionTime float64
 }
 
 type NaviData struct {

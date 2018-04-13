@@ -50,6 +50,7 @@ func mainLoop(window *ebiten.Image) error {
 
 func main() {
 	startProfile()
+	defer stopProfile()
 
 	WinW = DEFVAL.WinW
 	WinH = DEFVAL.WinH
@@ -70,8 +71,6 @@ func main() {
 	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "PILOT"); err != nil {
 		log.Fatal(err)
 	}
-
-	stopProfile()
 }
 
 func startProfile() {

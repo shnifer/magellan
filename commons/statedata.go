@@ -3,13 +3,12 @@ package commons
 import (
 	"encoding/json"
 	"github.com/Shnifer/magellan/v2"
-	"time"
 )
 
 type StateData struct {
-	ServerTime time.Time
-	BSP        *BSP
-	Galaxy     *Galaxy
+	//ServerTime time.Time
+	BSP    *BSP
+	Galaxy *Galaxy
 }
 
 type BSP struct {
@@ -53,9 +52,8 @@ type GalaxyPoint struct {
 
 	Pos v2.V2
 
-	Orbit    float64
-	Period   float64
-	DegStart float64
+	Orbit  float64
+	Period float64
 
 	Type string
 	Size float64
@@ -88,5 +86,6 @@ func (sd StateData) Copy() (res StateData) {
 		val := *sd.Galaxy
 		res.Galaxy = &val
 	}
+
 	return res
 }

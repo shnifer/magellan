@@ -52,7 +52,8 @@ func commonSend() []byte {
 	return Data.MyPartToSend()
 }
 
-//Network cycle - direct handler
+//Network cycle - if readOwnPart is FALSE direct handler
+//Network cycle - if readOwnPart is TRUE goroutine
 func commonRecv(buf []byte, readOwnPart bool) {
 	defer LogFunc("commonRecv")()
 	cd, err := CommonData{}.Decode(buf)
@@ -63,4 +64,7 @@ func commonRecv(buf []byte, readOwnPart bool) {
 		cd.ClearRole(DEFVAL.Role)
 	}
 	Data.LoadCommonData(cd)
+	if readOwnPart {
+		Data.WaitDone()
+	}
 }
