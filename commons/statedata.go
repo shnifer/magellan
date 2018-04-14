@@ -57,6 +57,8 @@ type GalaxyPoint struct {
 
 	Type string
 	Size float64
+
+	Mass float64
 }
 
 func (sd StateData) Encode() []byte {

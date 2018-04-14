@@ -16,6 +16,8 @@ type CosmoPoint struct {
 	Orbit    float64
 	AngVel   float64
 	AngPhase float64
+
+	Mass float64
 }
 
 func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
@@ -29,6 +31,7 @@ func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 		Size:   pd.Size,
 		Orbit:  pd.Orbit,
 		AngVel: 360 / pd.Period,
+		Mass:   pd.Mass,
 	}
 	res.recalcSprite()
 	return &res

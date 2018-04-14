@@ -19,6 +19,8 @@ var Scenes *scene.Manager
 func createScenes() {
 	defer LogFunc("createScenes")()
 
+	InitTexAtlas(texPath)
+
 	Scenes = scene.NewManager()
 
 	pauseScene := scene.NewPauseScene(Fonts[Face_cap], Client.PauseReason)

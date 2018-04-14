@@ -10,7 +10,8 @@
             "Orbit": 0,
             "Period": 0,
             "Type": "star",
-            "Size": 50
+            "Size": 50,
+            "Mass": 50
         },
         {
             "ID": "Earth",
@@ -22,7 +23,8 @@
             "Orbit": 400,
             "Period": 20,
             "Type": "planet",
-            "Size": 20
+            "Size": 20,
+            "Mass": 20
         },
         {
             "ID": "Moon",
@@ -30,7 +32,8 @@
             "Orbit": 100,
             "Period": 8,
             "Type": "asteroid",
-            "Size": 10
+            "Size": 10,
+            "Mass": 10
         }
     ]
 }

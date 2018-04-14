@@ -17,17 +17,22 @@ type tDefVals struct {
 
 	CpuProfFileName string
 	MemProfFileName string
+
+	GravityConst float64
+	GravityZ2    float64
 }
 
 var DEFVAL tDefVals
 
 func setDefDef() {
 	DEFVAL = tDefVals{
-		Port: "http://localhost:8000",
-		Room: "room101",
-		Role: commons.ROLE_Pilot,
-		WinW: 1024,
-		WinH: 768,
+		Port:         "http://localhost:8000",
+		Room:         "room101",
+		Role:         commons.ROLE_Pilot,
+		WinW:         1024,
+		WinH:         768,
+		GravityConst: 100,
+		GravityZ2:    100,
 	}
 }
 

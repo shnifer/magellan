@@ -5,22 +5,37 @@
         "Key": 32
     },
     {
-        "InputName": "turn",
+        "InputName": "forward",
+        "InputType": "KP",
+        "Key": 28,
+        "Val": -1
+    },
+    {
+        "InputName": "forward",
         "InputType": "JA",
         "JoyID": 0,
-        "MinAxis": 0.2,
-        "JoyAxis": 0
+        "MinAxis": 0.1,
+        "JoyAxis": 1,
+        "Val": -1
     },
     {
         "InputName": "turn",
-        "InputType": "KP",
-        "Key": 10,
+        "InputType": "JA",
+        "JoyID": 0,
+        "MinAxis": 0.1,
+        "JoyAxis": 0,
         "Val": -1
     },
     {
         "InputName": "turn",
         "InputType": "KP",
-        "Key": 13,
+        "Key": 10,
         "Val": 1
+    },
+    {
+        "InputName": "turn",
+        "InputType": "KP",
+        "Key": 13,
+        "Val": -1
     }
 ]
