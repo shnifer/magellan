@@ -13,6 +13,7 @@ import (
 type TexAtlasRec struct {
 	FileName string
 	Sx, Sy   int
+	Count    int
 	Color    color.RGBA
 }
 type TexAtlas map[string]TexAtlasRec
@@ -42,7 +43,7 @@ func GetAtlasTexColor(name string) (graph.Tex, color.RGBA) {
 		panic("GetAtlasTex: unknown name " + name)
 	}
 
-	tex, err := graph.GetTex(texPath+rec.FileName, ebiten.FilterLinear, rec.Sx, rec.Sy)
+	tex, err := graph.GetTex(texPath+rec.FileName, ebiten.FilterLinear, rec.Sx, rec.Sy, rec.Count)
 	if err != nil {
 		panic(err)
 	}
@@ -60,6 +61,7 @@ func saveAtlasExample(fn string) {
 		FileName: "filename.png",
 		Sx:       0,
 		Sy:       0,
+		Count:    1,
 		Color:    colornames.White,
 	}
 	buf, err := json.Marshal(exAtlas)

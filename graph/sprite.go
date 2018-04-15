@@ -35,9 +35,9 @@ type Sprite struct {
 	cam *Camera
 	//FixedSize
 	denyCamScale bool
+	//number of sprite from sheet
+	spriteN int
 }
-
-//TODO: animated spriteSheet?
 
 func NewSprite(tex Tex, cam *Camera, denyCamScale bool) *Sprite {
 	op := &ebiten.DrawImageOptions{}
@@ -64,8 +64,8 @@ func NewSprite(tex Tex, cam *Camera, denyCamScale bool) *Sprite {
 	return res
 }
 
-func NewSpriteFromFile(filename string, filter ebiten.Filter, sw, sh int, cam *Camera, denyCamScale bool) (*Sprite, error) {
-	tex, err := GetTex(filename, filter, sw, sh)
+func NewSpriteFromFile(filename string, filter ebiten.Filter, sw, sh int, count int, cam *Camera, denyCamScale bool) (*Sprite, error) {
+	tex, err := GetTex(filename, filter, sw, sh, count)
 	if err != nil {
 		return nil, err
 	}
@@ -164,4 +164,25 @@ func (s *Sprite) ImageOp() (*ebiten.Image, *ebiten.DrawImageOptions) {
 func (s *Sprite) Draw(dest *ebiten.Image) {
 	img, op := s.ImageOp()
 	dest.DrawImage(img, op)
+}
+
+func (s *Sprite) SpriteN() int {
+	return s.spriteN
+}
+
+func (s *Sprite) SpritesCount() int {
+	return s.tex.count
+}
+
+func (s *Sprite) SetSpriteN(n int) {
+	n = n % s.tex.count
+	s.spriteN = n
+	nx := n % s.tex.cols
+	ny := n / s.tex.cols
+	rect := image.Rect(nx*s.tex.sw, ny*s.tex.sh, (nx+1)*s.tex.sw, (ny+1)*s.tex.sh)
+	s.op.SourceRect = &rect
+}
+
+func (s *Sprite) NextSprite() {
+	s.SetSpriteN(s.spriteN + 1)
 }

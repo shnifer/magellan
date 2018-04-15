@@ -22,13 +22,14 @@
     }
   },
   "planet": {
-    "FileName": "asteroid.png",
-    "Sx": 0,
-    "Sy": 0,
+    "FileName": "planet_ani.png",
+    "Sx": 72,
+    "Sy": 72,
+    "Count": 19,
     "Color": {
-      "R": 120,
+      "R": 255,
       "G": 255,
-      "B": 120,
+      "B": 255,
       "A": 255
     }
   },

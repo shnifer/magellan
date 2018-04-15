@@ -14,17 +14,18 @@ type Tex struct {
 	//0 for solid image
 	sw, sh     int
 	cols, rows int
+	count      int
 }
 
-func newTex(filename string, filter ebiten.Filter, sw, sh int) (Tex, error) {
+func newTex(filename string, filter ebiten.Filter, sw, sh int, count int) (Tex, error) {
 	img, _, err := ebitenutil.NewImageFromFile(filename, filter)
 	if err != nil {
 		return Tex{}, err
 	}
-	return TexFromImage(img, filter, sw, sh), nil
+	return TexFromImage(img, filter, sw, sh, count), nil
 }
 
-func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int) Tex {
+func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int, count int) Tex {
 	if image == nil {
 		return Tex{}
 	}
@@ -36,15 +37,25 @@ func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int) Tex {
 			sh:     h,
 			cols:   1,
 			rows:   1,
+			count:  1,
 			filter: filter,
 		}
 	}
+	cols, rows := w/sw, h/sh
+	if count == 0 {
+		count = 1
+	}
+	if count > cols*rows {
+		panic("TexFromImage: count>cols*rows")
+	}
+
 	return Tex{
 		image:  image,
 		sw:     sw,
 		sh:     sh,
-		cols:   w / sw,
-		rows:   h / sh,
+		cols:   cols,
+		rows:   rows,
+		count:  count,
 		filter: filter,
 	}
 }
@@ -55,11 +66,11 @@ func init() {
 	texCache = make(map[string]Tex)
 }
 
-func GetTex(filename string, filter ebiten.Filter, sw, sh int) (Tex, error) {
+func GetTex(filename string, filter ebiten.Filter, sw, sh int, count int) (Tex, error) {
 	if Tex, ok := texCache[filename]; ok {
 		return Tex, nil
 	}
-	t, err := newTex(filename, filter, sw, sh)
+	t, err := newTex(filename, filter, sw, sh, count)
 	if err != nil {
 		return Tex{}, err
 	}

@@ -108,7 +108,7 @@ func (s *cosmoScene) Update(dt float64) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		Data.PilotData.Ship.Vel = v2.V2{}
 		Data.PilotData.Ship.AngVel = 0
-		Data.PilotData.Ship.Pos = v2.V2{100, 100}
+		Data.PilotData.Ship.Pos = v2.V2{X: 100, Y: 100}
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {

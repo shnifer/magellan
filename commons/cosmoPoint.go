@@ -17,6 +17,10 @@ type CosmoPoint struct {
 	AngVel   float64
 	AngPhase float64
 
+	SpinPeriod float64
+	spinT      float64
+	lastT      float64
+
 	Mass float64
 }
 
@@ -26,12 +30,13 @@ func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 	sprite.SetColor(col)
 	sprite.SetSize(pd.Size*2, pd.Size*2)
 	res := CosmoPoint{
-		Sprite: sprite,
-		Pos:    pd.Pos,
-		Size:   pd.Size,
-		Orbit:  pd.Orbit,
-		AngVel: 360 / pd.Period,
-		Mass:   pd.Mass,
+		Sprite:     sprite,
+		Pos:        pd.Pos,
+		Size:       pd.Size,
+		Orbit:      pd.Orbit,
+		AngVel:     360 / pd.Period,
+		Mass:       pd.Mass,
+		SpinPeriod: 3.0 / float64(sprite.SpritesCount()),
 	}
 	res.recalcSprite()
 	return &res
@@ -39,6 +44,18 @@ func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 
 //CosmoPoint update takes Absolute session time to calculate cosmic clocks position
 func (co *CosmoPoint) Update(sessionTime float64) {
+	if co.lastT == 0 {
+		co.lastT = sessionTime
+	}
+	dt := sessionTime - co.lastT
+	co.lastT = sessionTime
+
+	co.spinT += dt
+	if co.spinT >= co.SpinPeriod {
+		co.Sprite.NextSprite()
+		co.spinT -= co.SpinPeriod
+	}
+
 	if co.Parent != nil {
 		angle := co.AngPhase + co.AngVel*sessionTime
 		co.Pos = co.Parent.Pos.AddMul(v2.InDir(angle), co.Orbit)

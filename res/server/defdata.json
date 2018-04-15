@@ -1,6 +1,6 @@
 {
     "Port": ":8000",
     "NeededRoles": [
-        "Pilot","Navi"
+        "Pilot"
     ]
 }
