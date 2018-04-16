@@ -20,6 +20,15 @@ func NewSendMany(names []string) *SendMany {
 	}
 }
 
+func (sm *SendMany) AddName(name string) {
+	if _, ok := sm.sends[name]; ok {
+		panic("name " + name + " is already in list")
+	}
+	send := NewSend()
+	send.storage = sm.storage
+	sm.sends[name] = send
+}
+
 func (sm *SendMany) AddItems(items ...string) {
 	sm.storage.add(items...)
 }
