@@ -1,6 +1,8 @@
 package wrnt
 
-import "log"
+import (
+	"log"
+)
 
 type Storage struct {
 	BaseN int
@@ -34,10 +36,4 @@ func (s *Storage) cut(toN int) {
 	startInd := toN - s.BaseN + 1
 	s.Items = s.Items[startInd:]
 	s.BaseN += startInd
-}
-
-//TODO:Debug!!!
-func (s *Storage) doEmpty() {
-	s.BaseN += len(s.Items)
-	s.Items = s.Items[:0]
 }

@@ -89,7 +89,7 @@ func BadMedia(n int) {
 		select {
 		case data := <-dataIn[n]:
 			if rand.Intn(3) > 0 {
-				time.Sleep(time.Duration(rand.Intn(10)) * time.Second / 10)
+				time.Sleep(time.Duration(rand.Intn(10)) * time.Second / 30)
 				log.Println(names[n], data.Items)
 				dataOut[n] <- data
 			} else {
@@ -97,7 +97,7 @@ func BadMedia(n int) {
 			}
 		case N := <-confIn[n]:
 			if rand.Intn(3) > 0 {
-				time.Sleep(time.Duration(rand.Intn(10)) * time.Second / 10)
+				time.Sleep(time.Duration(rand.Intn(10)) * time.Second / 30)
 				log.Println(names[n], "confirmed", N)
 				confOut[n] <- N
 			} else {
@@ -120,7 +120,7 @@ func Confer(n int) {
 }
 
 //TODO: why blocks???
-const treads = 1
+const treads = 3
 
 func main() {
 	rand.Seed(time.Now().Unix())

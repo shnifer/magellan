@@ -1,6 +1,10 @@
 package wrnt
 
-import "errors"
+import (
+	"errors"
+)
+
+var ErrNotInited = errors.New("not inited")
 
 type Send struct {
 	storage    *Storage
@@ -29,7 +33,7 @@ func (s *Send) AddItems(items ...string) {
 
 func (s *Send) Pack() (msg Storage, err error) {
 	if !s.inited {
-		return Storage{}, errors.New("not inited")
+		return Storage{}, ErrNotInited
 	}
 
 	return Storage{
@@ -52,7 +56,6 @@ func (s *Send) Confirm(n int) {
 	s.storage.cut(s.confirmedN)
 }
 
-func (s *Send) Reset() {
-	s.storage.doEmpty()
-	s.inited = false
+func (s *Send) DropNotSent() {
+	s.confirmedN = s.storage.BaseN + len(s.storage.Items) - 1
 }
