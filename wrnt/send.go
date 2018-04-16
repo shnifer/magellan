@@ -1,4 +1,4 @@
-package guarantee
+package wrnt
 
 import "errors"
 
@@ -50,4 +50,9 @@ func (s *Send) confirm(n int) {
 func (s *Send) Confirm(n int) {
 	s.confirm(n)
 	s.storage.cut(s.confirmedN)
+}
+
+func (s *Send) Reset() {
+	s.storage.doEmpty()
+	s.inited = false
 }

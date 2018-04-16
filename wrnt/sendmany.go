@@ -1,4 +1,4 @@
-package guarantee
+package wrnt
 
 import "log"
 
@@ -53,4 +53,11 @@ func (sm *SendMany) Confirm(name string, n int) {
 	}
 	sm.storage.cut(minN)
 	log.Println("sm.storage.len,.cap=", len(sm.storage.Items), cap(sm.storage.Items))
+}
+
+func (sm *SendMany) Reset() {
+	sm.storage.doEmpty()
+	for _, send := range sm.sends {
+		send.inited = false
+	}
 }
