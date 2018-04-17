@@ -21,10 +21,7 @@ func newCosmoScene() *cosmoScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship, err := graph.NewSpriteFromFile(texPath+"ship.png", ebiten.FilterDefault, 0, 0, cam, false)
-	if err != nil {
-		panic(err)
-	}
+	ship := graph.NewSprite(GetAtlasTex("ship"), cam, false)
 
 	return &cosmoScene{
 		caption: caption,
