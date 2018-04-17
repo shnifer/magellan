@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"errors"
+	"github.com/Shnifer/magellan/wrnt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -37,13 +38,9 @@ type Client struct {
 	//do we need to RECEIVE our part of common
 	//	isMyPartActual bool
 
-	//commands to Send
-	//own mutex
-	scmu              sync.Mutex
-	sendCommandsBaseN int
-	sendCommands      []string
-
-	lastReceivedCommandN int
+	//commands, mutex inside
+	send *wrnt.Send
+	recv *wrnt.Recv
 
 	//mutex for PauseReason only
 	prmu sync.RWMutex
@@ -65,9 +62,10 @@ func NewClient(opts ClientOpts) (*Client, error) {
 
 		//starts from unconnected states,
 		//so opt.OnReconnect and opt.OnUnpause will be called on first connection
-		pingLost:     true,
-		onPause:      true,
-		sendCommands: make([]string, 0),
+		pingLost: true,
+		onPause:  true,
+		send:     wrnt.NewSend(),
+		recv:     wrnt.NewRecv(),
 	}
 
 	return res, nil
@@ -151,10 +149,6 @@ func checkWantedState(c *Client, pingResp PingResp) {
 	//state changed
 	wanted := pingResp.Room.Wanted
 	if wanted != c.wantState {
-		//Drop commands
-		c.sendCommandsBaseN += len(c.sendCommands)
-		c.sendCommands = c.sendCommands[:0]
-
 		c.wantState = wanted
 		//		c.isMyPartActual = false
 		//aware client about new state
@@ -198,52 +192,19 @@ func checkWantedState(c *Client, pingResp PingResp) {
 	}
 }
 
-func clientCheckSentCommandsReceived(c *Client, pingResp PingResp) {
-	c.scmu.Lock()
-	defer c.scmu.Unlock()
-
-	//fresh just started client. Continue from servers last position
-	if c.sendCommandsBaseN == 0 {
-		c.sendCommandsBaseN = pingResp.LastCommandReceived + 1
-		return
-	}
-	delta := pingResp.LastCommandReceived - c.sendCommandsBaseN + 1
-	if delta < 0 {
-		log.Println("strange LastCommandReceived<sendCommandsBaseN",
-			pingResp.LastCommandReceived, c.sendCommandsBaseN)
-	}
-	if delta == 0 {
-		return
-	}
-	if delta > len(c.sendCommands) {
-		log.Println("strange delta>sendCommandsBaseN+len",
-			delta, len(c.sendCommands))
-		delta = len(c.sendCommands)
-	}
-	c.sendCommands = c.sendCommands[delta:]
-	c.sendCommandsBaseN += delta
-}
-
 func clientReceiveCommands(c *Client, resp CommonResp) {
 	if c.opts.OnCommand == nil {
 		return
 	}
 
-	for i, command := range resp.Commands {
-		commandN := resp.CommandsBaseN + i
-		if commandN <= c.lastReceivedCommandN {
-			continue
-		}
+	commands := c.recv.Unpack(resp.Message)
+
+	for _, command := range commands {
 		c.opts.OnCommand(command)
 	}
-
-	c.lastReceivedCommandN = resp.CommandsBaseN + len(resp.Commands) - 1
 }
 
 func doCommonReq(c *Client) {
-	c.scmu.Lock()
-	defer c.scmu.Unlock()
-
 	var req CommonReq
 	var sentData []byte
 
@@ -257,10 +218,11 @@ func doCommonReq(c *Client) {
 		req.Data = string(sentData)
 	}
 	//	}
-
-	req.Commands = c.sendCommands
-	req.CommandsBaseN = c.sendCommandsBaseN
-	req.LastReceivedCommandN = c.lastReceivedCommandN
+	message, err := c.send.Pack()
+	if err == nil {
+		req.Message = message
+	}
+	req.ClientConfirmN = c.recv.LastRecv()
 
 	buf, err := json.Marshal(req)
 	if err != nil {
@@ -279,9 +241,7 @@ func doCommonReq(c *Client) {
 		log.Println("Can't unmarshal common resp")
 	}
 
-	//	if c.isMyPartActual {
 	clientReceiveCommands(c, resp)
-	//	}
 
 	if c.opts.OnCommonRecv != nil {
 		//		c.opts.OnCommonRecv([]byte(resp.Data), !c.isMyPartActual)
@@ -304,7 +264,7 @@ func clientPing(c *Client) {
 			continue
 		}
 		checkWantedState(c, pingResp)
-		clientCheckSentCommandsReceived(c, pingResp)
+		c.send.Confirm(pingResp.ServerConfirmN)
 
 		if !c.onPause {
 			doCommonReq(c)
@@ -349,7 +309,5 @@ func (c *Client) sendCommand(prefix string, command string) {
 		panic("sendCommand wrong prefix!")
 	}
 
-	c.scmu.Lock()
-	c.sendCommands = append(c.sendCommands, prefix+command)
-	c.scmu.Unlock()
+	c.send.AddItems(prefix + command)
 }

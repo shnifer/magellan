@@ -1,6 +1,7 @@
 package network
 
 import (
+	"github.com/Shnifer/magellan/wrnt"
 	"net/http"
 	"time"
 )
@@ -39,29 +40,27 @@ type RoomState struct {
 }
 
 type PingResp struct {
-	LastCommandReceived int
-	Room                RoomState
+	//for Client -> Server confirmation
+	ServerConfirmN int
+	Room           RoomState
 }
 
 type CommonReq struct {
 	DataSent bool
 	Data     string
 
-	//Command string first rune is service flag
-	//Client->Server
-	CommandsBaseN int
-	Commands      []string
+	//Client -> Server
+	Message wrnt.Message
 
-	//for Server<-Client
-	LastReceivedCommandN int
+	//for Server->Client confirmation
+	ClientConfirmN int
 }
 
 type CommonResp struct {
 	Data string
 
 	//Server->Client
-	CommandsBaseN int
-	Commands      []string
+	Message wrnt.Message
 }
 
 type StateDataResp struct {

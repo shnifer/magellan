@@ -49,12 +49,13 @@ func roomHandler(srv *Server) http.Handler {
 		//receive new commands
 		serverReceiveCommands(srv, req, room, roomName, roleName)
 
-		serverRecalcCommands(srv, room)
-
 		resp := CommonResp{
-			Data:          string(buf),
-			CommandsBaseN: room.baseCommandN,
-			Commands:      room.commands,
+			Data: string(buf),
+		}
+
+		message, err := room.send.Pack(roleName)
+		if err == nil {
+			resp.Message = message
 		}
 
 		respBody, err := json.Marshal(resp)
@@ -71,30 +72,32 @@ func roomHandler(srv *Server) http.Handler {
 //room.mu must be already locked
 func serverReceiveCommands(srv *Server, req CommonReq, room *servRoomState, roomName, roleName string) {
 
-	alreadyDoneN := room.lastCommandFromClient[roleName]
+	commands := room.recvs[roleName].Unpack(req.Message)
 
-	for i, command := range req.Commands {
-		commandN := req.CommandsBaseN + i
-		if commandN <= alreadyDoneN {
-			//already done
-			continue
-		}
+	for _, command := range commands {
+
 		if len(command) < 1 {
 			log.Println("empty command!")
 			continue
 		}
+
 		prefix := command[:1]
-		command = command[1:]
+		command := command[1:]
 		switch prefix {
 		case COMMAND_CLIENT:
-			//Do not
+			//ignore commands sent on not coherent state
 			if !room.state.IsCoherent {
 				log.Println("STRANGE: COMMAND_CLIENT received while non-coherent. Command: ", command)
-				break
+				continue
 			}
-			room.commands = append(room.commands, command)
+			room.send.AddItems(command)
 			srv.opts.RoomServ.OnCommand(roomName, roleName, command)
 		case COMMAND_REQUESTSTATE:
+			//ignore commands sent on not coherent state
+			if !room.state.IsCoherent {
+				log.Println("Requwst state command in non coherent room. Is this good?", command)
+			}
+
 			stateChanged := setNewState(srv, room, roomName, command)
 			if stateChanged {
 				break
@@ -104,34 +107,4 @@ func serverReceiveCommands(srv *Server, req CommonReq, room *servRoomState, room
 			continue
 		}
 	}
-
-	room.lastCommandFromClient[roleName] =
-		req.CommandsBaseN + len(req.Commands) - 1
-	room.lastCommandToClient[roleName] = req.LastReceivedCommandN
-}
-
-func serverRecalcCommands(srv *Server, room *servRoomState) {
-	var minN int
-	for _, role := range srv.opts.NeededRoles {
-		lastN, ok := room.lastCommandToClient[role]
-		if !ok {
-			return
-		}
-		if minN == 0 || lastN < minN {
-			minN = lastN
-		}
-	}
-	delta := minN - room.baseCommandN + 1
-	if delta < 0 {
-		log.Println("Strange! minimum lastCommandToClient < baseCommandN", delta, "=", minN, "-", room.baseCommandN, "+1 < 0")
-	}
-	if delta <= 0 {
-		return
-	}
-	if delta > len(room.commands) {
-		log.Println("strange! delta>len(commands)", delta, "=", minN, "-", room.baseCommandN, "+1>", len(room.commands))
-		delta = len(room.commands)
-	}
-	room.baseCommandN += delta
-	room.commands = room.commands[delta:]
 }

@@ -2,6 +2,7 @@ package network
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 )
@@ -21,7 +22,7 @@ func pingHandler(srv *Server) http.Handler {
 			//DOUBLE check cz mutex RUnlock-Lock
 			room, ok = srv.roomsState[roomName]
 			if !ok {
-				room = newServRoomState()
+				room = newServRoomState(srv.opts.NeededRoles)
 				room.state.Wanted = srv.opts.StartState
 				go requestStateData(srv, roomName, room.state.Wanted)
 				srv.roomsState[roomName] = room
@@ -40,9 +41,16 @@ func pingHandler(srv *Server) http.Handler {
 		room.reported[roleName] = clientState
 		room.updateState()
 
+		var lastRecv int
+		if recv, ok := room.recvs[roleName]; ok {
+			lastRecv = recv.LastRecv()
+		} else {
+			log.Println("NO RECIEVER ROOM", roomName, "ROLE", roleName)
+		}
+
 		pingResp := PingResp{
-			Room:                room.state,
-			LastCommandReceived: room.lastCommandFromClient[roleName],
+			Room:           room.state,
+			ServerConfirmN: lastRecv,
 		}
 
 		b, err := json.Marshal(pingResp)

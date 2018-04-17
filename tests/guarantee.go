@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/Shnifer/magellan/wrnt"
 	"log"
 	"math/rand"
@@ -16,8 +15,8 @@ var s *wrnt.SendMany
 var names = [3]string{"alice", "bob", "candy"}
 var r [3]*wrnt.Recv
 
-var dataIn [3]chan wrnt.Storage
-var dataOut [3]chan wrnt.Storage
+var dataIn [3]chan wrnt.Message
+var dataOut [3]chan wrnt.Message
 var confIn [3]chan int
 var confOut [3]chan int
 
@@ -128,8 +127,8 @@ func main() {
 	s = wrnt.NewSendMany(names[:treads])
 
 	for i := 0; i < treads; i++ {
-		dataIn[i] = make(chan wrnt.Storage, 1)
-		dataOut[i] = make(chan wrnt.Storage, 1)
+		dataIn[i] = make(chan wrnt.Message, 1)
+		dataOut[i] = make(chan wrnt.Message, 1)
 		confIn[i] = make(chan int, 1)
 		confOut[i] = make(chan int, 1)
 		r[i] = wrnt.NewRecv()
@@ -146,10 +145,7 @@ func main() {
 
 	for {
 		time.Sleep(3 * time.Second)
-		s.Reset()
+		s.DropNotSent()
 		log.Println("RESET!!!")
 	}
-
-	var s string
-	fmt.Scanln(&s)
 }

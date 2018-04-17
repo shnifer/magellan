@@ -2,38 +2,55 @@ package wrnt
 
 import (
 	"log"
+	"sync"
 )
 
-type Storage struct {
+type Message struct {
 	BaseN int
 	Items []string
 }
 
-func newStorage() *Storage {
-	return &Storage{
-		BaseN: 0,
-		Items: make([]string, 0),
+type storage struct {
+	mu sync.RWMutex
+	Message
+}
+
+func newStorage() *storage {
+	return &storage{
+		Message: Message{
+			BaseN: 0,
+			Items: make([]string, 0),
+		},
 	}
 }
 
-func (s *Storage) add(items ...string) {
+func (s *storage) add(items ...string) {
+	s.mu.Lock()
 	s.Items = append(s.Items, items...)
+	s.mu.Unlock()
 }
-func (s *Storage) get(fromN int) []string {
+func (s *storage) get(fromN int) []string {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
 	if fromN < s.BaseN {
-		log.Panicln("Storage.get fromN<BaseN", fromN, "<", s.BaseN)
+		log.Panicln("storage.get fromN<BaseN", fromN, "<", s.BaseN)
 	}
 	count := len(s.Items) - (fromN - s.BaseN)
 	if count < 0 {
-		log.Println("Storage.get count<0")
+		log.Println("storage.get count<0")
 	}
 	res := make([]string, count)
 	copy(res, s.Items[fromN-s.BaseN:])
 	return res
 }
 
-func (s *Storage) cut(toN int) {
+func (s *storage) cut(toN int) {
+	s.mu.Lock()
+
 	startInd := toN - s.BaseN + 1
 	s.Items = s.Items[startInd:]
 	s.BaseN += startInd
+
+	s.mu.Unlock()
 }

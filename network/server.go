@@ -8,6 +8,7 @@ package network
 
 import (
 	"encoding/gob"
+	"github.com/Shnifer/magellan/wrnt"
 	"log"
 	"net/http"
 	"sync"
@@ -46,28 +47,22 @@ type servRoomState struct {
 	//conns reported new state
 	reported map[string]string
 
-	//conns last received Client->Server command
-	//map[role]LastCommandReceived (client numeration)
-	lastCommandFromClient map[string]int
-
-	//conns last received Server->Client command
-	//map[role]LastReceivedCommandN (server numeration)
-	lastCommandToClient map[string]int
-
-	//server numeration
-	baseCommandN int
-	commands     []string
+	send  *wrnt.SendMany
+	recvs map[string]*wrnt.Recv
 }
 
-func newServRoomState() *servRoomState {
+func newServRoomState(commandReceivers []string) *servRoomState {
+	recvs := make(map[string]*wrnt.Recv)
+	for _, name := range commandReceivers {
+		recvs[name] = wrnt.NewRecv()
+	}
+
 	return &servRoomState{
-		online:                make(map[string]bool),
-		lastSeen:              make(map[string]time.Time),
-		reported:              make(map[string]string),
-		lastCommandFromClient: make(map[string]int),
-		baseCommandN:          1, //start from #1 server command
-		commands:              make([]string, 0),
-		lastCommandToClient:   make(map[string]int),
+		online:   make(map[string]bool),
+		lastSeen: make(map[string]time.Time),
+		reported: make(map[string]string),
+		send:     wrnt.NewSendMany(commandReceivers),
+		recvs:    recvs,
 	}
 }
 
@@ -81,6 +76,33 @@ type Server struct {
 	roomsState map[string]*servRoomState
 }
 
+//NewServer creates a server listening
+func NewServer(opts ServerOpts) *Server {
+	mux := http.NewServeMux()
+	httpServ := &http.Server{Addr: opts.Addr, Handler: mux}
+
+	srv := &Server{
+		httpServ:   httpServ,
+		mux:        mux,
+		opts:       opts,
+		roomsState: make(map[string]*servRoomState),
+	}
+
+	mux.Handle(pingPattern, pingHandler(srv))
+	mux.Handle(roomPattern, roomHandler(srv))
+	mux.Handle(statePattern, stateHandler(srv))
+	go func() {
+		err := httpServ.ListenAndServe()
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	go serverRoomUpdater(srv)
+
+	return srv
+}
+
 func (s *Server) AddCommand(roomName string, command string) {
 	go func() {
 		s.mu.RLock()
@@ -90,7 +112,7 @@ func (s *Server) AddCommand(roomName string, command string) {
 			return
 		}
 		room.mu.Lock()
-		room.commands = append(room.commands, command)
+		room.send.AddItems(command)
 		room.mu.Unlock()
 	}()
 }
@@ -162,8 +184,7 @@ func setNewState(srv *Server, room *servRoomState, roomName, newState string) bo
 	room.state.RdyServData = false
 
 	//flush commands
-	room.baseCommandN += len(room.commands)
-	room.commands = room.commands[:0]
+	room.send.DropNotSent()
 
 	go requestStateData(srv, roomName, newState)
 	return true
@@ -192,33 +213,6 @@ func serverRoomUpdater(serv *Server) {
 
 		serv.mu.RUnlock()
 	}
-}
-
-//NewServer creates a server listening
-func NewServer(opts ServerOpts) *Server {
-	mux := http.NewServeMux()
-	httpServ := &http.Server{Addr: opts.Addr, Handler: mux}
-
-	srv := &Server{
-		httpServ:   httpServ,
-		mux:        mux,
-		opts:       opts,
-		roomsState: make(map[string]*servRoomState),
-	}
-
-	mux.Handle(pingPattern, pingHandler(srv))
-	mux.Handle(roomPattern, roomHandler(srv))
-	mux.Handle(statePattern, stateHandler(srv))
-	go func() {
-		err := httpServ.ListenAndServe()
-		if err != nil {
-			panic(err)
-		}
-	}()
-
-	go serverRoomUpdater(srv)
-
-	return srv
 }
 
 func (s *Server) Close() error {
