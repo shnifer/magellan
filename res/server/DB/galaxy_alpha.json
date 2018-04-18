@@ -1,4 +1,5 @@
 {
+    "SpawnDistance": 600,
     "Points": [
         {
             "ID": "AlphaCentauri",

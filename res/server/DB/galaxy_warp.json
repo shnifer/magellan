@@ -9,9 +9,10 @@
             },
             "Orbit": 0,
             "Period": 0,
-            "Type": "star",
+            "Type": "warpstar",
             "Size": 20,
-            "Mass": 50
+            "Mass": 0,
+            "WarpSpawnDistance": 200
         },
         {
             "ID": "alpha",
@@ -22,9 +23,10 @@
             },
             "Orbit": 0,
             "Period": 0,
-            "Type": "star",
+            "Type": "warpstar",
             "Size": 20,
-            "Mass": 50
+            "Mass": 0,
+            "WarpSpawnDistance": 200
         }
      ]
 }

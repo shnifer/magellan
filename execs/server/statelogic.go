@@ -2,14 +2,54 @@ package main
 
 import (
 	. "github.com/Shnifer/magellan/commons"
+	"github.com/Shnifer/magellan/v2"
 	"os"
 	"time"
 )
 
-func generateCommonData(prevCommon CommonData, newState State) CommonData {
+func generateCommonData(common CommonData, stateData StateData, newState, prevState State) CommonData {
 	defer LogFunc("generateCommonData " + newState.StateID + " " + newState.GalaxyID + " " + newState.ShipID)()
-	prevCommon.PilotData.SessionTime = time.Now().Sub(StartDateTime).Seconds()
-	return prevCommon
+
+	common.PilotData.SessionTime = time.Now().Sub(StartDateTime).Seconds()
+
+	switch newState.StateID {
+	case STATE_warp:
+		common = toWarpCommonData(common, stateData, newState, prevState)
+	}
+
+	return common
+}
+
+func toWarpCommonData(common CommonData, stateData StateData, newState, prevState State) CommonData {
+	fromSystem := prevState.GalaxyID
+	var systemPoint GalaxyPoint
+	var found bool
+	for _, v := range stateData.Galaxy.Points {
+		if v.ID == fromSystem {
+			systemPoint = v
+			found = true
+			break
+		}
+	}
+	if !found {
+		Log(LVL_ERROR, "toWarpCommonData: can't find system", fromSystem, "on warp map!")
+		return common
+	}
+
+	pos := systemPoint.Pos
+	ang := common.PilotData.Ship.Ang
+	spawnRange := stateData.Galaxy.SpawnDistance
+
+	ship := RBData{
+		Pos:    pos.AddMul(v2.InDir(ang), spawnRange),
+		Vel:    v2.InDir(ang).Mul(DEFVAL.MinWarpSpeed * 1.1),
+		AngVel: 0,
+		Ang:    ang,
+	}
+
+	common.PilotData.Ship = ship
+
+	return common
 }
 
 func (rd *roomServer) IsValidState(roomName string, stateStr string) bool {

@@ -11,8 +11,9 @@ import (
 const DefValPath = "res/server/"
 
 type tDefVals struct {
-	Port        string
-	NeededRoles []string
+	Port         string
+	NeededRoles  []string
+	MinWarpSpeed float64
 }
 
 var DEFVAL tDefVals

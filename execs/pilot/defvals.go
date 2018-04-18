@@ -19,7 +19,6 @@ type tDefVals struct {
 	MemProfFileName string
 
 	GravityConst float64
-	GravityZ2    float64
 }
 
 var DEFVAL tDefVals
@@ -32,7 +31,6 @@ func setDefDef() {
 		WinW:         1024,
 		WinH:         768,
 		GravityConst: 100,
-		GravityZ2:    100,
 	}
 }
 

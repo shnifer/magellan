@@ -43,6 +43,9 @@ type BSP struct {
 }
 
 type Galaxy struct {
+	//for systems - range of "system borders"
+	SpawnDistance float64
+
 	Points []GalaxyPoint
 }
 
@@ -59,6 +62,10 @@ type GalaxyPoint struct {
 	Size float64
 
 	Mass float64
+
+	//for warp points
+	WarpSpawnDistance float64
+	WarpInDistance    float64
 }
 
 func (sd StateData) Encode() []byte {

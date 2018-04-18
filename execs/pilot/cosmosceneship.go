@@ -53,11 +53,12 @@ func (s *cosmoScene) procControlForward(dt float64) {
 }
 
 func (s *cosmoScene) procShipGravity(dt float64) {
-	var F v2.V2
+	var sumF v2.V2
 	for _, obj := range s.objects {
-		V := obj.Pos.Sub(Data.PilotData.Ship.Pos)
-		D2 := V.LenSqr() + DEFVAL.GravityZ2
-		F = F.Add(V.Normed().Mul(obj.Mass * DEFVAL.GravityConst / D2))
+		v := obj.Pos.Sub(Data.PilotData.Ship.Pos)
+		len2 := v.LenSqr()
+		F := Gravity(obj.Mass, len2, obj.Size/2)
+		sumF.DoAddMul(v.Normed(), F)
 	}
-	Data.PilotData.Ship.Vel.DoAddMul(F, dt)
+	Data.PilotData.Ship.Vel.DoAddMul(sumF, dt)
 }

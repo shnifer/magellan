@@ -72,9 +72,11 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 	rd.mu.Lock()
 	defer rd.mu.Unlock()
 
+	prevState := rd.curState[room]
 	state := State{}.Decode(stateStr)
 	rd.curState[room] = state
-	rd.stateData[room] = loadStateData(state)
+	stateData := loadStateData(state)
+	rd.stateData[room] = stateData
 
 	commonData, ok := rd.commonData[room]
 	if !ok {
@@ -82,7 +84,7 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 		rd.commonData[room] = commonData
 	}
 
-	rd.commonData[room] = generateCommonData(commonData, state)
+	rd.commonData[room] = generateCommonData(commonData, stateData, state, prevState)
 }
 
 func (rd *roomServer) GetStateData(room string) []byte {
