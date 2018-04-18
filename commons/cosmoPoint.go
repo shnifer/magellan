@@ -26,7 +26,7 @@ type CosmoPoint struct {
 
 func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 	tex, col := GetAtlasTexColor(pd.Type)
-	sprite := graph.NewSprite(tex, cam, false)
+	sprite := graph.NewSprite(tex, cam, false, false)
 	sprite.SetColor(col)
 	sprite.SetSize(pd.Size*2, pd.Size*2)
 	res := CosmoPoint{

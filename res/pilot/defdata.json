@@ -6,5 +6,6 @@
     "WinH": 768 ,
     "CpuProfFileName": "pilotcpu.prof",
     "MemProfFileName": "pilotmem.prof",
-    "GravityConst": 10000
+    "GravityConst": 10000,
+    "WarpGravityConst": 1000
 }

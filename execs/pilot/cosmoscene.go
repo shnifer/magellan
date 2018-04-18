@@ -10,6 +10,9 @@ import (
 	"golang.org/x/image/colornames"
 )
 
+const trailPeriod = 0.25
+const trailLifeTime = 10
+
 type cosmoScene struct {
 	ship    *graph.Sprite
 	caption *graph.Text
@@ -19,8 +22,14 @@ type cosmoScene struct {
 	idMap   map[string]*CosmoPoint
 
 	//control
-	thrustLevel      float64
-	maneurLevel      float64
+	thrustLevel float64
+	maneurLevel float64
+
+	//trail
+	trailT float64
+	trail  *graph.SpriteArray
+
+	//hud
 	thrustLevelHUD   *graph.Sprite
 	thrustControlHUD *graph.Sprite
 	turnLevelHUD     *graph.Sprite
@@ -35,7 +44,7 @@ func newCosmoScene() *cosmoScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := graph.NewSprite(GetAtlasTex("ship"), cam, true)
+	ship := graph.NewSprite(GetAtlasTex("ship"), cam, true, false)
 	ship.SetSize(50, 50)
 
 	res := cosmoScene{
@@ -46,19 +55,21 @@ func newCosmoScene() *cosmoScene {
 		idMap:   make(map[string]*CosmoPoint),
 	}
 
+	res.trail = graph.NewSpriteArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
+
 	arrowTex := GetAtlasTex("arrow")
-	res.thrustLevelHUD = graph.NewSprite(arrowTex, nil, false)
+	res.thrustLevelHUD = graph.NewSpriteHUD(arrowTex)
 	res.thrustLevelHUD.SetSize(50, 50)
 	res.thrustLevelHUD.SetAng(180)
 	res.thrustLevelHUD.SetAlpha(0.7)
-	res.thrustControlHUD = graph.NewSprite(arrowTex, nil, false)
+	res.thrustControlHUD = graph.NewSpriteHUD(arrowTex)
 	res.thrustControlHUD.SetSize(50, 50)
 	res.thrustControlHUD.SetAlpha(0.5)
-	res.turnLevelHUD = graph.NewSprite(arrowTex, nil, false)
+	res.turnLevelHUD = graph.NewSpriteHUD(arrowTex)
 	res.turnLevelHUD.SetSize(50, 50)
 	res.turnLevelHUD.SetAng(-90)
 	res.turnLevelHUD.SetAlpha(0.7)
-	res.turnControlHUD = graph.NewSprite(arrowTex, nil, false)
+	res.turnControlHUD = graph.NewSpriteHUD(arrowTex)
 	res.turnControlHUD.SetSize(50, 50)
 	res.turnControlHUD.SetAng(90)
 	res.turnControlHUD.SetAlpha(0.5)
@@ -73,6 +84,8 @@ func (s *cosmoScene) Init() {
 	s.idMap = make(map[string]*CosmoPoint)
 	s.thrustLevel = 0
 	s.maneurLevel = 0
+	s.trailT = 0
+	s.trail.Clear()
 
 	stateData := Data.GetStateData()
 
@@ -130,6 +143,18 @@ func (s *cosmoScene) Update(dt float64) {
 
 	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
 
+	s.trailT += dt
+	if s.trailT > trailPeriod {
+		s.trailT -= trailPeriod
+
+		s.trail.Add(graph.ArrayElem{
+			Size:     5,
+			Pos:      Data.PilotData.Ship.Pos,
+			LifeTime: trailLifeTime,
+		})
+	}
+	s.trail.Update(dt)
+
 	s.camRecalc()
 }
 func (s *cosmoScene) camRecalc() {
@@ -146,6 +171,8 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	for _, co := range s.objects {
 		co.Draw(image)
 	}
+
+	s.trail.Draw(image)
 
 	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 	s.ship.Draw(image)

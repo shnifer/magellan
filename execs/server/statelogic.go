@@ -38,7 +38,7 @@ func toWarpCommonData(common CommonData, stateData StateData, newState, prevStat
 
 	pos := systemPoint.Pos
 	ang := common.PilotData.Ship.Ang
-	spawnRange := stateData.Galaxy.SpawnDistance
+	spawnRange := systemPoint.WarpSpawnDistance
 
 	ship := RBData{
 		Pos:    pos.AddMul(v2.InDir(ang), spawnRange),

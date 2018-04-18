@@ -35,11 +35,13 @@ type Sprite struct {
 	cam *Camera
 	//FixedSize
 	denyCamScale bool
+	//FixedAngle
+	denyCamAngle bool
 	//number of sprite from sheet
 	spriteN int
 }
 
-func NewSprite(tex Tex, cam *Camera, denyCamScale bool) *Sprite {
+func NewSprite(tex Tex, cam *Camera, denyCamScale, denyCamAngle bool) *Sprite {
 	op := &ebiten.DrawImageOptions{}
 	op.Filter = tex.filter
 	srcRect := image.Rect(0, 0, tex.sw, tex.sh)
@@ -57,6 +59,7 @@ func NewSprite(tex Tex, cam *Camera, denyCamScale bool) *Sprite {
 		alpha:        1,
 		cam:          cam,
 		denyCamScale: denyCamScale,
+		denyCamAngle: denyCamAngle,
 	}
 
 	res.calcGeom()
@@ -64,12 +67,17 @@ func NewSprite(tex Tex, cam *Camera, denyCamScale bool) *Sprite {
 	return res
 }
 
-func NewSpriteFromFile(filename string, filter ebiten.Filter, sw, sh int, count int, cam *Camera, denyCamScale bool) (*Sprite, error) {
+//without cam
+func NewSpriteHUD(tex Tex) *Sprite {
+	return NewSprite(tex, nil, false, false)
+}
+
+func NewSpriteFromFile(filename string, filter ebiten.Filter, sw, sh int, count int, cam *Camera, denyCamScale, denyCamAngle bool) (*Sprite, error) {
 	tex, err := GetTex(filename, filter, sw, sh, count)
 	if err != nil {
 		return nil, err
 	}
-	return NewSprite(tex, cam, denyCamScale), nil
+	return NewSprite(tex, cam, denyCamScale, denyCamAngle), nil
 }
 
 func (s *Sprite) recalcColorM() {
@@ -151,6 +159,9 @@ func (s *Sprite) ImageOp() (*ebiten.Image, *ebiten.DrawImageOptions) {
 		G.Scale(1, -1)
 		if s.denyCamScale {
 			G.Scale(1/s.cam.Scale, 1/s.cam.Scale)
+		}
+		if s.denyCamAngle {
+			G.Rotate(s.cam.AngleDeg * Deg2Rad)
 		}
 	}
 	G.Concat(s.g2)
