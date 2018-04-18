@@ -10,7 +10,7 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-type cosmoScene struct {
+type warpScene struct {
 	ship    *graph.Sprite
 	caption *graph.Text
 	cam     *graph.Camera
@@ -27,8 +27,8 @@ type cosmoScene struct {
 	turnControlHUD   *graph.Sprite
 }
 
-func newCosmoScene() *cosmoScene {
-	caption := graph.NewText("Fly scene", Fonts[Face_cap], colornames.Aliceblue)
+func newWarpScene() *warpScene {
+	caption := graph.NewText("Warp scene", Fonts[Face_cap], colornames.Aliceblue)
 	caption.SetPosPivot(graph.ScrP(0.1, 0.1), graph.TopLeft())
 
 	cam := graph.NewCamera()
@@ -38,7 +38,7 @@ func newCosmoScene() *cosmoScene {
 	ship := graph.NewSprite(GetAtlasTex("ship"), cam, true)
 	ship.SetSize(50, 50)
 
-	res := cosmoScene{
+	res := warpScene{
 		caption: caption,
 		ship:    ship,
 		cam:     cam,
@@ -66,7 +66,7 @@ func newCosmoScene() *cosmoScene {
 	return &res
 }
 
-func (s *cosmoScene) Init() {
+func (s *warpScene) Init() {
 	defer LogFunc("cosmoScene.Init")()
 
 	s.objects = s.objects[:0]
@@ -89,7 +89,7 @@ func (s *cosmoScene) Init() {
 	}
 }
 
-func (s *cosmoScene) Update(dt float64) {
+func (s *warpScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
 	Data.PilotData.SessionTime += dt
 	sessionTime := Data.PilotData.SessionTime
@@ -111,10 +111,6 @@ func (s *cosmoScene) Update(dt float64) {
 		Data.PilotData.Ship.Pos = v2.V2{X: 100, Y: 100}
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
-		s.toWarp()
-	}
-
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
 		s.cam.Scale *= (1 + dt)
 	}
@@ -132,13 +128,13 @@ func (s *cosmoScene) Update(dt float64) {
 
 	s.camRecalc()
 }
-func (s *cosmoScene) camRecalc() {
+func (s *warpScene) camRecalc() {
 	s.cam.Pos = Data.PilotData.Ship.Pos
 	s.cam.AngleDeg = Data.PilotData.Ship.Ang
 	s.cam.Recalc()
 }
 
-func (s *cosmoScene) Draw(image *ebiten.Image) {
+func (s *warpScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
 	s.caption.Draw(image)
@@ -156,15 +152,8 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	s.turnControlHUD.Draw(image)
 }
 
-func (s *cosmoScene) OnCommand(command string) {
+func (s *warpScene) OnCommand(command string) {
 }
 
-func (*cosmoScene) Destroy() {
-}
-
-func (s *cosmoScene) toWarp() {
-	state := Data.State
-	state.StateID = STATE_warp
-	state.GalaxyID = WARP_Galaxy_ID
-	Client.RequestNewState(state.Encode())
+func (*warpScene) Destroy() {
 }

@@ -1,0 +1,30 @@
+{
+    "Points": [
+        {
+            "ID": "solar",
+            "ParentID": "",
+            "Pos": {
+                "X": 1000,
+                "Y": 150
+            },
+            "Orbit": 0,
+            "Period": 0,
+            "Type": "star",
+            "Size": 20,
+            "Mass": 50
+        },
+        {
+            "ID": "alpha",
+            "ParentID": "",
+            "Pos": {
+                "X": -200,
+                "Y": -1500
+            },
+            "Orbit": 0,
+            "Period": 0,
+            "Type": "star",
+            "Size": 20,
+            "Mass": 50
+        }
+     ]
+}

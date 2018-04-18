@@ -1,0 +1,82 @@
+{
+    "Points": [
+        {
+            "ID": "AlphaCentauri",
+            "ParentID": "",
+            "Pos": {
+                "X": 0,
+                "Y": 0
+            },
+            "Orbit": 0,
+            "Period": 0,
+            "Type": "star",
+            "Size": 80,
+            "Mass": 50
+        },
+        {
+            "ID": "Alpha1",
+            "ParentID": "AlphaCentauri",
+            "Pos": {
+                "X": 0,
+                "Y": 0
+            },
+            "Orbit": 400,
+            "Period": 40,
+            "Type": "planet",
+            "Size": 20,
+            "Mass": 20
+        },
+        {
+            "ID": "Alpha2",
+            "ParentID": "AlphaCentauri",
+            "Pos": {
+                "X": 0,
+                "Y": 0
+            },
+            "Orbit": 410,
+            "Period": 41,
+            "Type": "planet",
+            "Size": 20,
+            "Mass": 20
+        },
+        {
+            "ID": "Alpha3",
+            "ParentID": "AlphaCentauri",
+            "Pos": {
+                "X": 0,
+                "Y": 0
+            },
+            "Orbit": 420,
+            "Period": 42,
+            "Type": "planet",
+            "Size": 20,
+            "Mass": 20
+        },
+        {
+            "ID": "Alpha4",
+            "ParentID": "AlphaCentauri",
+            "Pos": {
+                "X": 0,
+                "Y": 0
+            },
+            "Orbit": 390,
+            "Period": 39,
+            "Type": "planet",
+            "Size": 20,
+            "Mass": 20
+        },
+        {
+            "ID": "Alpha5",
+            "ParentID": "AlphaCentauri",
+            "Pos": {
+                "X": 0,
+                "Y": 0
+            },
+            "Orbit": 380,
+            "Period": 38,
+            "Type": "planet",
+            "Size": 20,
+            "Mass": 20
+        }
+    ]
+}
