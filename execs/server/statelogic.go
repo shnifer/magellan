@@ -68,7 +68,7 @@ func (rd *roomServer) IsValidState(roomName string, stateStr string) bool {
 	}
 
 	if !res {
-		server.AddCommand(roomName, CMD_STATECHANGRFAIL)
+		server.AddCommand(roomName, CMD_STATECHANGEFAIL)
 	}
 
 	return res

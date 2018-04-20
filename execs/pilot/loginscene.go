@@ -103,7 +103,7 @@ func (p *LoginScene) tryToStartFly() {
 
 func (p *LoginScene) OnCommand(command string) {
 	defer LogFunc("LoginScene.OnCommand")()
-	if command == CMD_STATECHANGRFAIL {
+	if command == CMD_STATECHANGEFAIL {
 		p.lastErrTime = time.Now()
 	}
 }

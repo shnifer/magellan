@@ -21,7 +21,7 @@ const (
 )
 
 const (
-	CMD_STATECHANGRFAIL = "FailedStateChange"
+	CMD_STATECHANGEFAIL = "FailedStateChange"
 )
 
 var (
