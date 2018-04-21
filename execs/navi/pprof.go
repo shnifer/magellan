@@ -1,12 +1,11 @@
 package main
 
 import (
-	"os"
 	"log"
-	"runtime/pprof"
+	"os"
 	"runtime"
+	"runtime/pprof"
 )
-
 
 func startProfile() {
 	cpufn := DEFVAL.CpuProfFileName
@@ -41,4 +40,3 @@ func stopProfile() {
 		f.Close()
 	}
 }
-

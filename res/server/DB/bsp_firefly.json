@@ -23,5 +23,20 @@
     "Strafe_slow": 0,
     "Maneur_heat_capacity": 0,
     "Maneur_heat_prod": 0,
-    "Maneur_heat_sink": 0
+    "Maneur_heat_sink": 0,
+    "Radar_range_min": 0,
+    "Radar_range_max": 0,
+    "Radar_angle_min": 0,
+    "Radar_angle_max": 0,
+    "Radar_angle_change": 0,
+    "Radar_range_change": 0,
+    "Scan_range": 200,
+    "Scan_speed": 0.5,
+    "Sonar_range_min": 0,
+    "Sonar_range_max": 0,
+    "Sonar_angle_min": 0,
+    "Sonar_angle_max": 0,
+    "Sonar_angle_change": 0,
+    "Sonar_range_change": 0,
+    "Sonar_rotate_speed": 0
 }

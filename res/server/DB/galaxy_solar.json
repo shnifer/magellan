@@ -12,7 +12,8 @@
             "Period": 0,
             "Type": "star",
             "Size": 50,
-            "Mass": 50
+            "Mass": 50,
+            "ScanData": "SOLAROLOGY!"
         },
         {
             "ID": "Earth",

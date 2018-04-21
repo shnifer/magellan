@@ -40,6 +40,23 @@ type BSP struct {
 	Maneur_heat_capacity,
 	Maneur_heat_prod,
 	Maneur_heat_sink float64
+
+	Radar_range_min,
+	Radar_range_max,
+	Radar_angle_min,
+	Radar_angle_max,
+	Radar_angle_change,
+	Radar_range_change,
+	Scan_range,
+	Scan_speed float64
+
+	Sonar_range_min,
+	Sonar_range_max,
+	Sonar_angle_min,
+	Sonar_angle_max,
+	Sonar_angle_change,
+	Sonar_range_change,
+	Sonar_rotate_speed float64
 }
 
 type Galaxy struct {
@@ -66,6 +83,8 @@ type GalaxyPoint struct {
 	//for warp points
 	WarpSpawnDistance float64
 	WarpInDistance    float64
+
+	ScanData string
 }
 
 func (sd StateData) Encode() []byte {

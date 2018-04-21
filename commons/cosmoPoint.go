@@ -9,6 +9,8 @@ import (
 type CosmoPoint struct {
 	Sprite *graph.Sprite
 
+	ID string
+
 	Pos  v2.V2
 	Size float64
 
@@ -22,6 +24,8 @@ type CosmoPoint struct {
 	lastT      float64
 
 	Mass float64
+
+	ScanData string
 }
 
 func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
@@ -31,12 +35,14 @@ func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 	sprite.SetSize(pd.Size*2, pd.Size*2)
 	res := CosmoPoint{
 		Sprite:     sprite,
+		ID:         pd.ID,
 		Pos:        pd.Pos,
 		Size:       pd.Size,
 		Orbit:      pd.Orbit,
 		AngVel:     360 / pd.Period,
 		Mass:       pd.Mass,
 		SpinPeriod: 3.0 / float64(sprite.SpritesCount()),
+		ScanData:   pd.ScanData,
 	}
 	res.recalcSprite()
 	return &res

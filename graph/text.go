@@ -16,6 +16,10 @@ func Center() v2.V2 {
 	return v2.V2{X: 0.5, Y: 0.5}
 }
 
+func MiddleBottom() v2.V2 {
+	return v2.V2{X: 0.5, Y: 1}
+}
+
 type Text struct {
 	//common
 	text   string

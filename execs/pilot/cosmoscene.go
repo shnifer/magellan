@@ -18,6 +18,8 @@ type cosmoScene struct {
 	caption *graph.Text
 	cam     *graph.Camera
 
+	naviMarker *graph.Sprite
+
 	objects []*CosmoPoint
 	idMap   map[string]*CosmoPoint
 
@@ -47,12 +49,16 @@ func newCosmoScene() *cosmoScene {
 	ship := graph.NewSprite(GetAtlasTex("ship"), cam, true, false)
 	ship.SetSize(50, 50)
 
+	marker := graph.NewSprite(GetAtlasTex("marker"), cam, true, true)
+	marker.SetPivot(graph.MiddleBottom())
+
 	res := cosmoScene{
-		caption: caption,
-		ship:    ship,
-		cam:     cam,
-		objects: make([]*CosmoPoint, 0),
-		idMap:   make(map[string]*CosmoPoint),
+		caption:    caption,
+		ship:       ship,
+		cam:        cam,
+		naviMarker: marker,
+		objects:    make([]*CosmoPoint, 0),
+		idMap:      make(map[string]*CosmoPoint),
 	}
 
 	res.trail = graph.NewSpriteArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
@@ -173,6 +179,11 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	}
 
 	s.trail.Draw(image)
+
+	if Data.NaviData.ActiveMarker {
+		s.naviMarker.SetPos(Data.NaviData.MarkerPos)
+		s.naviMarker.Draw(image)
+	}
 
 	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 	s.ship.Draw(image)

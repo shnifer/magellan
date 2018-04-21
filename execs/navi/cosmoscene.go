@@ -3,7 +3,9 @@ package main
 import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
+	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 )
 
@@ -14,6 +16,10 @@ type cosmoScene struct {
 
 	objects []*CosmoPoint
 	idMap   map[string]*CosmoPoint
+
+	scanner *scanner
+
+	naviMarkerT float64
 }
 
 func newCosmoScene() *cosmoScene {
@@ -39,8 +45,11 @@ func newCosmoScene() *cosmoScene {
 func (s *cosmoScene) Init() {
 	defer LogFunc("cosmoScene.Init")()
 
-	s.objects = s.objects[:0]
 	stateData := Data.GetStateData()
+
+	s.objects = s.objects[:0]
+	s.naviMarkerT = 0
+	s.scanner = newScanner(s.cam)
 
 	for _, pd := range stateData.Galaxy.Points {
 		cosmoPoint := NewCosmoPoint(pd, s.cam)
@@ -57,6 +66,15 @@ func (s *cosmoScene) Init() {
 
 func (s *cosmoScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		mousex, mousey := ebiten.CursorPosition()
+		s.procMouseClick(v2.V2{X: float64(mousex), Y: float64(mousey)})
+	}
+	s.naviMarkerT -= dt
+	if s.naviMarkerT < 0 {
+		s.naviMarkerT = 0
+		Data.NaviData.ActiveMarker = false
+	}
 
 	Data.PilotData.SessionTime += dt
 	sessionTime := Data.PilotData.SessionTime
@@ -70,6 +88,8 @@ func (s *cosmoScene) Update(dt float64) {
 	if ebiten.IsKeyPressed(ebiten.KeyE) {
 		s.cam.Scale /= (1 + dt)
 	}
+
+	s.scanner.update(dt)
 
 	//PilotData Rigid Body emulation
 	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
@@ -85,9 +105,23 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	}
 
 	s.caption.Draw(image)
+	s.scanner.Draw(image)
 	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 	img, op := s.ship.ImageOp()
 	image.DrawImage(img, op)
+}
+
+func (s *cosmoScene) procMouseClick(scrPos v2.V2) {
+	worldPos := s.cam.UnApply(scrPos)
+	for _, obj := range s.objects {
+		if worldPos.Sub(obj.Pos).LenSqr() < (obj.Size * obj.Size) {
+			s.scanner.clicked(obj)
+			return
+		}
+	}
+	Data.NaviData.ActiveMarker = true
+	Data.NaviData.MarkerPos = worldPos
+	s.naviMarkerT = DEFVAL.NaviMarketDuration
 }
 
 func (s *cosmoScene) OnCommand(command string) {

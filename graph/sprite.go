@@ -109,8 +109,13 @@ func (s *Sprite) SetSize(x, y float64) {
 	s.dirty = true
 }
 
-func (s *Sprite) SetPivot(pivot v2.V2) {
-	s.pivot = pivot
+//pivotPartial is [0..1,0..1] vector of pivot point in parts of image size
+func (s *Sprite) SetPivot(pivotPartial v2.V2) {
+	w, h := s.tex.image.Size()
+	s.pivot = v2.V2{
+		X: pivotPartial.X * float64(w),
+		Y: pivotPartial.Y * float64(h),
+	}
 	s.dirty = true
 }
 

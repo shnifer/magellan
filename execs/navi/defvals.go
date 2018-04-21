@@ -17,17 +17,20 @@ type tDefVals struct {
 
 	CpuProfFileName string
 	MemProfFileName string
+
+	NaviMarketDuration float64
 }
 
 var DEFVAL tDefVals
 
 func setDefDef() {
 	DEFVAL = tDefVals{
-		Port: "http://localhost:8000",
-		Room: "room101",
-		Role: commons.ROLE_Navi,
-		WinW: 1024,
-		WinH: 768,
+		Port:               "http://localhost:8000",
+		Room:               "room101",
+		Role:               commons.ROLE_Navi,
+		WinW:               1024,
+		WinH:               768,
+		NaviMarketDuration: 5.0,
 	}
 }
 
