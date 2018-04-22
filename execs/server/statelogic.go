@@ -48,6 +48,7 @@ func toWarpCommonData(common CommonData, stateData StateData, newState, prevStat
 	}
 
 	common.PilotData.Ship = ship
+	common.NaviData.SonarDir = ship.Ang
 
 	return common
 }

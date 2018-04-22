@@ -32,11 +32,11 @@
     "Radar_range_change": 0,
     "Scan_range": 200,
     "Scan_speed": 0.5,
-    "Sonar_range_min": 0,
-    "Sonar_range_max": 0,
-    "Sonar_angle_min": 0,
-    "Sonar_angle_max": 0,
-    "Sonar_angle_change": 0,
-    "Sonar_range_change": 0,
-    "Sonar_rotate_speed": 0
+    "Sonar_range_min": 100,
+    "Sonar_range_max": 1000,
+    "Sonar_angle_min": 10,
+    "Sonar_angle_max": 90,
+    "Sonar_angle_change": 30,
+    "Sonar_range_change": 200,
+    "Sonar_rotate_speed": 90
 }

@@ -20,7 +20,10 @@ type warpScene struct {
 
 	//trail
 	trailT float64
-	trail  *graph.SpriteArray
+	trail  *graph.FadingArray
+
+	//sonar
+	sonarSector *graph.Sector
 
 	//control
 	thrustLevel      float64
@@ -42,15 +45,19 @@ func newWarpScene() *warpScene {
 	ship := graph.NewSprite(GetAtlasTex("ship"), cam, true, false)
 	ship.SetSize(50, 50)
 
+	sonarSector := graph.NewSector(cam, false, false)
+	sonarSector.SetColor(colornames.Forestgreen)
+
 	res := warpScene{
-		caption: caption,
-		ship:    ship,
-		cam:     cam,
-		objects: make([]*CosmoPoint, 0),
-		idMap:   make(map[string]*CosmoPoint),
+		caption:     caption,
+		ship:        ship,
+		cam:         cam,
+		objects:     make([]*CosmoPoint, 0),
+		idMap:       make(map[string]*CosmoPoint),
+		sonarSector: sonarSector,
 	}
 
-	res.trail = graph.NewSpriteArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
+	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
 
 	arrowTex := GetAtlasTex("arrow")
 	res.thrustLevelHUD = graph.NewSpriteHUD(arrowTex)
@@ -144,6 +151,12 @@ func (s *warpScene) Update(dt float64) {
 	}
 	s.trail.Update(dt)
 
+	s.sonarSector.SetCenter(Data.PilotData.Ship.Pos)
+	s.sonarSector.SetRadius(Data.NaviData.SonarRange)
+	s.sonarSector.SetAngles(
+		Data.NaviData.SonarDir-Data.NaviData.SonarWide/2,
+		Data.NaviData.SonarDir+Data.NaviData.SonarWide/2)
+
 	s.camRecalc()
 }
 func (s *warpScene) camRecalc() {
@@ -155,7 +168,7 @@ func (s *warpScene) camRecalc() {
 func (s *warpScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
-	s.caption.Draw(image)
+	s.sonarSector.Draw(image)
 
 	for _, co := range s.objects {
 		co.Draw(image)
@@ -170,6 +183,8 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 	s.thrustControlHUD.Draw(image)
 	s.turnLevelHUD.Draw(image)
 	s.turnControlHUD.Draw(image)
+
+	s.caption.Draw(image)
 }
 
 func (s *warpScene) OnCommand(command string) {

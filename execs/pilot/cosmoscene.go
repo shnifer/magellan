@@ -29,7 +29,7 @@ type cosmoScene struct {
 
 	//trail
 	trailT float64
-	trail  *graph.SpriteArray
+	trail  *graph.FadingArray
 
 	//hud
 	thrustLevelHUD   *graph.Sprite
@@ -61,7 +61,7 @@ func newCosmoScene() *cosmoScene {
 		idMap:      make(map[string]*CosmoPoint),
 	}
 
-	res.trail = graph.NewSpriteArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
+	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
 
 	arrowTex := GetAtlasTex("arrow")
 	res.thrustLevelHUD = graph.NewSpriteHUD(arrowTex)

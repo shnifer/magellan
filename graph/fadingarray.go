@@ -14,7 +14,7 @@ type part struct {
 	leftTime float64
 }
 
-func (sa *SpriteArray) newPart(elem ArrayElem) (p part) {
+func (sa *FadingArray) newPart(elem ArrayElem) (p part) {
 	p.isActive = true
 	p.leftTime = elem.LifeTime
 	sprite := NewSprite(sa.tex, sa.cam, sa.denyScale, sa.denyAngle)
@@ -33,7 +33,7 @@ type ArrayElem struct {
 	LifeTime float64
 }
 
-type SpriteArray struct {
+type FadingArray struct {
 	tex                  Tex
 	cam                  *Camera
 	denyScale, denyAngle bool
@@ -44,8 +44,8 @@ type SpriteArray struct {
 	used int
 }
 
-func NewSpriteArray(tex Tex, cap int, cam *Camera, denyCamScale, denyCamAngle bool) (res *SpriteArray) {
-	res = new(SpriteArray)
+func NewFadingArray(tex Tex, cap int, cam *Camera, denyCamScale, denyCamAngle bool) (res *FadingArray) {
+	res = new(FadingArray)
 	res.tex = tex
 	res.cap = cap
 	res.cam = cam
@@ -55,7 +55,7 @@ func NewSpriteArray(tex Tex, cap int, cam *Camera, denyCamScale, denyCamAngle bo
 	return res
 }
 
-func (sa *SpriteArray) findNextInd() int {
+func (sa *FadingArray) findNextInd() int {
 
 	if sa.used == sa.cap {
 		sa.used--
@@ -68,13 +68,13 @@ func (sa *SpriteArray) findNextInd() int {
 	return sa.cur
 }
 
-func (sa *SpriteArray) Add(elem ArrayElem) {
+func (sa *FadingArray) Add(elem ArrayElem) {
 	ind := sa.findNextInd()
 	sa.array[ind] = sa.newPart(elem)
 	sa.used++
 }
 
-func (sa *SpriteArray) Update(dt float64) {
+func (sa *FadingArray) Update(dt float64) {
 	for i := range sa.array {
 		if !sa.array[i].isActive {
 			continue
@@ -89,7 +89,7 @@ func (sa *SpriteArray) Update(dt float64) {
 	}
 }
 
-func (sa *SpriteArray) Draw(img *ebiten.Image) {
+func (sa *FadingArray) Draw(img *ebiten.Image) {
 	for _, part := range sa.array {
 		if !part.isActive {
 			continue
@@ -98,7 +98,7 @@ func (sa *SpriteArray) Draw(img *ebiten.Image) {
 	}
 }
 
-func (sa *SpriteArray) Clear() {
+func (sa *FadingArray) Clear() {
 	sa.used = 0
 	sa.cur = 0
 	for i := range sa.array {

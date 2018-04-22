@@ -19,8 +19,14 @@ type PilotData struct {
 }
 
 type NaviData struct {
+	//cosmo
 	ActiveMarker bool
 	MarkerPos    v2.V2
+
+	//warp
+	SonarDir   float64
+	SonarRange float64
+	SonarWide  float64
 }
 type CargoData struct {
 	TurboBoost bool

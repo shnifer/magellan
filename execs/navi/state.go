@@ -26,9 +26,12 @@ func createScenes() {
 		"waiting for login on other terminal")
 
 	cosmoScene := newCosmoScene()
+	warpScene := newWarpScene()
+
 	Scenes.Install(scene_pause, pauseScene, true)
 	Scenes.Install(scene_login, loginScene, true)
 	Scenes.Install(scene_cosmo, cosmoScene, false)
+	Scenes.Install(scene_warp, warpScene, false)
 	Scenes.SetAsPauseScene(scene_pause)
 	Scenes.Activate(scene_pause, false)
 	Scenes.WaitDone()

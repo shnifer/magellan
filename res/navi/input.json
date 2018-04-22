@@ -1,26 +1,52 @@
 [
     {
-        "InputName": "forward",
-        "InputType": "KP",
-        "Key": 32
+        "InputName": "sonarrange",
+        "InputType": "JA",
+        "JoyID": 0,
+        "MinAxis": 0.2,
+        "JoyAxis": 1
     },
     {
-        "InputName": "turn",
+        "InputName": "sonarrange",
+        "InputType": "KP",
+        "Key": 32,
+        "Val": 1
+    },
+    {
+        "InputName": "sonarrange",
+        "InputType": "KP",
+        "Key": 28,
+        "Val": -1
+    },
+    {
+        "InputName": "sonarturn",
         "InputType": "JA",
         "JoyID": 0,
         "MinAxis": 0.2,
         "JoyAxis": 0
     },
     {
-        "InputName": "turn",
+        "InputName": "sonarturn",
         "InputType": "KP",
         "Key": 10,
+        "Val": 1
+    },
+    {
+        "InputName": "sonarturn",
+        "InputType": "KP",
+        "Key": 13,
         "Val": -1
     },
     {
-        "InputName": "turn",
+        "InputName": "sonarwide",
         "InputType": "KP",
-        "Key": 13,
+        "Key": 26,
         "Val": 1
+    },
+    {
+        "InputName": "sonarwide",
+        "InputType": "KP",
+        "Key": 14,
+        "Val": -1
     }
 ]
