@@ -39,6 +39,7 @@ func getStateData(stateData []byte) {
 		panic("Weird state stateData:" + err.Error())
 	}
 	Data.SetStateData(sd)
+	Data.WaitDone()
 
 	//first load data in scene, and only than count as done - so Client reports new state ready
 	initSceneState()
@@ -56,7 +57,7 @@ func commonRecv(buf []byte, readOwnPart bool) {
 		panic("commonRecv: Can't decode CommonData " + err.Error())
 	}
 	if !readOwnPart {
-		cd.ClearRole(DEFVAL.Role)
+		cd = cd.WithoutRole(DEFVAL.Role)
 	}
 	Data.LoadCommonData(cd)
 }

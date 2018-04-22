@@ -61,7 +61,7 @@ func commonRecv(buf []byte, readOwnPart bool) {
 		panic("commonRecv: Can't decode CommonData " + err.Error())
 	}
 	if !readOwnPart {
-		cd.ClearRole(DEFVAL.Role)
+		cd = cd.WithoutRole(DEFVAL.Role)
 	}
 	Data.LoadCommonData(cd)
 	if readOwnPart {

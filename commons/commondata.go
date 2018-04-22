@@ -79,7 +79,7 @@ func (cd CommonData) FillNotNil(dest *CommonData) {
 	}
 }
 
-func (cd CommonData) ClearRole(roleName string) CommonData {
+func (cd CommonData) WithoutRole(roleName string) CommonData {
 	switch roleName {
 	case ROLE_Pilot:
 		cd.PilotData = nil
@@ -90,7 +90,7 @@ func (cd CommonData) ClearRole(roleName string) CommonData {
 	case ROLE_Cargo:
 		cd.CargoData = nil
 	default:
-		panic("CommonData.ClearRole: Unknown role " + roleName)
+		panic("CommonData.WithoutRole: Unknown role " + roleName)
 	}
 	return cd
 }
