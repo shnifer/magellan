@@ -2,6 +2,6 @@
     "Port": ":8000",
     "MinWarpSpeed":10,
     "NeededRoles": [
-        "Pilot", "Navi"
+        "Pilot"
     ]
 }

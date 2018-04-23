@@ -78,9 +78,20 @@
     }
   },
   "marker": {
-    "FileName": "marker.png",
+    "FileName": "arrow.png",
     "Sx": 0,
     "Sy": 0,
+    "Color": {
+      "R": 255,
+      "G": 255,
+      "B": 255,
+      "A": 255
+    }
+  },
+  "noise": {
+    "FileName": "noisesheet.png",
+    "Sx": 400,
+    "Sy": 400,
     "Color": {
       "R": 255,
       "G": 255,

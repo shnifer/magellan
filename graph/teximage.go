@@ -43,7 +43,7 @@ func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int, count i
 	}
 	cols, rows := w/sw, h/sh
 	if count == 0 {
-		count = 1
+		count = cols * rows
 	}
 	if count > cols*rows {
 		panic("TexFromImage: count>cols*rows")

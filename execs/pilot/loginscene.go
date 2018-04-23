@@ -19,6 +19,10 @@ type LoginScene struct {
 	errorMsg    *graph.Text
 
 	inputText string
+
+	backT      float64
+	dir        int
+	background *graph.CycledSprite
 }
 
 func NewLoginScene() *LoginScene {
@@ -32,10 +36,17 @@ func NewLoginScene() *LoginScene {
 
 	errorMsg := graph.NewText(errorText, face, colornames.Indianred)
 	errorMsg.SetPosPivot(graph.ScrP(0.5, 0.7), graph.Center())
+
+	back := graph.NewSprite(GetAtlasTex("noise"), nil, false, false)
+	back.SetPivot(graph.TopLeft())
+	back.SetSize(float64(WinW), float64(WinH))
+
 	return &LoginScene{
-		face:     face,
-		question: question,
-		errorMsg: errorMsg,
+		face:       face,
+		question:   question,
+		errorMsg:   errorMsg,
+		background: graph.NewCycledSprite(back, graph.Cycle_PingPong, 24),
+		dir:        1,
 	}
 }
 
@@ -45,7 +56,7 @@ func (p *LoginScene) Init() {
 	p.lastErrTime = time.Time{}
 }
 
-func (p *LoginScene) Update(float64) {
+func (p *LoginScene) Update(dt float64) {
 	defer LogFunc("LoginScene.Update")()
 	var changed bool
 
@@ -69,12 +80,16 @@ func (p *LoginScene) Update(float64) {
 		p.text = graph.NewText(p.inputText, p.face, colornames.White)
 		p.text.SetPosPivot(graph.ScrP(0.5, 0.5), graph.Center())
 	}
+
+	p.background.Update(dt)
 }
 
 func (p *LoginScene) Draw(image *ebiten.Image) {
 	defer LogFunc("LoginScene.Draw")()
 
 	const ErrorShowtime = time.Second * 2
+
+	p.background.Draw(image)
 
 	p.question.Draw(image)
 	p.text.Draw(image)

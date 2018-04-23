@@ -7,7 +7,7 @@ import (
 )
 
 type CosmoPoint struct {
-	Sprite *graph.Sprite
+	Sprite *graph.CycledSprite
 
 	ID string
 
@@ -19,9 +19,7 @@ type CosmoPoint struct {
 	AngVel   float64
 	AngPhase float64
 
-	SpinPeriod float64
-	spinT      float64
-	lastT      float64
+	lastT float64
 
 	Mass float64
 
@@ -33,16 +31,16 @@ func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 	sprite := graph.NewSprite(tex, cam, false, false)
 	sprite.SetColor(col)
 	sprite.SetSize(pd.Size*2, pd.Size*2)
+	cycledSprite := graph.NewCycledSprite(sprite, graph.Cycle_Loop, 20)
 	res := CosmoPoint{
-		Sprite:     sprite,
-		ID:         pd.ID,
-		Pos:        pd.Pos,
-		Size:       pd.Size,
-		Orbit:      pd.Orbit,
-		AngVel:     360 / pd.Period,
-		Mass:       pd.Mass,
-		SpinPeriod: 3.0 / float64(sprite.SpritesCount()),
-		ScanData:   pd.ScanData,
+		Sprite:   cycledSprite,
+		ID:       pd.ID,
+		Pos:      pd.Pos,
+		Size:     pd.Size,
+		Orbit:    pd.Orbit,
+		AngVel:   360 / pd.Period,
+		Mass:     pd.Mass,
+		ScanData: pd.ScanData,
 	}
 	res.recalcSprite()
 	return &res
@@ -56,11 +54,7 @@ func (co *CosmoPoint) Update(sessionTime float64) {
 	dt := sessionTime - co.lastT
 	co.lastT = sessionTime
 
-	co.spinT += dt
-	if co.spinT >= co.SpinPeriod {
-		co.Sprite.NextSprite()
-		co.spinT -= co.SpinPeriod
-	}
+	co.Sprite.Update(dt)
 
 	if co.Parent != nil {
 		angle := co.AngPhase + co.AngVel*sessionTime
