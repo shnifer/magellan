@@ -99,10 +99,10 @@ func calcPixels(frequency, lacunarity, gain float64, octaves int, t float64) []b
 }
 
 func saveSpriteSheet() {
-	const rows = 4
-	const cols = 4
+	const rows = 6
+	const cols = 6
 
-	f, err := os.Create("spritesheet.png")
+	f, err := os.Create("noisesheet.png")
 	if err != nil {
 		panic(err)
 	}
@@ -112,7 +112,7 @@ func saveSpriteSheet() {
 	all := make([]byte, cols*rows*winSize*winSize*4)
 	for col := 0; col < cols; col++ {
 		for row := 0; row < rows; row++ {
-			t := 1.0 * float64(col+row*cols) / float64(rows*cols)
+			t := float64(col+row*cols)/20
 			p := calcPixels(frequency, lacunarity, gain, octaves, t)
 			for y := 0; y < winSize; y++ {
 				for x := 0; x < winSize; x++ {
