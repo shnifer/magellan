@@ -72,8 +72,8 @@ func NewSpriteHUD(tex Tex) *Sprite {
 	return NewSprite(tex, nil, false, false)
 }
 
-func NewSpriteFromFile(filename string, filter ebiten.Filter, sw, sh int, count int, cam *Camera, denyCamScale, denyCamAngle bool) (*Sprite, error) {
-	tex, err := GetTex(filename, filter, sw, sh, count)
+func NewSpriteFromFile(filename string, smoothFilter bool, sw, sh int, count int, cam *Camera, denyCamScale, denyCamAngle bool) (*Sprite, error) {
+	tex, err := GetTex(filename, smoothFilter, sw, sh, count)
 	if err != nil {
 		return nil, err
 	}

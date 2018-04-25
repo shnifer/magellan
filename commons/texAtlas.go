@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/Shnifer/magellan/graph"
-	"github.com/hajimehoshi/ebiten"
 	"io/ioutil"
 )
 
@@ -12,6 +11,7 @@ type TexAtlasRec struct {
 	FileName string
 	Sx, Sy   int
 	Count    int
+	Smooth   bool
 }
 type TexAtlas map[string]TexAtlasRec
 
@@ -40,7 +40,7 @@ func GetAtlasTex(name string) graph.Tex {
 		panic("GetAtlasTex: unknown name " + name)
 	}
 
-	tex, err := graph.GetTex(texPath+rec.FileName, ebiten.FilterLinear, rec.Sx, rec.Sy, rec.Count)
+	tex, err := graph.GetTex(texPath+rec.FileName, rec.Smooth, rec.Sx, rec.Sy, rec.Count)
 	if err != nil {
 		panic(err)
 	}

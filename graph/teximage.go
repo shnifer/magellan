@@ -66,14 +66,26 @@ func init() {
 	texCache = make(map[string]Tex)
 }
 
-func GetTex(filename string, filter ebiten.Filter, sw, sh int, count int) (Tex, error) {
-	if Tex, ok := texCache[filename]; ok {
+func GetTex(filename string, smoothFilter bool, sw, sh int, count int) (Tex, error) {
+	var cacheKey string
+	if smoothFilter {
+		cacheKey = "0" + filename
+	} else {
+		cacheKey = "1" + filename
+	}
+	if Tex, ok := texCache[cacheKey]; ok {
 		return Tex, nil
 	}
+
+	filter := ebiten.FilterDefault
+	if smoothFilter {
+		filter = ebiten.FilterLinear
+	}
+
 	t, err := newTex(filename, filter, sw, sh, count)
 	if err != nil {
 		return Tex{}, err
 	}
-	texCache[filename] = t
+	texCache[cacheKey] = t
 	return t, nil
 }

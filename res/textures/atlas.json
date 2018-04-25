@@ -4,7 +4,7 @@
   "sun": {"FileName": "sun.png"},
   "earth": {"FileName": "earth.png"},
   "planet": {"FileName": "planet_ani.png","Sx": 72,"Sy": 72,"Count": 19},
-  "asteroid": {"FileName": "asteroid.png"},
+  "asteroid": {"FileName": "background.jpg"},
   "arrow": {"FileName": "arrow.png"},
   "warpstar": {"FileName": "particle.png"},
   "trail": {"FileName": "particle.png"},

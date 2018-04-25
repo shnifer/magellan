@@ -6,7 +6,6 @@ import (
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/input"
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"log"
 	"time"
 )
@@ -22,6 +21,8 @@ var (
 var last time.Time
 var Data commons.TData
 
+var ticker <-chan time.Time
+
 func mainLoop(window *ebiten.Image) error {
 	t := time.Now()
 	dt := t.Sub(last).Seconds()
@@ -33,13 +34,12 @@ func mainLoop(window *ebiten.Image) error {
 
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
 
-	if commons.LOG_LEVEL <= commons.LVL_ERROR {
+	select {
+	case <-ticker:
 		fps := ebiten.CurrentFPS()
 		msg := fmt.Sprintf("FPS: %v\ndt = %.2f\n", fps, dt)
-		if ebiten.IsRunningSlowly() {
-			msg = msg + "is running SLOWLY!\n"
-		}
-		ebitenutil.DebugPrint(window, msg)
+		commons.Log(commons.LVL_ERROR, msg)
+	default:
 	}
 
 	return nil
@@ -69,7 +69,10 @@ func main() {
 	Client.Start()
 	ebiten.SetFullscreen(DEFVAL.FullScreen)
 	ebiten.SetRunnableInBackground(true)
+
+	ticker = time.Tick(time.Second)
 	last = time.Now()
+
 	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "PILOT"); err != nil {
 		log.Fatal(err)
 	}

@@ -56,7 +56,7 @@ func newCosmoScene() *cosmoScene {
 	marker.SetPivot(graph.MiddleBottom())
 
 	background := NewAtlasSpriteHUD("background")
-	background.SetSize(float64(WinW), float64(WinH))
+	//background.SetSize(800, 600)
 	background.SetPivot(graph.TopLeft())
 
 	compass := NewAtlasSprite("compass", cam, true, false)
@@ -186,13 +186,12 @@ func (s *cosmoScene) camRecalc() {
 func (s *cosmoScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
-	s.background.Draw(image)
-	s.compass.Draw(image)
+	//s.background.Draw(image)
+	//s.compass.Draw(image)
 
 	for _, co := range s.objects {
 		co.Draw(image)
 	}
-
 	s.trail.Draw(image)
 
 	if Data.NaviData.ActiveMarker {
