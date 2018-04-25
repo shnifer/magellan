@@ -5,6 +5,7 @@ import (
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"image/color"
+	"math/rand"
 )
 
 type CosmoPoint struct {
@@ -35,7 +36,10 @@ func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 	}
 
 	sprite.SetSize(pd.Size*2, pd.Size*2)
-	cycledSprite := graph.NewCycledSprite(sprite, graph.Cycle_Loop, 20)
+
+	//Random spin speed
+	fps := 20 * (0.5 + rand.Float64())
+	cycledSprite := graph.NewCycledSprite(sprite, graph.Cycle_Loop, fps)
 	res := CosmoPoint{
 		Sprite:   cycledSprite,
 		ID:       pd.ID,

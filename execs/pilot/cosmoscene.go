@@ -56,12 +56,13 @@ func newCosmoScene() *cosmoScene {
 	marker.SetPivot(graph.MiddleBottom())
 
 	background := NewAtlasSpriteHUD("background")
-	//background.SetSize(800, 600)
+	background.SetSize(float64(WinW), float64(WinH))
 	background.SetPivot(graph.TopLeft())
 
 	compass := NewAtlasSprite("compass", cam, true, false)
 	compassSize := float64(WinH) * 0.8
 	compass.SetSize(compassSize, compassSize)
+	compass.SetAlpha(0.3)
 
 	res := cosmoScene{
 		caption:    caption,
@@ -140,7 +141,7 @@ func (s *cosmoScene) Update(dt float64) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		Data.PilotData.Ship.Vel = v2.V2{}
 		Data.PilotData.Ship.AngVel = 0
-		Data.PilotData.Ship.Pos = s.idMap["magelan"].Pos
+		Data.PilotData.Ship.Pos = s.idMap["magellan"].Pos
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
@@ -186,8 +187,8 @@ func (s *cosmoScene) camRecalc() {
 func (s *cosmoScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
-	//s.background.Draw(image)
-	//s.compass.Draw(image)
+	s.background.Draw(image)
+	s.compass.Draw(image)
 
 	for _, co := range s.objects {
 		co.Draw(image)

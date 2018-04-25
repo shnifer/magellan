@@ -1,22 +1,22 @@
 [
-{"ID":"sun","Parent":"",		"Diameter":300,				"Mass":30000000,			   "Color":{"R":255,"G":255,"B":128},"Count":1},
+{"ID":"sun","Parent":"",		"Diameter":300,				"Mass":30000000,			   "Color":{"R":255,"G":255,"B":128},"Count":1, "TexName":"star"},
 
 {"ID":"mercury","Parent":"sun",		"Diameter":25,		"Distance":300, "Mass":2332000,		"OrbitPeriod":88.0,"Color":{"R":192,"G":192,"B":0},"Count":1,"StartAng":0},
 {"ID":"venus","Parent":"sun",		"Diameter":50,		"Distance":450, "Mass":4868500,		"OrbitPeriod":224.7,"Color":{"R":128,"G":255,"B":128},"Count":1,"StartAng":90},
 
-{"ID":"earth","Parent":"sun",		"Diameter":65,		"Distance": 650,"Mass":5973600,		"OrbitPeriod":365.3,"Color":{"R":128,"G":255,"B":255},"Count":1,"StartAng":270},
+{"ID":"earth","Parent":"sun",		"Diameter":65,		"Distance": 650,"Mass":5973600,		"OrbitPeriod":365.3,"Color":{"R":128,"G":255,"B":255},"Count":1,"StartAng":270, "TexName":"earth"},
   {"ID":"moon",   "Parent":"earth",	"Diameter":20,		"Distance":100, "Mass":1470000,		"OrbitPeriod":27.3,"Color":{"R":128,"G":128,"B":128},"Count":1,"StartAng":100},
-  {"ID":"magelan","Parent":"earth",	"Diameter":10,		"Distance":120, "Mass":0,		"OrbitPeriod":27.3,"Color":{"R":255,"G":255,"B":255},"Count":1,"StartAng":280},
+  {"ID":"magellan","Parent":"earth",	"Diameter":10,		"Distance":120, "Mass":0,		"OrbitPeriod":27.3,"Color":{"R":255,"G":255,"B":255},"Count":1,"StartAng":280},
 
 {"ID":"mars","Parent":"sun",		"Diameter":40,		"Distance":900, "Mass":6418500,		"OrbitPeriod":687.0,"Color":{"R":255,"G":192,"B":64},"Count":1,"StartAng":135},
   {"ID":"phobos","Parent":"mars",	"Diameter":15,		"Distance":50,	"Mass":200000,		"OrbitPeriod":12.6,"Color":{"R":128,"G":128,"B":128},"Count":1,"StartAng":0},
   {"ID":"deimos","Parent":"mars",	"Diameter":10,		"Distance":100,	"Mass":200000,		"OrbitPeriod": 3.0,"Color":{"R":128,"G":128,"B":128},"Count":1,"StartAng":260},
 
-{"ID":"asteroid","Parent":"sun",	"Diameter":15,		"Distance":1100,"Mass":150000,		"OrbitPeriod":200, "Color":{"R":128,"G":128,"B":128},"Count":50,"RadMassDev":5,"PeriodOrbitDev":3},
-{"ID":"asteroid","Parent":"sun",	"Diameter":18,		"Distance":1100,"Mass":200000,		"OrbitPeriod":400, "Color":{"R":128,"G":128,"B":128},"Count":40,"RadMassDev":5,"PeriodOrbitDev":3},
-{"ID":"asteroid","Parent":"sun",	"Diameter":21,		"Distance":1100,"Mass":250000,		"OrbitPeriod":600, "Color":{"R":128,"G":128,"B":128},"Count":30,"RadMassDev":5,"PeriodOrbitDev":3},
-{"ID":"asteroid","Parent":"sun",	"Diameter":24,		"Distance":1100,"Mass":300000,		"OrbitPeriod":800, "Color":{"R":128,"G":128,"B":128},"Count":20,"RadMassDev":5,"PeriodOrbitDev":3},
-{"ID":"asteroid","Parent":"sun",	"Diameter":27,		"Distance":1100,"Mass":350000,		"OrbitPeriod":1000,"Color":{"R":128,"G":128,"B":128},"Count":10,"RadMassDev":5,"PeriodOrbitDev":3},
+{"ID":"asteroid","Parent":"sun",	"Diameter":15,		"Distance":1100,"Mass":150000,		"OrbitPeriod":200, "Color":{"R":128,"G":128,"B":128},"Count":50,"RadMassDev":5,"PeriodOrbitDev":3, "TexName":"asteroid"},
+{"ID":"asteroid","Parent":"sun",	"Diameter":18,		"Distance":1100,"Mass":200000,		"OrbitPeriod":400, "Color":{"R":128,"G":128,"B":128},"Count":40,"RadMassDev":5,"PeriodOrbitDev":3, "TexName":"asteroid1"},
+{"ID":"asteroid","Parent":"sun",	"Diameter":21,		"Distance":1100,"Mass":250000,		"OrbitPeriod":600, "Color":{"R":128,"G":128,"B":128},"Count":30,"RadMassDev":5,"PeriodOrbitDev":3, "TexName":"asteroid2"},
+{"ID":"asteroid","Parent":"sun",	"Diameter":24,		"Distance":1100,"Mass":300000,		"OrbitPeriod":800, "Color":{"R":128,"G":128,"B":128},"Count":20,"RadMassDev":5,"PeriodOrbitDev":3, "TexName":"asteroid3"},
+{"ID":"asteroid","Parent":"sun",	"Diameter":27,		"Distance":1100,"Mass":350000,		"OrbitPeriod":1000,"Color":{"R":128,"G":128,"B":128},"Count":10,"RadMassDev":5,"PeriodOrbitDev":3, "TexName":"asteroid4"},
 
 {"ID":"jupiter","Parent":"sun",		"Diameter":200,		"Distance":1500,"Mass":129860000,	"OrbitPeriod":1000,"Color":{"R":255,"G":192,"B":128},"Count":1,"StartAng":225},
   {"ID":"io",	    "Parent":"jupiter", "Diameter":40,		"Distance":150,	"Mass":1786000,		"OrbitPeriod":42.2,"Color":{"R":128,"G":128,"B":128},"Count":1,"StartAng":30},
@@ -25,27 +25,26 @@
   {"ID":"callisto", "Parent":"jupiter", "Diameter":40,		"Distance":300, "Mass":2152000,		"OrbitPeriod":188.2,"Color":{"R":128,"G":128,"B":128},"Count":1,"StartAng":280},
 
 {"ID":"saturn","Parent":"sun",		"Diameter":170,		"Distance":2000,"Mass":76846000,	"OrbitPeriod":1500,"Color":{"R":192,"G":128,"B":64},"Count":1,"StartAng":45},
-  {"ID":"saturnbelt","Parent":"saturn", "Diameter":12,		"Distance":100, "Mass":0, 		"OrbitPeriod":20,  "Color":{"R":128,"G":255,"B":255},"Count":20,"RadMassDev":0,"PeriodOrbitDev":3},
-  {"ID":"saturnbelt","Parent":"saturn", "Diameter":10,		"Distance":100, "Mass":0, 		"OrbitPeriod":10,  "Color":{"R":128,"G":255,"B":255},"Count":20,"RadMassDev":0,"PeriodOrbitDev":3},
+  {"ID":"saturnbelt","Parent":"saturn", "Diameter":12,		"Distance":100, "Mass":0, 		"OrbitPeriod":20,  "Color":{"R":128,"G":255,"B":255},"Count":20,"RadMassDev":0,"PeriodOrbitDev":3, "TexName":"asteroid1"},
+  {"ID":"saturnbelt","Parent":"saturn", "Diameter":10,		"Distance":100, "Mass":0, 		"OrbitPeriod":10,  "Color":{"R":128,"G":255,"B":255},"Count":20,"RadMassDev":0,"PeriodOrbitDev":3, "TexName":"asteroid2"},
   {"ID":"titan",     "Parent":"saturn", "Diameter":40,		"Distance":130, "Mass":2690000, 	"OrbitPeriod":122.2,"Color":{"R":128,"G":128,"B":128},"Count":1,"StartAng":210},
-  {"ID":"saturnbelt","Parent":"saturn", "Diameter":10,		"Distance":180, "Mass":0, 		"OrbitPeriod":10,  "Color":{"R":128,"G":255,"B":255},"Count":50,"RadMassDev":0,"PeriodOrbitDev":5},
-  {"ID":"saturnbelt","Parent":"saturn", "Diameter":12,		"Distance":180, "Mass":0, 		"OrbitPeriod":20,  "Color":{"R":128,"G":255,"B":255},"Count":40,"RadMassDev":0,"PeriodOrbitDev":5},
-  {"ID":"saturnbelt","Parent":"saturn", "Diameter":14,		"Distance":180, "Mass":0, 		"OrbitPeriod":40,  "Color":{"R":128,"G":255,"B":255},"Count":30,"RadMassDev":0,"PeriodOrbitDev":5},
-  {"ID":"saturnbelt","Parent":"saturn", "Diameter":16,		"Distance":180, "Mass":0, 		"OrbitPeriod":80,  "Color":{"R":128,"G":255,"B":255},"Count":20,"RadMassDev":0,"PeriodOrbitDev":5},
+  {"ID":"saturnbelt","Parent":"saturn", "Diameter":10,		"Distance":180, "Mass":0, 		"OrbitPeriod":10,  "Color":{"R":128,"G":255,"B":255},"Count":50,"RadMassDev":0,"PeriodOrbitDev":5, "TexName":"asteroid2"},
+  {"ID":"saturnbelt","Parent":"saturn", "Diameter":12,		"Distance":180, "Mass":0, 		"OrbitPeriod":20,  "Color":{"R":128,"G":255,"B":255},"Count":40,"RadMassDev":0,"PeriodOrbitDev":5, "TexName":"asteroid3"},
+  {"ID":"saturnbelt","Parent":"saturn", "Diameter":14,		"Distance":180, "Mass":0, 		"OrbitPeriod":40,  "Color":{"R":128,"G":255,"B":255},"Count":30,"RadMassDev":0,"PeriodOrbitDev":5, "TexName":"asteroid1"},
+  {"ID":"saturnbelt","Parent":"saturn", "Diameter":16,		"Distance":180, "Mass":0, 		"OrbitPeriod":80,  "Color":{"R":128,"G":255,"B":255},"Count":20,"RadMassDev":0,"PeriodOrbitDev":5, "TexName":"asteroid2"},
 
 {"ID":"uran","Parent":"sun",		"Diameter":110,		"Distance":2300,"Mass":48868320,		"OrbitPeriod":2000,"Color":{"R":128,"G":255,"B":192},"Count":1,"StartAng":315},
-  {"ID":"uranbelt","Parent":"uran",	"Diameter":12,		"Distance":80,  "Mass":0, 		"OrbitPeriod":30,  "Color":{"R":128,"G":255,"B":255},"Count":20,"RadMassDev":0,"PeriodOrbitDev":5},
-  {"ID":"uranbelt","Parent":"uran",	"Diameter":10,		"Distance":80,  "Mass":0, 		"OrbitPeriod":10,  "Color":{"R":128,"G":255,"B":255},"Count":20,"RadMassDev":0,"PeriodOrbitDev":8},
+  {"ID":"uranbelt","Parent":"uran",	"Diameter":12,		"Distance":80,  "Mass":0, 		"OrbitPeriod":30,  "Color":{"R":128,"G":255,"B":255},"Count":20,"RadMassDev":0,"PeriodOrbitDev":5, "TexName":"asteroid"},
+  {"ID":"uranbelt","Parent":"uran",	"Diameter":10,		"Distance":80,  "Mass":0, 		"OrbitPeriod":10,  "Color":{"R":128,"G":255,"B":255},"Count":20,"RadMassDev":0,"PeriodOrbitDev":8, "TexName":"asteroid1"},
 
 {"ID":"neptun","Parent":"sun",		"Diameter":100,		"Distance":2500,"Mass":23524300,		"OrbitPeriod":2500,"Color":{"R":128,"G":192,"B":255},"Count":1,"StartAng":180},
   {"ID":"triton","Parent":"neptun",	"Diameter":30,		"Distance":80,  "Mass":850000,		"OrbitPeriod":10,"Color":{"R":128,"G":128,"B":128},"Count":1,"StartAng":0},
 
 {"ID":"pluto","Parent":"sun",		"Diameter":50,		"Distance":2700,"Mass":631000,		"OrbitPeriod":3000,"Color":{"R":255,"G":128,"B":192},"Count":1,"StartAng":165},
 {"ID":"erida","Parent":"sun",		"Diameter":50,		"Distance":2900,"Mass":767000,		"OrbitPeriod":3100,"Color":{"R":255,"G":255,"B":255},"Count":1,"StartAng":75},
-  {"ID":"kuiper","Parent":"sun",	"Diameter":20,		"Distance":2800,"Mass":200000,		"OrbitPeriod":300,"Color":{"R":128,"G":128,"B":128},"Count":70,"RadMassDev":5,"PeriodOrbitDev":5},
-  {"ID":"kuiper","Parent":"sun",	"Diameter":23,		"Distance":2800,"Mass":250000,		"OrbitPeriod":500,"Color":{"R":128,"G":128,"B":128},"Count":60,"RadMassDev":5,"PeriodOrbitDev":5},
-  {"ID":"kuiper","Parent":"sun",	"Diameter":27,		"Distance":2800,"Mass":300000,		"OrbitPeriod":700,"Color":{"R":128,"G":128,"B":128},"Count":50,"RadMassDev":5,"PeriodOrbitDev":5},
-  {"ID":"kuiper","Parent":"sun",	"Diameter":31,		"Distance":2800,"Mass":350000,		"OrbitPeriod":900,"Color":{"R":128,"G":128,"B":128},"Count":40,"RadMassDev":5,"PeriodOrbitDev":5},
-  {"ID":"kuiper","Parent":"sun",	"Diameter":34,		"Distance":2800,"Mass":400000,		"OrbitPeriod":1100,"Color":{"R":128,"G":128,"B":128},"Count":30,"RadMassDev":5,"PeriodOrbitDev":5},
-  {"ID":"magellan","Parent":"pluto",	"Diameter":10,		"Distance":120, "Mass":0,		"OrbitPeriod":27.3,"Color":{"R":255,"G":255,"B":255},"Count":1,"StartAng":280}
+  {"ID":"kuiper","Parent":"sun",	"Diameter":20,		"Distance":2800,"Mass":200000,		"OrbitPeriod":300,"Color":{"R":128,"G":128,"B":128},"Count":70,"RadMassDev":5,"PeriodOrbitDev":5, "TexName":"asteroid"},
+  {"ID":"kuiper","Parent":"sun",	"Diameter":23,		"Distance":2800,"Mass":250000,		"OrbitPeriod":500,"Color":{"R":128,"G":128,"B":128},"Count":60,"RadMassDev":5,"PeriodOrbitDev":5, "TexName":"asteroid1"},
+  {"ID":"kuiper","Parent":"sun",	"Diameter":27,		"Distance":2800,"Mass":300000,		"OrbitPeriod":700,"Color":{"R":128,"G":128,"B":128},"Count":50,"RadMassDev":5,"PeriodOrbitDev":5, "TexName":"asteroid2"},
+  {"ID":"kuiper","Parent":"sun",	"Diameter":31,		"Distance":2800,"Mass":350000,		"OrbitPeriod":900,"Color":{"R":128,"G":128,"B":128},"Count":40,"RadMassDev":5,"PeriodOrbitDev":5, "TexName":"asteroid3"},
+  {"ID":"kuiper","Parent":"sun",	"Diameter":34,		"Distance":2800,"Mass":400000,		"OrbitPeriod":1100,"Color":{"R":128,"G":128,"B":128},"Count":30,"RadMassDev":5,"PeriodOrbitDev":5, "TexName":"asteroid4"}
 ]
