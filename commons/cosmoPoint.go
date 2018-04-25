@@ -62,7 +62,9 @@ func (co *CosmoPoint) Update(sessionTime float64) {
 	dt := sessionTime - co.lastT
 	co.lastT = sessionTime
 
-	co.Sprite.Update(dt)
+	if dt>0 {
+		co.Sprite.Update(dt)
+	}
 
 	if co.Parent != nil {
 		angle := co.AngPhase + co.AngVel*sessionTime
