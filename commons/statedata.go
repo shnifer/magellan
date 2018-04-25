@@ -3,6 +3,7 @@ package commons
 import (
 	"encoding/json"
 	"github.com/Shnifer/magellan/v2"
+	"image/color"
 )
 
 type StateData struct {
@@ -75,8 +76,9 @@ type GalaxyPoint struct {
 	Orbit  float64
 	Period float64
 
-	Type string
-	Size float64
+	Type  string
+	Size  float64
+	Color color.RGBA
 
 	Mass float64
 

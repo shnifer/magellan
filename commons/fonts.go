@@ -19,13 +19,13 @@ func init() {
 
 	face, err := graph.GetFace(fontPath+"phantom.ttf", 20)
 	if err != nil {
-		panic(err)
+		Log(LVL_ERROR, err)
 	}
 	Fonts[Face_cap] = face
 
 	face, err = graph.GetFace(fontPath+"interdim.ttf", 16)
 	if err != nil {
-		panic(err)
+		Log(LVL_ERROR, err)
 	}
 	Fonts[Face_stats] = face
 }

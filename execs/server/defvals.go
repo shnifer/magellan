@@ -11,9 +11,11 @@ import (
 const DefValPath = "res/server/"
 
 type tDefVals struct {
-	Port         string
-	NeededRoles  []string
-	MinWarpSpeed float64
+	Port        string
+	NeededRoles []string
+
+	StartWarpSpeed         float64
+	SolarStartLocationName string
 }
 
 var DEFVAL tDefVals
@@ -26,6 +28,7 @@ func setDefDef() {
 			ROLE_Navi,
 			ROLE_Engi,
 			ROLE_Cargo},
+		SolarStartLocationName: "magellan",
 	}
 }
 

@@ -1,7 +1,8 @@
 {
     "Port": ":8000",
-    "MinWarpSpeed":10,
+    "StartWarpSpeed":10,
     "NeededRoles": [
         "Pilot"
-    ]
+    ],
+    "SolarStartLocationName": "magelan"
 }

@@ -15,6 +15,9 @@ const Deg2Rad = 2 * math.Pi / 360
 
 //Generators
 
+//zero vector
+var ZV V2
+
 //RandomOrt returns a random vector with len = 1
 func RandomOrt() V2 {
 	a := rand.Float64() * 2 * math.Pi

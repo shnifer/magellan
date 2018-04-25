@@ -31,6 +31,9 @@ type cosmoScene struct {
 	trailT float64
 	trail  *graph.FadingArray
 
+	background *graph.Sprite
+	compass    *graph.Sprite
+
 	//hud
 	thrustLevelHUD   *graph.Sprite
 	thrustControlHUD *graph.Sprite
@@ -46,11 +49,19 @@ func newCosmoScene() *cosmoScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := graph.NewSprite(GetAtlasTex("ship"), cam, true, false)
+	ship := NewAtlasSprite("ship", cam, true, false)
 	ship.SetSize(50, 50)
 
-	marker := graph.NewSprite(GetAtlasTex("marker"), cam, true, true)
+	marker := NewAtlasSprite("marker", cam, true, true)
 	marker.SetPivot(graph.MiddleBottom())
+
+	background := NewAtlasSpriteHUD("background")
+	background.SetSize(float64(WinW), float64(WinH))
+	background.SetPivot(graph.TopLeft())
+
+	compass := NewAtlasSprite("compass", cam, true, false)
+	compassSize := float64(WinH) * 0.8
+	compass.SetSize(compassSize, compassSize)
 
 	res := cosmoScene{
 		caption:    caption,
@@ -59,6 +70,8 @@ func newCosmoScene() *cosmoScene {
 		naviMarker: marker,
 		objects:    make([]*CosmoPoint, 0),
 		idMap:      make(map[string]*CosmoPoint),
+		background: background,
+		compass:    compass,
 	}
 
 	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
@@ -127,7 +140,7 @@ func (s *cosmoScene) Update(dt float64) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		Data.PilotData.Ship.Vel = v2.V2{}
 		Data.PilotData.Ship.AngVel = 0
-		Data.PilotData.Ship.Pos = v2.V2{X: 100, Y: 100}
+		Data.PilotData.Ship.Pos = s.idMap["magelan"].Pos
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
@@ -160,6 +173,7 @@ func (s *cosmoScene) Update(dt float64) {
 		})
 	}
 	s.trail.Update(dt)
+	s.compass.SetPos(Data.PilotData.Ship.Pos)
 
 	s.camRecalc()
 }
@@ -172,7 +186,8 @@ func (s *cosmoScene) camRecalc() {
 func (s *cosmoScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
-	s.caption.Draw(image)
+	s.background.Draw(image)
+	s.compass.Draw(image)
 
 	for _, co := range s.objects {
 		co.Draw(image)
@@ -187,6 +202,8 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 
 	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 	s.ship.Draw(image)
+
+	s.caption.Draw(image)
 
 	s.thrustLevelHUD.Draw(image)
 	s.thrustControlHUD.Draw(image)

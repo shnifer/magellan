@@ -13,6 +13,12 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 	common.PilotData.SessionTime = time.Now().Sub(StartDateTime).Seconds()
 
 	switch newState.StateID {
+	case STATE_cosmo:
+		//spawn in Solar location
+		if common.PilotData.Ship == (RBData{}) {
+			common.PilotData.Ship.Pos =
+				CalculateCosmoPos(DEFVAL.SolarStartLocationName, stateData.Galaxy.Points, common.PilotData.SessionTime)
+		}
 	case STATE_warp:
 		common = toWarpCommonData(common, stateData, newState, prevState)
 	}
@@ -42,7 +48,7 @@ func toWarpCommonData(common CommonData, stateData StateData, newState, prevStat
 
 	ship := RBData{
 		Pos:    pos.AddMul(v2.InDir(ang), spawnRange),
-		Vel:    v2.InDir(ang).Mul(DEFVAL.MinWarpSpeed * 1.1),
+		Vel:    v2.InDir(ang).Mul(DEFVAL.StartWarpSpeed),
 		AngVel: 0,
 		Ang:    ang,
 	}

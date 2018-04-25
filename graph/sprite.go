@@ -104,17 +104,16 @@ func (s *Sprite) SetScale(x, y float64) {
 }
 
 func (s *Sprite) SetSize(x, y float64) {
-	s.sx = x / float64(s.tex.sh)
-	s.sy = y / float64(s.tex.sw)
+	s.sx = x / float64(s.tex.sw)
+	s.sy = y / float64(s.tex.sh)
 	s.dirty = true
 }
 
 //pivotPartial is [0..1,0..1] vector of pivot point in parts of image size
 func (s *Sprite) SetPivot(pivotPartial v2.V2) {
-	w, h := s.tex.image.Size()
 	s.pivot = v2.V2{
-		X: pivotPartial.X * float64(w),
-		Y: pivotPartial.Y * float64(h),
+		X: pivotPartial.X * float64(s.tex.sw),
+		Y: pivotPartial.Y * float64(s.tex.sh),
 	}
 	s.dirty = true
 }

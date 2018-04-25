@@ -42,7 +42,7 @@ func newWarpScene() *warpScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := graph.NewSprite(GetAtlasTex("ship"), cam, true, false)
+	ship := NewAtlasSprite("ship", cam, true, false)
 	ship.SetSize(50, 50)
 
 	sonarSector := graph.NewSector(cam, false, false)

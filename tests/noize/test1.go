@@ -112,7 +112,7 @@ func saveSpriteSheet() {
 	all := make([]byte, cols*rows*winSize*winSize*4)
 	for col := 0; col < cols; col++ {
 		for row := 0; row < rows; row++ {
-			t := float64(col+row*cols)/20
+			t := float64(col+row*cols) / 20
 			p := calcPixels(frequency, lacunarity, gain, octaves, t)
 			for y := 0; y < winSize; y++ {
 				for x := 0; x < winSize; x++ {

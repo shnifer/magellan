@@ -2,10 +2,11 @@
     "Port": "http://localhost:8000",
     "Room": "room101",
     "FullScreen": false,
-    "WinW": 640,
-    "WinH": 480 ,
+    "WinW": 1024,
+    "WinH": 768,
+    "DoProf": false,
     "CpuProfFileName": "pilotcpu.prof",
     "MemProfFileName": "pilotmem.prof",
-    "GravityConst": 10000,
+    "GravityConst": 0.3,
     "WarpGravityConst": 1000
 }

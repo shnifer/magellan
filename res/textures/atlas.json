@@ -1,102 +1,15 @@
 {
-  "ship": {
-    "FileName": "ship.png",
-    "Sx": 0,
-    "Sy": 0,
-    "Color": {
-      "R": 255,
-      "G": 255,
-      "B": 255,
-      "A": 255
-    }
-  },
-  "star": {
-    "FileName": "sun.png",
-    "Sx": 0,
-    "Sy": 0,
-    "Color": {
-      "R": 255,
-      "G": 255,
-      "B": 255,
-      "A": 255
-    }
-  },
-  "planet": {
-    "FileName": "planet_ani.png",
-    "Sx": 72,
-    "Sy": 72,
-    "Count": 19,
-    "Color": {
-      "R": 255,
-      "G": 255,
-      "B": 255,
-      "A": 255
-    }
-  },
-  "asteroid": {
-    "FileName": "asteroid.png",
-    "Sx": 0,
-    "Sy": 0,
-    "Color": {
-      "R": 255,
-      "G": 255,
-      "B": 255,
-      "A": 255
-    }
-  },
-  "arrow": {
-    "FileName": "arrow.png",
-    "Sx": 0,
-    "Sy": 0,
-    "Color": {
-      "R": 255,
-      "G": 255,
-      "B": 255,
-      "A": 255
-    }
-  },
-  "warpstar": {
-    "FileName": "particle.png",
-    "Sx": 0,
-    "Sy": 0,
-    "Color": {
-      "R": 255,
-      "G": 255,
-      "B": 255,
-      "A": 255
-    }
-  },
-  "trail": {
-    "FileName": "particle.png",
-    "Sx": 0,
-    "Sy": 0,
-    "Color": {
-      "R": 255,
-      "G": 255,
-      "B": 255,
-      "A": 255
-    }
-  },
-  "marker": {
-    "FileName": "arrow.png",
-    "Sx": 0,
-    "Sy": 0,
-    "Color": {
-      "R": 255,
-      "G": 255,
-      "B": 255,
-      "A": 255
-    }
-  },
-  "noise": {
-    "FileName": "noisesheet.png",
-    "Sx": 400,
-    "Sy": 400,
-    "Color": {
-      "R": 255,
-      "G": 255,
-      "B": 255,
-      "A": 255
-    }
-  }
+  "ship": {"FileName": "ship.png"},
+  "star": {"FileName": "sun.png"},
+  "sun": {"FileName": "sun.png"},
+  "earth": {"FileName": "earth.png"},
+  "planet": {"FileName": "planet_ani.png","Sx": 72,"Sy": 72,"Count": 19},
+  "asteroid": {"FileName": "asteroid.png"},
+  "arrow": {"FileName": "arrow.png"},
+  "warpstar": {"FileName": "particle.png"},
+  "trail": {"FileName": "particle.png"},
+  "marker": {"FileName": "arrow.png"},
+  "noise": {"FileName": "noisesheet.png","Sx": 400,"Sy": 400},
+  "compass": {"FileName": "compas.png"},
+  "background": {"FileName": "background.jpg"}
 }

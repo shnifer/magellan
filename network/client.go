@@ -35,8 +35,9 @@ type Client struct {
 	curState  string
 	wantState string
 
-	//do we need to RECEIVE our part of common
-	//	isMyPartActual bool
+	//do we need to SEND our part of common
+	isMyPartActual       bool
+	recvGoroutineStarted bool
 
 	//commands, mutex inside
 	send *wrnt.Send
@@ -150,7 +151,7 @@ func checkWantedState(c *Client, pingResp PingResp) {
 	wanted := pingResp.Room.Wanted
 	if wanted != c.wantState {
 		c.wantState = wanted
-		//		c.isMyPartActual = false
+		c.isMyPartActual = false
 		//aware client about new state
 		if c.opts.OnStateChanged != nil {
 			c.opts.OnStateChanged(wanted)
@@ -172,21 +173,26 @@ func checkWantedState(c *Client, pingResp PingResp) {
 				//set wanted state now
 				c.curState = c.wantState
 			} else {
-				//run hook and wait for done chan close
-				go func() {
-					log.Println("recieved state+start data size = ", len(resp))
-					buf := bytes.NewBuffer(resp)
-					dec := gob.NewDecoder(buf)
-					var DataResp StateDataResp
-					dec.Decode(&DataResp)
-					c.opts.OnGetStateData(DataResp.StateData)
-					if c.opts.OnCommonRecv != nil {
-						c.opts.OnCommonRecv(DataResp.StartCommon, true)
-					}
-					c.mu.Lock()
-					c.curState = c.wantState
-					c.mu.Unlock()
-				}()
+				if !c.recvGoroutineStarted {
+					c.recvGoroutineStarted = true
+					//run hook and wait for done chan close
+					go func() {
+						log.Println("recieved state+start data size = ", len(resp))
+						buf := bytes.NewBuffer(resp)
+						dec := gob.NewDecoder(buf)
+						var DataResp StateDataResp
+						dec.Decode(&DataResp)
+						c.opts.OnGetStateData(DataResp.StateData)
+						if c.opts.OnCommonRecv != nil {
+							c.opts.OnCommonRecv(DataResp.StartCommon, true)
+						}
+						c.mu.Lock()
+						c.curState = c.wantState
+						c.isMyPartActual = true
+						c.recvGoroutineStarted = false
+						c.mu.Unlock()
+					}()
+				}
 			}
 		}
 	}
@@ -208,9 +214,10 @@ func doCommonReq(c *Client) {
 	var req CommonReq
 	var sentData []byte
 
-	//	if c.isMyPartActual {
-	if c.opts.OnCommonSend != nil {
-		sentData = c.opts.OnCommonSend()
+	if c.isMyPartActual {
+		if c.opts.OnCommonSend != nil {
+			sentData = c.opts.OnCommonSend()
+		}
 	}
 
 	if sentData != nil && len(sentData) > 0 {

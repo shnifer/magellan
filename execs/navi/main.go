@@ -46,7 +46,10 @@ func mainLoop(window *ebiten.Image) error {
 }
 
 func main() {
-	startProfile()
+	if DEFVAL.DoProf {
+		startProfile()
+		defer stopProfile()
+	}
 
 	WinW = DEFVAL.WinW
 	WinH = DEFVAL.WinH
@@ -69,6 +72,4 @@ func main() {
 	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "NAVIGATOR"); err != nil {
 		log.Fatal(err)
 	}
-
-	stopProfile()
 }

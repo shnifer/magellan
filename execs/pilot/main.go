@@ -46,8 +46,10 @@ func mainLoop(window *ebiten.Image) error {
 }
 
 func main() {
-	startProfile()
-	defer stopProfile()
+	if DEFVAL.DoProf {
+		startProfile()
+		defer stopProfile()
+	}
 
 	WinW = DEFVAL.WinW
 	WinH = DEFVAL.WinH

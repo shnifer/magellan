@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/hajimehoshi/ebiten"
-	"golang.org/x/image/colornames"
-	"image/color"
 	"io/ioutil"
 )
 
@@ -14,7 +12,6 @@ type TexAtlasRec struct {
 	FileName string
 	Sx, Sy   int
 	Count    int
-	Color    color.RGBA
 }
 type TexAtlas map[string]TexAtlasRec
 
@@ -37,7 +34,7 @@ func InitTexAtlas(newTexPath string) {
 	}
 }
 
-func GetAtlasTexColor(name string) (graph.Tex, color.RGBA) {
+func GetAtlasTex(name string) graph.Tex {
 	rec, ok := atlas[name]
 	if !ok {
 		panic("GetAtlasTex: unknown name " + name)
@@ -47,12 +44,15 @@ func GetAtlasTexColor(name string) (graph.Tex, color.RGBA) {
 	if err != nil {
 		panic(err)
 	}
-	return tex, rec.Color
+	return tex
 }
 
-func GetAtlasTex(name string) graph.Tex {
-	tex, _ := GetAtlasTexColor(name)
-	return tex
+func NewAtlasSprite(atlasName string, cam *graph.Camera, denyCamScale, denyCamAngle bool) *graph.Sprite {
+	return graph.NewSprite(GetAtlasTex(atlasName), cam, denyCamScale, denyCamAngle)
+}
+
+func NewAtlasSpriteHUD(atlasName string) *graph.Sprite {
+	return graph.NewSpriteHUD(GetAtlasTex(atlasName))
 }
 
 func saveAtlasExample(fn string) {
@@ -62,7 +62,6 @@ func saveAtlasExample(fn string) {
 		Sx:       0,
 		Sy:       0,
 		Count:    1,
-		Color:    colornames.White,
 	}
 	buf, err := json.Marshal(exAtlas)
 	if err != nil {

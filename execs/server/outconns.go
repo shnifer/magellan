@@ -72,7 +72,7 @@ func saveDataExamples(path string) {
 	galaxy := Galaxy{}
 	galaxy.Points = append(galaxy.Points, GalaxyPoint{})
 	galaxyStr, _ := json.Marshal(galaxy)
-	bufGalaxy := bytes.Buffer{}
-	json.Indent(&bufGalaxy, galaxyStr, "", "    ")
-	ioutil.WriteFile(path+"example_galaxy.json", bufGalaxy.Bytes(), 0)
+	//bufGalaxy := bytes.Buffer{}
+	//json.Indent(&bufGalaxy, galaxyStr, "", "    ")
+	ioutil.WriteFile(path+"example_galaxy.json", galaxyStr, 0)
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
+	"image/color"
 )
 
 type CosmoPoint struct {
@@ -27,9 +28,12 @@ type CosmoPoint struct {
 }
 
 func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
-	tex, col := GetAtlasTexColor(pd.Type)
-	sprite := graph.NewSprite(tex, cam, false, false)
-	sprite.SetColor(col)
+	sprite := NewAtlasSprite(pd.Type, cam, false, false)
+	zeroColor := color.RGBA{}
+	if pd.Color != zeroColor {
+		sprite.SetColor(pd.Color)
+	}
+
 	sprite.SetSize(pd.Size*2, pd.Size*2)
 	cycledSprite := graph.NewCycledSprite(sprite, graph.Cycle_Loop, 20)
 	res := CosmoPoint{
@@ -69,4 +73,29 @@ func (co *CosmoPoint) Draw(dest *ebiten.Image) {
 
 func (co *CosmoPoint) recalcSprite() {
 	co.Sprite.SetPosAng(co.Pos, 0)
+}
+
+//for server calculation
+func CalculateCosmoPos(name string, points []GalaxyPoint, sessionTime float64) v2.V2 {
+	ind := make(map[string]int, len(points))
+	for i, v := range points {
+		ind[v.ID] = i
+	}
+	var f func(id string) v2.V2
+	f = func(id string) v2.V2 {
+		i, ok := ind[id]
+		if !ok {
+			return v2.ZV
+		}
+		point := points[i]
+		parent := points[i].ParentID
+		if parent == "" {
+			return point.Pos
+		}
+
+		parentPos := f(parent)
+		angle := (360 / point.Period) * sessionTime
+		return parentPos.AddMul(v2.InDir(angle), point.Orbit)
+	}
+	return f(name)
 }

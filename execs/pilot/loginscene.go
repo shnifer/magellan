@@ -37,7 +37,7 @@ func NewLoginScene() *LoginScene {
 	errorMsg := graph.NewText(errorText, face, colornames.Indianred)
 	errorMsg.SetPosPivot(graph.ScrP(0.5, 0.7), graph.Center())
 
-	back := graph.NewSprite(GetAtlasTex("noise"), nil, false, false)
+	back := NewAtlasSpriteHUD("noise")
 	back.SetPivot(graph.TopLeft())
 	back.SetSize(float64(WinW), float64(WinH))
 

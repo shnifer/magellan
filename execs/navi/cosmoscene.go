@@ -30,7 +30,7 @@ func newCosmoScene() *cosmoScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := graph.NewSprite(GetAtlasTex("ship"), cam, false, false)
+	ship := NewAtlasSprite("ship", cam, false, false)
 	ship.SetSize(50, 50)
 
 	return &cosmoScene{
