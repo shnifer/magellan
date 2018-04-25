@@ -26,11 +26,11 @@ func SetGravityConsts(G, W float64) {
 //
 func Gravity(mass, lenSqr, zDist float64) float64 {
 	d2 := lenSqr + zDist*zDist
-	d2 = d2 * d2
+	//d2 = d2 * d2
 	if d2 == 0 {
 		return 0
 	}
-	return gravityConst * mass * lenSqr / d2
+	return gravityConst * mass / d2
 }
 
 func WarpGravity(mass, lenSqr, velSqr, zDist float64) float64 {

@@ -159,7 +159,7 @@ func stateHandler(srv *Server) http.Handler {
 		enc := gob.NewEncoder(w)
 		err = enc.Encode(SendData)
 		if err != nil {
-			panic(err)
+			log.Println("error: gob.encode.SendData: ", err)
 		}
 	}
 	return http.HandlerFunc(f)

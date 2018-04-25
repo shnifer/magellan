@@ -12,7 +12,7 @@
   "arrow": {"FileName": "arrow.png"},
   "warpstar": {"FileName": "particle.png"},
   "trail": {"FileName": "particle.png"},
-  "marker": {"FileName": "arrow.png"},
+  "marker": {"FileName": "marker.png"},
   "noise": {"FileName": "noisesheet.png","Sx": 400,"Sy": 400},
   "compass": {"FileName": "compas.png"},
   "background": {"FileName": "background.jpg"}
