@@ -58,12 +58,12 @@ func newCosmoScene() *cosmoScene {
 	background := NewAtlasSpriteHUD("background")
 	background.SetSize(float64(WinW), float64(WinH))
 	background.SetPivot(graph.TopLeft())
-	background.SetColor(colornames.Darkgray)
+	background.SetColor(colornames.Dimgrey)
 
 	compass := NewAtlasSprite("compass", cam, true, false)
 	compassSize := float64(WinH) * 0.8
 	compass.SetSize(compassSize, compassSize)
-	compass.SetAlpha(0.3)
+	compass.SetAlpha(0.5)
 
 	res := cosmoScene{
 		caption:    caption,
