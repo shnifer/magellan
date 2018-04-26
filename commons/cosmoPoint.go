@@ -36,6 +36,7 @@ func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 	}
 
 	sprite.SetSize(pd.Size*2, pd.Size*2)
+	sprite.SetAng(rand.Float64()*360)
 
 	//Random spin speed
 	fps := 20 * (0.5 + rand.Float64())
@@ -78,7 +79,7 @@ func (co *CosmoPoint) Draw(dest *ebiten.Image) {
 }
 
 func (co *CosmoPoint) recalcSprite() {
-	co.Sprite.SetPosAng(co.Pos, 0)
+	co.Sprite.SetPos(co.Pos)
 }
 
 //for server calculation
