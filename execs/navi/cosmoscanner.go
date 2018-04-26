@@ -80,11 +80,11 @@ func (s *scanner) update(dt float64) {
 	}
 
 	v := s.obj.Pos.Sub(ship)
-	dist := v.Len()
+	dist := v.Len() + 0.1
 	ang := v.Dir()
-	angw := math.Atan(s.obj.Size/dist) * v2.Rad2Deg
+	angW := math.Atan(s.obj.Size/dist) * v2.Rad2Deg * 0.8
 	s.scanSector.SetCenterRadius(ship, dist)
-	s.scanSector.SetAngles(ang-angw, ang+angw)
+	s.scanSector.SetAngles(ang-angW, ang+angW)
 
 	if Data.PilotData.Ship.Pos.Sub(s.obj.Pos).LenSqr() > s.maxRange2 {
 		s.reset()
