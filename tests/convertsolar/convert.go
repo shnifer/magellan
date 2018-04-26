@@ -105,6 +105,7 @@ func createGP(v fileData) commons.GalaxyPoint {
 		Size:     okr(v.Diameter / 2),
 		Color:    color,
 		Mass:     okr(v.Mass),
+		ScanData: v.ID,
 	}
 	return gp
 }
