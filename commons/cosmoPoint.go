@@ -36,7 +36,7 @@ func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 	}
 
 	sprite.SetSize(pd.Size*2, pd.Size*2)
-	sprite.SetAng(rand.Float64()*360)
+	sprite.SetAng(rand.Float64() * 360)
 
 	//Random spin speed
 	fps := 20 * (0.5 + rand.Float64())
@@ -63,7 +63,7 @@ func (co *CosmoPoint) Update(sessionTime float64) {
 	dt := sessionTime - co.lastT
 	co.lastT = sessionTime
 
-	if dt>0 {
+	if dt > 0 {
 		co.Sprite.Update(dt)
 	}
 

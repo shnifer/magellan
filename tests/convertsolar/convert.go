@@ -90,9 +90,9 @@ func createGP(v fileData) commons.GalaxyPoint {
 
 	color := color.RGBA{R: v.Color.R, G: v.Color.G, B: v.Color.B, A: 255}
 
-	okr:=func (x float64) float64{
+	okr := func(x float64) float64 {
 		const sgn = 10
-		return float64(int(x*sgn))/sgn
+		return float64(int(x*sgn)) / sgn
 	}
 
 	gp := commons.GalaxyPoint{

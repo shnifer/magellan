@@ -9,6 +9,7 @@ import (
 )
 
 const Deg2Rad = math.Pi / 180
+const Rad2Deg = 180 / math.Pi
 
 type Sprite struct {
 	tex      Tex
@@ -200,4 +201,8 @@ func (s *Sprite) SetSpriteN(n int) {
 
 func (s *Sprite) NextSprite() {
 	s.SetSpriteN(s.spriteN + 1)
+}
+
+func (s *Sprite) TexImageDispose() {
+	s.tex.image.Dispose()
 }

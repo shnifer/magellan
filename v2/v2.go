@@ -11,7 +11,8 @@ type V2 struct {
 	X, Y float64
 }
 
-const Deg2Rad = 2 * math.Pi / 360
+const Deg2Rad = math.Pi / 180
+const Rad2Deg = 180 / math.Pi
 
 //Generators
 
@@ -109,6 +110,20 @@ func Normed(a V2) V2 {
 	return Mul(a, K)
 }
 
+func Dir(v V2) float64 {
+	if v == ZV {
+		return 0
+	}
+	a := math.Atan(-v.X/v.Y) * Rad2Deg
+	if v.Y < 0 {
+		a += 180
+	}
+	if a < 0 {
+		a += 360
+	}
+	return a
+}
+
 //method syntax
 
 func (a V2) Add(b V2) V2 {
@@ -157,4 +172,8 @@ func (a V2) AddMul(b V2, t float64) V2 {
 
 func (a *V2) DoAddMul(b V2, t float64) {
 	*a = AddMul(*a, b, t)
+}
+
+func (a V2) Dir() float64 {
+	return Dir(a)
 }

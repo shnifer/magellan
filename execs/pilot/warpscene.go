@@ -124,6 +124,10 @@ func (s *warpScene) Update(dt float64) {
 		Data.PilotData.Ship.Pos = v2.V2{X: 100, Y: 100}
 	}
 
+	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
+		s.toCosmo()
+	}
+
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
 		s.cam.Scale *= (1 + dt)
 	}
@@ -185,6 +189,27 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 	s.turnControlHUD.Draw(image)
 
 	s.caption.Draw(image)
+}
+
+func (s *warpScene) toCosmo() {
+	state := Data.State
+	state.StateID = STATE_cosmo
+
+	//spawn to closest
+	minDist := -1.0
+	systemID := ""
+	for _, v := range Data.Galaxy.Points {
+		dist := Data.PilotData.Ship.Pos.Sub(v.Pos).LenSqr()
+		if minDist < 0 || dist < minDist {
+			systemID = v.ID
+			minDist = dist
+		}
+	}
+
+	if systemID != "" {
+		state.GalaxyID = systemID
+		Client.RequestNewState(state.Encode())
+	}
 }
 
 func (s *warpScene) OnCommand(command string) {

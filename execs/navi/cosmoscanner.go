@@ -5,8 +5,9 @@ import (
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
-	"github.com/skip2/go-qrcode"
+	"golang.org/x/image/colornames"
 	"log"
+	"math"
 	"time"
 )
 
@@ -19,11 +20,14 @@ type scanner struct {
 	countSprite *graph.Sprite
 	countN      int
 
+	scanRange  *graph.Sprite
+	scanSector *graph.Sector
+
 	scannedImg *graph.Sprite
 }
 
 func newScanner(cam *graph.Camera) *scanner {
-	const countN = 8
+	const countN = 12
 
 	var totalT float64
 	if Data.BSP.Scan_speed > 0 {
@@ -32,11 +36,22 @@ func newScanner(cam *graph.Camera) *scanner {
 	sprite := graph.NewSprite(GetAtlasTex("trail"), cam, true, true)
 	sprite.SetSize(15, 15)
 
+	Range := Data.BSP.Scan_range * 2
+	scanRange := graph.NewSprite(graph.CircleTex(), cam, false, false)
+	scanRange.SetSize(Range, Range)
+	scanRange.SetAlpha(0.5)
+	scanRange.SetColor(colornames.Indigo)
+
+	scanSector := graph.NewSector(cam, false, false)
+	scanSector.SetColor(colornames.Goldenrod)
+
 	return &scanner{
 		totalT:      totalT,
 		maxRange2:   Data.BSP.Scan_range * Data.BSP.Scan_range,
 		countSprite: sprite,
 		countN:      countN,
+		scanRange:   scanRange,
+		scanSector:  scanSector,
 	}
 }
 
@@ -57,9 +72,20 @@ func (s *scanner) clicked(obj *CosmoPoint) {
 }
 
 func (s *scanner) update(dt float64) {
+	ship := Data.PilotData.Ship.Pos
+	s.scanRange.SetPos(ship)
+
 	if s.obj == nil {
 		return
 	}
+
+	v := s.obj.Pos.Sub(ship)
+	dist := v.Len()
+	ang := v.Dir()
+	angw := math.Atan(s.obj.Size/dist) * v2.Rad2Deg
+	s.scanSector.SetCenterRadius(ship, dist)
+	s.scanSector.SetAngles(ang-angw, ang+angw)
+
 	if Data.PilotData.Ship.Pos.Sub(s.obj.Pos).LenSqr() > s.maxRange2 {
 		s.reset()
 		return
@@ -72,12 +98,19 @@ func (s *scanner) update(dt float64) {
 }
 
 func (s *scanner) Draw(img *ebiten.Image) {
+	s.scanRange.Draw(img)
+
 	if s.scannedImg != nil {
 		s.scannedImg.Draw(img)
 	}
+
 	if s.obj == nil {
 		return
 	}
+
+	s.scanSector.Draw(img)
+
+	//Draw circle counter
 	num := int(0.5 + s.scanT/s.totalT*float64(s.countN))
 	obj := s.obj.Pos
 	rng := s.obj.Size * 1.1
@@ -96,17 +129,8 @@ func (s *scanner) procScanned(obj *CosmoPoint) {
 	if obj.ScanData == "" {
 		return
 	}
-	qr, err := qrcode.New(obj.ScanData, qrcode.Medium)
-	if err != nil {
-		panic(err)
-	}
-	image, err := ebiten.NewImageFromImage(qr.Image(256), ebiten.FilterDefault)
-	if err != nil {
-		panic(err)
-	}
-	tex := graph.TexFromImage(image, ebiten.FilterDefault, 0, 0, 0)
-	s.scannedImg = graph.NewSprite(tex, nil, false, false)
+	s.scannedImg = graph.NewQRSpriteHUD(obj.ScanData, 256)
 	s.scannedImg.SetPivot(graph.TopLeft())
 	s.scannedImg.SetPos(graph.ScrP(0, 0))
-	time.AfterFunc(time.Second*3, func() { s.scannedImg = nil })
+	time.AfterFunc(time.Second*3, func() { s.scannedImg.TexImageDispose(); s.scannedImg = nil })
 }

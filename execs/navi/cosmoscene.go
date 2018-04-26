@@ -83,10 +83,10 @@ func (s *cosmoScene) Update(dt float64) {
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
-		s.cam.Scale *= (1 + dt)
+		s.cam.Scale *= 1 + dt
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyE) {
-		s.cam.Scale /= (1 + dt)
+		s.cam.Scale /= 1 + dt
 	}
 
 	s.scanner.update(dt)
@@ -100,12 +100,13 @@ func (s *cosmoScene) Update(dt float64) {
 func (s *cosmoScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
+	s.scanner.Draw(image)
+
 	for _, co := range s.objects {
 		co.Draw(image)
 	}
 
 	s.caption.Draw(image)
-	s.scanner.Draw(image)
 	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 	img, op := s.ship.ImageOp()
 	image.DrawImage(img, op)
