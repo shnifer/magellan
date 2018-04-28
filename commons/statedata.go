@@ -64,29 +64,33 @@ type Galaxy struct {
 	//for systems - range of "system borders"
 	SpawnDistance float64
 
-	Points []GalaxyPoint
+	Points   map[string]GalaxyPoint
+	maxLvl   int
+	lvlLists [][]string
 }
 
 type GalaxyPoint struct {
-	ID       string
-	ParentID string
+	ID       string `json:",omitempty"`
+	ParentID string `json:",omitempty"`
 
 	Pos v2.V2
 
-	Orbit  float64
-	Period float64
+	Orbit  float64 `json:",omitempty"`
+	Period float64 `json:",omitempty"`
 
 	Type  string
 	Size  float64
 	Color color.RGBA
 
-	Mass float64
+	Mass float64 `json:",omitempty"`
 
 	//for warp points
-	WarpSpawnDistance float64
-	WarpInDistance    float64
+	WarpSpawnDistance float64 `json:",omitempty"`
+	WarpInDistance    float64 `json:",omitempty"`
 
-	ScanData string
+	ScanData string `json:",omitempty"`
+
+	Emissions []Emission `json:",omitempty"`
 }
 
 func (sd StateData) Encode() []byte {
@@ -103,6 +107,7 @@ func (StateData) Decode(buf []byte) (sd StateData, err error) {
 	if err != nil {
 		return StateData{}, err
 	}
+	sd.Galaxy.RecalcLvls()
 	return sd, nil
 }
 

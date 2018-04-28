@@ -1,7 +1,7 @@
 {
-    "Points": [
-        {
-            "ID": "solar",
+    "Points": {
+        "solar": {
+            "ID": "",
             "ParentID": "",
             "Pos": {
                 "X": 1000,
@@ -14,8 +14,7 @@
             "Mass": 0,
             "WarpSpawnDistance": 200
         },
-        {
-            "ID": "alpha",
+        "alpha": {
             "ParentID": "",
             "Pos": {
                 "X": -200,
@@ -28,5 +27,5 @@
             "Mass": 0,
             "WarpSpawnDistance": 200
         }
-     ]
+    }
 }

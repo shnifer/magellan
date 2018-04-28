@@ -24,7 +24,7 @@ func createScenes() {
 	loginScene := scene.NewCaptionSceneString(Fonts[Face_cap], colornames.Goldenrod,
 		"waiting for login on other terminal")
 
-	engiScene := newCosmoScene()
+	engiScene := newEngiScene()
 	Scenes.Install(scene_pause, pauseScene, true)
 	Scenes.Install(scene_login, loginScene, true)
 	Scenes.Install(scene_engi, engiScene, false)

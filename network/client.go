@@ -158,7 +158,7 @@ func checkWantedState(c *Client, pingResp PingResp) {
 		}
 	}
 
-	if c.wantState != c.curState {
+	if !c.recvGoroutineStarted && c.wantState != c.curState {
 		//rdy to grab new state Data
 		if pingResp.Room.RdyServData {
 			resp, err := c.doReq(GET, statePattern, nil)

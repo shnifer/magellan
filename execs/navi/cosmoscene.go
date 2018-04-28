@@ -14,8 +14,7 @@ type cosmoScene struct {
 	caption *graph.Text
 	cam     *graph.Camera
 
-	objects []*CosmoPoint
-	idMap   map[string]*CosmoPoint
+	objects map[string]*CosmoPoint
 
 	scanner *scanner
 
@@ -37,8 +36,7 @@ func newCosmoScene() *cosmoScene {
 		caption: caption,
 		ship:    ship,
 		cam:     cam,
-		objects: make([]*CosmoPoint, 0),
-		idMap:   make(map[string]*CosmoPoint),
+		objects: make(map[string]*CosmoPoint),
 	}
 }
 
@@ -47,25 +45,23 @@ func (s *cosmoScene) Init() {
 
 	stateData := Data.GetStateData()
 
-	s.objects = s.objects[:0]
+	s.objects = make(map[string]*CosmoPoint)
 	s.naviMarkerT = 0
 	s.scanner = newScanner(s.cam)
 
-	for _, pd := range stateData.Galaxy.Points {
+	for id, pd := range stateData.Galaxy.Points {
 		cosmoPoint := NewCosmoPoint(pd, s.cam)
-		s.objects = append(s.objects, cosmoPoint)
-
-		if pd.ID != "" {
-			s.idMap[pd.ID] = cosmoPoint
-		}
-		if pd.ParentID != "" {
-			cosmoPoint.Parent = s.idMap[pd.ParentID]
-		}
+		s.objects[id] = cosmoPoint
 	}
 }
 
 func (s *cosmoScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
+	//PilotData Rigid Body emulation
+	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
+	s.cam.Pos = Data.PilotData.Ship.Pos
+	s.cam.Recalc()
+
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		mousex, mousey := ebiten.CursorPosition()
 		s.procMouseClick(v2.V2{X: float64(mousex), Y: float64(mousey)})
@@ -78,8 +74,13 @@ func (s *cosmoScene) Update(dt float64) {
 
 	Data.PilotData.SessionTime += dt
 	sessionTime := Data.PilotData.SessionTime
-	for _, co := range s.objects {
-		co.Update(sessionTime)
+	Data.Galaxy.Update(sessionTime)
+
+	for id, co := range s.objects {
+		if gp, ok := Data.Galaxy.Points[id]; ok {
+			s.objects[id].Pos = gp.Pos
+		}
+		co.Update(dt)
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
@@ -90,11 +91,6 @@ func (s *cosmoScene) Update(dt float64) {
 	}
 
 	s.scanner.update(dt)
-
-	//PilotData Rigid Body emulation
-	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
-	s.cam.Pos = Data.PilotData.Ship.Pos
-	s.cam.Recalc()
 }
 
 func (s *cosmoScene) Draw(image *ebiten.Image) {
@@ -114,9 +110,9 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 
 func (s *cosmoScene) procMouseClick(scrPos v2.V2) {
 	worldPos := s.cam.UnApply(scrPos)
-	for _, obj := range s.objects {
+	for id, obj := range Data.Galaxy.Points {
 		if worldPos.Sub(obj.Pos).LenSqr() < (obj.Size * obj.Size) {
-			s.scanner.clicked(obj)
+			s.scanner.clicked(s.objects[id])
 			return
 		}
 	}

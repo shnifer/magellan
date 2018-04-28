@@ -8,25 +8,21 @@ import (
 )
 
 type engiScene struct {
-	ship    *graph.Sprite
-	caption *graph.Text
-	cam     *graph.Camera
+	ship       *graph.Sprite
+	caption    *graph.Text
+	background *graph.Sprite
 }
 
-func newCosmoScene() *engiScene {
+func newEngiScene() *engiScene {
 	caption := graph.NewText("Engi scene", Fonts[Face_cap], colornames.Aliceblue)
 	caption.SetPosPivot(graph.ScrP(0.1, 0.1), graph.TopLeft())
 
-	cam := graph.NewCamera()
-	cam.Center = graph.ScrP(0.5, 0.5)
-	cam.Recalc()
-
-	ship := graph.NewSprite(GetAtlasTex("ship"), cam, false)
+	back := NewAtlasSpriteHUD("engibackground")
+	back.SetSize(float64(WinW), float64(WinH))
 
 	return &engiScene{
-		caption: caption,
-		ship:    ship,
-		cam:     cam,
+		caption:    caption,
+		background: back,
 	}
 }
 
@@ -36,18 +32,13 @@ func (*engiScene) Init() {
 
 func (scene *engiScene) Update(dt float64) {
 	defer LogFunc("engiScene.Update")()
-
-	//PilotData Rigid Body emulation
-	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
 }
 
 func (scene *engiScene) Draw(image *ebiten.Image) {
 	defer LogFunc("engiScene.Draw")()
 
+	scene.background.Draw(image)
 	scene.caption.Draw(image)
-	scene.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
-	img, op := scene.ship.ImageOp()
-	image.DrawImage(img, op)
 }
 
 func (scene *engiScene) OnCommand(command string) {

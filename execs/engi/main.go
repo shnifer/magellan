@@ -8,9 +8,6 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"log"
-	"os"
-	"runtime"
-	"runtime/pprof"
 	"time"
 )
 
@@ -49,7 +46,10 @@ func mainLoop(window *ebiten.Image) error {
 }
 
 func main() {
-	startProfile()
+	if DEFVAL.DoProf {
+		commons.StartProfile(DEFVAL.CpuProfFileName)
+		defer commons.StopProfile(DEFVAL.CpuProfFileName, DEFVAL.MemProfFileName)
+	}
 
 	WinW = DEFVAL.WinW
 	WinH = DEFVAL.WinH
@@ -61,6 +61,8 @@ func main() {
 	initClient()
 	input.LoadConf(resPath)
 
+	commons.InitTexAtlas(texPath)
+
 	createScenes()
 
 	Client.Start()
@@ -69,41 +71,5 @@ func main() {
 	last = time.Now()
 	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "ENGI"); err != nil {
 		log.Fatal(err)
-	}
-
-	stopProfile()
-}
-
-func startProfile() {
-	cpufn := DEFVAL.CpuProfFileName
-	if cpufn != "" {
-		f, err := os.Create(cpufn)
-		if err != nil {
-			log.Panicln("can't create cpu profile", cpufn, err)
-		}
-		err = pprof.StartCPUProfile(f)
-		if err != nil {
-			log.Panicln("can't start CPU profile ", err)
-		}
-	}
-}
-
-func stopProfile() {
-	if DEFVAL.CpuProfFileName != "" {
-		pprof.StopCPUProfile()
-	}
-
-	memfn := DEFVAL.MemProfFileName
-	if memfn != "" {
-		f, err := os.Create(memfn)
-		if err != nil {
-			log.Panicln("can't create mem profile", memfn)
-		}
-		runtime.GC()
-		err = pprof.WriteHeapProfile(f)
-		if err != nil {
-			log.Panicln("can't start mem profile", err)
-		}
-		f.Close()
 	}
 }

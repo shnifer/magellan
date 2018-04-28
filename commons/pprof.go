@@ -1,4 +1,4 @@
-package main
+package commons
 
 import (
 	"log"
@@ -7,8 +7,7 @@ import (
 	"runtime/pprof"
 )
 
-func startProfile() {
-	cpufn := DEFVAL.CpuProfFileName
+func StartProfile(cpufn string) {
 	if cpufn != "" {
 		f, err := os.Create(cpufn)
 		if err != nil {
@@ -21,12 +20,11 @@ func startProfile() {
 	}
 }
 
-func stopProfile() {
-	if DEFVAL.CpuProfFileName != "" {
+func StopProfile(cpufn string, memfn string) {
+	if cpufn != "" {
 		pprof.StopCPUProfile()
 	}
 
-	memfn := DEFVAL.MemProfFileName
 	if memfn != "" {
 		f, err := os.Create(memfn)
 		if err != nil {

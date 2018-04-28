@@ -15,7 +15,7 @@
     "Distort_consumption": 0,
     "Distort_turn": 10,
     "Distort_turn_consumption": 0,
-    "Turn_max": 90,
+    "Turn_max": 360,
     "Turn_acc": 40,
     "Turn_slow": 80,
     "Strafe_max": 0,

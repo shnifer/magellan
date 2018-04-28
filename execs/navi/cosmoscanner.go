@@ -126,10 +126,14 @@ func (s *scanner) Draw(img *ebiten.Image) {
 
 func (s *scanner) procScanned(obj *CosmoPoint) {
 	log.Println("SCANNED ", obj.ID)
-	if obj.ScanData == "" {
+	gp, ok := Data.Galaxy.Points[obj.ID]
+	if !ok {
 		return
 	}
-	s.scannedImg = graph.NewQRSpriteHUD(obj.ScanData, 256)
+	if gp.ScanData == "" {
+		return
+	}
+	s.scannedImg = graph.NewQRSpriteHUD(gp.ScanData, 256)
 	s.scannedImg.SetPivot(graph.TopLeft())
 	s.scannedImg.SetPos(graph.ScrP(0, 0))
 	time.AfterFunc(time.Second*3, func() { s.scannedImg.TexImageDispose(); s.scannedImg = nil })

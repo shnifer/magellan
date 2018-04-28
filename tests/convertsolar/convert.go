@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/v2"
@@ -23,6 +24,7 @@ type fileData struct {
 	//отклонения от базовых значений в процентах, если объектов много
 	RadMassDev     float64
 	PeriodOrbitDev float64
+	Emissions      []commons.Emission
 	TexName        string
 }
 
@@ -42,7 +44,9 @@ func main() {
 		panic(err)
 	}
 
-	var outData commons.Galaxy
+	outData := commons.Galaxy{
+		Points: make(map[string]commons.GalaxyPoint),
+	}
 	maxOrbit := 0.0
 
 	for _, v := range inData {
@@ -50,8 +54,8 @@ func main() {
 			if v.Distance > maxOrbit {
 				maxOrbit = v.Distance
 			}
-			gp := createGP(v)
-			outData.Points = append(outData.Points, gp)
+			gp, id := createGP(v)
+			outData.Points[id] = gp
 		} else {
 			for i := 0; i < v.Count; i++ {
 				w := v
@@ -65,8 +69,8 @@ func main() {
 				w.Diameter *= kRadMass
 				w.Mass *= kRadMass
 
-				gp := createGP(w)
-				outData.Points = append(outData.Points, gp)
+				gp, id := createGP(w)
+				outData.Points[id] = gp
 			}
 		}
 	}
@@ -77,18 +81,19 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	ioutil.WriteFile("galaxy_solar.json", buf, 0)
+	var idbuf bytes.Buffer
+	json.Indent(&idbuf, buf, "", "  ")
+	ioutil.WriteFile("galaxy_solar.json", idbuf.Bytes(), 0)
 }
 
-func createGP(v fileData) commons.GalaxyPoint {
+func createGP(v fileData) (commons.GalaxyPoint, string) {
 	objType := DEFType
 	if v.TexName != "" {
 		s := strings.Split(v.TexName, ".")
 		objType = s[0]
 	}
 
-	color := color.RGBA{R: v.Color.R, G: v.Color.G, B: v.Color.B, A: 255}
+	clr := color.RGBA{R: v.Color.R, G: v.Color.G, B: v.Color.B, A: 255}
 
 	okr := func(x float64) float64 {
 		const sgn = 10
@@ -96,16 +101,16 @@ func createGP(v fileData) commons.GalaxyPoint {
 	}
 
 	gp := commons.GalaxyPoint{
-		ID:       v.ID,
-		ParentID: v.Parent,
-		Pos:      v2.V2{},
-		Orbit:    okr(v.Distance * K_Radius),
-		Period:   okr(v.OrbitPeriod * K_OrbitPeriod),
-		Type:     objType,
-		Size:     okr(v.Diameter / 2),
-		Color:    color,
-		Mass:     okr(v.Mass),
-		ScanData: v.ID,
+		ParentID:  v.Parent,
+		Pos:       v2.V2{},
+		Orbit:     okr(v.Distance * K_Radius),
+		Period:    okr(v.OrbitPeriod * K_OrbitPeriod),
+		Type:      objType,
+		Size:      okr(v.Diameter / 2),
+		Color:     clr,
+		Mass:      okr(v.Mass),
+		ScanData:  v.ID,
+		Emissions: v.Emissions,
 	}
-	return gp
+	return gp, v.ID
 }

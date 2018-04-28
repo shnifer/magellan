@@ -20,8 +20,7 @@ type cosmoScene struct {
 
 	naviMarker *graph.Sprite
 
-	objects []*CosmoPoint
-	idMap   map[string]*CosmoPoint
+	objects map[string]*CosmoPoint
 
 	//control
 	thrustLevel float64
@@ -70,8 +69,7 @@ func newCosmoScene() *cosmoScene {
 		ship:       ship,
 		cam:        cam,
 		naviMarker: marker,
-		objects:    make([]*CosmoPoint, 0),
-		idMap:      make(map[string]*CosmoPoint),
+		objects:    make(map[string]*CosmoPoint),
 		background: background,
 		compass:    compass,
 	}
@@ -101,8 +99,7 @@ func newCosmoScene() *cosmoScene {
 func (s *cosmoScene) Init() {
 	defer LogFunc("cosmoScene.Init")()
 
-	s.objects = s.objects[:0]
-	s.idMap = make(map[string]*CosmoPoint)
+	s.objects = make(map[string]*CosmoPoint)
 	s.thrustLevel = 0
 	s.maneurLevel = 0
 	s.trailT = 0
@@ -110,29 +107,29 @@ func (s *cosmoScene) Init() {
 
 	stateData := Data.GetStateData()
 
-	for _, pd := range stateData.Galaxy.Points {
+	stateData.Galaxy.Foreach(func(pd GalaxyPoint) {
 		cosmoPoint := NewCosmoPoint(pd, s.cam)
-		s.objects = append(s.objects, cosmoPoint)
-
-		if pd.ID != "" {
-			s.idMap[pd.ID] = cosmoPoint
-		}
-		if pd.ParentID != "" {
-			cosmoPoint.Parent = s.idMap[pd.ParentID]
-		}
-	}
+		s.objects[pd.ID] = cosmoPoint
+	})
 }
 
 func (s *cosmoScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
+
 	Data.PilotData.SessionTime += dt
 	sessionTime := Data.PilotData.SessionTime
-	for _, co := range s.objects {
-		co.Update(sessionTime)
+	Data.Galaxy.Update(sessionTime)
+
+	for id, co := range s.objects {
+		if gp, ok := Data.Galaxy.Points[id]; ok {
+			s.objects[id].Pos = gp.Pos
+		}
+		co.Update(dt)
 	}
 
 	s.updateShipControl(dt)
 	s.procShipGravity(dt)
+	s.procEmissions(dt)
 
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		Data.PilotData.Ship.Vel = v2.V2{}
@@ -142,7 +139,7 @@ func (s *cosmoScene) Update(dt float64) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		Data.PilotData.Ship.Vel = v2.V2{}
 		Data.PilotData.Ship.AngVel = 0
-		Data.PilotData.Ship.Pos = s.idMap["magellan"].Pos
+		Data.PilotData.Ship.Pos = Data.Galaxy.Points["magellan"].Pos
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
@@ -150,10 +147,10 @@ func (s *cosmoScene) Update(dt float64) {
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
-		s.cam.Scale *= (1 + dt)
+		s.cam.Scale *= 1 + dt
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyE) {
-		s.cam.Scale /= (1 + dt)
+		s.cam.Scale /= 1 + dt
 	}
 
 	s.thrustLevelHUD.SetPos(graph.ScrP(0.15, 0.5-0.4*s.thrustLevel))

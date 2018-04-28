@@ -42,8 +42,8 @@ func mainLoop(window *ebiten.Image) error {
 
 func main() {
 	if DEFVAL.DoProf {
-		startProfile()
-		defer stopProfile()
+		commons.StartProfile(DEFVAL.CpuProfFileName)
+		defer commons.StopProfile(DEFVAL.CpuProfFileName, DEFVAL.MemProfFileName)
 	}
 
 	WinW = DEFVAL.WinW

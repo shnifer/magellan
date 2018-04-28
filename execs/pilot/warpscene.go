@@ -15,8 +15,7 @@ type warpScene struct {
 	caption *graph.Text
 	cam     *graph.Camera
 
-	objects []*CosmoPoint
-	idMap   map[string]*CosmoPoint
+	objects map[string]*CosmoPoint
 
 	//trail
 	trailT float64
@@ -52,8 +51,7 @@ func newWarpScene() *warpScene {
 		caption:     caption,
 		ship:        ship,
 		cam:         cam,
-		objects:     make([]*CosmoPoint, 0),
-		idMap:       make(map[string]*CosmoPoint),
+		objects:     make(map[string]*CosmoPoint),
 		sonarSector: sonarSector,
 	}
 
@@ -80,34 +78,26 @@ func newWarpScene() *warpScene {
 }
 
 func (s *warpScene) Init() {
-	defer LogFunc("cosmoScene.Init")()
+	defer LogFunc("warpScene.Init")()
 
-	s.objects = s.objects[:0]
-	s.idMap = make(map[string]*CosmoPoint)
+	s.objects = make(map[string]*CosmoPoint)
 	s.thrustLevel = 0
 	s.maneurLevel = 0
 
 	stateData := Data.GetStateData()
 
-	for _, pd := range stateData.Galaxy.Points {
+	for id, pd := range stateData.Galaxy.Points {
 		cosmoPoint := NewCosmoPoint(pd, s.cam)
-		s.objects = append(s.objects, cosmoPoint)
-
-		if pd.ID != "" {
-			s.idMap[pd.ID] = cosmoPoint
-		}
-		if pd.ParentID != "" {
-			cosmoPoint.Parent = s.idMap[pd.ParentID]
-		}
+		s.objects[id] = cosmoPoint
 	}
 }
 
 func (s *warpScene) Update(dt float64) {
-	defer LogFunc("cosmoScene.Update")()
+	defer LogFunc("warpScene.Update")()
 	Data.PilotData.SessionTime += dt
-	sessionTime := Data.PilotData.SessionTime
+
 	for _, co := range s.objects {
-		co.Update(sessionTime)
+		co.Update(dt)
 	}
 
 	s.updateShipControl(dt)
@@ -170,7 +160,7 @@ func (s *warpScene) camRecalc() {
 }
 
 func (s *warpScene) Draw(image *ebiten.Image) {
-	defer LogFunc("cosmoScene.Draw")()
+	defer LogFunc("warpScene.Draw")()
 
 	s.sonarSector.Draw(image)
 

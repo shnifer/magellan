@@ -33,7 +33,7 @@ func (s *warpScene) procControlTurn(dt float64) {
 
 func (s *warpScene) procShipGravity(dt float64) {
 	var sumV v2.V2
-	for _, obj := range s.objects {
+	for _, obj := range Data.Galaxy.Points {
 		v := obj.Pos.Sub(Data.PilotData.Ship.Pos)
 		len2 := v.LenSqr()
 		vel := Data.PilotData.Ship.Vel.LenSqr()

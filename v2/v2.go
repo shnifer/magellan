@@ -8,7 +8,8 @@ import (
 
 //float64 vector2
 type V2 struct {
-	X, Y float64
+	X float64 `json:",omitempty"`
+	Y float64 `json:",omitempty"`
 }
 
 const Deg2Rad = math.Pi / 180

@@ -49,11 +49,22 @@ func loadGalaxyState(GalaxyID string) *Galaxy {
 		Log(LVL_ERROR, "Can't open file for galaxyID ", GalaxyID)
 		return nil
 	}
+
 	err = json.Unmarshal(buf, &res)
 	if err != nil {
 		Log(LVL_ERROR, "can't unmarshal file for galaxy", GalaxyID)
 		return nil
 	}
+
+	res.RecalcLvls()
+
+	for id, v := range res.Points {
+		if v.ID == "" {
+			v.ID = id
+			res.Points[id] = v
+		}
+	}
+
 	return &res
 }
 
@@ -69,8 +80,17 @@ func saveDataExamples(path string) {
 	json.Indent(&bufBsp, bsp, "", "    ")
 	ioutil.WriteFile(path+"example_bsp.json", bufBsp.Bytes(), 0)
 
-	galaxy := Galaxy{}
-	galaxy.Points = append(galaxy.Points, GalaxyPoint{})
+	galaxy := Galaxy{Points: make(map[string]GalaxyPoint)}
+	galaxy.Points["samplePoint"] = GalaxyPoint{
+		ParentID:          "parentID",
+		Orbit:             100,
+		Period:            80,
+		Mass:              10,
+		WarpInDistance:    100,
+		WarpSpawnDistance: 80,
+		ScanData:          "Eurika!",
+		Emissions:         []Emission{{Type: "Heat", MainRange: 100, FarValue: 200, MainValue: 100, FarRange: 200}},
+	}
 	galaxyStr, _ := json.Marshal(galaxy)
 	//bufGalaxy := bytes.Buffer{}
 	//json.Indent(&bufGalaxy, galaxyStr, "", "    ")

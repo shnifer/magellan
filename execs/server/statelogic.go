@@ -10,14 +10,20 @@ import (
 func generateCommonData(common CommonData, stateData StateData, newState, prevState State) CommonData {
 	defer LogFunc("generateCommonData " + newState.StateID + " " + newState.GalaxyID + " " + newState.ShipID)()
 
-	common.PilotData.SessionTime = time.Now().Sub(StartDateTime).Seconds()
+	sessionTime := time.Now().Sub(StartDateTime).Seconds()
+	common.PilotData.SessionTime = sessionTime
+	stateData.Galaxy.Update(sessionTime)
 
 	switch newState.StateID {
 	case STATE_cosmo:
-		//spawn in Solar location
-		if common.PilotData.Ship == (RBData{}) {
+		if prevState.StateID == STATE_login {
 			common.PilotData.Ship.Pos =
-				CalculateCosmoPos(DEFVAL.SolarStartLocationName, stateData.Galaxy.Points, common.PilotData.SessionTime)
+				stateData.Galaxy.Points[DEFVAL.SolarStartLocationName].Pos
+		}
+
+		if prevState.StateID == STATE_warp {
+			common.PilotData.Ship.Pos =
+				v2.InDir(180 + common.PilotData.Ship.Ang).Mul(stateData.Galaxy.SpawnDistance)
 		}
 	case STATE_warp:
 		common = toWarpCommonData(common, stateData, newState, prevState)

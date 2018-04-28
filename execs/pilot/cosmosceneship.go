@@ -54,11 +54,22 @@ func (s *cosmoScene) procControlForward(dt float64) {
 
 func (s *cosmoScene) procShipGravity(dt float64) {
 	var sumF v2.V2
-	for _, obj := range s.objects {
+	for _, obj := range Data.Galaxy.Points {
 		v := obj.Pos.Sub(Data.PilotData.Ship.Pos)
 		len2 := v.LenSqr()
 		F := Gravity(obj.Mass, len2, obj.Size/2)
 		sumF.DoAddMul(v.Normed(), F)
 	}
 	Data.PilotData.Ship.Vel.DoAddMul(sumF, dt)
+}
+
+func (s *cosmoScene) procEmissions(dt float64) {
+	emissions := CalculateEmissions(Data.Galaxy, Data.PilotData.Ship.Pos)
+	for emiType, emiVal := range emissions {
+		switch emiType {
+		case EMISSION_SLOW:
+			Data.PilotData.Ship.Vel =
+				Data.PilotData.Ship.Vel.Mul(1 - emiVal*dt/100)
+		}
+	}
 }
