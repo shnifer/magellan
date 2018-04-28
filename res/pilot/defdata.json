@@ -4,7 +4,7 @@
     "FullScreen": false,
     "WinW": 800,
     "WinH": 600,
-    "DoProf": true,
+    "DoProf": false,
     "CpuProfFileName": "pilotcpu.prof",
     "MemProfFileName": "pilotmem.prof",
     "GravityConst": 0.1,

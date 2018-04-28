@@ -147,13 +147,12 @@ func stateHandler(srv *Server) http.Handler {
 		}
 		room.mu.Unlock()
 
-		StateData := srv.opts.RoomServ.GetStateData(roomName)
 		CommonData, err := srv.opts.RoomServ.GetRoomCommon(roomName)
 		if err != nil {
 			sendErr(w, "can't get fresh Common data to send with state data!")
 		}
 		SendData := StateDataResp{
-			StateData:   StateData,
+			StateData:   srv.opts.RoomServ.GetStateData(roomName),
 			StartCommon: CommonData,
 		}
 		enc := gob.NewEncoder(w)

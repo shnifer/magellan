@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/Shnifer/magellan/v2"
 	"image/color"
+	"bytes"
 )
 
 type StateData struct {
@@ -80,7 +81,6 @@ type GalaxyPoint struct {
 
 	Type  string
 	Size  float64
-	Color color.RGBA
 
 	Mass float64 `json:",omitempty"`
 
@@ -91,6 +91,7 @@ type GalaxyPoint struct {
 	ScanData string `json:",omitempty"`
 
 	Emissions []Emission `json:",omitempty"`
+	Color color.RGBA
 }
 
 func (sd StateData) Encode() []byte {
@@ -123,4 +124,14 @@ func (sd StateData) Copy() (res StateData) {
 	}
 
 	return res
+}
+
+func (gp GalaxyPoint) MarshalJSON() ([]byte,error){
+	type just GalaxyPoint
+	buf,err:=json.Marshal(just(gp))
+	if err!=nil{
+		return buf,err
+	}
+	buf = bytes.Replace(buf,[]byte(`"Pos":{},`),[]byte{},-1)
+	return buf,nil
 }

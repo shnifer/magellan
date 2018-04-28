@@ -81,9 +81,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	var idbuf bytes.Buffer
-	json.Indent(&idbuf, buf, "", "  ")
-	ioutil.WriteFile("galaxy_solar.json", idbuf.Bytes(), 0)
+	buf = bytes.Replace(buf,[]byte(`"Pos":{},`),[]byte(""),-1)
+	buf = bytes.Replace(buf,[]byte("}},"),[]byte("}},\n"),-1)
+	//var idbuf bytes.Buffer
+	//json.Indent(&idbuf, buf, "", " ")
+	ioutil.WriteFile("galaxy_solar.json", buf, 0)
 }
 
 func createGP(v fileData) (commons.GalaxyPoint, string) {
