@@ -4,7 +4,6 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
-	"github.com/hajimehoshi/ebiten"
 	"golang.org/x/image/colornames"
 	"log"
 	"math"
@@ -97,18 +96,20 @@ func (s *scanner) update(dt float64) {
 	}
 }
 
-func (s *scanner) Draw(img *ebiten.Image) {
-	s.scanRange.Draw(img)
+func (s *scanner) Req() *graph.DrawQueue{
+	Q:=graph.NewDrawQueue()
+
+	Q.Add(s.scanRange,graph.Z_UNDER_OBJECT,"")
 
 	if s.scannedImg != nil {
-		s.scannedImg.Draw(img)
+		Q.Add(s.scannedImg, graph.Z_STAT_HUD,"")
 	}
 
 	if s.obj == nil {
-		return
+		return Q
 	}
 
-	s.scanSector.Draw(img)
+	Q.Add(s.scanSector, graph.Z_UNDER_OBJECT,"")
 
 	//Draw circle counter
 	num := int(0.5 + s.scanT/s.totalT*float64(s.countN))
@@ -120,8 +121,9 @@ func (s *scanner) Draw(img *ebiten.Image) {
 	for i := 0; i < num; i++ {
 		pos := obj.AddMul(v2.InDir(-360/float64(s.countN)*float64(i)), rng)
 		s.countSprite.SetPos(pos)
-		s.countSprite.Draw(img)
+		Q.Add(s.countSprite,graph.Z_UNDER_OBJECT,"")
 	}
+	return Q
 }
 
 func (s *scanner) procScanned(obj *CosmoPoint) {

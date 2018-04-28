@@ -69,7 +69,7 @@ func NewDrawQueue() *DrawQueue {
 }
 
 //For simple objects(like Sprite amd other graph primitives) that do not know it's layer
-func (dq *DrawQueue) Add(layer int, group string, drawer drawer) {
+func (dq *DrawQueue) Add(drawer drawer, layer int, group string) {
 	dq.reqs = append(dq.reqs, NewReq(layer, group, drawer.DrawF()))
 }
 

@@ -75,22 +75,27 @@ func (s *warpScene) Update(dt float64) {
 	s.sonar.SetAngles(
 		Data.NaviData.SonarDir-Data.NaviData.SonarWide/2,
 		Data.NaviData.SonarDir+Data.NaviData.SonarWide/2)
+
+	s.ship.SetAng(Data.PilotData.Ship.Ang)
 }
 
 func (s *warpScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
-	s.sonar.Draw(image)
+	Q:=graph.NewDrawQueue()
 
-	s.ship.SetAng(Data.PilotData.Ship.Ang)
-	s.ship.Draw(image)
+	Q.Add(s.sonar,graph.Z_UNDER_OBJECT,"")
+
+	Q.Add(s.ship,graph.Z_UNDER_OBJECT,"")
 
 	msg := fmt.Sprintf("DIRECTION: %.f\nRANGE: %.f\nWIDE: %.1f",
 		Data.NaviData.SonarDir, Data.NaviData.SonarRange, Data.NaviData.SonarWide)
 	stats := graph.NewText(msg, s.face, colornames.Palegoldenrod)
 	stats.SetPosPivot(graph.ScrP(0.6, 0.1), graph.TopLeft())
-	stats.Draw(image)
-	s.caption.Draw(image)
+	Q.Add(stats,graph.Z_HUD,"")
+	Q.Add(s.caption,graph.Z_STAT_HUD,"")
+
+	Q.Run(image)
 }
 
 func (s *warpScene) procMouseClick(scrPos v2.V2) {

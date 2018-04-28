@@ -90,22 +90,25 @@ func (s *cosmoScene) Update(dt float64) {
 		s.cam.Scale /= 1 + dt
 	}
 
+	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 	s.scanner.update(dt)
 }
 
 func (s *cosmoScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
-	s.scanner.Draw(image)
+	Q:=graph.NewDrawQueue()
+
+	Q.Append(s.scanner)
 
 	for _, co := range s.objects {
-		co.Draw(image)
+		Q.Append(co)
 	}
 
-	s.caption.Draw(image)
-	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
-	img, op := s.ship.ImageOp()
-	image.DrawImage(img, op)
+	Q.Add(s.caption,graph.Z_STAT_HUD,"")
+	Q.Add(s.ship,graph.Z_GAME_OBJECT,"")
+
+	Q.Run(image)
 }
 
 func (s *cosmoScene) procMouseClick(scrPos v2.V2) {

@@ -151,6 +151,7 @@ func (s *warpScene) Update(dt float64) {
 		Data.NaviData.SonarDir-Data.NaviData.SonarWide/2,
 		Data.NaviData.SonarDir+Data.NaviData.SonarWide/2)
 
+	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 	s.camRecalc()
 }
 func (s *warpScene) camRecalc() {
@@ -162,23 +163,27 @@ func (s *warpScene) camRecalc() {
 func (s *warpScene) Draw(image *ebiten.Image) {
 	defer LogFunc("warpScene.Draw")()
 
-	s.sonarSector.Draw(image)
+	Q:=graph.NewDrawQueue()
+
+	Q.Add(s.sonarSector, graph.Z_UNDER_OBJECT, "")
 
 	for _, co := range s.objects {
-		co.Draw(image)
+		Q.Append(co)
 	}
 
-	s.trail.Draw(image)
+	Q.Add(s.trail,graph.Z_UNDER_OBJECT,"trail")
 
-	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
-	s.ship.Draw(image)
+	Q.Add(s.ship,graph.Z_GAME_OBJECT,"")
 
-	s.thrustLevelHUD.Draw(image)
-	s.thrustControlHUD.Draw(image)
-	s.turnLevelHUD.Draw(image)
-	s.turnControlHUD.Draw(image)
 
-	s.caption.Draw(image)
+	Q.Add(s.thrustLevelHUD,graph.Z_HUD,"")
+	Q.Add(s.thrustControlHUD,graph.Z_HUD,"")
+	Q.Add(s.turnLevelHUD,graph.Z_HUD,"")
+	Q.Add(s.turnControlHUD,graph.Z_HUD,"")
+
+	Q.Add(s.caption,graph.Z_STAT_HUD,"")
+
+	Q.Run(image)
 }
 
 func (s *warpScene) toCosmo() {

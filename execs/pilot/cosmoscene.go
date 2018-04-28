@@ -173,6 +173,7 @@ func (s *cosmoScene) Update(dt float64) {
 	}
 	s.trail.Update(dt)
 	s.compass.SetPos(Data.PilotData.Ship.Pos)
+	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 
 	s.camRecalc()
 }
@@ -188,28 +189,27 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	Q := graph.NewDrawQueue()
 
 	s.background.Draw(image)
-	Q.Add(graph.Z_STAT_BACKGROUND, "", s.background)
-	Q.Add(graph.Z_BACKGROUND, "", s.compass)
+	Q.Add(s.background, graph.Z_STAT_BACKGROUND, "" )
+	Q.Add(s.compass, graph.Z_BACKGROUND, "")
 
 	for _, co := range s.objects {
 		Q.Append(co)
 	}
-	Q.Add(graph.Z_UNDER_OBJECT, "tail", s.trail)
+	Q.Add(s.trail, graph.Z_UNDER_OBJECT, "tail")
 
 	if Data.NaviData.ActiveMarker {
 		s.naviMarker.SetPos(Data.NaviData.MarkerPos)
-		Q.Add(graph.Z_ABOVE_OBJECT, "", s.naviMarker)
+		Q.Add(s.naviMarker, graph.Z_ABOVE_OBJECT, "")
 	}
 
-	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
-	Q.Add(graph.Z_HUD, "", s.ship)
+	Q.Add(s.ship, graph.Z_HUD, "")
 
-	Q.Add(graph.Z_STAT_HUD, "", s.caption)
+	Q.Add(s.caption, graph.Z_STAT_HUD, "")
 
-	Q.Add(graph.Z_HUD, "", s.thrustLevelHUD)
-	Q.Add(graph.Z_HUD, "", s.thrustControlHUD)
-	Q.Add(graph.Z_HUD, "", s.turnLevelHUD)
-	Q.Add(graph.Z_HUD, "", s.turnControlHUD)
+	Q.Add(s.thrustLevelHUD, graph.Z_HUD, "")
+	Q.Add(s.thrustControlHUD, graph.Z_HUD, "")
+	Q.Add(s.turnLevelHUD, graph.Z_HUD, "")
+	Q.Add(s.turnControlHUD, graph.Z_HUD, "")
 
 	Q.Run(image)
 }
