@@ -1,7 +1,6 @@
 package graph
 
 import (
-	"github.com/Shnifer/ebiten_tests/graph"
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"image/color"
