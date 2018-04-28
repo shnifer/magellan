@@ -188,7 +188,10 @@ func (m *Manager) init(name string) {
 
 	if ok {
 		scene.Init()
+
+		m.mu.Lock()
 		m.inited[name] = true
+		m.mu.Unlock()
 	}
 }
 

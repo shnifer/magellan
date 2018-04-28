@@ -42,14 +42,18 @@ type PauseReason struct {
 }
 
 func (c *Client) recalcPauseReason() {
-	c.prmu.Lock()
-	c.pr = PauseReason{
+	c.mu.RLock()
+	pr := PauseReason{
 		PingLost:   c.pingLost,
 		IsFull:     c.isFull,
 		IsCoherent: c.isCoherent,
 		CurState:   c.curState,
 		WantState:  c.wantState,
 	}
+	c.mu.RUnlock()
+
+	c.prmu.Lock()
+	c.pr = pr
 	c.prmu.Unlock()
 }
 

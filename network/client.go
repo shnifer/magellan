@@ -214,8 +214,12 @@ func doCommonReq(c *Client) {
 	var req CommonReq
 	var sentData []byte
 
-	if c.isMyPartActual {
-		if c.opts.OnCommonSend != nil {
+	if c.opts.OnCommonSend != nil {
+		c.mu.RLock()
+		isMyPartActual := c.isMyPartActual
+		c.mu.RUnlock()
+
+		if isMyPartActual{
 			sentData = c.opts.OnCommonSend()
 		}
 	}
