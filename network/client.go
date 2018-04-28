@@ -219,7 +219,7 @@ func doCommonReq(c *Client) {
 		isMyPartActual := c.isMyPartActual
 		c.mu.RUnlock()
 
-		if isMyPartActual{
+		if isMyPartActual {
 			sentData = c.opts.OnCommonSend()
 		}
 	}

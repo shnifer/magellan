@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"github.com/Shnifer/ebiten_tests/graph"
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"image/color"
@@ -85,6 +86,10 @@ func (s *Sector) Draw(dest *ebiten.Image) {
 		s.sprite.SetAng(lastPart)
 		s.sprite.Draw(dest)
 	}
+}
+
+func (s *Sector) DrawF() DrawF {
+	return s.Draw
 }
 
 func (s *Sector) recalcSprite() {

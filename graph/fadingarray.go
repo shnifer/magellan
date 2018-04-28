@@ -98,6 +98,10 @@ func (sa *FadingArray) Draw(img *ebiten.Image) {
 	}
 }
 
+func (sa *FadingArray) DrawF() DrawF {
+	return sa.Draw
+}
+
 func (sa *FadingArray) Clear() {
 	sa.used = 0
 	sa.cur = 0

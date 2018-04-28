@@ -185,28 +185,33 @@ func (s *cosmoScene) camRecalc() {
 func (s *cosmoScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
+	Q := graph.NewDrawQueue()
+
 	s.background.Draw(image)
-	s.compass.Draw(image)
+	Q.Add(graph.Z_STAT_BACKGROUND, "", s.background)
+	Q.Add(graph.Z_BACKGROUND, "", s.compass)
 
 	for _, co := range s.objects {
-		co.Draw(image)
+		Q.Append(co)
 	}
-	s.trail.Draw(image)
+	Q.Add(graph.Z_UNDER_OBJECT, "tail", s.trail)
 
 	if Data.NaviData.ActiveMarker {
 		s.naviMarker.SetPos(Data.NaviData.MarkerPos)
-		s.naviMarker.Draw(image)
+		Q.Add(graph.Z_ABOVE_OBJECT, "", s.naviMarker)
 	}
 
 	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
-	s.ship.Draw(image)
+	Q.Add(graph.Z_HUD, "", s.ship)
 
-	s.caption.Draw(image)
+	Q.Add(graph.Z_STAT_HUD, "", s.caption)
 
-	s.thrustLevelHUD.Draw(image)
-	s.thrustControlHUD.Draw(image)
-	s.turnLevelHUD.Draw(image)
-	s.turnControlHUD.Draw(image)
+	Q.Add(graph.Z_HUD, "", s.thrustLevelHUD)
+	Q.Add(graph.Z_HUD, "", s.thrustControlHUD)
+	Q.Add(graph.Z_HUD, "", s.turnLevelHUD)
+	Q.Add(graph.Z_HUD, "", s.turnControlHUD)
+
+	Q.Run(image)
 }
 
 func (s *cosmoScene) OnCommand(command string) {

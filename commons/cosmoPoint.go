@@ -16,6 +16,7 @@ type CosmoPoint struct {
 	ID   string
 	Pos  v2.V2
 	Size float64
+	Type string
 
 	lastT float64
 }
@@ -55,6 +56,7 @@ func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 		Pos:           pd.Pos,
 		ID:            pd.ID,
 		Size:          pd.Size,
+		Type:          pd.Type,
 	}
 	res.recalcSprite()
 	return &res
@@ -71,6 +73,15 @@ func (co *CosmoPoint) Draw(dest *ebiten.Image) {
 		co.EmissionRange.Draw(dest)
 	}
 	co.Sprite.Draw(dest)
+}
+
+func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
+	res = graph.NewDrawQueue()
+	if co.EmissionRange != nil {
+		res.Add(graph.Z_ABOVE_OBJECT, co.Type, co.EmissionRange)
+	}
+	res.Add(graph.Z_GAME_OBJECT, co.Type, co.Sprite)
+	return res
 }
 
 func (co *CosmoPoint) recalcSprite() {

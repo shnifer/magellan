@@ -4,23 +4,23 @@ import "time"
 
 var i int
 
-func inc(){
-	for{
+func inc() {
+	for {
 		time.Sleep(time.Microsecond)
 		i++
 	}
 }
 
-func dec(){
-	for{
+func dec() {
+	for {
 		time.Sleep(time.Microsecond)
 		i--
 	}
 }
 
-func main(){
+func main() {
 	go inc()
 	go dec()
 
-	time.Sleep(2*time.Second)
+	time.Sleep(2 * time.Second)
 }

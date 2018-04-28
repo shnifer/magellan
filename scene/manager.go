@@ -9,7 +9,7 @@ import (
 type scene interface {
 	Init()
 	Update(dt float64)
-	Draw(image *ebiten.Image)
+	Draw(*ebiten.Image)
 	OnCommand(command string)
 	Destroy()
 }
@@ -75,6 +75,7 @@ func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
 	scene.Update(dt)
 
 	if doDraw {
+
 		scene.Draw(image)
 	}
 }
