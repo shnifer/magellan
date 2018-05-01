@@ -14,8 +14,9 @@ type CommonData struct {
 }
 
 type PilotData struct {
-	Ship        RBData
-	SessionTime float64
+	Ship           RBData
+	SessionTime    float64
+	HeatProduction float64
 }
 
 type NaviData struct {
@@ -35,7 +36,9 @@ type CargoData struct {
 type EngiData struct {
 	//[0.0 - 1.0]
 	//0 for fully OKEY, 1 - for totally DEGRADED
-	BSPDegrade *BSP
+	BSPDegrade    *BSP
+	HeatCumulated float64
+	DmgCumulated  [8]float64
 }
 
 func (cd CommonData) Encode() []byte {
@@ -108,7 +111,7 @@ func (CommonData) Empty() CommonData {
 		PilotData: &PilotData{},
 		NaviData:  &NaviData{},
 		CargoData: &CargoData{},
-		EngiData:  &EngiData{BSPDegrade:&BSP{}},
+		EngiData:  &EngiData{BSPDegrade: &BSP{}},
 	}
 }
 

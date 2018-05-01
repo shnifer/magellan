@@ -16,8 +16,8 @@ type Tex struct {
 	sw, sh     int
 	cols, rows int
 	//count of sprites in sprite sheet
-	count      int
-	name string
+	count int
+	name  string
 }
 
 func newTex(filename string, filter ebiten.Filter, sw, sh int, count int) (Tex, error) {
@@ -60,7 +60,7 @@ func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int, count i
 		rows:   rows,
 		count:  count,
 		filter: filter,
-		name: name,
+		name:   name,
 	}
 }
 

@@ -84,7 +84,7 @@ func (t *Text) Draw(dst *ebiten.Image) {
 	}
 }
 
-func (t *Text) DrawF() (DrawF,string) {
+func (t *Text) DrawF() (DrawF, string) {
 	return t.Draw, "~text"
 }
 
@@ -98,4 +98,8 @@ func (t *Text) Image() *ebiten.Image {
 		et.Draw(img, str, t.face, -t.bounds.Min.X, -t.bounds.Min.Y+i*t.strH, t.color)
 	}
 	return img
+}
+
+func (t *Text) GetSize() (w, h int) {
+	return t.w, t.h
 }

@@ -1,10 +1,10 @@
 package commons
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/Shnifer/magellan/v2"
 	"image/color"
-	"bytes"
 	"reflect"
 )
 
@@ -80,8 +80,8 @@ type GalaxyPoint struct {
 	Orbit  float64 `json:",omitempty"`
 	Period float64 `json:",omitempty"`
 
-	Type  string
-	Size  float64
+	Type string
+	Size float64
 
 	Mass float64 `json:",omitempty"`
 
@@ -92,7 +92,7 @@ type GalaxyPoint struct {
 	ScanData string `json:",omitempty"`
 
 	Emissions []Emission `json:",omitempty"`
-	Color color.RGBA
+	Color     color.RGBA
 }
 
 func (sd StateData) Encode() []byte {
@@ -127,29 +127,29 @@ func (sd StateData) Copy() (res StateData) {
 	return res
 }
 
-func (gp GalaxyPoint) MarshalJSON() ([]byte,error){
+func (gp GalaxyPoint) MarshalJSON() ([]byte, error) {
 	type just GalaxyPoint
-	buf,err:=json.Marshal(just(gp))
-	if err!=nil{
-		return buf,err
+	buf, err := json.Marshal(just(gp))
+	if err != nil {
+		return buf, err
 	}
-	buf = bytes.Replace(buf,[]byte(`"Pos":{},`),[]byte{},-1)
-	return buf,nil
+	buf = bytes.Replace(buf, []byte(`"Pos":{},`), []byte{}, -1)
+	return buf, nil
 }
 
-func (BSP) CalcDegrade (base, degrade *BSP) (res *BSP) {
-	if base == nil || degrade == nil{
+func (BSP) CalcDegrade(base, degrade *BSP) (res *BSP) {
+	if base == nil || degrade == nil {
 		return &BSP{}
 	}
-	res=new(BSP)
-	vBase:=reflect.ValueOf(base).Elem()
-	vDegrade:=reflect.ValueOf(degrade).Elem()
-	vRes:=reflect.ValueOf(res).Elem()
-	t:=vRes.Type()
-	fc:=t.NumField()
+	res = new(BSP)
+	vBase := reflect.ValueOf(base).Elem()
+	vDegrade := reflect.ValueOf(degrade).Elem()
+	vRes := reflect.ValueOf(res).Elem()
+	t := vRes.Type()
+	fc := t.NumField()
 
-	for i:=0;i<fc;i++{
-		x:=vBase.Field(i).Float()*(1.0-vDegrade.Field(i).Float())
+	for i := 0; i < fc; i++ {
+		x := vBase.Field(i).Float() * (1.0 - vDegrade.Field(i).Float())
 		vRes.Field(i).SetFloat(x)
 	}
 	return res

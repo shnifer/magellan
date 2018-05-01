@@ -50,7 +50,7 @@ func (galaxy *Galaxy) RecalcLvls() {
 func (galaxy *Galaxy) Foreach(f func(GalaxyPoint)) {
 	defer LogFunc("galaxy.Foreach")()
 
-	if galaxy.maxLvl==0{
+	if galaxy.maxLvl == 0 {
 		Log(LVL_ERROR, "galaxy.Foreach: maxLvl = 0")
 	}
 	for lvl := 0; lvl <= galaxy.maxLvl; lvl++ {

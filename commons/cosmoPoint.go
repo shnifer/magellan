@@ -78,7 +78,7 @@ func (co *CosmoPoint) Draw(dest *ebiten.Image) {
 func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 	res = graph.NewDrawQueue()
 	if co.EmissionRange != nil {
-		res.Add(co.EmissionRange,graph.Z_ABOVE_OBJECT)
+		res.Add(co.EmissionRange, graph.Z_ABOVE_OBJECT)
 	}
 	res.Add(co.Sprite, graph.Z_GAME_OBJECT)
 	return res

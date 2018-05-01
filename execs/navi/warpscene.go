@@ -82,18 +82,18 @@ func (s *warpScene) Update(dt float64) {
 func (s *warpScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
-	Q:=graph.NewDrawQueue()
+	Q := graph.NewDrawQueue()
 
-	Q.Add(s.sonar,graph.Z_UNDER_OBJECT)
+	Q.Add(s.sonar, graph.Z_UNDER_OBJECT)
 
-	Q.Add(s.ship,graph.Z_UNDER_OBJECT)
+	Q.Add(s.ship, graph.Z_UNDER_OBJECT)
 
 	msg := fmt.Sprintf("DIRECTION: %.f\nRANGE: %.f\nWIDE: %.1f",
 		Data.NaviData.SonarDir, Data.NaviData.SonarRange, Data.NaviData.SonarWide)
 	stats := graph.NewText(msg, s.face, colornames.Palegoldenrod)
 	stats.SetPosPivot(graph.ScrP(0.6, 0.1), graph.TopLeft())
-	Q.Add(stats,graph.Z_HUD)
-	Q.Add(s.caption,graph.Z_STAT_HUD)
+	Q.Add(stats, graph.Z_HUD)
+	Q.Add(s.caption, graph.Z_STAT_HUD)
 
 	Q.Run(image)
 }

@@ -163,7 +163,7 @@ func (s *warpScene) camRecalc() {
 func (s *warpScene) Draw(image *ebiten.Image) {
 	defer LogFunc("warpScene.Draw")()
 
-	Q:=graph.NewDrawQueue()
+	Q := graph.NewDrawQueue()
 
 	Q.Add(s.sonarSector, graph.Z_UNDER_OBJECT)
 
@@ -171,17 +171,16 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 		Q.Append(co)
 	}
 
-	Q.Add(s.trail,graph.Z_UNDER_OBJECT)
+	Q.Add(s.trail, graph.Z_UNDER_OBJECT)
 
-	Q.Add(s.ship,graph.Z_GAME_OBJECT)
+	Q.Add(s.ship, graph.Z_GAME_OBJECT)
 
+	Q.Add(s.thrustLevelHUD, graph.Z_HUD)
+	Q.Add(s.thrustControlHUD, graph.Z_HUD)
+	Q.Add(s.turnLevelHUD, graph.Z_HUD)
+	Q.Add(s.turnControlHUD, graph.Z_HUD)
 
-	Q.Add(s.thrustLevelHUD,graph.Z_HUD)
-	Q.Add(s.thrustControlHUD,graph.Z_HUD)
-	Q.Add(s.turnLevelHUD,graph.Z_HUD)
-	Q.Add(s.turnControlHUD,graph.Z_HUD)
-
-	Q.Add(s.caption,graph.Z_STAT_HUD)
+	Q.Add(s.caption, graph.Z_STAT_HUD)
 
 	Q.Run(image)
 }

@@ -10,6 +10,10 @@ import (
 func generateCommonData(common CommonData, stateData StateData, newState, prevState State) CommonData {
 	defer LogFunc("generateCommonData " + newState.StateID + " " + newState.GalaxyID + " " + newState.ShipID)()
 
+	//DROP inter clients params
+	common.PilotData.HeatProduction = 0
+	common.NaviData.SonarDir = common.PilotData.Ship.Ang
+
 	sessionTime := time.Now().Sub(StartDateTime).Seconds()
 	common.PilotData.SessionTime = sessionTime
 	stateData.Galaxy.Update(sessionTime)

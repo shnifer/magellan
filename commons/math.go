@@ -15,6 +15,15 @@ func Clamp(x, min, max float64) float64 {
 	}
 }
 
+//add delta to X, but X can't be more than 1
+func Add1(x *float64, delta float64) {
+	*x += delta
+	if *x > 1 {
+		*x = 1
+	}
+	return
+}
+
 var gravityConst float64
 var warpGravityConst float64
 

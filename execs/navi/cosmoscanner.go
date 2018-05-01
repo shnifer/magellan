@@ -96,10 +96,10 @@ func (s *scanner) update(dt float64) {
 	}
 }
 
-func (s *scanner) Req() *graph.DrawQueue{
-	Q:=graph.NewDrawQueue()
+func (s *scanner) Req() *graph.DrawQueue {
+	Q := graph.NewDrawQueue()
 
-	Q.Add(s.scanRange,graph.Z_UNDER_OBJECT)
+	Q.Add(s.scanRange, graph.Z_UNDER_OBJECT)
 
 	if s.scannedImg != nil {
 		Q.Add(s.scannedImg, graph.Z_STAT_HUD)
@@ -121,7 +121,7 @@ func (s *scanner) Req() *graph.DrawQueue{
 	for i := 0; i < num; i++ {
 		pos := obj.AddMul(v2.InDir(-360/float64(s.countN)*float64(i)), rng)
 		s.countSprite.SetPos(pos)
-		Q.Add(s.countSprite,graph.Z_UNDER_OBJECT)
+		Q.Add(s.countSprite, graph.Z_UNDER_OBJECT)
 	}
 	return Q
 }

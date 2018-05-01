@@ -8,6 +8,7 @@ import (
 const (
 	Face_cap   = "caption"
 	Face_stats = "stats"
+	Face_list  = "list"
 )
 
 const fontPath = "res/fonts/"
@@ -28,4 +29,10 @@ func init() {
 		Log(LVL_ERROR, err)
 	}
 	Fonts[Face_stats] = face
+
+	face, err = graph.GetFace(fontPath+"phantom.ttf", 12)
+	if err != nil {
+		Log(LVL_ERROR, err)
+	}
+	Fonts[Face_list] = face
 }
