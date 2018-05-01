@@ -53,6 +53,7 @@ func NewLoginScene() *LoginScene {
 func (p *LoginScene) Init() {
 	defer LogFunc("LoginScene.Init")()
 	p.inputText = ""
+	p.text = nil
 	p.lastErrTime = time.Time{}
 }
 

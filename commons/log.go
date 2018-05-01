@@ -1,6 +1,8 @@
 package commons
 
-import "fmt"
+import (
+	"log"
+)
 
 const (
 	LVL_DEBUG int = iota
@@ -16,7 +18,7 @@ const (
 
 func Log(level int, params ...interface{}) {
 	if level >= LOG_LEVEL {
-		fmt.Println(params...)
+		log.Println(params...)
 	}
 }
 

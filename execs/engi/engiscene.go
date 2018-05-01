@@ -8,7 +8,6 @@ import (
 )
 
 type engiScene struct {
-	ship       *graph.Sprite
 	caption    *graph.Text
 	background *graph.Sprite
 }
@@ -19,6 +18,7 @@ func newEngiScene() *engiScene {
 
 	back := NewAtlasSpriteHUD("engibackground")
 	back.SetSize(float64(WinW), float64(WinH))
+	back.SetPivot(graph.TopLeft())
 
 	return &engiScene{
 		caption:    caption,
@@ -37,8 +37,11 @@ func (scene *engiScene) Update(dt float64) {
 func (scene *engiScene) Draw(image *ebiten.Image) {
 	defer LogFunc("engiScene.Draw")()
 
-	scene.background.Draw(image)
-	scene.caption.Draw(image)
+	Q:=graph.NewDrawQueue()
+	Q.Add(scene.background,graph.Z_STAT_BACKGROUND,"")
+	Q.Add(scene.caption, graph.Z_STAT_HUD,"")
+
+	Q.Run(image)
 }
 
 func (scene *engiScene) OnCommand(command string) {

@@ -56,14 +56,15 @@ func loadGalaxyState(GalaxyID string) *Galaxy {
 		return nil
 	}
 
-	res.RecalcLvls()
-
+	//First restore ID's
 	for id, v := range res.Points {
 		if v.ID == "" {
 			v.ID = id
 			res.Points[id] = v
 		}
 	}
+	//Second - recalc lvls!
+	res.RecalcLvls()
 
 	return &res
 }

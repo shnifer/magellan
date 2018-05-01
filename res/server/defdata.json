@@ -2,7 +2,7 @@
     "Port": ":8000",
     "StartWarpSpeed":10,
     "NeededRoles": [
-        "Pilot"
+        "Pilot", "Engi"
     ],
     "SolarStartLocationName": "magellan"
 }

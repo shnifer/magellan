@@ -1,6 +1,8 @@
 package commons
 
-import "github.com/Shnifer/magellan/v2"
+import (
+	"github.com/Shnifer/magellan/v2"
+)
 
 func (galaxy *Galaxy) RecalcLvls() {
 	defer LogFunc("galaxy.RecalcLvls")()
@@ -48,6 +50,9 @@ func (galaxy *Galaxy) RecalcLvls() {
 func (galaxy *Galaxy) Foreach(f func(GalaxyPoint)) {
 	defer LogFunc("galaxy.Foreach")()
 
+	if galaxy.maxLvl==0{
+		Log(LVL_ERROR, "galaxy.Foreach: maxLvl = 0")
+	}
 	for lvl := 0; lvl <= galaxy.maxLvl; lvl++ {
 		for _, id := range galaxy.lvlLists[lvl] {
 			f(galaxy.Points[id])
@@ -57,6 +62,7 @@ func (galaxy *Galaxy) Foreach(f func(GalaxyPoint)) {
 
 func (galaxy *Galaxy) Update(sessionTime float64) {
 	defer LogFunc("galaxy.Update")()
+
 	if galaxy == nil {
 		return
 	}
