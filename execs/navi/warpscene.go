@@ -62,11 +62,11 @@ func (s *warpScene) Update(dt float64) {
 	rang := input.GetF("sonarrange")
 	wide := input.GetF("sonarwide")
 
-	Data.NaviData.SonarDir += turn * dt * Data.BSP.Sonar_rotate_speed
-	Data.NaviData.SonarRange += rang * dt * Data.BSP.Sonar_range_change
-	Data.NaviData.SonarRange = Clamp(Data.NaviData.SonarRange, Data.BSP.Sonar_range_min, Data.BSP.Sonar_range_max)
-	Data.NaviData.SonarWide += wide * dt * Data.BSP.Sonar_angle_change
-	Data.NaviData.SonarWide = Clamp(Data.NaviData.SonarWide, Data.BSP.Sonar_angle_min, Data.BSP.Sonar_angle_max)
+	Data.NaviData.SonarDir += turn * dt * Data.SP.Sonar_rotate_speed
+	Data.NaviData.SonarRange += rang * dt * Data.SP.Sonar_range_change
+	Data.NaviData.SonarRange = Clamp(Data.NaviData.SonarRange, Data.SP.Sonar_range_min, Data.SP.Sonar_range_max)
+	Data.NaviData.SonarWide += wide * dt * Data.SP.Sonar_angle_change
+	Data.NaviData.SonarWide = Clamp(Data.NaviData.SonarWide, Data.SP.Sonar_angle_min, Data.SP.Sonar_angle_max)
 
 	//PilotData Rigid Body emulation
 	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
@@ -84,16 +84,16 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 
 	Q:=graph.NewDrawQueue()
 
-	Q.Add(s.sonar,graph.Z_UNDER_OBJECT,"")
+	Q.Add(s.sonar,graph.Z_UNDER_OBJECT)
 
-	Q.Add(s.ship,graph.Z_UNDER_OBJECT,"")
+	Q.Add(s.ship,graph.Z_UNDER_OBJECT)
 
 	msg := fmt.Sprintf("DIRECTION: %.f\nRANGE: %.f\nWIDE: %.1f",
 		Data.NaviData.SonarDir, Data.NaviData.SonarRange, Data.NaviData.SonarWide)
 	stats := graph.NewText(msg, s.face, colornames.Palegoldenrod)
 	stats.SetPosPivot(graph.ScrP(0.6, 0.1), graph.TopLeft())
-	Q.Add(stats,graph.Z_HUD,"")
-	Q.Add(s.caption,graph.Z_STAT_HUD,"")
+	Q.Add(stats,graph.Z_HUD)
+	Q.Add(s.caption,graph.Z_STAT_HUD)
 
 	Q.Run(image)
 }

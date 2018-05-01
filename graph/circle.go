@@ -36,5 +36,5 @@ func circleTex(radius int) Tex {
 
 	img.ReplacePixels(p)
 
-	return TexFromImage(img, ebiten.FilterDefault, 0, 0, 0)
+	return TexFromImage(img, ebiten.FilterDefault, 0, 0, 0,"~circle")
 }

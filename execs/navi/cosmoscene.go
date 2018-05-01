@@ -105,8 +105,8 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Append(co)
 	}
 
-	Q.Add(s.caption,graph.Z_STAT_HUD,"")
-	Q.Add(s.ship,graph.Z_GAME_OBJECT,"")
+	Q.Add(s.caption,graph.Z_STAT_HUD)
+	Q.Add(s.ship,graph.Z_GAME_OBJECT)
 
 	Q.Run(image)
 }

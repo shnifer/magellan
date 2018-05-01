@@ -16,19 +16,19 @@ func (s *warpScene) procControlForward(dt float64) {
 
 	switch {
 	case thrustInput >= 0:
-		s.thrustLevel = s.thrustLevel + Data.BSP.Distort_level_acc/100*thrustInput*dt
+		s.thrustLevel = s.thrustLevel + Data.SP.Distort_level_acc/100*thrustInput*dt
 	case thrustInput < 0:
-		s.thrustLevel = s.thrustLevel + Data.BSP.Distort_level_slow/100*thrustInput*dt
+		s.thrustLevel = s.thrustLevel + Data.SP.Distort_level_slow/100*thrustInput*dt
 	}
 
 	s.thrustLevel = Clamp(s.thrustLevel, 0, 1)
 
-	Data.PilotData.Ship.Vel = v2.InDir(Data.PilotData.Ship.Ang).Mul(s.thrustLevel * Data.BSP.Distort_level)
+	Data.PilotData.Ship.Vel = v2.InDir(Data.PilotData.Ship.Ang).Mul(s.thrustLevel * Data.SP.Distort_level)
 }
 
 func (s *warpScene) procControlTurn(dt float64) {
 	turnInput := input.GetF("turn")
-	Data.PilotData.Ship.AngVel = turnInput * Data.BSP.Distort_turn * s.thrustLevel
+	Data.PilotData.Ship.AngVel = turnInput * Data.SP.Distort_turn * s.thrustLevel
 }
 
 func (s *warpScene) procShipGravity(dt float64) {

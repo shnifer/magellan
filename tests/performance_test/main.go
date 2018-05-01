@@ -4,11 +4,12 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/hajimehoshi/ebiten/text"
-	_"image/jpeg"
-	"fmt"
+_"image/jpeg"
 	"golang.org/x/image/font"
 	"io/ioutil"
 	"github.com/golang/freetype/truetype"
+	"time"
+	"fmt"
 	"image/color"
 )
 
@@ -17,17 +18,23 @@ func update(img *ebiten.Image) error{
 		return nil
 	}
 	img.DrawImage(Back,Op)
-	msg:=fmt.Sprintf("FPS: %v",ebiten.CurrentFPS())
 	text.Draw(img, "Text", Face,100,100,color.White)
-	ebitenutil.DebugPrint(img, msg)
+	select{
+	case <-Tick:
+		fmt.Println(ebiten.CurrentFPS())
+	default:
+
+	}
 	return nil
 }
 
 var Back *ebiten.Image
 var Op *ebiten.DrawImageOptions
 var Face font.Face
+var Tick <-chan time.Time
 
 func main(){
+	Tick = time.Tick(time.Second)
 	var err error
 	Back,_,err=ebitenutil.NewImageFromFile("back.jpg",ebiten.FilterDefault)
 	if err != nil {

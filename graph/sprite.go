@@ -182,12 +182,12 @@ func (s *Sprite) Draw(dest *ebiten.Image) {
 	dest.DrawImage(img, op)
 }
 
-func (s *Sprite) DrawF() DrawF {
+func (s *Sprite) DrawF() (DrawF, string) {
 	img, op := s.ImageOp()
 	f := func(dest *ebiten.Image) {
 		dest.DrawImage(img, op)
 	}
-	return f
+	return f,s.tex.name
 }
 
 func (s *Sprite) SpriteN() int {

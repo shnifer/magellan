@@ -9,6 +9,9 @@ type TData struct {
 	StateData
 	CommonData
 
+	//StateBSP * Common.Engi.BSPDegrade
+	SP *BSP
+
 	actionQ chan func()
 
 	mu         sync.Mutex
@@ -58,6 +61,7 @@ func (d *TData) SetStateData(stateData StateData) {
 func (d *TData) LoadCommonData(src CommonData) {
 	d.actionQ <- func() {
 		src.FillNotNil(&d.CommonData)
+		d.SP = BSP{}.CalcDegrade(d.BSP, d.EngiData.BSPDegrade)
 	}
 }
 

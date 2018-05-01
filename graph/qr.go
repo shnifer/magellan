@@ -14,6 +14,6 @@ func NewQRSpriteHUD(text string, size int) *Sprite {
 	if err != nil {
 		panic(err)
 	}
-	tex := TexFromImage(image, ebiten.FilterDefault, 0, 0, 0)
+	tex := TexFromImage(image, ebiten.FilterDefault, 0, 0, 0,"~qr")
 	return NewSpriteHUD(tex)
 }

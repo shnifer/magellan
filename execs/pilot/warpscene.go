@@ -165,23 +165,23 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 
 	Q:=graph.NewDrawQueue()
 
-	Q.Add(s.sonarSector, graph.Z_UNDER_OBJECT, "")
+	Q.Add(s.sonarSector, graph.Z_UNDER_OBJECT)
 
 	for _, co := range s.objects {
 		Q.Append(co)
 	}
 
-	Q.Add(s.trail,graph.Z_UNDER_OBJECT,"trail")
+	Q.Add(s.trail,graph.Z_UNDER_OBJECT)
 
-	Q.Add(s.ship,graph.Z_GAME_OBJECT,"")
+	Q.Add(s.ship,graph.Z_GAME_OBJECT)
 
 
-	Q.Add(s.thrustLevelHUD,graph.Z_HUD,"")
-	Q.Add(s.thrustControlHUD,graph.Z_HUD,"")
-	Q.Add(s.turnLevelHUD,graph.Z_HUD,"")
-	Q.Add(s.turnControlHUD,graph.Z_HUD,"")
+	Q.Add(s.thrustLevelHUD,graph.Z_HUD)
+	Q.Add(s.thrustControlHUD,graph.Z_HUD)
+	Q.Add(s.turnLevelHUD,graph.Z_HUD)
+	Q.Add(s.turnControlHUD,graph.Z_HUD)
 
-	Q.Add(s.caption,graph.Z_STAT_HUD,"")
+	Q.Add(s.caption,graph.Z_STAT_HUD)
 
 	Q.Run(image)
 }

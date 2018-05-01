@@ -31,9 +31,11 @@ type NaviData struct {
 type CargoData struct {
 	TurboBoost bool
 }
+
 type EngiData struct {
 	//[0.0 - 1.0]
-	Systems [8]float64
+	//0 for fully OKEY, 1 - for totally DEGRADED
+	BSPDegrade *BSP
 }
 
 func (cd CommonData) Encode() []byte {
@@ -106,7 +108,7 @@ func (CommonData) Empty() CommonData {
 		PilotData: &PilotData{},
 		NaviData:  &NaviData{},
 		CargoData: &CargoData{},
-		EngiData:  &EngiData{},
+		EngiData:  &EngiData{BSPDegrade:&BSP{}},
 	}
 }
 

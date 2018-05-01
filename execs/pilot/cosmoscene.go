@@ -189,27 +189,27 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	Q := graph.NewDrawQueue()
 
 	s.background.Draw(image)
-	Q.Add(s.background, graph.Z_STAT_BACKGROUND, "" )
-	Q.Add(s.compass, graph.Z_BACKGROUND, "")
+	Q.Add(s.background, graph.Z_STAT_BACKGROUND)
+	Q.Add(s.compass, graph.Z_BACKGROUND)
 
 	for _, co := range s.objects {
 		Q.Append(co)
 	}
-	Q.Add(s.trail, graph.Z_UNDER_OBJECT, "tail")
+	Q.Add(s.trail, graph.Z_UNDER_OBJECT)
 
 	if Data.NaviData.ActiveMarker {
 		s.naviMarker.SetPos(Data.NaviData.MarkerPos)
-		Q.Add(s.naviMarker, graph.Z_ABOVE_OBJECT, "")
+		Q.Add(s.naviMarker, graph.Z_ABOVE_OBJECT)
 	}
 
-	Q.Add(s.ship, graph.Z_HUD, "")
+	Q.Add(s.ship, graph.Z_HUD)
 
-	Q.Add(s.caption, graph.Z_STAT_HUD, "")
+	Q.Add(s.caption, graph.Z_STAT_HUD)
 
-	Q.Add(s.thrustLevelHUD, graph.Z_HUD, "")
-	Q.Add(s.thrustControlHUD, graph.Z_HUD, "")
-	Q.Add(s.turnLevelHUD, graph.Z_HUD, "")
-	Q.Add(s.turnControlHUD, graph.Z_HUD, "")
+	Q.Add(s.thrustLevelHUD, graph.Z_HUD)
+	Q.Add(s.thrustControlHUD, graph.Z_HUD)
+	Q.Add(s.turnLevelHUD, graph.Z_HUD)
+	Q.Add(s.turnControlHUD, graph.Z_HUD)
 
 	Q.Run(image)
 }

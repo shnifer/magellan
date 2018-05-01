@@ -39,7 +39,7 @@ func NewReq(layer int, group string, f DrawF) DrawReq {
 }
 
 type drawer interface {
-	DrawF() DrawF
+	DrawF() (f DrawF, group string)
 }
 
 type drawQueuer interface {
@@ -69,8 +69,9 @@ func NewDrawQueue() *DrawQueue {
 }
 
 //For simple objects(like Sprite amd other graph primitives) that do not know it's layer
-func (dq *DrawQueue) Add(drawer drawer, layer int, group string) {
-	dq.reqs = append(dq.reqs, NewReq(layer, group, drawer.DrawF()))
+func (dq *DrawQueue) Add(drawer drawer, layer int) {
+	f, group:= drawer.DrawF()
+	dq.reqs = append(dq.reqs, NewReq(layer, group, f))
 }
 
 //For game objects that create a set of requests with layers and groups

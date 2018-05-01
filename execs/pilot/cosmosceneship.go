@@ -16,14 +16,14 @@ func (s *cosmoScene) procControlTurn(dt float64) {
 	var min, max float64
 	switch {
 	case s.maneurLevel >= 0:
-		max = s.maneurLevel + Data.BSP.Turn_acc/100*dt
-		min = s.maneurLevel - Data.BSP.Turn_slow/100*dt
+		max = s.maneurLevel + Data.SP.Turn_acc/100*dt
+		min = s.maneurLevel - Data.SP.Turn_slow/100*dt
 	case s.maneurLevel < 0:
-		max = s.maneurLevel + Data.BSP.Turn_slow/100*dt
-		min = s.maneurLevel - Data.BSP.Turn_acc/100*dt
+		max = s.maneurLevel + Data.SP.Turn_slow/100*dt
+		min = s.maneurLevel - Data.SP.Turn_acc/100*dt
 	}
 	s.maneurLevel = Clamp(turnInput, min, max)
-	Data.PilotData.Ship.AngVel = s.maneurLevel * Data.BSP.Turn_max
+	Data.PilotData.Ship.AngVel = s.maneurLevel * Data.SP.Turn_max
 }
 
 func (s *cosmoScene) procControlForward(dt float64) {
@@ -31,13 +31,13 @@ func (s *cosmoScene) procControlForward(dt float64) {
 	var min, max float64
 	switch {
 	case s.thrustLevel >= 0:
-		max = s.thrustLevel + Data.BSP.Thrust_acc/100*dt
-		min = s.thrustLevel - Data.BSP.Thrust_slow/100*dt
+		max = s.thrustLevel + Data.SP.Thrust_acc/100*dt
+		min = s.thrustLevel - Data.SP.Thrust_slow/100*dt
 	case s.thrustLevel < 0:
-		max = s.thrustLevel + Data.BSP.Thrust_rev_slow/100*dt
-		min = s.thrustLevel - Data.BSP.Thrust_rev_acc/100*dt
+		max = s.thrustLevel + Data.SP.Thrust_rev_slow/100*dt
+		min = s.thrustLevel - Data.SP.Thrust_rev_acc/100*dt
 	}
-	if Data.BSP.Thrust_rev == 0 && min < 0 {
+	if Data.SP.Thrust_rev == 0 && min < 0 {
 		min = 0
 	}
 	s.thrustLevel = Clamp(thrustInput, min, max)
@@ -45,9 +45,9 @@ func (s *cosmoScene) procControlForward(dt float64) {
 	var accel float64
 	switch {
 	case s.thrustLevel >= 0:
-		accel = s.thrustLevel * Data.BSP.Thrust
+		accel = s.thrustLevel * Data.SP.Thrust
 	case s.thrustLevel < 0:
-		accel = s.thrustLevel * Data.BSP.Thrust_rev
+		accel = s.thrustLevel * Data.SP.Thrust_rev
 	}
 	Data.PilotData.Ship.Vel.DoAddMul(v2.InDir(Data.PilotData.Ship.Ang), accel*dt)
 }

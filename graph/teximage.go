@@ -11,10 +11,13 @@ import (
 type Tex struct {
 	image  *ebiten.Image
 	filter ebiten.Filter
+	//size of single sprite in sheet
 	//0 for solid image
 	sw, sh     int
 	cols, rows int
+	//count of sprites in sprite sheet
 	count      int
+	name string
 }
 
 func newTex(filename string, filter ebiten.Filter, sw, sh int, count int) (Tex, error) {
@@ -22,10 +25,10 @@ func newTex(filename string, filter ebiten.Filter, sw, sh int, count int) (Tex, 
 	if err != nil {
 		return Tex{}, err
 	}
-	return TexFromImage(img, filter, sw, sh, count), nil
+	return TexFromImage(img, filter, sw, sh, count, filename), nil
 }
 
-func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int, count int) Tex {
+func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int, count int, name string) Tex {
 	if image == nil {
 		return Tex{}
 	}
@@ -57,6 +60,7 @@ func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int, count i
 		rows:   rows,
 		count:  count,
 		filter: filter,
+		name: name,
 	}
 }
 

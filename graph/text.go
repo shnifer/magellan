@@ -84,8 +84,8 @@ func (t *Text) Draw(dst *ebiten.Image) {
 	}
 }
 
-func (t *Text) DrawF() DrawF {
-	return t.Draw
+func (t *Text) DrawF() (DrawF,string) {
+	return t.Draw, "~text"
 }
 
 func (t *Text) SetFilter(filter ebiten.Filter) {

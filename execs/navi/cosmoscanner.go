@@ -29,13 +29,13 @@ func newScanner(cam *graph.Camera) *scanner {
 	const countN = 12
 
 	var totalT float64
-	if Data.BSP.Scan_speed > 0 {
-		totalT = 1 / Data.BSP.Scan_speed
+	if Data.SP.Scan_speed > 0 {
+		totalT = 1 / Data.SP.Scan_speed
 	}
 	sprite := graph.NewSprite(GetAtlasTex("trail"), cam, true, true)
 	sprite.SetSize(15, 15)
 
-	Range := Data.BSP.Scan_range * 2
+	Range := Data.SP.Scan_range * 2
 	scanRange := graph.NewSprite(graph.CircleTex(), cam, false, false)
 	scanRange.SetSize(Range, Range)
 	scanRange.SetAlpha(0.5)
@@ -46,7 +46,7 @@ func newScanner(cam *graph.Camera) *scanner {
 
 	return &scanner{
 		totalT:      totalT,
-		maxRange2:   Data.BSP.Scan_range * Data.BSP.Scan_range,
+		maxRange2:   Data.SP.Scan_range * Data.SP.Scan_range,
 		countSprite: sprite,
 		countN:      countN,
 		scanRange:   scanRange,
@@ -99,17 +99,17 @@ func (s *scanner) update(dt float64) {
 func (s *scanner) Req() *graph.DrawQueue{
 	Q:=graph.NewDrawQueue()
 
-	Q.Add(s.scanRange,graph.Z_UNDER_OBJECT,"")
+	Q.Add(s.scanRange,graph.Z_UNDER_OBJECT)
 
 	if s.scannedImg != nil {
-		Q.Add(s.scannedImg, graph.Z_STAT_HUD,"")
+		Q.Add(s.scannedImg, graph.Z_STAT_HUD)
 	}
 
 	if s.obj == nil {
 		return Q
 	}
 
-	Q.Add(s.scanSector, graph.Z_UNDER_OBJECT,"")
+	Q.Add(s.scanSector, graph.Z_UNDER_OBJECT)
 
 	//Draw circle counter
 	num := int(0.5 + s.scanT/s.totalT*float64(s.countN))
@@ -121,7 +121,7 @@ func (s *scanner) Req() *graph.DrawQueue{
 	for i := 0; i < num; i++ {
 		pos := obj.AddMul(v2.InDir(-360/float64(s.countN)*float64(i)), rng)
 		s.countSprite.SetPos(pos)
-		Q.Add(s.countSprite,graph.Z_UNDER_OBJECT,"")
+		Q.Add(s.countSprite,graph.Z_UNDER_OBJECT)
 	}
 	return Q
 }

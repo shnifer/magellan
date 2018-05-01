@@ -5,6 +5,7 @@ import (
 	"github.com/Shnifer/magellan/v2"
 	"image/color"
 	"bytes"
+	"reflect"
 )
 
 type StateData struct {
@@ -134,4 +135,22 @@ func (gp GalaxyPoint) MarshalJSON() ([]byte,error){
 	}
 	buf = bytes.Replace(buf,[]byte(`"Pos":{},`),[]byte{},-1)
 	return buf,nil
+}
+
+func (BSP) CalcDegrade (base, degrade *BSP) (res *BSP) {
+	if base == nil || degrade == nil{
+		return &BSP{}
+	}
+	res=new(BSP)
+	vBase:=reflect.ValueOf(base).Elem()
+	vDegrade:=reflect.ValueOf(degrade).Elem()
+	vRes:=reflect.ValueOf(res).Elem()
+	t:=vRes.Type()
+	fc:=t.NumField()
+
+	for i:=0;i<fc;i++{
+		x:=vBase.Field(i).Float()*(1.0-vDegrade.Field(i).Float())
+		vRes.Field(i).SetFloat(x)
+	}
+	return res
 }

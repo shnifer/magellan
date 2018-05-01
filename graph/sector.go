@@ -56,7 +56,7 @@ func init() {
 	}
 
 	img.ReplacePixels(p)
-	oneDegreeTex = TexFromImage(img, ebiten.FilterDefault, 0, 0, 0)
+	oneDegreeTex = TexFromImage(img, ebiten.FilterDefault, 0, 0, 0, "~oneDegree")
 }
 
 func NewSector(cam *Camera, denyCamScale, denyCamAngle bool) *Sector {
@@ -87,8 +87,8 @@ func (s *Sector) Draw(dest *ebiten.Image) {
 	}
 }
 
-func (s *Sector) DrawF() DrawF {
-	return s.Draw
+func (s *Sector) DrawF() (DrawF, string) {
+	return s.Draw, "~oneDegree"
 }
 
 func (s *Sector) recalcSprite() {

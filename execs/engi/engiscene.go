@@ -38,8 +38,8 @@ func (scene *engiScene) Draw(image *ebiten.Image) {
 	defer LogFunc("engiScene.Draw")()
 
 	Q:=graph.NewDrawQueue()
-	Q.Add(scene.background,graph.Z_STAT_BACKGROUND,"")
-	Q.Add(scene.caption, graph.Z_STAT_HUD,"")
+	Q.Add(scene.background,graph.Z_STAT_BACKGROUND)
+	Q.Add(scene.caption, graph.Z_STAT_HUD)
 
 	Q.Run(image)
 }
