@@ -12,9 +12,8 @@ const Deg2Rad = math.Pi / 180
 const Rad2Deg = 180 / math.Pi
 
 type Sprite struct {
-	tex      Tex
-	col, row int
-	op       *ebiten.DrawImageOptions
+	tex Tex
+	op  ebiten.DrawImageOptions
 	//before and past cam parts of geom
 	dirty      bool
 	colorDirty bool
@@ -43,7 +42,7 @@ type Sprite struct {
 }
 
 func NewSprite(tex Tex, cam *Camera, denyCamScale, denyCamAngle bool) *Sprite {
-	op := &ebiten.DrawImageOptions{}
+	op := ebiten.DrawImageOptions{}
 	op.Filter = tex.filter
 	srcRect := image.Rect(0, 0, tex.sw, tex.sh)
 	op.SourceRect = &srcRect
@@ -157,7 +156,7 @@ func (s *Sprite) ImageOp() (*ebiten.Image, *ebiten.DrawImageOptions) {
 		s.colorDirty = false
 	}
 	op := new(ebiten.DrawImageOptions)
-	*op = *s.op
+	*op = s.op
 	G := s.g1
 	//Flip vert before cam coords
 	if s.cam != nil {
@@ -213,4 +212,11 @@ func (s *Sprite) NextSprite() {
 
 func (s *Sprite) TexImageDispose() {
 	s.tex.image.Dispose()
+}
+
+func (s *Sprite) Cols() int {
+	return s.tex.cols
+}
+func (s *Sprite) Rows() int {
+	return s.tex.rows
 }

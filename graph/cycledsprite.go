@@ -7,7 +7,7 @@ const (
 )
 
 type CycledSprite struct {
-	*Sprite
+	Sprite
 
 	cycleType int
 	curT      float64
@@ -16,20 +16,40 @@ type CycledSprite struct {
 	//for pingpong
 	dir int
 
+	//spriterange
+	min, max int
+
 	paused bool
 }
 
 func NewCycledSprite(sprite *Sprite, cycleType int, fps float64) *CycledSprite {
+	return NewCycledSpriteRange(sprite, cycleType, fps, 0, sprite.SpritesCount()-1)
+}
+
+func NewCycledSpriteRange(sprite *Sprite, cycleType int, fps float64, min, max int) *CycledSprite {
 	if fps == 0 {
 		panic("zero fps!")
 	}
+	if min > max {
+		panic("NewCycledSpriteRange: max < min")
+	}
+	if min < 0 {
+		panic("NewCycledSpriteRange: min < 0")
+	}
+	if max > sprite.SpritesCount()-1 {
+		panic("NewCycledSpriteRange: max>SpritesCount()-1")
+	}
 
+	var s Sprite
+	s = *sprite
 	return &CycledSprite{
-		Sprite:    sprite,
+		Sprite:    s,
 		cycleType: cycleType,
 		curT:      0,
 		periodT:   1 / fps,
 		dir:       1,
+		min:       min,
+		max:       max,
 	}
 }
 
@@ -55,31 +75,30 @@ func (cs *CycledSprite) Update(dt float64) {
 
 func (cs *CycledSprite) nextSprite() {
 	n := cs.SpriteN()
-	max := cs.SpritesCount() - 1
 	n += cs.dir
 	switch cs.cycleType {
 	case Cycle_OneTime:
-		if n > max {
-			n = max
+		if n > cs.max {
+			n = cs.max
 		}
 	case Cycle_Loop:
-		if n > max {
-			n = 0
+		if n > cs.max {
+			n = cs.min
 		}
 	case Cycle_PingPong:
-		if n > max {
-			n = max - 1
+		if n > cs.max {
+			n = cs.max - 1
 			cs.dir = -1
 		}
-		if n < 0 {
-			n = 1
+		if n < cs.min {
+			n = cs.min + 1
 			cs.dir = 1
 		}
 	}
-	if n < 0 {
-		n = 0
-	} else if n > max {
-		n = max
+	if n < cs.min {
+		n = cs.min
+	} else if n > cs.max {
+		n = cs.max
 	}
 	cs.SetSpriteN(n)
 }
