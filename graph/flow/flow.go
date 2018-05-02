@@ -15,13 +15,20 @@ type point struct {
 	maxTime  float64
 	pos      V2
 	updDraw  updDrawPointer
+	attr     map[string]float64
 }
 
 func (p point) Req() *graph.DrawQueue {
 	return p.updDraw.drawPoint(p)
 }
 
-type FlowParams struct {
+type attrF = func(p point) float64
+
+func NewAttrFs() map[string]attrF {
+	return make(map[string]attrF)
+}
+
+type Params struct {
 	SpawnPeriod float64
 
 	SpawnPos       func() (pos V2)
@@ -29,15 +36,16 @@ type FlowParams struct {
 	SpawnUpdDrawer func() updDrawPointer
 
 	VelocityF func(pos V2) V2
+	AttrFs    map[string]attrF
 }
 
 type Flow struct {
-	params FlowParams
+	params Params
 	points []point
 	spawnT float64
 }
 
-func (fp FlowParams) New() *Flow {
+func (fp Params) New() *Flow {
 	if fp.SpawnPeriod == 0 {
 		panic("NewFlow: zero SpawnPeriod")
 	}
@@ -49,6 +57,9 @@ func (fp FlowParams) New() *Flow {
 	}
 	if fp.SpawnLife == nil {
 		fp.SpawnLife = func() float64 { return 1 }
+	}
+	if fp.AttrFs == nil {
+		fp.AttrFs = make(map[string]func(p point) float64)
 	}
 
 	return &Flow{
@@ -83,7 +94,14 @@ func (f *Flow) Update(dt float64) {
 		f.points[i] = p
 	}
 
-	//update
+	//attr update
+	for i, p := range f.points {
+		for name, F := range f.params.AttrFs {
+			f.points[i].attr[name] = F(p)
+		}
+	}
+
+	//draw update
 	for _, p := range f.points {
 		p.updDraw.update(dt)
 	}
@@ -102,6 +120,7 @@ func (f *Flow) newPoint() {
 		maxTime: f.params.SpawnLife(),
 		pos:     f.params.SpawnPos(),
 		updDraw: f.params.SpawnUpdDrawer(),
+		attr:    make(map[string]float64),
 	}
 	f.points = append(f.points, p)
 }

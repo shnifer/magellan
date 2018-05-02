@@ -2,8 +2,20 @@ package flow
 
 import (
 	. "github.com/Shnifer/magellan/v2"
+	"math"
 	"math/rand"
 )
+
+func SinLifeTime(med, dev, period float64) func(p point) float64 {
+	return func(p point) float64 {
+		return med + math.Sin(p.lifeTime/period*2*math.Pi)*dev
+	}
+}
+func SinMaxTime(med, dev, periods float64) func(p point) float64 {
+	return func(p point) float64 {
+		return med + math.Sin(p.lifeTime/p.maxTime*periods*2*math.Pi)*dev
+	}
+}
 
 func ComposeRadial(tang, norm func(l, w float64) float64) func(V2) V2 {
 	return func(pos V2) (vel V2) {

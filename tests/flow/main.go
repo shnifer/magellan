@@ -5,8 +5,10 @@ import (
 	"github.com/Shnifer/magellan/graph/flow"
 	. "github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"math"
+	"math/rand"
 	"time"
 )
 
@@ -31,6 +33,8 @@ func update(window *ebiten.Image) error {
 	Q.Append(fl)
 	Q.Run(window)
 
+	ebitenutil.DebugPrint(window, "Press SPACE to change mod")
+
 	return nil
 }
 
@@ -38,12 +42,14 @@ var sprite *graph.Sprite
 var fl *flow.Flow
 var last time.Time
 
-var flows []flow.FlowParams
+var flows []flow.Params
 var flowN int
 
 const screenSize = 600
 
 func main() {
+	rand.Seed(time.Now().Unix())
+
 	cam := graph.NewCamera()
 	cam.Center = V2{X: screenSize / 2, Y: screenSize / 2}
 	cam.Scale = screenSize / 2
@@ -84,20 +90,42 @@ func main() {
 	}
 	velFs["sinUp"] = flow.ComposeDecart(sinx, flow.ConstC(0.3))
 
-	flows = append(flows, flow.FlowParams{
+	sintang := func(l, w float64) float64 {
+		return math.Sin(l*10) * l / 3
+	}
+	velFs["sinOut"] = flow.ComposeRadial(sintang, flow.ConstC(0.3))
+
+	AttrFs := flow.NewAttrFs()
+	AttrFs["Ang"] = flow.SinLifeTime(0, 90, 1)
+	flows = append(flows, flow.Params{
 		SpawnPeriod:    spawnPeriod,
 		SpawnPos:       flow.RandomInCirc(1),
 		SpawnLife:      flow.NormRand(medLife, devLife),
 		SpawnUpdDrawer: drawer,
 		VelocityF:      velFs["rotation"],
+		AttrFs:         AttrFs,
 	})
 
-	flows = append(flows, flow.FlowParams{
+	AttrFs = flow.NewAttrFs()
+	AttrFs["Size"] = flow.SinLifeTime(0.4, 0.2, 1)
+	flows = append(flows, flow.Params{
 		SpawnPeriod:    spawnPeriod,
-		SpawnPos:       flow.RandomOnSide(V2{0, -1}, 0.5),
+		SpawnPos:       flow.RandomOnSide(V2{X: 0, Y: -1}, 0.5),
 		SpawnLife:      flow.NormRand(medLife, devLife),
 		SpawnUpdDrawer: drawer,
 		VelocityF:      velFs["sinUp"],
+		AttrFs:         AttrFs,
+	})
+
+	AttrFs = flow.NewAttrFs()
+	AttrFs["Alpha"] = flow.SinMaxTime(0, 1, 0.5)
+	flows = append(flows, flow.Params{
+		SpawnPeriod:    spawnPeriod,
+		SpawnPos:       flow.RandomInCirc(0.3),
+		SpawnLife:      flow.NormRand(medLife, devLife),
+		SpawnUpdDrawer: drawer,
+		VelocityF:      velFs["sinOut"],
+		AttrFs:         AttrFs,
 	})
 
 	fl = flows[flowN].New()

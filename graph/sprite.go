@@ -109,6 +109,20 @@ func (s *Sprite) SetSize(x, y float64) {
 	s.dirty = true
 }
 
+func (s *Sprite) SetSizeProportion(size float64) {
+	sx := size / float64(s.tex.sw)
+	sy := size / float64(s.tex.sh)
+	var scale float64
+	if sx > sy {
+		scale = sy
+	} else {
+		scale = sx
+	}
+	s.sx = scale
+	s.sy = scale
+	s.dirty = true
+}
+
 //pivotPartial is [0..1,0..1] vector of pivot point in parts of image size
 func (s *Sprite) SetPivot(pivotPartial v2.V2) {
 	s.pivot = v2.V2{

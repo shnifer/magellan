@@ -47,6 +47,16 @@ func (sd *spriteDrawer) update(dt float64) {
 func (sd *spriteDrawer) drawPoint(p point) *graph.DrawQueue {
 	sd.cs.SetPos(p.pos)
 
+	if ang, ok := p.attr["Ang"]; ok {
+		sd.cs.SetAng(ang)
+	}
+	if size, ok := p.attr["Size"]; ok {
+		sd.cs.SetSizeProportion(size)
+	}
+	if alpha, ok := p.attr["Alpha"]; ok {
+		sd.cs.SetAlpha(alpha)
+	}
+
 	res := graph.NewDrawQueue()
 	res.Add(sd.cs, sd.layer)
 	return res
