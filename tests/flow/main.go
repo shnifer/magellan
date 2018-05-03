@@ -10,6 +10,7 @@ import (
 	"math"
 	"math/rand"
 	"time"
+	"log"
 )
 
 func update(window *ebiten.Image) error {
@@ -130,7 +131,11 @@ func main() {
 
 	fl = flows[flowN].New()
 
+	log.Println("starting...")
 	last = time.Now()
 	ebiten.SetRunnableInBackground(true)
-	ebiten.Run(update, screenSize, screenSize, 1, "test")
+	err=ebiten.Run(update, screenSize, screenSize, 1, "test")
+	if err!=nil{
+		panic(err)
+	}
 }
