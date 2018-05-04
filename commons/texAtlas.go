@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/Shnifer/magellan/graph"
+	"github.com/pkg/errors"
 	"io/ioutil"
+	"strconv"
 )
 
 type TexAtlasRec struct {
@@ -34,13 +36,23 @@ func InitTexAtlas(newTexPath string) {
 	}
 }
 
-func GetAtlasTex(name string) graph.Tex {
+//return tex and error
+func getAtlasTex(name string) (graph.Tex, error) {
 	rec, ok := atlas[name]
 	if !ok {
-		panic("GetAtlasTex: unknown name " + name)
+		return graph.Tex{}, errors.New("Not found atlas")
 	}
 
 	tex, err := graph.GetTex(texPath+rec.FileName, rec.Smooth, rec.Sx, rec.Sy, rec.Count)
+	if err != nil {
+		return graph.Tex{}, err
+	}
+	return tex, nil
+}
+
+//return tex, panic on error
+func GetAtlasTex(name string) graph.Tex {
+	tex, err := getAtlasTex(name)
 	if err != nil {
 		panic(err)
 	}
@@ -53,6 +65,19 @@ func NewAtlasSprite(atlasName string, cam *graph.Camera, denyCamScale, denyCamAn
 
 func NewAtlasSpriteHUD(atlasName string) *graph.Sprite {
 	return graph.NewSpriteHUD(GetAtlasTex(atlasName))
+}
+
+func NewAtlasFrame9HUD(atlasName string, w, h int) *graph.Frame9HUD {
+	var sprites [9]*graph.Sprite
+	for i := 0; i < 9; i++ {
+		tex, err := getAtlasTex(atlasName + strconv.Itoa(i))
+		if err != nil {
+			continue
+		}
+		sprites[i] = graph.NewSpriteHUD(tex)
+
+	}
+	return graph.NewFrame9(sprites, float64(w), float64(h))
 }
 
 func saveAtlasExample(fn string) {

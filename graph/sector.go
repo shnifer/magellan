@@ -61,7 +61,7 @@ func init() {
 
 func NewSector(cam *Camera, denyCamScale, denyCamAngle bool) *Sector {
 	sprite := NewSprite(oneDegreeTex, cam, denyCamScale, denyCamAngle)
-	sprite.SetPivot(BottomRight())
+	sprite.SetPivot(BotRight())
 	return &Sector{
 		cam:          cam,
 		denyCamAngle: denyCamAngle,
@@ -87,7 +87,7 @@ func (s *Sector) Draw(dest *ebiten.Image) {
 	}
 }
 
-func (s *Sector) DrawF() (DrawF, string) {
+func (s *Sector) DrawF() (drawF, string) {
 	return s.Draw, "~oneDegree"
 }
 

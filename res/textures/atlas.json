@@ -16,5 +16,13 @@
   "noise": {"FileName": "noisesheet.png","Sx": 400,"Sy": 400},
   "compass": {"FileName": "compas.png"},
   "background": {"FileName": "background.jpg"},
-  "engibackground": {"FileName": "engibackground.jpg"}
+  "engibackground": {"FileName": "engibackground.jpg"},
+  "front90": {"FileName": "top-left.png"},
+  "front91": {"FileName": "top-ext.png"},
+  "front92": {"FileName": "top-right.png"},
+  "front93": {"FileName": "left-ext.png"},
+  "front95": {"FileName": "right-ext.png"},
+  "front96": {"FileName": "bottom-left.png"},
+  "front97": {"FileName": "bottom-ext.png"},
+  "front98": {"FileName": "bottom-right.png"}
 }

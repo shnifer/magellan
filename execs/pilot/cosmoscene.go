@@ -38,6 +38,8 @@ type cosmoScene struct {
 	thrustControlHUD *graph.Sprite
 	turnLevelHUD     *graph.Sprite
 	turnControlHUD   *graph.Sprite
+	//
+	f9 *graph.Frame9HUD
 }
 
 func newCosmoScene() *cosmoScene {
@@ -52,7 +54,7 @@ func newCosmoScene() *cosmoScene {
 	ship.SetSize(50, 50)
 
 	marker := NewAtlasSprite("marker", cam, true, true)
-	marker.SetPivot(graph.MiddleBottom())
+	marker.SetPivot(graph.MidBottom())
 
 	background := NewAtlasSpriteHUD("background")
 	background.SetSize(float64(WinW), float64(WinH))
@@ -64,6 +66,8 @@ func newCosmoScene() *cosmoScene {
 	compass.SetSize(compassSize, compassSize)
 	compass.SetAlpha(0.5)
 
+	f9 := NewAtlasFrame9HUD("front9", WinW, WinH)
+
 	res := cosmoScene{
 		caption:    caption,
 		ship:       ship,
@@ -72,6 +76,7 @@ func newCosmoScene() *cosmoScene {
 		objects:    make(map[string]*CosmoPoint),
 		background: background,
 		compass:    compass,
+		f9:         f9,
 	}
 
 	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
@@ -215,6 +220,8 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	Q.Add(s.thrustControlHUD, graph.Z_HUD)
 	Q.Add(s.turnLevelHUD, graph.Z_HUD)
 	Q.Add(s.turnControlHUD, graph.Z_HUD)
+
+	Q.Add(s.f9, graph.Z_STAT_HUD)
 
 	Q.Run(image)
 }

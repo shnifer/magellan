@@ -7,10 +7,10 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/hajimehoshi/ebiten/inpututil"
+	"log"
 	"math"
 	"math/rand"
 	"time"
-	"log"
 )
 
 func update(window *ebiten.Image) error {
@@ -134,8 +134,8 @@ func main() {
 	log.Println("starting...")
 	last = time.Now()
 	ebiten.SetRunnableInBackground(true)
-	err=ebiten.Run(update, screenSize, screenSize, 1, "test")
-	if err!=nil{
+	err = ebiten.Run(update, screenSize, screenSize, 1, "test")
+	if err != nil {
 		panic(err)
 	}
 }

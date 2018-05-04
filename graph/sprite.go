@@ -195,7 +195,7 @@ func (s *Sprite) Draw(dest *ebiten.Image) {
 	dest.DrawImage(img, op)
 }
 
-func (s *Sprite) DrawF() (DrawF, string) {
+func (s *Sprite) DrawF() (drawF, string) {
 	img, op := s.ImageOp()
 	f := func(dest *ebiten.Image) {
 		dest.DrawImage(img, op)

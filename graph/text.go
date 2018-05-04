@@ -15,16 +15,24 @@ const interlinesK = 1.2
 func TopLeft() v2.V2 {
 	return v2.V2{X: 0.0, Y: 0.0}
 }
+func TopRight() v2.V2 {
+	return v2.V2{X: 1.0, Y: 0.0}
+}
+
 func Center() v2.V2 {
 	return v2.V2{X: 0.5, Y: 0.5}
 }
 
-func MiddleBottom() v2.V2 {
+func MidBottom() v2.V2 {
 	return v2.V2{X: 0.5, Y: 1}
 }
 
-func BottomRight() v2.V2 {
-	return v2.V2{X: 1, Y: 1}
+func BotLeft() v2.V2 {
+	return v2.V2{X: 0.0, Y: 1.0}
+}
+
+func BotRight() v2.V2 {
+	return v2.V2{X: 1.0, Y: 1.0}
 }
 
 type Text struct {
@@ -84,7 +92,7 @@ func (t *Text) Draw(dst *ebiten.Image) {
 	}
 }
 
-func (t *Text) DrawF() (DrawF, string) {
+func (t *Text) DrawF() (drawF, string) {
 	return t.Draw, "~text"
 }
 
