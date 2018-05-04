@@ -27,6 +27,10 @@ func MidBottom() v2.V2 {
 	return v2.V2{X: 0.5, Y: 1}
 }
 
+func MidLeft() v2.V2 {
+	return v2.V2{X: 0.0, Y: 0.5}
+}
+
 func BotLeft() v2.V2 {
 	return v2.V2{X: 0.0, Y: 1.0}
 }
