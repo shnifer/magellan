@@ -43,11 +43,16 @@ func Gravity(mass, lenSqr, zDist float64) float64 {
 	return gravityConst * mass / d2
 }
 
-func SumGravity(pos v2.V2, points map[string]GalaxyPoint) (sumF v2.V2) {
-	for _, obj := range points {
-		v := obj.Pos.Sub(pos)
-		len2 := v.LenSqr()
-		F := Gravity(obj.Mass, len2, obj.Size/2)
+func SumGravity(pos v2.V2, galaxy *Galaxy) (sumF v2.V2) {
+	var v v2.V2
+	var len2, F float64
+	for _, obj := range galaxy.Ordered {
+		if obj.Mass == 0 {
+			continue
+		}
+		v = obj.Pos.Sub(pos)
+		len2 = v.LenSqr()
+		F = Gravity(obj.Mass, len2, obj.Size/2)
 		sumF.DoAddMul(v.Normed(), F)
 	}
 	return sumF

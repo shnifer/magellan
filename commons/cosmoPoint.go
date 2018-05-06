@@ -21,7 +21,7 @@ type CosmoPoint struct {
 	lastT float64
 }
 
-func NewCosmoPoint(pd GalaxyPoint, cam *graph.Camera) *CosmoPoint {
+func NewCosmoPoint(pd *GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 	sprite := NewAtlasSprite(pd.Type, cam, false, false)
 	zeroColor := color.RGBA{}
 	if pd.Color != zeroColor {

@@ -55,7 +55,7 @@ func (s *cosmoScene) procControlForward(dt float64) {
 
 func (s *cosmoScene) procShipGravity(dt float64) {
 
-	sumF := SumGravity(Data.PilotData.Ship.Pos, Data.StateData.Galaxy.Points)
+	sumF := SumGravity(Data.PilotData.Ship.Pos, Data.StateData.Galaxy)
 
 	Data.PilotData.Ship.Vel.DoAddMul(sumF, dt)
 }

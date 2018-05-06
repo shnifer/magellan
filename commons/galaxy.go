@@ -14,8 +14,8 @@ func (galaxy *Galaxy) RecalcLvls() {
 	maxLvl := 0
 	lvls := make(map[string]int)
 
-	var Lvl func(GalaxyPoint) int
-	Lvl = func(p GalaxyPoint) int {
+	var Lvl func(*GalaxyPoint) int
+	Lvl = func(p *GalaxyPoint) int {
 		parent := p.ParentID
 		if parent == "" {
 			lvls[p.ID] = 0
@@ -40,22 +40,11 @@ func (galaxy *Galaxy) RecalcLvls() {
 	}
 
 	galaxy.maxLvl = maxLvl
-	galaxy.lvlLists = make([][]string, maxLvl+1)
-	for id, lvl := range lvls {
-		galaxy.lvlLists[lvl] = append(galaxy.lvlLists[lvl], id)
-	}
-}
-
-//apply in-func for each point in lvl order
-func (galaxy *Galaxy) Foreach(f func(GalaxyPoint)) {
-	defer LogFunc("galaxy.Foreach")()
-
-	if galaxy.maxLvl == 0 {
-		Log(LVL_ERROR, "galaxy.Foreach: maxLvl = 0")
-	}
-	for lvl := 0; lvl <= galaxy.maxLvl; lvl++ {
-		for _, id := range galaxy.lvlLists[lvl] {
-			f(galaxy.Points[id])
+	for lvl := 0; lvl <= maxLvl; lvl++ {
+		for id, p := range galaxy.Points {
+			if lvls[id] == lvl {
+				galaxy.Ordered = append(galaxy.Ordered, p)
+			}
 		}
 	}
 }
@@ -67,13 +56,12 @@ func (galaxy *Galaxy) Update(sessionTime float64) {
 		return
 	}
 	//skip lvl 0 objects, they do not move
-	galaxy.Foreach(func(obj GalaxyPoint) {
+	for _,obj:=range galaxy.Ordered{
 		if obj.ParentID == "" {
 			return
 		}
 		parent := galaxy.Points[obj.ParentID].Pos
 		angle := (360 / obj.Period) * sessionTime
 		obj.Pos = parent.AddMul(v2.InDir(angle), obj.Orbit)
-		galaxy.Points[obj.ID] = obj
-	})
+	}
 }

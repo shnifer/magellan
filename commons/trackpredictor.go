@@ -37,11 +37,11 @@ func NewTrackPredictor(cam *graph.Camera, sprite *graph.Sprite, data *TData, mod
 }
 
 func (tp *TrackPredictor) Req() *graph.DrawQueue {
-	const dt = 1.0 / 10
+	const dt = 1.0 / 15
 	const markEach = 1 / dt
 	const trackLen = 10
 
-	const updT = 0.1
+	const updT = 1.0 / 15
 
 	if tp.q != nil && time.Since(tp.lastT).Seconds() < updT {
 		return tp.q
@@ -59,7 +59,7 @@ func (tp *TrackPredictor) Req() *graph.DrawQueue {
 
 	ship := tp.data.PilotData.Ship
 	for n := 1; n <= trackLen/dt; n++ {
-		grav := SumGravity(ship.Pos, tp.data.Galaxy.Points)
+		grav := SumGravity(ship.Pos, tp.data.Galaxy)
 		ship.Vel.DoAddMul(v2.Add(grav, accel), dt)
 		prevPos := ship.Pos
 		ship = ship.Extrapolate(dt)

@@ -39,7 +39,7 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 
 func toWarpCommonData(common CommonData, stateData StateData, newState, prevState State) CommonData {
 	fromSystem := prevState.GalaxyID
-	var systemPoint GalaxyPoint
+	var systemPoint *GalaxyPoint
 	var found bool
 	for _, v := range stateData.Galaxy.Points {
 		if v.ID == fromSystem {

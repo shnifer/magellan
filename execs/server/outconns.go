@@ -81,8 +81,8 @@ func saveDataExamples(path string) {
 	json.Indent(&bufBsp, bsp, "", "    ")
 	ioutil.WriteFile(path+"example_bsp.json", bufBsp.Bytes(), 0)
 
-	galaxy := Galaxy{Points: make(map[string]GalaxyPoint)}
-	galaxy.Points["samplePoint"] = GalaxyPoint{
+	galaxy := Galaxy{Points: make(map[string]*GalaxyPoint)}
+	galaxy.Points["samplePoint"] = &GalaxyPoint{
 		ParentID:          "parentID",
 		Orbit:             100,
 		Period:            80,
