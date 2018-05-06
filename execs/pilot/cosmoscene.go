@@ -127,9 +127,9 @@ func (s *cosmoScene) Init() {
 
 	stateData := Data.GetStateData()
 
-    //FIXME: Pos lost!
-//	stateData.Galaxy.Foreach(func(pd GalaxyPoint) {
-	for _,pd:=range stateData.Galaxy.Ordered{
+	//FIXME: Pos lost!
+	//	stateData.Galaxy.Foreach(func(pd GalaxyPoint) {
+	for _, pd := range stateData.Galaxy.Ordered {
 		cosmoPoint := NewCosmoPoint(pd, s.cam)
 		s.objects[pd.ID] = cosmoPoint
 	}

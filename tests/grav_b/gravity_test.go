@@ -45,21 +45,6 @@ func SumGravity3(pos v2.V2, points map[string]*GalaxyPoint) (sumF v2.V2) {
 	return sumF
 }
 
-func SumGravity5(pos v2.V2, points map[string]*GalaxyPoint) (sumF v2.V2) {
-	var v v2.V2
-	var len2, F float64
-	for _, obj := range points {
-		if obj.Mass == 0 {
-			continue
-		}
-		v = obj.Pos.Sub(pos)
-		len2 = v.LenSqr()
-		F = Gravity(obj.Mass, len2, obj.Size/2)
-		sumF.DoAddMul(v.Normed(), F)
-	}
-	return sumF
-}
-
 func SumGravity4(pos v2.V2, points []*GalaxyPoint) (sumF v2.V2) {
 	var v v2.V2
 	var len2, F float64
@@ -75,7 +60,7 @@ func SumGravity4(pos v2.V2, points []*GalaxyPoint) (sumF v2.V2) {
 func SumGravity6(pos v2.V2, galaxy *Galaxy) (sumF v2.V2) {
 	var v v2.V2
 	var len2, F float64
-	for _, obj := range galaxy.Ordered{
+	for _, obj := range galaxy.Ordered {
 		if obj.Mass == 0 {
 			continue
 		}
@@ -134,31 +119,6 @@ func BenchmarkGravity4(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		pos := v2.RandomInCircle(100)
 		SumGravity4(pos, sliceOfPoint)
-	}
-}
-
-func BenchmarkGravity5(b *testing.B) {
-	galaxy := LoadGalaxy(b)
-
-	b.ResetTimer()
-
-	for i := 0; i < b.N; i++ {
-		pos := v2.RandomInCircle(100)
-		var v v2.V2
-		var len2, F float64
-		sumF := v2.ZV
-
-		f := func(p *GalaxyPoint) {
-			if p.Mass == 0 {
-				return
-			}
-			v = p.Pos.Sub(pos)
-			len2 = v.LenSqr()
-			F = Gravity(p.Mass, len2, p.Size/2)
-			sumF.DoAddMul(v.Normed(), F)
-		}
-
-		galaxy.Foreach(f)
 	}
 }
 

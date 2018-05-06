@@ -124,10 +124,10 @@ func (sd StateData) Copy() (res StateData) {
 	if sd.Galaxy != nil {
 
 		val := *sd.Galaxy
-		val.Points = make(map[string]*GalaxyPoint,len(sd.Galaxy.Points))
+		val.Points = make(map[string]*GalaxyPoint, len(sd.Galaxy.Points))
 		val.Ordered = nil
-		for k,v:=range sd.Galaxy.Points{
-			val.Points[k]=v
+		for k, v := range sd.Galaxy.Points {
+			val.Points[k] = v
 		}
 		val.RecalcLvls()
 		res.Galaxy = &val

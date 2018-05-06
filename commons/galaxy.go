@@ -53,12 +53,13 @@ func (galaxy *Galaxy) Update(sessionTime float64) {
 	defer LogFunc("galaxy.Update")()
 
 	if galaxy == nil {
+		Log(LVL_ERROR, "galaxy.Update: galaxy == nil")
 		return
 	}
 	//skip lvl 0 objects, they do not move
-	for _,obj:=range galaxy.Ordered{
+	for _, obj := range galaxy.Ordered {
 		if obj.ParentID == "" {
-			return
+			continue
 		}
 		parent := galaxy.Points[obj.ParentID].Pos
 		angle := (360 / obj.Period) * sessionTime
