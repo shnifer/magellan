@@ -1,6 +1,7 @@
 package commons
 
 import (
+	"github.com/Shnifer/magellan/v2"
 	"math/rand"
 )
 
@@ -40,6 +41,16 @@ func Gravity(mass, lenSqr, zDist float64) float64 {
 		return 0
 	}
 	return gravityConst * mass / d2
+}
+
+func SumGravity(pos v2.V2, points map[string]GalaxyPoint) (sumF v2.V2) {
+	for _, obj := range points {
+		v := obj.Pos.Sub(pos)
+		len2 := v.LenSqr()
+		F := Gravity(obj.Mass, len2, obj.Size/2)
+		sumF.DoAddMul(v.Normed(), F)
+	}
+	return sumF
 }
 
 func WarpGravity(mass, lenSqr, velSqr, zDist float64) float64 {

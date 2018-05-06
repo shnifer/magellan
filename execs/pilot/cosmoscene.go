@@ -40,6 +40,9 @@ type cosmoScene struct {
 	turnControlHUD   *graph.Sprite
 	//
 	f9 *graph.Frame9HUD
+
+	predictorZero   *TrackPredictor
+	predictorThrust *TrackPredictor
 }
 
 func newCosmoScene() *cosmoScene {
@@ -68,15 +71,27 @@ func newCosmoScene() *cosmoScene {
 
 	f9 := NewAtlasFrame9HUD("front9", WinW, WinH)
 
+	predictorSprite := NewAtlasSprite("trail", cam, true, true)
+	predictorSprite.SetSize(20, 20)
+	predictorThrust := NewTrackPredictor(cam, predictorSprite, &Data, Track_CurrentThrust, colornames.Palevioletred, graph.Z_ABOVE_OBJECT+1)
+
+	predictor2Sprite := NewAtlasSprite("trail", cam, true, true)
+	predictor2Sprite.SetSize(15, 15)
+	predictor2Sprite.SetColor(colornames.Darkgray)
+
+	predictorZero := NewTrackPredictor(cam, predictor2Sprite, &Data, Track_ZeroThrust, colornames.Cadetblue, graph.Z_ABOVE_OBJECT)
+
 	res := cosmoScene{
-		caption:    caption,
-		ship:       ship,
-		cam:        cam,
-		naviMarker: marker,
-		objects:    make(map[string]*CosmoPoint),
-		background: background,
-		compass:    compass,
-		f9:         f9,
+		caption:         caption,
+		ship:            ship,
+		cam:             cam,
+		naviMarker:      marker,
+		objects:         make(map[string]*CosmoPoint),
+		background:      background,
+		compass:         compass,
+		f9:              f9,
+		predictorThrust: predictorThrust,
+		predictorZero:   predictorZero,
 	}
 
 	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
@@ -222,6 +237,9 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	Q.Add(s.turnControlHUD, graph.Z_HUD)
 
 	Q.Add(s.f9, graph.Z_STAT_HUD)
+
+	Q.Append(s.predictorThrust)
+	Q.Append(s.predictorZero)
 
 	Q.Run(image)
 }

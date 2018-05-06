@@ -16,6 +16,7 @@ type CommonData struct {
 type PilotData struct {
 	Ship           RBData
 	SessionTime    float64
+	ThrustVector   v2.V2
 	HeatProduction float64
 }
 

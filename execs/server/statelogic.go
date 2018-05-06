@@ -12,6 +12,7 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 
 	//DROP inter clients params
 	common.PilotData.HeatProduction = 0
+	common.PilotData.ThrustVector = v2.ZV
 	common.NaviData.SonarDir = common.PilotData.Ship.Ang
 
 	sessionTime := time.Now().Sub(StartDateTime).Seconds()
