@@ -10,6 +10,7 @@ import (
 
 type tDefVals struct {
 	Port       string
+	Timeout int
 	Room       string
 	Role       string
 	FullScreen bool

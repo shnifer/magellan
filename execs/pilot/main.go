@@ -50,6 +50,7 @@ func main() {
 	WinH = DEFVAL.WinH
 
 	graph.SetScreenSize(WinW, WinH)
+	commons.InitFonts()
 
 	initClient()
 	input.LoadConf(resPath)

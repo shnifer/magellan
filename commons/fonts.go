@@ -15,7 +15,7 @@ const fontPath = "res/fonts/"
 
 var Fonts map[string]font.Face
 
-func init() {
+func InitFonts() {
 	Fonts = make(map[string]font.Face)
 
 	face, err := graph.GetFace(fontPath+"phantom.ttf", 20)

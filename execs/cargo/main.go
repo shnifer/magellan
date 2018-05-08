@@ -55,10 +55,12 @@ func main() {
 	WinH = DEFVAL.WinH
 
 	graph.SetScreenSize(WinW, WinH)
+	commons.InitFonts()
 
 	Data = commons.NewData()
 
 	initClient()
+
 	input.LoadConf(resPath)
 
 	createScenes()

@@ -54,6 +54,7 @@ func main() {
 	WinW = DEFVAL.WinW
 	WinH = DEFVAL.WinH
 
+	commons.InitFonts()
 	graph.SetScreenSize(WinW, WinH)
 
 	Data = commons.NewData()
