@@ -3,12 +3,16 @@ package network
 import (
 	"encoding/json"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 )
 
 func pingHandler(srv *Server) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
+		if rand.Intn(2) == 0 {
+			return
+		}
 		srv.mu.RLock()
 		defer srv.mu.RUnlock()
 

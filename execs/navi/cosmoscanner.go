@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
@@ -11,10 +12,11 @@ import (
 )
 
 type scanner struct {
+	scanT float64
+	obj   *CosmoPoint
+
 	totalT    float64
-	scanT     float64
 	maxRange2 float64
-	obj       *CosmoPoint
 
 	countSprite *graph.Sprite
 	countN      int
@@ -26,18 +28,14 @@ type scanner struct {
 }
 
 func newScanner(cam *graph.Camera) *scanner {
+	defer commons.LogFunc("newScanner")()
+
 	const countN = 12
 
-	var totalT float64
-	if Data.SP.Scan_speed > 0 {
-		totalT = 1 / Data.SP.Scan_speed
-	}
 	sprite := graph.NewSprite(GetAtlasTex("trail"), cam, true, true)
 	sprite.SetSize(15, 15)
 
-	Range := Data.SP.Scan_range * 2
 	scanRange := graph.NewSprite(graph.CircleTex(), cam, false, false)
-	scanRange.SetSize(Range, Range)
 	scanRange.SetAlpha(0.5)
 	scanRange.SetColor(colornames.Indigo)
 
@@ -45,8 +43,6 @@ func newScanner(cam *graph.Camera) *scanner {
 	scanSector.SetColor(colornames.Goldenrod)
 
 	return &scanner{
-		totalT:      totalT,
-		maxRange2:   Data.SP.Scan_range * Data.SP.Scan_range,
 		countSprite: sprite,
 		countN:      countN,
 		scanRange:   scanRange,
@@ -78,6 +74,14 @@ func (s *scanner) update(dt float64) {
 		return
 	}
 
+	if Data.SP.Scan_speed > 0 {
+		s.totalT = 1 / Data.SP.Scan_speed
+	} else {
+		s.totalT = 0
+	}
+
+	s.maxRange2 = Data.SP.Scan_range * Data.SP.Scan_range
+
 	v := s.obj.Pos.Sub(ship)
 	dist := v.Len() + 0.1
 	ang := v.Dir()
@@ -90,8 +94,12 @@ func (s *scanner) update(dt float64) {
 		return
 	}
 	s.scanT += dt
-	if s.scanT > s.totalT {
-		s.procScanned(s.obj)
+	if s.totalT > 0 {
+		if s.scanT > s.totalT {
+			s.procScanned(s.obj)
+			s.reset()
+		}
+	} else {
 		s.reset()
 	}
 }
@@ -99,6 +107,8 @@ func (s *scanner) update(dt float64) {
 func (s *scanner) Req() *graph.DrawQueue {
 	Q := graph.NewDrawQueue()
 
+	Range := Data.SP.Scan_range * 2
+	s.scanRange.SetSize(Range, Range)
 	Q.Add(s.scanRange, graph.Z_UNDER_OBJECT)
 
 	if s.scannedImg != nil {

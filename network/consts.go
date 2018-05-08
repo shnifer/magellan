@@ -17,6 +17,7 @@ const (
 	roomPattern  = "/room/"
 	pingPattern  = "/ping/"
 	statePattern = "/state/"
+	testPattern  = "/test/"
 
 	ClientDefaultTimeout  = time.Second / 30
 	ClientPingPeriod      = time.Second / 20

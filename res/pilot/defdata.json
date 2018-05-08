@@ -1,9 +1,10 @@
 {
     "Port": "http://localhost:8000",
+    "Timeout":10,
     "Room": "room101",
     "FullScreen": false,
-    "WinW": 1200,
-    "WinH": 900,
+    "WinW": 320,
+    "WinH": 240,
     "DoProf": true,
     "CpuProfFileName": "pilotcpu.prof",
     "MemProfFileName": "pilotmem.prof",

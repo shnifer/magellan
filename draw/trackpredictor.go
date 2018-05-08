@@ -38,11 +38,11 @@ func NewTrackPredictor(cam *graph.Camera, sprite *graph.Sprite, data *TData, mod
 }
 
 func (tp *TrackPredictor) Req() *graph.DrawQueue {
-	const dt = 1.0 / 15
+	const dt = 1.0 / 10
 	const markEach = 1 / dt
 	const trackLen = 10
 
-	const updT = 1.0 / 15
+	const updT = 1.0 / 10
 
 	if tp.q != nil && time.Since(tp.lastT).Seconds() < updT {
 		return tp.q
@@ -50,6 +50,7 @@ func (tp *TrackPredictor) Req() *graph.DrawQueue {
 	tp.lastT = time.Now()
 
 	tp.q = graph.NewDrawQueue()
+
 	var accel v2.V2
 	switch tp.mode {
 	case Track_CurrentThrust:

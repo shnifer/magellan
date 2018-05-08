@@ -8,6 +8,7 @@ package network
 
 import (
 	"encoding/gob"
+	"fmt"
 	"github.com/Shnifer/magellan/wrnt"
 	"log"
 	"net/http"
@@ -88,6 +89,7 @@ func NewServer(opts ServerOpts) *Server {
 		roomsState: make(map[string]*servRoomState),
 	}
 
+	mux.Handle(testPattern, testHandler(srv))
 	mux.Handle(pingPattern, pingHandler(srv))
 	mux.Handle(roomPattern, roomHandler(srv))
 	mux.Handle(statePattern, stateHandler(srv))
@@ -212,6 +214,14 @@ func serverRoomUpdater(serv *Server) {
 
 		serv.mu.RUnlock()
 	}
+}
+
+func testHandler(srv *Server) http.Handler {
+	f := func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Magellan server responding")
+	}
+
+	return http.HandlerFunc(f)
 }
 
 func (s *Server) Close() error {

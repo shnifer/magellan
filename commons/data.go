@@ -22,12 +22,14 @@ func NewData() TData {
 	return TData{
 		CommonData: CommonData{}.Empty(),
 		actionQ:    make(chan func(), 8),
+		SP:         &BSP{},
 	}
 }
 
 //Main cycle
 func (d *TData) Update(roleName string) {
 	defer LogFunc("Data.Update")()
+
 loop:
 	for {
 		select {
