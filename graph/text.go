@@ -8,6 +8,7 @@ import (
 	"image"
 	"image/color"
 	"strings"
+	"log"
 )
 
 const interlinesK = 1.2
@@ -89,6 +90,10 @@ func (t *Text) SetPosPivot(pos, pivot v2.V2) {
 }
 
 func (t *Text) Draw(dst *ebiten.Image) {
+	if t==nil{
+		log.Println("Draw called for nil Text")
+		return
+	}
 	for i, str := range t.text {
 		et.Draw(dst, str, t.face,
 			int(t.pos.X-t.pivot.Y*float64(t.w))-t.bounds.Min.X,

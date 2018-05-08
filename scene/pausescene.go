@@ -7,6 +7,7 @@ import (
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
 	"image/color"
+	"github.com/Shnifer/magellan/commons"
 )
 
 type PauseScene struct {
@@ -22,6 +23,7 @@ func NewPauseScene(face font.Face, getReason func() network.PauseReason) *PauseS
 	return &PauseScene{
 		face:      face,
 		getReason: getReason,
+		caption: graph.NewText("",face,color.White),
 	}
 }
 
@@ -29,6 +31,8 @@ func (p *PauseScene) Init() {
 }
 
 func (p *PauseScene) Update(float64) {
+	commons.LogFunc("pauseScene.Update")()
+
 	reason := p.getReason()
 	if reason != p.reason {
 		p.reason = reason
@@ -56,6 +60,8 @@ func (p *PauseScene) Update(float64) {
 }
 
 func (p *PauseScene) Draw(image *ebiten.Image) {
+	commons.LogFunc("pauseScene.Draw")()
+
 	p.caption.Draw(image)
 }
 

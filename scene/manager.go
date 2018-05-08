@@ -4,6 +4,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"log"
 	"sync"
+	"github.com/Shnifer/magellan/commons"
 )
 
 type scene interface {
@@ -49,6 +50,8 @@ func actionRun(m *Manager) {
 
 //main cycle
 func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
+	defer commons.LogFunc("manager.UpdateAndDraw")()
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
 

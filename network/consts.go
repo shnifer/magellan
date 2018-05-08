@@ -20,10 +20,10 @@ const (
 	testPattern  = "/test/"
 
 	ClientDefaultTimeout  = time.Second / 30
-	ClientPingPeriod      = time.Second / 20
+	ClientPingPeriod      = time.Second / 1
 	ClientLostPingsNumber = 3
 
-	ServerRoomUpdatePeriod = time.Second / 10
+	ServerRoomUpdatePeriod = ClientPingPeriod
 	ServerLastSeenTimeout  = 3 * ServerRoomUpdatePeriod
 )
 

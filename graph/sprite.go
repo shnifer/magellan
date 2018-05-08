@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/color"
 	"math"
+	"log"
 )
 
 const Deg2Rad = math.Pi / 180
@@ -191,6 +192,10 @@ func (s *Sprite) ImageOp() (*ebiten.Image, *ebiten.DrawImageOptions) {
 }
 
 func (s *Sprite) Draw(dest *ebiten.Image) {
+	if s==nil{
+		log.Println("Draw called for nil Sprite")
+		return
+	}
 	img, op := s.ImageOp()
 	dest.DrawImage(img, op)
 }
