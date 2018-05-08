@@ -1,6 +1,7 @@
-package commons
+package draw
 
 import (
+	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
 	"golang.org/x/image/font"
 )
@@ -15,7 +16,7 @@ const fontPath = "res/fonts/"
 
 var Fonts map[string]font.Face
 
-func InitFonts() {
+func init() {
 	Fonts = make(map[string]font.Face)
 
 	face, err := graph.GetFace(fontPath+"phantom.ttf", 20)

@@ -1,6 +1,7 @@
-package commons
+package draw
 
 import (
+	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
 	"image/color"

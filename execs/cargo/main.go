@@ -15,7 +15,6 @@ import (
 )
 
 const resPath = "res/cargo/"
-const texPath = "res/textures/"
 
 var (
 	WinW int
@@ -55,7 +54,6 @@ func main() {
 	WinH = DEFVAL.WinH
 
 	graph.SetScreenSize(WinW, WinH)
-	commons.InitFonts()
 
 	Data = commons.NewData()
 

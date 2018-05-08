@@ -13,7 +13,7 @@ func initClient() {
 		Addr:           DEFVAL.Port,
 		Room:           DEFVAL.Room,
 		Role:           DEFVAL.Role,
-		Timeout: time.Duration(DEFVAL.Timeout)*time.Millisecond,
+		Timeout:        time.Duration(DEFVAL.Timeout) * time.Millisecond,
 		OnReconnect:    recon,
 		OnDisconnect:   discon,
 		OnPause:        pause,

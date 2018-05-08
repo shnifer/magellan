@@ -2,6 +2,7 @@ package main
 
 import (
 	. "github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/hajimehoshi/ebiten"
 	"golang.org/x/image/colornames"
@@ -21,7 +22,7 @@ func newCosmoScene() *cosmoScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := graph.NewSprite(GetAtlasTex("ship"), cam, false)
+	ship := graph.NewSprite(GetAtlasTex("ship"), cam, false, false)
 
 	return &cosmoScene{
 		caption: caption,

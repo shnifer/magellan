@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
 	"golang.org/x/image/colornames"

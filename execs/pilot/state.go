@@ -2,6 +2,7 @@ package main
 
 import (
 	. "github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/scene"
 	"log"
 )

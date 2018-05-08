@@ -9,7 +9,7 @@ import (
 )
 
 type tDefVals struct {
-	Port       string
+	Port string
 	//in ms, 0 - default
 	Timeout    int
 	Room       string

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/Shnifer/magellan/commons"
+	"github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/input"
 	"github.com/hajimehoshi/ebiten"
@@ -50,14 +51,13 @@ func main() {
 	WinH = DEFVAL.WinH
 
 	graph.SetScreenSize(WinW, WinH)
-	commons.InitFonts()
 
 	initClient()
 	input.LoadConf(resPath)
 
 	Data = commons.NewData()
 
-	commons.InitTexAtlas(texPath)
+	draw.InitTexAtlas(texPath)
 	commons.SetGravityConsts(DEFVAL.GravityConst, DEFVAL.WarpGravityConst)
 
 	createScenes()

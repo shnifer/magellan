@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	. "github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
