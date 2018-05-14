@@ -12,6 +12,7 @@ type tDefVals struct {
 	Port string
 	//in ms, 0 - default
 	Timeout    int
+	PingPeriod int
 	Room       string
 	Role       string
 	FullScreen bool

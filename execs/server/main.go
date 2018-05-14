@@ -17,10 +17,12 @@ func main() {
 	}
 
 	opts := network.ServerOpts{
-		Addr:        DEFVAL.Port,
-		RoomServ:    roomServ,
-		StartState:  startState.Encode(),
-		NeededRoles: DEFVAL.NeededRoles,
+		Addr:             DEFVAL.Port,
+		RoomUpdatePeriod: time.Duration(DEFVAL.RoomUpdatePeriod) * time.Millisecond,
+		LastSeenTimeout:  time.Duration(DEFVAL.LastSeenTimeout) * time.Millisecond,
+		RoomServ:         roomServ,
+		StartState:       startState.Encode(),
+		NeededRoles:      DEFVAL.NeededRoles,
 	}
 
 	server = network.NewServer(opts)

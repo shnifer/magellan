@@ -9,6 +9,9 @@ type ClientOpts struct {
 	//default ClientDefaultTimeout
 	Timeout time.Duration
 
+	//default ClientDefaultPingPeriod
+	PingPeriod time.Duration
+
 	Addr string
 
 	Room, Role string

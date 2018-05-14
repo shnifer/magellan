@@ -19,12 +19,13 @@ const (
 	statePattern = "/state/"
 	testPattern  = "/test/"
 
-	ClientDefaultTimeout  = time.Second / 30
-	ClientPingPeriod      = time.Second / 1
-	ClientLostPingsNumber = 3
+	ClientDefaultTimeout    = time.Second / 30
+	ClientLargeTimeout      = time.Second * 5
+	ClientDefaultPingPeriod = time.Second / 10
+	ClientLostPingsNumber   = 3
 
-	ServerRoomUpdatePeriod = ClientPingPeriod
-	ServerLastSeenTimeout  = 3 * ServerRoomUpdatePeriod
+	ServerDefaultRoomUpdatePeriod = ClientDefaultPingPeriod
+	ServerDefaultLastSeenTimeout  = 3 * ServerDefaultRoomUpdatePeriod
 )
 
 //network.Server - network.Client ping response

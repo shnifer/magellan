@@ -9,7 +9,6 @@ import (
 type CommonData struct {
 	PilotData *PilotData
 	NaviData  *NaviData
-	CargoData *CargoData
 	EngiData  *EngiData
 }
 
@@ -18,6 +17,9 @@ type PilotData struct {
 	SessionTime    float64
 	ThrustVector   v2.V2
 	HeatProduction float64
+
+	//do not reload same Msg, cz of extrapolate
+	MsgID int
 }
 
 type NaviData struct {
@@ -68,8 +70,6 @@ func (cd CommonData) Part(roleName string) CommonData {
 		res.NaviData = cd.NaviData
 	case ROLE_Engi:
 		res.EngiData = cd.EngiData
-	case ROLE_Cargo:
-		res.CargoData = cd.CargoData
 	default:
 		panic("CommonData.Part: Unknown role " + roleName)
 	}
@@ -78,16 +78,15 @@ func (cd CommonData) Part(roleName string) CommonData {
 
 func (cd CommonData) FillNotNil(dest *CommonData) {
 	if cd.PilotData != nil {
-		dest.PilotData = cd.PilotData
+		if dest.PilotData == nil || dest.PilotData.MsgID != cd.PilotData.MsgID {
+			dest.PilotData = cd.PilotData
+		}
 	}
 	if cd.NaviData != nil {
 		dest.NaviData = cd.NaviData
 	}
 	if cd.EngiData != nil {
 		dest.EngiData = cd.EngiData
-	}
-	if cd.CargoData != nil {
-		dest.CargoData = cd.CargoData
 	}
 }
 
@@ -99,8 +98,6 @@ func (cd CommonData) WithoutRole(roleName string) CommonData {
 		cd.NaviData = nil
 	case ROLE_Engi:
 		cd.EngiData = nil
-	case ROLE_Cargo:
-		cd.CargoData = nil
 	default:
 		panic("CommonData.WithoutRole: Unknown role " + roleName)
 	}
@@ -111,7 +108,6 @@ func (CommonData) Empty() CommonData {
 	return CommonData{
 		PilotData: &PilotData{},
 		NaviData:  &NaviData{},
-		CargoData: &CargoData{},
 		EngiData:  &EngiData{BSPDegrade: &BSP{}},
 	}
 }
@@ -129,10 +125,6 @@ func (cd CommonData) Copy() (res CommonData) {
 	if cd.EngiData != nil {
 		val := *cd.EngiData
 		res.EngiData = &val
-	}
-	if cd.CargoData != nil {
-		val := *cd.CargoData
-		res.CargoData = &val
 	}
 	return res
 }

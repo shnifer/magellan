@@ -1,13 +1,13 @@
 package scene
 
 import (
+	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/network"
 	"github.com/hajimehoshi/ebiten"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
 	"image/color"
-	"github.com/Shnifer/magellan/commons"
 )
 
 type PauseScene struct {
@@ -23,7 +23,7 @@ func NewPauseScene(face font.Face, getReason func() network.PauseReason) *PauseS
 	return &PauseScene{
 		face:      face,
 		getReason: getReason,
-		caption: graph.NewText("",face,color.White),
+		caption:   graph.NewText("", face, color.White),
 	}
 }
 

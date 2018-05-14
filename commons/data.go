@@ -86,6 +86,7 @@ func (d *TData) GetState() State {
 	return <-stateCh
 }
 
+//Network cycle, get data for scene.Init
 func (d *TData) GetStateData() StateData {
 	stateDataCh := make(chan StateData)
 	defer close(stateDataCh)

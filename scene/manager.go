@@ -1,10 +1,11 @@
 package scene
 
 import (
+	"fmt"
+	"github.com/Shnifer/magellan/commons"
 	"github.com/hajimehoshi/ebiten"
 	"log"
 	"sync"
-	"github.com/Shnifer/magellan/commons"
 )
 
 type scene interface {
@@ -50,10 +51,12 @@ func actionRun(m *Manager) {
 
 //main cycle
 func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
-	defer commons.LogFunc("manager.UpdateAndDraw")()
-
 	m.mu.Lock()
 	defer m.mu.Unlock()
+
+	logStr := fmt.Sprintf("manager.UpdateAndDraw %v paused: %v inited: %v",
+		m.current, m.paused, m.inited[m.current])
+	defer commons.LogFunc(logStr)()
 
 	if doDraw {
 		image.Clear()

@@ -14,6 +14,7 @@ func initClient() {
 		Room:           DEFVAL.Room,
 		Role:           DEFVAL.Role,
 		Timeout:        time.Duration(DEFVAL.Timeout) * time.Millisecond,
+		PingPeriod:     time.Duration(DEFVAL.PingPeriod) * time.Millisecond,
 		OnReconnect:    recon,
 		OnDisconnect:   discon,
 		OnPause:        pause,

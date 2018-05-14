@@ -30,6 +30,9 @@ func mainLoop(window *ebiten.Image) error {
 
 	input.Update()
 
+	if Data.CommonData.PilotData != nil {
+		Data.CommonData.PilotData.MsgID++
+	}
 	Data.Update(DEFVAL.Role)
 
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())

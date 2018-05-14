@@ -53,6 +53,10 @@ func NewClient(opts ClientOpts) (*Client, error) {
 		opts.Timeout = ClientDefaultTimeout
 	}
 
+	if opts.PingPeriod == 0 {
+		opts.PingPeriod = ClientDefaultPingPeriod
+	}
+
 	httpCli := http.Client{
 		Timeout: opts.Timeout,
 	}
@@ -104,7 +108,7 @@ func doPingReq(c *Client) (PingResp, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	resp, err := c.doReq(GET, pingPattern, nil)
+	resp, err := c.doReq(GET, pingPattern, nil, false)
 	if err != nil {
 		//Connection is not good if ClientLostPingsNumber in row
 		if !c.pingLost {
@@ -161,7 +165,7 @@ func checkWantedState(c *Client, pingResp PingResp) {
 	if !c.recvGoroutineStarted && c.wantState != c.curState {
 		//rdy to grab new state Data
 		if pingResp.Room.RdyServData {
-			resp, err := c.doReq(GET, statePattern, nil)
+			resp, err := c.doReq(GET, statePattern, nil, true)
 			if err != nil {
 				//weird, but will try next ping circle
 				log.Println("can't get new ServData", err)
@@ -241,7 +245,7 @@ func doCommonReq(c *Client) {
 		return
 	}
 
-	respBytes, err := c.doReq(POST, roomPattern, buf)
+	respBytes, err := c.doReq(POST, roomPattern, buf, false)
 	if err != nil {
 		log.Println("CANT SEND common room data request", err)
 		return
@@ -264,7 +268,7 @@ func doCommonReq(c *Client) {
 }
 
 func clientPing(c *Client) {
-	tick := time.Tick(ClientPingPeriod)
+	tick := time.Tick(c.opts.PingPeriod)
 	for {
 		<-tick
 
@@ -284,7 +288,12 @@ func clientPing(c *Client) {
 	}
 }
 
-func (c *Client) doReq(method, path string, reqBody []byte) (respBody []byte, er error) {
+func (c *Client) doReq(method, path string, reqBody []byte, largeTimeout bool) (respBody []byte, er error) {
+
+	if largeTimeout {
+		c.httpCli.Timeout = ClientLargeTimeout
+	}
+
 	bodyBuf := bytes.NewBuffer(reqBody)
 
 	req, err := http.NewRequest(method, c.opts.Addr+path, bodyBuf)
@@ -311,6 +320,8 @@ func (c *Client) doReq(method, path string, reqBody []byte) (respBody []byte, er
 		log.Println(errStr)
 		return nil, errors.New(errStr)
 	}
+
+	c.httpCli.Timeout = c.opts.Timeout
 
 	return buf, nil
 }

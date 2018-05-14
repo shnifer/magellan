@@ -7,8 +7,8 @@ import (
 	"golang.org/x/image/font"
 	"image"
 	"image/color"
-	"strings"
 	"log"
+	"strings"
 )
 
 const interlinesK = 1.2
@@ -90,7 +90,7 @@ func (t *Text) SetPosPivot(pos, pivot v2.V2) {
 }
 
 func (t *Text) Draw(dst *ebiten.Image) {
-	if t==nil{
+	if t == nil {
 		log.Println("Draw called for nil Text")
 		return
 	}

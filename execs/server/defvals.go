@@ -14,6 +14,10 @@ type tDefVals struct {
 	Port        string
 	NeededRoles []string
 
+	//in ms
+	RoomUpdatePeriod int
+	LastSeenTimeout  int
+
 	StartWarpSpeed         float64
 	SolarStartLocationName string
 }
@@ -26,8 +30,7 @@ func setDefDef() {
 		NeededRoles: []string{
 			ROLE_Pilot,
 			ROLE_Navi,
-			ROLE_Engi,
-			ROLE_Cargo},
+			ROLE_Engi},
 		SolarStartLocationName: "magellan",
 	}
 }

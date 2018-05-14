@@ -95,7 +95,7 @@ func serverReceiveCommands(srv *Server, req CommonReq, room *servRoomState, room
 		case COMMAND_REQUESTSTATE:
 			//ignore commands sent on not coherent state
 			if !room.state.IsCoherent {
-				log.Println("Requwst state command in non coherent room. Is this good?", command)
+				log.Println("Request state command in non coherent room. Is this good?", command)
 			}
 
 			stateChanged := setNewState(srv, room, roomName, command)

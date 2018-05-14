@@ -24,6 +24,9 @@ type ServerOpts struct {
 	StartState string
 
 	NeededRoles []string
+
+	RoomUpdatePeriod time.Duration
+	LastSeenTimeout  time.Duration
 }
 
 type RoomCheckGetSetter interface {
@@ -81,6 +84,13 @@ type Server struct {
 func NewServer(opts ServerOpts) *Server {
 	mux := http.NewServeMux()
 	httpServ := &http.Server{Addr: opts.Addr, Handler: mux}
+
+	if opts.RoomUpdatePeriod == 0 {
+		opts.RoomUpdatePeriod = ServerDefaultRoomUpdatePeriod
+	}
+	if opts.LastSeenTimeout == 0 {
+		opts.LastSeenTimeout = ServerDefaultLastSeenTimeout
+	}
 
 	srv := &Server{
 		httpServ:   httpServ,
@@ -195,7 +205,7 @@ func serverRoomUpdater(serv *Server) {
 
 	//Only update last seen timeout
 	//state update's on changes
-	tick := time.Tick(ServerRoomUpdatePeriod)
+	tick := time.Tick(serv.opts.RoomUpdatePeriod)
 	for {
 		<-tick
 		serv.mu.RLock()
@@ -205,7 +215,7 @@ func serverRoomUpdater(serv *Server) {
 		for _, room := range serv.roomsState {
 			room.mu.Lock()
 			for role, lastSeen := range room.lastSeen {
-				if now.Sub(lastSeen) > ServerLastSeenTimeout {
+				if now.Sub(lastSeen) > serv.opts.LastSeenTimeout {
 					room.online[role] = false
 				}
 			}

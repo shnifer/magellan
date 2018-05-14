@@ -1,6 +1,8 @@
 {
     "Port": ":8000",
     "StartWarpSpeed":10,
+    "RoomUpdatePeriod": 300,
+    "LastSeenTimeout": 1000,
     "NeededRoles": [
         "Pilot", "Navi"
     ],
