@@ -8,7 +8,6 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
-	"log"
 )
 
 type cosmoScene struct {
@@ -76,7 +75,6 @@ func (s *cosmoScene) Update(dt float64) {
 
 	Data.PilotData.SessionTime += dt
 	sessionTime := Data.PilotData.SessionTime
-	log.Printf("%.5f %v", sessionTime, dt)
 	Data.Galaxy.Update(sessionTime)
 
 	for id, co := range s.objects {

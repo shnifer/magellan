@@ -22,12 +22,9 @@ var (
 
 var last time.Time
 var Data commons.TData
+var dt float64
 
 func mainLoop(window *ebiten.Image) error {
-	t := time.Now()
-	dt := t.Sub(last).Seconds()
-	last = t
-
 	input.Update()
 
 	Data.Update(DEFVAL.Role)
@@ -42,7 +39,9 @@ func mainLoop(window *ebiten.Image) error {
 		}
 		ebitenutil.DebugPrint(window, msg)
 	}
-
+	t := time.Now()
+	dt = t.Sub(last).Seconds()
+	last = t
 	return nil
 }
 

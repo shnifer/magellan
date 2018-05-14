@@ -22,12 +22,9 @@ var (
 
 var last time.Time
 var Data commons.TData
+var dt float64
 
 func mainLoop(window *ebiten.Image) error {
-	t := time.Now()
-	dt := t.Sub(last).Seconds()
-	last = t
-
 	input.Update()
 
 	if Data.CommonData.PilotData != nil {
@@ -38,8 +35,12 @@ func mainLoop(window *ebiten.Image) error {
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
 
 	fps := ebiten.CurrentFPS()
-	msg := fmt.Sprintf("FPS: %v\ndt = %.2f\n", fps, dt)
+	msg := fmt.Sprintf("FPS: %v\ndt = %.3f\n", fps, dt)
 	ebitenutil.DebugPrint(window, msg)
+
+	t := time.Now()
+	dt = t.Sub(last).Seconds()
+	last = t
 
 	return nil
 }
