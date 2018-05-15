@@ -6,6 +6,8 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"fmt"
+	"os"
 )
 
 //box path must be just a string to be parsed by
@@ -30,13 +32,19 @@ func Load(pack, filename string) ([]byte, error) {
 }
 
 func Exist(pack, filename string) bool {
-	res:= resBox.Has(pack + "/" + filename)
-	if res {
-		log.Println("Check embedded for", pack, filename, "found")
-	} else {
-		log.Println("Check embedded for", pack, filename, "miss")
+	fmt.Println("Exist",pack,filename)
+	inBox := resBox.Has(pack + "/" + filename)
+	if inBox {
+		fmt.Println("Check embedded for", pack, filename, "embedded found")
+		return true
 	}
-	return res
+	if _, err:=os.Stat(resFilePath + pack + "/" + filename); err==nil{
+		fmt.Println("Check embedded for", pack, filename, "external found")
+		return true
+	} else {
+		fmt.Println("Check embedded for", pack, filename, "miss")
+		return false
+	}
 }
 
 func Read(pack, filename string) (io.Reader, error) {
