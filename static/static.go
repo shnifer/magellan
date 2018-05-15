@@ -32,14 +32,11 @@ func Load(pack, filename string) ([]byte, error) {
 }
 
 func Exist(pack, filename string) bool {
-	fmt.Println("Exist",pack,filename)
 	inBox := resBox.Has(pack + "/" + filename)
 	if inBox {
-		fmt.Println("Check embedded for", pack, filename, "embedded found")
 		return true
 	}
 	if _, err:=os.Stat(resFilePath + pack + "/" + filename); err==nil{
-		fmt.Println("Check embedded for", pack, filename, "external found")
 		return true
 	} else {
 		fmt.Println("Check embedded for", pack, filename, "miss")
