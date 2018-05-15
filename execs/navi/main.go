@@ -51,8 +51,13 @@ func main() {
 		defer commons.StopProfile(DEFVAL.CpuProfFileName, DEFVAL.MemProfFileName)
 	}
 
-	WinW = DEFVAL.WinW
-	WinH = DEFVAL.WinH
+	if DEFVAL.FullScreen {
+		ebiten.SetFullscreen(true)
+		WinW, WinH = ebiten.MonitorSize()
+	} else {
+		WinW = DEFVAL.WinW
+		WinH = DEFVAL.WinH
+	}
 
 	graph.SetScreenSize(WinW, WinH)
 
@@ -66,7 +71,6 @@ func main() {
 	createScenes()
 
 	Client.Start()
-	ebiten.SetFullscreen(DEFVAL.FullScreen)
 	ebiten.SetRunnableInBackground(true)
 	last = time.Now()
 	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "NAVIGATOR"); err != nil {

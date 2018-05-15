@@ -49,6 +49,9 @@ func SumGravity4(pos v2.V2, points []*GalaxyPoint) (sumF v2.V2) {
 	var v v2.V2
 	var len2, F float64
 	for _, obj := range points {
+		if obj.Mass == 0 {
+			continue
+		}
 		v = obj.Pos.Sub(pos)
 		len2 = v.LenSqr()
 		F = Gravity(obj.Mass, len2, obj.Size/2)
@@ -109,9 +112,9 @@ func BenchmarkGravity4(b *testing.B) {
 
 	sliceOfPoint := make([]*GalaxyPoint, 0)
 	for _, v := range galaxy.Points {
-		if v.Mass != 0 {
+//		if v.Mass != 0 {
 			sliceOfPoint = append(sliceOfPoint, v)
-		}
+//		}
 	}
 
 	b.ResetTimer()
