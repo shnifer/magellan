@@ -3,6 +3,7 @@ package network
 import (
 	"log"
 	"time"
+	"strings"
 )
 
 type ClientOpts struct {
@@ -42,6 +43,34 @@ type PauseReason struct {
 	IsCoherent bool
 	CurState   string
 	WantState  string
+}
+
+func (pr PauseReason) String() string{
+	msg:=make([]string,0)
+	add:=func(s string) {
+		msg = append(msg, s)
+	}
+
+	if pr.PingLost{
+		add("ping lost")
+	}
+	if pr.IsFull {
+		add("full")
+	} else {
+		add("not full")
+	}
+	if pr.IsCoherent{
+		add("coherent")
+	} else {
+		add("non-coherent")
+	}
+	if pr.CurState == pr.WantState{
+		add("state "+pr.CurState)
+	} else{
+		add("current state "+pr.CurState)
+		add("wanted state "+pr.WantState)
+	}
+	return strings.Join(msg,", ")
 }
 
 func (c *Client) recalcPauseReason() {

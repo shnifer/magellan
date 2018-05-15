@@ -53,6 +53,10 @@ func (p *PauseScene) Update(float64) {
 		case !reason.IsCoherent:
 			str = "waiting other loading..."
 			captionColor = colornames.Green
+		default:
+			str = ""
+			captionColor = colornames.White
+			commons.Log(commons.LVL_ERROR, "strange pause reason! ", reason)
 		}
 		p.caption = graph.NewText(str, p.face, captionColor)
 		p.caption.SetPosPivot(graph.ScrP(0.5, 0.5), graph.Center())
@@ -61,7 +65,6 @@ func (p *PauseScene) Update(float64) {
 
 func (p *PauseScene) Draw(image *ebiten.Image) {
 	commons.LogFunc("pauseScene.Draw")()
-
 	p.caption.Draw(image)
 }
 

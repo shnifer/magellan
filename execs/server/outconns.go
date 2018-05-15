@@ -28,7 +28,7 @@ func loadStateData(state State) StateData {
 func loadShipState(shipID string) *BSP {
 	var res BSP
 
-	buf, err := static.Load("DB", "BSP_"+shipID+".json")
+	buf, err := static.Load("DB", "bsp_"+shipID+".json")
 
 	if err != nil {
 		Log(LVL_ERROR, "Can't open file for ShipID ", shipID)
@@ -45,7 +45,7 @@ func loadShipState(shipID string) *BSP {
 //TODO: look in DB
 func loadGalaxyState(GalaxyID string) *Galaxy {
 	var res Galaxy
-	buf, err := static.Load("DB", "Galaxy_"+GalaxyID+".json")
+	buf, err := static.Load("DB", "galaxy_"+GalaxyID+".json")
 	if err != nil {
 		Log(LVL_ERROR, "Can't open file for galaxyID ", GalaxyID)
 		return nil

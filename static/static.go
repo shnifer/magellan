@@ -2,10 +2,10 @@ package static
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/gobuffalo/packr"
 	"io"
 	"io/ioutil"
+	"log"
 )
 
 //box path must be just a string to be parsed by
@@ -19,18 +19,24 @@ func init() {
 }
 
 func Load(pack, filename string) ([]byte, error) {
-	fmt.Println("Load " + pack + " " + filename)
-
 	fn := pack + "/" + filename
 	if resBox.Has(fn) {
+		log.Println("Load",pack,filename,"from embedded")
 		return resBox.MustBytes(pack + "/" + filename)
 	} else {
+		log.Println("Load",pack,filename,"from external file")
 		return ioutil.ReadFile(resFilePath + pack + "/" + filename)
 	}
 }
 
 func Exist(pack, filename string) bool {
-	return resBox.Has(pack + "/" + filename)
+	res:= resBox.Has(pack + "/" + filename)
+	if res {
+		log.Println("Check embedded for", pack, filename, "found")
+	} else {
+		log.Println("Check embedded for", pack, filename, "miss")
+	}
+	return res
 }
 
 func Read(pack, filename string) (io.Reader, error) {

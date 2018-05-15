@@ -94,6 +94,10 @@ func (t *Text) Draw(dst *ebiten.Image) {
 		log.Println("Draw called for nil Text")
 		return
 	}
+	if t.color == nil{
+		log.Println("Draw called for nil color")
+	}
+
 	for i, str := range t.text {
 		et.Draw(dst, str, t.face,
 			int(t.pos.X-t.pivot.Y*float64(t.w))-t.bounds.Min.X,

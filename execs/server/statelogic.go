@@ -104,10 +104,10 @@ func (rd *roomServer) isValidFlyShip(roomName string, shipID string) bool {
 		}
 	}
 
-	return static.Exist("DB", "BSP_"+shipID+".json")
+	return static.Exist("DB", "bsp_"+shipID+".json")
 }
 
 //run internal mutex call
 func (rd *roomServer) isValidFlyGalaxy(galaxyID string) bool {
-	return static.Exist("DB", "Galaxy_"+galaxyID+".json")
+	return static.Exist("DB", "galaxy_"+galaxyID+".json")
 }
