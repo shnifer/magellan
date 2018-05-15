@@ -12,8 +12,7 @@ import (
 	"time"
 )
 
-const resPath = "res/pilot/"
-const texPath = "res/textures/"
+const roleName = "pilot"
 
 var (
 	WinW int
@@ -62,11 +61,11 @@ func main() {
 	graph.SetScreenSize(WinW, WinH)
 
 	initClient()
-	input.LoadConf(resPath)
+	input.LoadConf("input_" + roleName + ".json")
 
 	Data = commons.NewData()
 
-	draw.InitTexAtlas(texPath)
+	draw.InitTexAtlas()
 	commons.SetGravityConsts(DEFVAL.GravityConst, DEFVAL.WarpGravityConst)
 
 	createScenes()

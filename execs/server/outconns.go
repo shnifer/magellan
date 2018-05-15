@@ -4,10 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	. "github.com/Shnifer/magellan/commons"
+	"github.com/Shnifer/magellan/static"
 	"io/ioutil"
 )
-
-const DBPath = "res/server/DB/"
 
 func loadStateData(state State) StateData {
 	defer LogFunc("loadStateData")()
@@ -28,7 +27,9 @@ func loadStateData(state State) StateData {
 //TODO: look in DB
 func loadShipState(shipID string) *BSP {
 	var res BSP
-	buf, err := ioutil.ReadFile(DBPath + "BSP_" + shipID + ".json")
+
+	buf, err := static.Load("DB", "BSP_"+shipID+".json")
+
 	if err != nil {
 		Log(LVL_ERROR, "Can't open file for ShipID ", shipID)
 		return nil
@@ -44,7 +45,7 @@ func loadShipState(shipID string) *BSP {
 //TODO: look in DB
 func loadGalaxyState(GalaxyID string) *Galaxy {
 	var res Galaxy
-	buf, err := ioutil.ReadFile(DBPath + "Galaxy_" + GalaxyID + ".json")
+	buf, err := static.Load("DB", "Galaxy_"+GalaxyID+".json")
 	if err != nil {
 		Log(LVL_ERROR, "Can't open file for galaxyID ", GalaxyID)
 		return nil
@@ -71,7 +72,8 @@ func loadGalaxyState(GalaxyID string) *Galaxy {
 
 //save examples of DB data
 func init() {
-	saveDataExamples(DBPath)
+	//do not save it now
+	//saveDataExamples(DBPath)
 }
 
 func saveDataExamples(path string) {

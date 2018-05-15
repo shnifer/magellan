@@ -1,10 +1,13 @@
 package graph
 
 import (
+	"bytes"
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"image"
 	"image/color"
+	"io"
+	"io/ioutil"
 	"log"
 	"math"
 )
@@ -73,8 +76,16 @@ func NewSpriteHUD(tex Tex) *Sprite {
 	return NewSprite(tex, nil, false, false)
 }
 
+func fileLoader(filename string) (io.Reader, error) {
+	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	return bytes.NewBuffer(b), err
+}
+
 func NewSpriteFromFile(filename string, smoothFilter bool, sw, sh int, count int, cam *Camera, denyCamScale, denyCamAngle bool) (*Sprite, error) {
-	tex, err := GetTex(filename, smoothFilter, sw, sh, count)
+	tex, err := GetTex(filename, smoothFilter, sw, sh, count, fileLoader)
 	if err != nil {
 		return nil, err
 	}

@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/Shnifer/magellan/graph"
+	"github.com/Shnifer/magellan/static"
 	"github.com/pkg/errors"
+	"io"
 	"io/ioutil"
 	"strconv"
 )
@@ -19,21 +21,23 @@ type TexAtlas map[string]TexAtlasRec
 
 const atlasFN = "atlas.json"
 
-var texPath string
 var atlas TexAtlas
 
-func InitTexAtlas(newTexPath string) {
-	texPath = newTexPath
-	saveAtlasExample(texPath + "example_" + atlasFN)
-	data, err := ioutil.ReadFile(texPath + atlasFN)
+func InitTexAtlas() {
+	saveAtlasExample("example_" + atlasFN)
+	data, err := static.Load("textures", atlasFN)
 	if err != nil {
 		atlas = make(TexAtlas)
-		panic("Can't find tex atlas file " + texPath + atlasFN)
+		panic("Can't find tex atlas file " + atlasFN)
 	}
 	err = json.Unmarshal(data, &atlas)
 	if err != nil {
 		panic(err)
 	}
+}
+
+func atlasLoader(filename string) (io.Reader, error) {
+	return static.Read("textures", filename)
 }
 
 //return tex and error
@@ -43,7 +47,7 @@ func getAtlasTex(name string) (graph.Tex, error) {
 		return graph.Tex{}, errors.New("Not found atlas")
 	}
 
-	tex, err := graph.GetTex(texPath+rec.FileName, rec.Smooth, rec.Sx, rec.Sy, rec.Count)
+	tex, err := graph.GetTex(rec.FileName, rec.Smooth, rec.Sx, rec.Sy, rec.Count, atlasLoader)
 	if err != nil {
 		return graph.Tex{}, err
 	}

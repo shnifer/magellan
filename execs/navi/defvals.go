@@ -8,6 +8,8 @@ import (
 	"log"
 )
 
+const DefValPath = "./"
+
 type tDefVals struct {
 	Port       string
 	Timeout    int
@@ -40,15 +42,15 @@ func setDefDef() {
 func init() {
 	setDefDef()
 
-	exfn := resPath + "example_defdata.json"
-	exbuf, _ := json.Marshal(DEFVAL)
+	exfn := DefValPath + "example_ini_" + roleName + ".json"
+	exbuf, err := json.Marshal(DEFVAL)
 	identbuf := bytes.Buffer{}
 	json.Indent(&identbuf, exbuf, "", "    ")
 	if err := ioutil.WriteFile(exfn, identbuf.Bytes(), 0); err != nil {
 		log.Println("can't even write ", exfn)
 	}
 
-	fn := resPath + "defdata.json"
+	fn := DefValPath + "ini_" + roleName + ".json"
 
 	buf, err := ioutil.ReadFile(fn)
 	if err != nil {

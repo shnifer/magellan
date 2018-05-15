@@ -8,7 +8,8 @@ import (
 	"log"
 )
 
-const DefValPath = "res/server/"
+const DefValPath = "./"
+const roleName = "server"
 
 type tDefVals struct {
 	Port        string
@@ -26,7 +27,7 @@ var DEFVAL tDefVals
 
 func setDefDef() {
 	DEFVAL = tDefVals{
-		Port: "8000",
+		Port: ":8000",
 		NeededRoles: []string{
 			ROLE_Pilot,
 			ROLE_Navi,
@@ -38,7 +39,7 @@ func setDefDef() {
 func init() {
 	setDefDef()
 
-	exfn := DefValPath + "example_defdata.json"
+	exfn := DefValPath + "example_ini_" + roleName + ".json"
 	exbuf, err := json.Marshal(DEFVAL)
 	identbuf := bytes.Buffer{}
 	json.Indent(&identbuf, exbuf, "", "    ")
@@ -46,9 +47,9 @@ func init() {
 		log.Println("can't even write ", exfn)
 	}
 
-	fn := DefValPath + "defdata.json"
+	fn := DefValPath + "ini_" + roleName + ".json"
 
-	buf, err := ioutil.ReadFile(DefValPath + "defdata.json")
+	buf, err := ioutil.ReadFile(fn)
 	if err != nil {
 		log.Println("cant read ", fn, "using default")
 		return

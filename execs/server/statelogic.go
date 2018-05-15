@@ -2,8 +2,8 @@ package main
 
 import (
 	. "github.com/Shnifer/magellan/commons"
+	"github.com/Shnifer/magellan/static"
 	"github.com/Shnifer/magellan/v2"
-	"os"
 	"time"
 )
 
@@ -104,18 +104,10 @@ func (rd *roomServer) isValidFlyShip(roomName string, shipID string) bool {
 		}
 	}
 
-	if _, err := os.Stat(DBPath + "BSP_" + shipID + ".json"); os.IsNotExist(err) {
-		return false
-	}
-
-	return true
+	return static.Exist("DB", "BSP_"+shipID+".json")
 }
 
 //run internal mutex call
 func (rd *roomServer) isValidFlyGalaxy(galaxyID string) bool {
-	if _, err := os.Stat(DBPath + "Galaxy_" + galaxyID + ".json"); os.IsNotExist(err) {
-		return false
-	}
-
-	return true
+	return static.Exist("DB", "Galaxy_"+galaxyID+".json")
 }

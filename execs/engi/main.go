@@ -12,8 +12,7 @@ import (
 	"time"
 )
 
-const resPath = "res/engi/"
-const texPath = "res/textures/"
+const roleName = "engi"
 
 var (
 	WinW int
@@ -65,9 +64,9 @@ func main() {
 	Data = commons.NewData()
 
 	initClient()
-	input.LoadConf(resPath)
+	input.LoadConf("input_" + roleName + ".json")
 
-	draw.InitTexAtlas(texPath)
+	draw.InitTexAtlas()
 
 	createScenes()
 

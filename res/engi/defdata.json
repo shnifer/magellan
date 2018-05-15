@@ -1,9 +1,0 @@
-{
-    "Port": "http://localhost:8000",
-    "Room": "room101",
-    "FullScreen": false,
-    "WinW": 640,
-    "WinH": 480,
-    "CpuProfFileName": "",
-    "MemProfFileName": ""
-}

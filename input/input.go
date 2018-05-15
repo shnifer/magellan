@@ -134,16 +134,21 @@ func Update() {
 
 var savedDef bool
 
-func LoadConf(filePath string) {
+func init() {
+	//disable example saving
+	savedDef = true
+}
+
+func LoadConf(fileName string) {
 	mu.Lock()
 	defer mu.Unlock()
 
 	if !savedDef {
-		defConf(filePath)
+		defConf(fileName)
 		savedDef = true
 	}
 
-	fn := filePath + "input.json"
+	fn := fileName
 
 	buf, err := ioutil.ReadFile(fn)
 	if err != nil {
@@ -267,14 +272,36 @@ var keysNames = []string{
 	"KeyGraveAccent",
 	"KeyHome",
 	"KeyInsert",
+	"KeyKP0",
+	"KeyKP1",
+	"KeyKP2",
+	"KeyKP3",
+	"KeyKP4",
+	"KeyKP5",
+	"KeyKP6",
+	"KeyKP7",
+	"KeyKP8",
+	"KeyKP9",
+	"KeyKPAdd",
+	"KeyKPDecimal",
+	"KeyKPDivide",
+	"KeyKPEnter",
+	"KeyKPEqual",
+	"KeyKPMultiply",
+	"KeyKPSubtract",
 	"KeyLeft",
 	"KeyLeftBracket",
+	"KeyMenu",
 	"KeyMinus",
+	"KeyNumLock",
 	"KeyPageDown",
 	"KeyPageUp",
+	"KeyPause",
 	"KeyPeriod",
+	"KeyPrintScreen",
 	"KeyRight",
 	"KeyRightBracket",
+	"KeyScrollLock",
 	"KeySemicolon",
 	"KeyShift",
 	"KeySlash",

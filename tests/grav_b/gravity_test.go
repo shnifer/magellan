@@ -112,9 +112,9 @@ func BenchmarkGravity4(b *testing.B) {
 
 	sliceOfPoint := make([]*GalaxyPoint, 0)
 	for _, v := range galaxy.Points {
-//		if v.Mass != 0 {
-			sliceOfPoint = append(sliceOfPoint, v)
-//		}
+		//		if v.Mass != 0 {
+		sliceOfPoint = append(sliceOfPoint, v)
+		//		}
 	}
 
 	b.ResetTimer()

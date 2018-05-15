@@ -3,7 +3,7 @@
     "Timeout":20,
     "PingPeriod": 500,
     "Room": "room101",
-    "FullScreen": true,
+    "FullScreen": false,
     "WinW": 500,
     "WinH": 500,
     "DoProf": false,

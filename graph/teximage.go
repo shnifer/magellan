@@ -2,10 +2,11 @@ package graph
 
 import (
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"image"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
+	"io"
 )
 
 type Tex struct {
@@ -18,14 +19,6 @@ type Tex struct {
 	//count of sprites in sprite sheet
 	count int
 	name  string
-}
-
-func newTex(filename string, filter ebiten.Filter, sw, sh int, count int) (Tex, error) {
-	img, _, err := ebitenutil.NewImageFromFile(filename, filter)
-	if err != nil {
-		return Tex{}, err
-	}
-	return TexFromImage(img, filter, sw, sh, count, filename), nil
 }
 
 func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int, count int, name string) Tex {
@@ -70,7 +63,9 @@ func init() {
 	texCache = make(map[string]Tex)
 }
 
-func GetTex(filename string, smoothFilter bool, sw, sh int, count int) (Tex, error) {
+func GetTex(filename string, smoothFilter bool, sw, sh int, count int,
+	loader func(filename string) (io.Reader, error)) (Tex, error) {
+
 	var cacheKey string
 	if smoothFilter {
 		cacheKey = "0" + filename
@@ -86,7 +81,21 @@ func GetTex(filename string, smoothFilter bool, sw, sh int, count int) (Tex, err
 		filter = ebiten.FilterLinear
 	}
 
-	t, err := newTex(filename, filter, sw, sh, count)
+	buf, err := loader(filename)
+	if err != nil {
+		return Tex{}, err
+	}
+
+	img, _, err := image.Decode(buf)
+	if err != nil {
+		return Tex{}, err
+	}
+	img2, err := ebiten.NewImageFromImage(img, filter)
+	if err != nil {
+		return Tex{}, err
+	}
+
+	t := TexFromImage(img2, filter, sw, sh, count, filename)
 	if err != nil {
 		return Tex{}, err
 	}
