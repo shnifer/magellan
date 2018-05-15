@@ -34,7 +34,7 @@ func mainLoop(window *ebiten.Image) error {
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
 
 	fps := ebiten.CurrentFPS()
-	msg := fmt.Sprintf("FPS: %v\ndt = %.3f\n", fps, dt)
+	msg := fmt.Sprintf("FPS: %v\nALT-F4 to close\nWASD to control\nQ-E scale\nSPACE - stop\nENTER - reset position", fps)
 	ebitenutil.DebugPrint(window, msg)
 
 	t := time.Now()

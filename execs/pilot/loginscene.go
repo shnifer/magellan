@@ -27,7 +27,7 @@ type LoginScene struct {
 }
 
 func NewLoginScene() *LoginScene {
-	const questionText = "Enter login ID:"
+	const questionText = "Enter login ID (\"firefly\")"
 	const errorText = "Wrong ID!"
 
 	face := Fonts[Face_cap]

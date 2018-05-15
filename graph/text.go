@@ -94,7 +94,7 @@ func (t *Text) Draw(dst *ebiten.Image) {
 		log.Println("Draw called for nil Text")
 		return
 	}
-	if t.color == nil{
+	if t.color == nil {
 		log.Println("Draw called for nil color")
 	}
 
