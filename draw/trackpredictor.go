@@ -40,9 +40,9 @@ func NewTrackPredictor(cam *graph.Camera, sprite *graph.Sprite, data *TData, mod
 func (tp *TrackPredictor) Req() *graph.DrawQueue {
 	const dt = 1.0 / 5
 	const markEach = 1 / dt
-	const trackLen = 10
+	const trackLen = 8
 
-	const updT = 1.0 / 5
+	const updT = 1.0 / 10
 
 	if tp.q != nil && time.Since(tp.lastT).Seconds() < updT {
 		return tp.q
