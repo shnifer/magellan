@@ -54,26 +54,22 @@ func newCosmoSceneHUD(cam *graph.Camera) cosmoSceneHUD {
 	thrustLevel := graph.NewSpriteHUD(arrowTex)
 	thrustLevel.SetSizeProportion(arrowSize)
 	thrustLevel.SetAng(-90)
-	thrustLevel.SetAlpha(0.8)
 	thrustControl := graph.NewSpriteHUD(arrowTex)
 	thrustControl.SetSizeProportion(arrowSize)
 	thrustControl.SetAng(90)
-	thrustControl.SetAlpha(0.8)
 	turnLevel := graph.NewSpriteHUD(arrowTex)
 	turnLevel.SetSizeProportion(arrowSize)
 	turnLevel.SetAng(0)
-	turnLevel.SetAlpha(0.8)
 	turnControl := graph.NewSpriteHUD(arrowTex)
 	turnControl.SetSizeProportion(arrowSize)
 	turnControl.SetAng(180)
-	turnControl.SetAlpha(0.8)
 
-	rulerSize := float64(WinH)*wide
+	rulerSize := float64(WinH) * wide
 	rulerH := NewAtlasSpriteHUD("rulerH")
-	rulerH.SetSizeProportion(rulerSize*rulerWideK)
+	rulerH.SetSizeProportion(rulerSize * rulerWideK)
 	rulerH.SetPos(graph.ScrP(0.5, rulerY))
 	rulerV := NewAtlasSpriteHUD("rulerV")
-	rulerV.SetSizeProportion(rulerSize*rulerWideK)
+	rulerV.SetSizeProportion(rulerSize * rulerWideK)
 	rulerV.SetPos(graph.ScrP(rulerX, 0.5))
 
 	return cosmoSceneHUD{
@@ -87,30 +83,30 @@ func newCosmoSceneHUD(cam *graph.Camera) cosmoSceneHUD {
 		rulerV:        rulerV,
 		rulerH:        rulerH,
 		arrowSize:     arrowSize,
-		rulerSize:rulerSize,
+		rulerSize:     rulerSize,
 	}
 }
 
 func (s *cosmoScene) UpdateHUD() {
 	var p v2.V2
-	arrS := s.hud.arrowSize*0.6
+	arrS := s.hud.arrowSize * 0.6
 
-	ruler:=func(x float64) float64{
-		return 0.5-s.hud.rulerSize/2*x
+	ruler := func(x float64) float64 {
+		return 0.5 - s.hud.rulerSize/2*x
 	}
 
-	vPos:=graph.ScrP(rulerX, 0.5)
-	p = vPos.Add(v2.V2{X:arrS,Y:ruler(s.thrustLevel)})
+	vPos := graph.ScrP(rulerX, 0.5)
+	p = vPos.Add(v2.V2{X: arrS, Y: ruler(s.thrustLevel)})
 	s.hud.thrustLevel.SetPos(p)
 
-	p = vPos.Add(v2.V2{X:-arrS,Y:ruler(input.GetF("forward"))})
+	p = vPos.Add(v2.V2{X: -arrS, Y: ruler(input.GetF("forward"))})
 	s.hud.thrustControl.SetPos(p)
 
-	hPos:=graph.ScrP(0.5, rulerY)
-	p = hPos.Add(v2.V2{X:ruler(s.maneurLevel),Y:arrS})
+	hPos := graph.ScrP(0.5, rulerY)
+	p = hPos.Add(v2.V2{X: ruler(s.maneurLevel), Y: arrS})
 	s.hud.turnLevel.SetPos(p)
 
-	p = hPos.Add(v2.V2{X:ruler(input.GetF("turn")),Y:-arrS})
+	p = hPos.Add(v2.V2{X: ruler(input.GetF("turn")), Y: -arrS})
 	s.hud.turnControl.SetPos(p)
 
 	s.hud.compass.SetPos(Data.PilotData.Ship.Pos)
