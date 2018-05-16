@@ -5,10 +5,7 @@ import (
 	"os"
 	"runtime"
 	"runtime/pprof"
-	"time"
 )
-
-var mutex *os.File
 
 func StartProfile(prefix string) {
 	defer LogFunc("StartProfile " + prefix)()
@@ -24,23 +21,6 @@ func StartProfile(prefix string) {
 
 	runtime.SetMutexProfileFraction(1)
 	runtime.SetBlockProfileRate(1)
-
-	return
-
-	mutex, err = os.Create(prefix + "mutex.prof")
-	if err != nil {
-		log.Panicln("can't create profile mutex")
-	}
-	go func() {
-		for {
-			time.Sleep(time.Second)
-			err := pprof.Lookup("mutex").WriteTo(mutex, 1)
-			if err != nil {
-				log.Println(err)
-				break
-			}
-		}
-	}()
 }
 
 func heap(fn string) {
@@ -59,7 +39,21 @@ func heap(fn string) {
 func StopProfile(prefix string) {
 	defer LogFunc("StopProfile " + prefix)()
 
-	//mutex.Close()
+	mutex, err := os.Create(prefix + "mutex.prof")
+	if err != nil {
+		log.Panicln("can't create profile mutex")
+	}
+	defer mutex.Close()
+
+	block, err := os.Create(prefix + "block.prof")
+	if err != nil {
+		log.Panicln("can't create profile block")
+	}
+	defer block.Close()
+
+	pprof.Lookup("mutex").WriteTo(mutex, 1)
+	pprof.Lookup("block").WriteTo(block, 1)
+
 	pprof.StopCPUProfile()
 
 	heap(prefix + "mem.prof")

@@ -1,0 +1,16 @@
+go tool pprof -svg execs\pilot\pilot.exe pilotcpu.prof>pilotcpu.svg
+go tool pprof -svg execs\pilot\pilot.exe pilotmem.prof>pilotmem.svg
+go tool pprof -svg execs\pilot\pilot.exe pilotblock.prof>pilotblock.svg
+go tool pprof -svg execs\pilot\pilot.exe pilotmutex.prof>pilotmutex.svg
+go tool pprof -svg execs\navi\navi.exe navicpu.prof>navicpu.svg
+go tool pprof -svg execs\navi\navi.exe navimem.prof>navimem.svg
+go tool pprof -svg execs\navi\navi.exe naviblock.prof>naviblock.svg
+go tool pprof -svg execs\navi\navi.exe navimutex.prof>navimutex.svg
+go tool pprof -svg execs\engi\engi.exe engicpu.prof>engicpu.svg
+go tool pprof -svg execs\engi\engi.exe engimem.prof>engimem.svg
+go tool pprof -svg execs\engi\engi.exe engiblock.prof>engiblock.svg
+go tool pprof -svg execs\engi\engi.exe engimutex.prof>engimutex.svg
+go tool pprof -svg execs\server\server.exe servercpu.prof>servercpu.svg
+go tool pprof -svg execs\server\server.exe servermem.prof>servermem.svg
+go tool pprof -svg execs\server\server.exe serverblock.prof>serverblock.svg
+go tool pprof -svg execs\server\server.exe servermutex.prof>servermutex.svg
