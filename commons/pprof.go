@@ -25,6 +25,8 @@ func StartProfile(prefix string) {
 	runtime.SetMutexProfileFraction(1)
 	runtime.SetBlockProfileRate(1)
 
+	return
+
 	mutex, err = os.Create(prefix + "mutex.prof")
 	if err != nil {
 		log.Panicln("can't create profile mutex")
@@ -57,7 +59,7 @@ func heap(fn string) {
 func StopProfile(prefix string) {
 	defer LogFunc("StopProfile " + prefix)()
 
-	mutex.Close()
+	//mutex.Close()
 	pprof.StopCPUProfile()
 
 	heap(prefix + "mem.prof")
