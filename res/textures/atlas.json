@@ -19,12 +19,12 @@
   "engibackground": {"FileName": "engibackground.jpg"},
   "rulerH":{"FileName": "HUD_RUS2.png"},
   "rulerV":{"FileName": "HUD_RUD2.png"},
-  "front90": {"FileName": "HUD_TL.png"},
-  "front91": {"FileName": "HUD_TC.png"},
-  "front92": {"FileName": "HUD_TR.png"},
-  "front93": {"FileName": "HUD_CL.png"},
-  "front95": {"FileName": "HUD_CR.png"},
-  "front96": {"FileName": "HUD_BL.png"},
-  "front97": {"FileName": "HUD_BC.png"},
-  "front98": {"FileName": "HUD_BR.png"}
+  "front90": {"FileName": "HUD_TL_mini.png"},
+  "front91": {"FileName": "HUD_TC_mini.png"},
+  "front92": {"FileName": "HUD_TR_mini.png"},
+  "front93": {"FileName": "HUD_CL_mini.png"},
+  "front95": {"FileName": "HUD_CR_mini.png"},
+  "front96": {"FileName": "HUD_BL_mini.png"},
+  "front97": {"FileName": "HUD_BC_mini.png"},
+  "front98": {"FileName": "HUD_BR_mini.png"}
 }
