@@ -3,10 +3,10 @@
     "Timeout":50,
     "PingPeriod": 60,
     "Room": "room101",
-    "FullScreen": false,
-    "WinW": 800,
-    "WinH": 800,
-    "DoProf": true,
-    "GravityConst": 0.1,
+    "FullScreen": true,
+    "WinW": 1000,
+    "WinH": 1000,
+    "DoProf": false,
+    "GravityConst": 0.05,
     "WarpGravityConst": 1000
 }

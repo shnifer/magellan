@@ -4,7 +4,6 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
-	"github.com/Shnifer/magellan/input"
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
@@ -31,16 +30,7 @@ type cosmoScene struct {
 	trailT float64
 	trail  *graph.FadingArray
 
-	background *graph.Sprite
-	compass    *graph.Sprite
-
-	//hud
-	thrustLevelHUD   *graph.Sprite
-	thrustControlHUD *graph.Sprite
-	turnLevelHUD     *graph.Sprite
-	turnControlHUD   *graph.Sprite
-	//
-	f9 *graph.Frame9HUD
+	hud cosmoSceneHUD
 
 	predictorZero   *TrackPredictor
 	predictorThrust *TrackPredictor
@@ -60,18 +50,6 @@ func newCosmoScene() *cosmoScene {
 	marker := NewAtlasSprite("marker", cam, true, true)
 	marker.SetPivot(graph.MidBottom())
 
-	background := NewAtlasSpriteHUD("background")
-	background.SetSize(float64(WinW), float64(WinH))
-	background.SetPivot(graph.TopLeft())
-	background.SetColor(colornames.Dimgrey)
-
-	compass := NewAtlasSprite("compass", cam, true, false)
-	compassSize := float64(WinH) * 0.8
-	compass.SetSize(compassSize, compassSize)
-	compass.SetAlpha(0.5)
-
-	f9 := NewAtlasFrame9HUD("front9", WinW, WinH)
-
 	predictorSprite := NewAtlasSprite("trail", cam, true, true)
 	predictorSprite.SetSize(20, 20)
 	predictorThrust := NewTrackPredictor(cam, predictorSprite, &Data, Track_CurrentThrust, colornames.Palevioletred, graph.Z_ABOVE_OBJECT+1)
@@ -82,37 +60,20 @@ func newCosmoScene() *cosmoScene {
 
 	predictorZero := NewTrackPredictor(cam, predictor2Sprite, &Data, Track_ZeroThrust, colornames.Cadetblue, graph.Z_ABOVE_OBJECT)
 
+	hud := newCosmoSceneHUD(cam)
+
 	res := cosmoScene{
 		caption:         caption,
 		ship:            ship,
 		cam:             cam,
 		naviMarker:      marker,
+		hud:             hud,
 		objects:         make(map[string]*CosmoPoint),
-		background:      background,
-		compass:         compass,
-		f9:              f9,
 		predictorThrust: predictorThrust,
 		predictorZero:   predictorZero,
 	}
 
 	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
-
-	arrowTex := GetAtlasTex("arrow")
-	res.thrustLevelHUD = graph.NewSpriteHUD(arrowTex)
-	res.thrustLevelHUD.SetSize(50, 50)
-	res.thrustLevelHUD.SetAng(180)
-	res.thrustLevelHUD.SetAlpha(0.7)
-	res.thrustControlHUD = graph.NewSpriteHUD(arrowTex)
-	res.thrustControlHUD.SetSize(50, 50)
-	res.thrustControlHUD.SetAlpha(0.5)
-	res.turnLevelHUD = graph.NewSpriteHUD(arrowTex)
-	res.turnLevelHUD.SetSize(50, 50)
-	res.turnLevelHUD.SetAng(-90)
-	res.turnLevelHUD.SetAlpha(0.7)
-	res.turnControlHUD = graph.NewSpriteHUD(arrowTex)
-	res.turnControlHUD.SetSize(50, 50)
-	res.turnControlHUD.SetAng(90)
-	res.turnControlHUD.SetAlpha(0.5)
 
 	return &res
 }
@@ -128,8 +89,6 @@ func (s *cosmoScene) Init() {
 
 	stateData := Data.GetStateData()
 
-	//FIXME: Pos lost!
-	//	stateData.Galaxy.Foreach(func(pd GalaxyPoint) {
 	for _, pd := range stateData.Galaxy.Ordered {
 		cosmoPoint := NewCosmoPoint(pd, s.cam)
 		s.objects[pd.ID] = cosmoPoint
@@ -176,12 +135,6 @@ func (s *cosmoScene) Update(dt float64) {
 		s.cam.Scale /= 1 + dt
 	}
 
-	s.thrustLevelHUD.SetPos(graph.ScrP(0.15, 0.5-0.4*s.thrustLevel))
-	s.thrustControlHUD.SetPos(graph.ScrP(0.1, 0.5-0.4*input.GetF("forward")))
-
-	s.turnLevelHUD.SetPos(graph.ScrP(0.5-0.4*s.maneurLevel, 0.15))
-	s.turnControlHUD.SetPos(graph.ScrP(0.5-0.4*input.GetF("turn"), 0.1))
-
 	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
 
 	s.trailT += dt
@@ -195,7 +148,6 @@ func (s *cosmoScene) Update(dt float64) {
 		})
 	}
 	s.trail.Update(dt)
-	s.compass.SetPos(Data.PilotData.Ship.Pos)
 	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 
 	if s.thrustLevel > 0 {
@@ -203,6 +155,7 @@ func (s *cosmoScene) Update(dt float64) {
 	} else {
 		Data.PilotData.HeatProduction = 0
 	}
+	s.UpdateHUD()
 	s.camRecalc()
 }
 func (s *cosmoScene) camRecalc() {
@@ -216,9 +169,7 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 
 	Q := graph.NewDrawQueue()
 
-	s.background.Draw(image)
-	Q.Add(s.background, graph.Z_STAT_BACKGROUND)
-	Q.Add(s.compass, graph.Z_BACKGROUND)
+	Q.Append(s.hud)
 
 	for _, co := range s.objects {
 		Q.Append(co)
@@ -232,14 +183,7 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 
 	Q.Add(s.ship, graph.Z_HUD)
 
-	Q.Add(s.caption, graph.Z_STAT_HUD)
-
-	Q.Add(s.thrustLevelHUD, graph.Z_HUD)
-	Q.Add(s.thrustControlHUD, graph.Z_HUD)
-	Q.Add(s.turnLevelHUD, graph.Z_HUD)
-	Q.Add(s.turnControlHUD, graph.Z_HUD)
-
-	Q.Add(s.f9, graph.Z_STAT_HUD)
+	//Q.Add(s.caption, graph.Z_STAT_HUD)
 
 	Q.Append(s.predictorThrust)
 	Q.Append(s.predictorZero)
