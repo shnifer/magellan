@@ -45,7 +45,7 @@ func main() {
 	}
 
 	outData := commons.Galaxy{
-		Points: make(map[string]commons.GalaxyPoint),
+		Points: make(map[string]*commons.GalaxyPoint),
 	}
 	maxOrbit := 0.0
 
@@ -88,7 +88,7 @@ func main() {
 	ioutil.WriteFile("galaxy_solar.json", buf, 0)
 }
 
-func createGP(v fileData) (commons.GalaxyPoint, string) {
+func createGP(v fileData) (*commons.GalaxyPoint, string) {
 	objType := DEFType
 	if v.TexName != "" {
 		s := strings.Split(v.TexName, ".")
@@ -114,5 +114,5 @@ func createGP(v fileData) (commons.GalaxyPoint, string) {
 		ScanData:  v.ID,
 		Emissions: v.Emissions,
 	}
-	return gp, v.ID
+	return &gp, v.ID
 }
