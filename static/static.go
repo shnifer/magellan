@@ -2,11 +2,10 @@ package static
 
 import (
 	"bytes"
-	"fmt"
+	"github.com/Shnifer/magellan/commons"
 	"github.com/gobuffalo/packr"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 )
 
@@ -23,10 +22,10 @@ func init() {
 func Load(pack, filename string) ([]byte, error) {
 	fn := pack + "/" + filename
 	if resBox.Has(fn) {
-		log.Println("Load", pack, filename, "from embedded")
+		commons.Log(commons.LVL_WARNING, "Load", pack, filename, "from embedded")
 		return resBox.MustBytes(pack + "/" + filename)
 	} else {
-		log.Println("Load", pack, filename, "from external file")
+		commons.Log(commons.LVL_WARNING, "Load", pack, filename, "from external file")
 		return ioutil.ReadFile(resFilePath + pack + "/" + filename)
 	}
 }
@@ -39,7 +38,7 @@ func Exist(pack, filename string) bool {
 	if _, err := os.Stat(resFilePath + pack + "/" + filename); err == nil {
 		return true
 	} else {
-		fmt.Println("Check embedded for", pack, filename, "miss")
+		commons.Log(commons.LVL_WARNING, "Check embedded for", pack, filename, "miss")
 		return false
 	}
 }

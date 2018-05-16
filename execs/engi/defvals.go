@@ -17,9 +17,7 @@ type tDefVals struct {
 	FullScreen bool
 	WinW, WinH int
 
-	DoProf          bool
-	CpuProfFileName string
-	MemProfFileName string
+	DoProf bool
 }
 
 var DEFVAL tDefVals

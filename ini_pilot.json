@@ -3,12 +3,10 @@
     "Timeout":50,
     "PingPeriod": 60,
     "Room": "room101",
-    "FullScreen": true,
+    "FullScreen": false,
     "WinW": 800,
     "WinH": 800,
-    "DoProf": false,
-    "CpuProfFileName": "pilotcpu.prof",
-    "MemProfFileName": "pilotmem.prof",
+    "DoProf": true,
     "GravityConst": 0.1,
     "WarpGravityConst": 1000
 }

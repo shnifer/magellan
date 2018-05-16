@@ -1,12 +1,10 @@
 {
-    "Port": "http://192.168.10.102:8000",
+    "Port": "http://localhost:8000",
     "Timeout":50,
     "PingPeriod": 60,
     "Room": "room101",
     "FullScreen": false,
     "WinW": 500,
     "WinH": 500,
-    "DoProf": false,
-    "CpuProfFileName": "",
-    "MemProfFileName": ""
+    "DoProf": false
 }

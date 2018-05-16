@@ -4,7 +4,8 @@
     "RoomUpdatePeriod": 200,
     "LastSeenTimeout": 1000,
     "NeededRoles": [
-        "Pilot"
+        "Pilot", "Navi"
     ],
+    "DoProf": true,
     "SolarStartLocationName": "magellan"
 }

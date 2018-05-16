@@ -20,9 +20,7 @@ type tDefVals struct {
 	FullScreen bool
 	WinW, WinH int
 
-	DoProf          bool
-	CpuProfFileName string
-	MemProfFileName string
+	DoProf bool
 
 	GravityConst     float64
 	WarpGravityConst float64

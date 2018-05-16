@@ -106,7 +106,9 @@ func NewServer(opts ServerOpts) *Server {
 	go func() {
 		err := httpServ.ListenAndServe()
 		if err != nil {
-			panic(err)
+			if err != http.ErrServerClosed {
+				panic(err)
+			}
 		}
 	}()
 

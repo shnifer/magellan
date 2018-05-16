@@ -181,7 +181,6 @@ func checkWantedState(c *Client, pingResp PingResp) {
 					c.recvGoroutineStarted = true
 					//run hook and wait for done chan close
 					go func() {
-						log.Println("recieved state+start data size = ", len(resp))
 						buf := bytes.NewBuffer(resp)
 						dec := gob.NewDecoder(buf)
 						var DataResp StateDataResp

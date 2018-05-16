@@ -47,8 +47,8 @@ func mainLoop(window *ebiten.Image) error {
 
 func main() {
 	if DEFVAL.DoProf {
-		commons.StartProfile(DEFVAL.CpuProfFileName)
-		defer commons.StopProfile(DEFVAL.CpuProfFileName, DEFVAL.MemProfFileName)
+		commons.StartProfile(roleName)
+		defer commons.StopProfile(roleName)
 	}
 
 	if DEFVAL.FullScreen {

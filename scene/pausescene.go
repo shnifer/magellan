@@ -56,7 +56,7 @@ func (p *PauseScene) Update(float64) {
 		default:
 			str = ""
 			captionColor = colornames.White
-			commons.Log(commons.LVL_ERROR, "strange pause reason! ", reason)
+			commons.Log(commons.LVL_WARNING, "strange pause reason! ", reason)
 		}
 		p.caption = graph.NewText(str, p.face, captionColor)
 		p.caption.SetPosPivot(graph.ScrP(0.5, 0.5), graph.Center())

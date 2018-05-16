@@ -19,6 +19,8 @@ type tDefVals struct {
 	RoomUpdatePeriod int
 	LastSeenTimeout  int
 
+	DoProf bool
+
 	StartWarpSpeed         float64
 	SolarStartLocationName string
 }

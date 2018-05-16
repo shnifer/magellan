@@ -3,7 +3,5 @@
     "Room": "room101",
     "FullScreen": false,
     "WinW": 640,
-    "WinH": 480,
-    "CpuProfFileName": "",
-    "MemProfFileName": ""
+    "WinH": 480
 }

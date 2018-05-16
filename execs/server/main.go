@@ -3,12 +3,18 @@ package main
 import (
 	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/network"
+	"os"
+	"os/signal"
 	"time"
 )
 
 var server *network.Server
 
 func main() {
+	if DEFVAL.DoProf {
+		commons.StartProfile(roleName)
+		defer commons.StopProfile(roleName)
+	}
 
 	roomServ := newRoomServer()
 
@@ -29,7 +35,7 @@ func main() {
 	defer server.Close()
 
 	//waiting for enter to stop server
-	for {
-		time.Sleep(time.Second)
-	}
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt)
+	<-c
 }
