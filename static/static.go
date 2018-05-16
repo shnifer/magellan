@@ -2,12 +2,12 @@ package static
 
 import (
 	"bytes"
+	"errors"
 	"github.com/Shnifer/magellan/commons"
 	"github.com/gobuffalo/packr"
 	"io"
 	"io/ioutil"
 	"os"
-	"errors"
 )
 
 //box path must be just a string to be parsed by
@@ -23,13 +23,13 @@ func init() {
 func Load(pack, filename string) ([]byte, error) {
 	fn := pack + "/" + filename
 	if _, err := os.Stat(resFilePath + pack + "/" + filename); err == nil {
-		commons.Log(commons.LVL_ERROR, "Load", pack, filename, "from external file")
+		commons.Log(commons.LVL_WARNING, "Load", pack, filename, "from external file")
 		return ioutil.ReadFile(resFilePath + pack + "/" + filename)
 	} else if resBox.Has(fn) {
-		commons.Log(commons.LVL_ERROR, "Load", pack, filename, "from embedded")
+		commons.Log(commons.LVL_WARNING, "Load", pack, filename, "from embedded")
 		return resBox.MustBytes(pack + "/" + filename)
 	} else {
-		return nil,errors.New("static "+pack+" "+filename+" not found!")
+		return nil, errors.New("static " + pack + " " + filename + " not found!")
 	}
 }
 
