@@ -27,12 +27,12 @@ type cosmoSceneHUD struct {
 
 const (
 	rulerX     = 0.08
-	rulerY     = 0.08
+	rulerY     = 0.16
 	arrSize    = 0.05
 	wide       = 0.6
 	rulerWideK = 1.1
 
-	compassSize = 0.7
+	compassSize = 0.55
 )
 
 func newCosmoSceneHUD(cam *graph.Camera) cosmoSceneHUD {
@@ -47,7 +47,6 @@ func newCosmoSceneHUD(cam *graph.Camera) cosmoSceneHUD {
 	compass.SetAlpha(1)
 
 	f9 := NewAtlasFrame9HUD("front9", WinW, WinH)
-	f9.SetScale(0.5)
 
 	arrowSize := float64(WinH) * arrSize
 	arrowTex := GetAtlasTex("arrow")
@@ -115,7 +114,7 @@ func (s *cosmoScene) UpdateHUD() {
 func (h cosmoSceneHUD) Req() *graph.DrawQueue {
 	Q := graph.NewDrawQueue()
 	Q.Add(h.background, graph.Z_STAT_BACKGROUND)
-	Q.Add(h.compass, graph.Z_BACKGROUND)
+	Q.Add(h.compass, graph.Z_HUD)
 
 	Q.Add(h.rulerV, graph.Z_HUD)
 	Q.Add(h.rulerH, graph.Z_HUD)
