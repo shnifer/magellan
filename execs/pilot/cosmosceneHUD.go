@@ -26,8 +26,8 @@ type cosmoSceneHUD struct {
 }
 
 const (
-	rulerX     = 0.1
-	rulerY     = 0.1
+	rulerX     = 0.08
+	rulerY     = 0.08
 	arrSize    = 0.05
 	wide       = 0.6
 	rulerWideK = 1.1
@@ -93,7 +93,7 @@ func newCosmoSceneHUD(cam *graph.Camera) cosmoSceneHUD {
 
 func (s *cosmoScene) UpdateHUD() {
 	var p v2.V2
-	arrS := s.hud.arrowSize
+	arrS := s.hud.arrowSize*0.6
 
 	ruler:=func(x float64) float64{
 		return 0.5-s.hud.rulerSize/2*x
