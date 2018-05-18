@@ -32,14 +32,14 @@ func newScanner(cam *graph.Camera) *scanner {
 
 	const countN = 12
 
-	sprite := graph.NewSprite(GetAtlasTex("trail"), cam, true, true)
+	sprite := graph.NewSprite(GetAtlasTex("trail"), cam.Deny())
 	sprite.SetSize(15, 15)
 
-	scanRange := graph.NewSprite(graph.CircleTex(), cam, false, false)
+	scanRange := graph.NewSprite(graph.CircleTex(), cam.Phys())
 	scanRange.SetAlpha(0.5)
 	scanRange.SetColor(colornames.Indigo)
 
-	scanSector := graph.NewSector(cam, false, false)
+	scanSector := graph.NewSector(cam.Phys())
 	scanSector.SetColor(colornames.Goldenrod)
 
 	return &scanner{

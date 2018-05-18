@@ -8,11 +8,7 @@ import (
 )
 
 type Sector struct {
-	cam *Camera
-	//FixedSize
-	denyCamScale bool
-	//FixedAngle
-	denyCamAngle bool
+	camParams CamParams
 
 	center   v2.V2
 	radius   float64
@@ -59,16 +55,14 @@ func init() {
 	oneDegreeTex = TexFromImage(img, ebiten.FilterDefault, 0, 0, 0, "~oneDegree")
 }
 
-func NewSector(cam *Camera, denyCamScale, denyCamAngle bool) *Sector {
-	sprite := NewSprite(oneDegreeTex, cam, denyCamScale, denyCamAngle)
+func NewSector(params CamParams) *Sector {
+	sprite := NewSprite(oneDegreeTex, params)
 	sprite.SetPivot(BotRight())
 	return &Sector{
-		cam:          cam,
-		denyCamAngle: denyCamAngle,
-		denyCamScale: denyCamScale,
-		sprite:       sprite,
-		color:        color.White,
-		alpha:        1,
+		camParams: params,
+		sprite:    sprite,
+		color:     color.White,
+		alpha:     1,
 	}
 }
 

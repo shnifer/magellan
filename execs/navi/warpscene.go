@@ -31,11 +31,11 @@ func newWarpScene() *warpScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := graph.NewSprite(GetAtlasTex("ship"), cam, false, false)
+	ship := graph.NewSprite(GetAtlasTex("ship"), cam.Phys())
 	ship.SetSize(100, 100)
 	ship.SetAlpha(0.5)
 
-	sonarSector := graph.NewSector(cam, false, false)
+	sonarSector := graph.NewSector(cam.Phys())
 	sonarSector.SetColor(colornames.Indigo)
 
 	return &warpScene{

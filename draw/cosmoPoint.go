@@ -7,6 +7,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"golang.org/x/image/colornames"
 	"image/color"
+	"log"
 	"math/rand"
 )
 
@@ -22,8 +23,9 @@ type CosmoPoint struct {
 	lastT float64
 }
 
-func NewCosmoPoint(pd *GalaxyPoint, cam *graph.Camera) *CosmoPoint {
-	sprite := NewAtlasSprite(pd.Type, cam, false, false)
+func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
+	log.Println(pd)
+	sprite := NewAtlasSprite(pd.Type, params)
 	zeroColor := color.RGBA{}
 	if pd.Color != zeroColor {
 		sprite.SetColor(pd.Color)
@@ -44,7 +46,7 @@ func NewCosmoPoint(pd *GalaxyPoint, cam *graph.Camera) *CosmoPoint {
 	}
 	var emissionRange *graph.Sprite
 	if emiR > 0 {
-		emissionRange = graph.NewSprite(graph.CircleTex(), cam, false, false)
+		emissionRange = graph.NewSprite(graph.CircleTex(), params)
 		emissionRange.SetSize(emiR*2, emiR*2)
 		emissionRange.SetColor(colornames.Orchid)
 		emissionRange.SetAlpha(0.3)

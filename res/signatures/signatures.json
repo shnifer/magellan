@@ -1,0 +1,19 @@
+{
+  "name": {
+    "ParticleName": "particleName",
+    "SpawnPeriod": 1,
+    "LifeTime": 2,
+    "VelAndSpawnF": "funcName",
+    "AngF": "funcName",
+    "SizeF": "funcName",
+    "AlphaF": "funcName",
+    "ApplyDevOn": [
+      "SpawnPeriod",
+      "LifeTime",
+      "VelAndSpawnF",
+      "AngF",
+      "SizeF",
+      "AlphaF"
+    ]
+  }
+}

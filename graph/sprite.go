@@ -13,11 +13,12 @@ import (
 )
 
 const Deg2Rad = math.Pi / 180
-const Rad2Deg = 180 / math.Pi
+//const Rad2Deg = 180 / math.Pi
 
 type Sprite struct {
-	tex Tex
-	op  ebiten.DrawImageOptions
+	tex       Tex
+	op        ebiten.DrawImageOptions
+	camParams CamParams
 	//before and past cam parts of geom
 	dirty      bool
 	colorDirty bool
@@ -35,17 +36,11 @@ type Sprite struct {
 	color color.Color
 	//additional alpha k [0...1]
 	alpha float64
-	//if we plan to apply camera -- flip vertically, cz world coords Y is up and screen - dwn
-	cam *Camera
-	//FixedSize
-	denyCamScale bool
-	//FixedAngle
-	denyCamAngle bool
 	//number of sprite from sheet
 	spriteN int
 }
 
-func NewSprite(tex Tex, cam *Camera, denyCamScale, denyCamAngle bool) *Sprite {
+func NewSprite(tex Tex, params CamParams) *Sprite {
 	op := ebiten.DrawImageOptions{}
 	op.Filter = tex.filter
 	srcRect := image.Rect(0, 0, tex.sw, tex.sh)
@@ -54,16 +49,14 @@ func NewSprite(tex Tex, cam *Camera, denyCamScale, denyCamAngle bool) *Sprite {
 	w, h := float64(tex.sw), float64(tex.sh)
 
 	res := &Sprite{
-		tex:          tex,
-		op:           op,
-		sx:           1,
-		sy:           1,
-		pivot:        v2.V2{X: w / 2, Y: h / 2},
-		color:        color.White,
-		alpha:        1,
-		cam:          cam,
-		denyCamScale: denyCamScale,
-		denyCamAngle: denyCamAngle,
+		tex:       tex,
+		op:        op,
+		sx:        1,
+		sy:        1,
+		pivot:     v2.V2{X: w / 2, Y: h / 2},
+		color:     color.White,
+		alpha:     1,
+		camParams: params,
 	}
 
 	res.calcGeom()
@@ -73,7 +66,7 @@ func NewSprite(tex Tex, cam *Camera, denyCamScale, denyCamAngle bool) *Sprite {
 
 //without cam
 func NewSpriteHUD(tex Tex) *Sprite {
-	return NewSprite(tex, nil, false, false)
+	return NewSprite(tex, NoCam)
 }
 
 func fileLoader(filename string) (io.Reader, error) {
@@ -84,12 +77,12 @@ func fileLoader(filename string) (io.Reader, error) {
 	return bytes.NewBuffer(b), err
 }
 
-func NewSpriteFromFile(filename string, smoothFilter bool, sw, sh int, count int, cam *Camera, denyCamScale, denyCamAngle bool) (*Sprite, error) {
+func NewSpriteFromFile(filename string, smoothFilter bool, sw, sh int, count int, params CamParams) (*Sprite, error) {
 	tex, err := GetTex(filename, smoothFilter, sw, sh, count, fileLoader)
 	if err != nil {
 		return nil, err
 	}
-	return NewSprite(tex, cam, denyCamScale, denyCamAngle), nil
+	return NewSprite(tex, params), nil
 }
 
 func (s *Sprite) recalcColorM() {
@@ -185,18 +178,18 @@ func (s *Sprite) ImageOp() (*ebiten.Image, *ebiten.DrawImageOptions) {
 	*op = s.op
 	G := s.g1
 	//Flip vert before cam coords
-	if s.cam != nil {
+	if s.camParams.Cam != nil {
 		G.Scale(1, -1)
-		if s.denyCamScale {
-			G.Scale(1/s.cam.Scale, 1/s.cam.Scale)
+		if s.camParams.DenyScale {
+			G.Scale(1/s.camParams.Cam.Scale, 1/s.camParams.Cam.Scale)
 		}
-		if s.denyCamAngle {
-			G.Rotate(s.cam.AngleDeg * Deg2Rad)
+		if s.camParams.DenyAngle {
+			G.Rotate(s.camParams.Cam.AngleDeg * Deg2Rad)
 		}
 	}
 	G.Concat(s.g2)
-	if s.cam != nil {
-		G.Concat(s.cam.Geom())
+	if s.camParams.Cam != nil {
+		G.Concat(s.camParams.Cam.Geom())
 	}
 	op.GeoM = G
 	return s.tex.image, op

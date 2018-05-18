@@ -27,9 +27,9 @@ func InitTexAtlas() {
 	saveAtlasExample("example_" + atlasFN)
 	data, err := static.Load("textures", atlasFN)
 	if err != nil {
-		atlas = make(TexAtlas)
 		panic("Can't find tex atlas file " + atlasFN)
 	}
+	atlas = make(TexAtlas)
 	err = json.Unmarshal(data, &atlas)
 	if err != nil {
 		panic(err)
@@ -63,8 +63,8 @@ func GetAtlasTex(name string) graph.Tex {
 	return tex
 }
 
-func NewAtlasSprite(atlasName string, cam *graph.Camera, denyCamScale, denyCamAngle bool) *graph.Sprite {
-	return graph.NewSprite(GetAtlasTex(atlasName), cam, denyCamScale, denyCamAngle)
+func NewAtlasSprite(atlasName string, params graph.CamParams) *graph.Sprite {
+	return graph.NewSprite(GetAtlasTex(atlasName), params)
 }
 
 func NewAtlasSpriteHUD(atlasName string) *graph.Sprite {

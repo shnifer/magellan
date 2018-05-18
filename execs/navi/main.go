@@ -66,6 +66,7 @@ func main() {
 	input.LoadConf("input_" + roleName + ".json")
 
 	draw.InitTexAtlas()
+	commons.InitSignatureAtlas()
 
 	createScenes()
 

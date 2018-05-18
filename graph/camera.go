@@ -18,6 +18,34 @@ type Camera struct {
 	g, r  ebiten.GeoM
 }
 
+var NoCam CamParams
+
+type CamParams struct {
+	Cam       *Camera
+	DenyScale bool
+	DenyAngle bool
+}
+
+func NewCamParams(cam *Camera, denyScale, denyAngle bool) CamParams {
+	return CamParams{
+		Cam:       cam,
+		DenyAngle: denyAngle,
+		DenyScale: denyScale,
+	}
+}
+func (c *Camera) Params(denyScale, denyAngle bool) CamParams {
+	return NewCamParams(c, denyScale, denyAngle)
+}
+func (c *Camera) Phys() CamParams {
+	return c.Params(false, false)
+}
+func (c *Camera) Deny() CamParams {
+	return c.Params(true, true)
+}
+func (c *Camera) FixS() CamParams {
+	return c.Params(true, false)
+}
+
 func NewCamera() *Camera {
 	res := &Camera{
 		Scale: 1,

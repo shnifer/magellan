@@ -44,17 +44,17 @@ func newCosmoScene() *cosmoScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := NewAtlasSprite("ship", cam, true, false)
+	ship := NewAtlasSprite("ship", cam.FixS())
 	ship.SetSize(50, 50)
 
-	marker := NewAtlasSprite("marker", cam, true, true)
+	marker := NewAtlasSprite("marker", cam.Deny())
 	marker.SetPivot(graph.MidBottom())
 
-	predictorSprite := NewAtlasSprite("trail", cam, true, true)
+	predictorSprite := NewAtlasSprite("trail", cam.Deny())
 	predictorSprite.SetSize(20, 20)
 	predictorThrust := NewTrackPredictor(cam, predictorSprite, &Data, Track_CurrentThrust, colornames.Palevioletred, graph.Z_ABOVE_OBJECT+1)
 
-	predictor2Sprite := NewAtlasSprite("trail", cam, true, true)
+	predictor2Sprite := NewAtlasSprite("trail", cam.Deny())
 	predictor2Sprite.SetSize(15, 15)
 	predictor2Sprite.SetColor(colornames.Darkgray)
 
@@ -73,7 +73,7 @@ func newCosmoScene() *cosmoScene {
 		predictorZero:   predictorZero,
 	}
 
-	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
+	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam.Deny())
 
 	return &res
 }
@@ -90,7 +90,7 @@ func (s *cosmoScene) Init() {
 	stateData := Data.GetStateData()
 
 	for _, pd := range stateData.Galaxy.Ordered {
-		cosmoPoint := NewCosmoPoint(pd, s.cam)
+		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
 		s.objects[pd.ID] = cosmoPoint
 	}
 }

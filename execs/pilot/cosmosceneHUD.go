@@ -41,7 +41,7 @@ func newCosmoSceneHUD(cam *graph.Camera) cosmoSceneHUD {
 	background.SetPivot(graph.TopLeft())
 	background.SetColor(colornames.Dimgrey)
 
-	compass := NewAtlasSprite("compass", cam, true, false)
+	compass := NewAtlasSprite("compass", cam.FixS())
 	compassSize := float64(WinH) * compassSize
 	compass.SetSize(compassSize, compassSize)
 	compass.SetAlpha(1)

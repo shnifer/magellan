@@ -66,35 +66,36 @@ type Galaxy struct {
 	//for systems - range of "system borders"
 	SpawnDistance float64
 
-	Points  map[string]*GalaxyPoint
+	Points map[string]*GalaxyPoint
+
+	//recalculated on Decode
 	Ordered []*GalaxyPoint `json:"-"`
 	maxLvl  int
-	//changed on ordered slice
-	//lvlLists [][]string
 }
 
 type GalaxyPoint struct {
-	ID       string `json:",omitempty"`
-	ParentID string `json:",omitempty"`
+	ID       string `json:"id,omitempty"`
+	ParentID string `json:"pid,omitempty"`
 
 	Pos v2.V2
 
-	Orbit  float64 `json:",omitempty"`
-	Period float64 `json:",omitempty"`
+	Orbit  float64 `json:"orb,omitempty"`
+	Period float64 `json:"per,omitempty"`
 
-	Type string
-	Size float64
+	Type string  `json:"t,omitempty"`
+	Size float64 `json:"s,omitempty"`
 
-	Mass float64 `json:",omitempty"`
+	Mass float64 `json:"m,omitempty"`
 
 	//for warp points
-	WarpSpawnDistance float64 `json:",omitempty"`
-	WarpInDistance    float64 `json:",omitempty"`
+	WarpSpawnDistance float64 `json:"wsd,omitempty"`
+	WarpInDistance    float64 `json:"did,omitempty"`
 
-	ScanData string `json:",omitempty"`
+	ScanData string `json:"sd,omitempty"`
 
-	Emissions []Emission `json:",omitempty"`
-	Color     color.RGBA
+	Emissions  []Emission  `json:"emm,omitempty"`
+	Signatures []Signature `json:"sig,omitempty"`
+	Color      color.RGBA  `json:"clr"`
 }
 
 func (sd StateData) Encode() []byte {

@@ -42,10 +42,10 @@ func newWarpScene() *warpScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := NewAtlasSprite("ship", cam, true, false)
+	ship := NewAtlasSprite("ship", cam.FixS())
 	ship.SetSize(50, 50)
 
-	sonarSector := graph.NewSector(cam, false, false)
+	sonarSector := graph.NewSector(cam.Phys())
 	sonarSector.SetColor(colornames.Forestgreen)
 
 	res := warpScene{
@@ -56,7 +56,8 @@ func newWarpScene() *warpScene {
 		sonarSector: sonarSector,
 	}
 
-	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam, true, true)
+	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod,
+		cam.Deny())
 
 	arrowTex := GetAtlasTex("arrow")
 	res.thrustLevelHUD = graph.NewSpriteHUD(arrowTex)
@@ -88,7 +89,7 @@ func (s *warpScene) Init() {
 	stateData := Data.GetStateData()
 
 	for id, pd := range stateData.Galaxy.Points {
-		cosmoPoint := NewCosmoPoint(pd, s.cam)
+		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
 		s.objects[id] = cosmoPoint
 	}
 }

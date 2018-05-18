@@ -30,7 +30,7 @@ func newCosmoScene() *cosmoScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := NewAtlasSprite("ship", cam, false, false)
+	ship := NewAtlasSprite("ship", cam.Phys())
 	ship.SetSize(50, 50)
 
 	return &cosmoScene{
@@ -51,7 +51,7 @@ func (s *cosmoScene) Init() {
 	s.scanner = newScanner(s.cam)
 
 	for id, pd := range stateData.Galaxy.Points {
-		cosmoPoint := NewCosmoPoint(pd, s.cam)
+		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
 		s.objects[id] = cosmoPoint
 	}
 }

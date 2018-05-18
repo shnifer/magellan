@@ -1,0 +1,8 @@
+{
+  "particleName": {
+    "SpriteName": "texAtlasName",
+    "DoRandomLine": true,
+    "FPS": 20,
+    "CycleType": 1
+  }
+}

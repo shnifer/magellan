@@ -14,15 +14,14 @@ type part struct {
 	leftTime float64
 }
 
-func (sa *FadingArray) newPart(elem ArrayElem) (p part) {
-	p.isActive = true
-	p.leftTime = elem.LifeTime
-	sprite := NewSprite(sa.tex, sa.cam, sa.denyScale, sa.denyAngle)
-	sprite.SetPosAng(elem.Pos, elem.AngDeg)
-	sprite.SetSize(elem.Size, elem.Size)
-	sprite.SetSpriteN(elem.SpriteN)
-	p.sprite = sprite
-	return p
+type FadingArray struct {
+	tex       Tex
+	camParams CamParams
+	array     []part
+
+	cap  int
+	cur  int
+	used int
 }
 
 type ArrayElem struct {
@@ -33,24 +32,22 @@ type ArrayElem struct {
 	LifeTime float64
 }
 
-type FadingArray struct {
-	tex                  Tex
-	cam                  *Camera
-	denyScale, denyAngle bool
-	array                []part
-
-	cap  int
-	cur  int
-	used int
+func (sa *FadingArray) newPart(elem ArrayElem) (p part) {
+	p.isActive = true
+	p.leftTime = elem.LifeTime
+	sprite := NewSprite(sa.tex, sa.camParams)
+	sprite.SetPosAng(elem.Pos, elem.AngDeg)
+	sprite.SetSize(elem.Size, elem.Size)
+	sprite.SetSpriteN(elem.SpriteN)
+	p.sprite = sprite
+	return p
 }
 
-func NewFadingArray(tex Tex, cap int, cam *Camera, denyCamScale, denyCamAngle bool) (res *FadingArray) {
+func NewFadingArray(tex Tex, cap int, params CamParams) (res *FadingArray) {
 	res = new(FadingArray)
 	res.tex = tex
 	res.cap = cap
-	res.cam = cam
-	res.denyScale = denyCamScale
-	res.denyAngle = denyCamAngle
+	res.camParams = params
 	res.array = make([]part, cap, cap)
 	return res
 }
