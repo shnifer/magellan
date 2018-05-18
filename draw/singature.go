@@ -4,7 +4,6 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/graph/flow"
-	"github.com/Shnifer/magellan/v2"
 )
 
 const (
@@ -51,7 +50,7 @@ func (sp *SignaturePack) ActiveSignatures(sigs []Signature) {
 		}
 	}
 
-	for sig, flow := range sp.flows {
+	for sig, f := range sp.flows {
 		found := false
 		for _, val := range sigs {
 			if val == sig {
@@ -59,14 +58,14 @@ func (sp *SignaturePack) ActiveSignatures(sigs []Signature) {
 				break
 			}
 		}
-		flow.SetActive(found)
+		f.SetActive(found)
 	}
 }
 
 func (sp *SignaturePack) Update(dt float64) {
-	for sig, flow := range sp.flows {
-		flow.Update(dt)
-		if flow.IsEmpty() {
+	for sig, f := range sp.flows {
+		f.Update(dt)
+		if f.IsEmpty() {
 			sp.deltas[sp.deltaLayer[sig]] = false
 			delete(sp.deltaLayer, sig)
 			delete(sp.flows, sig)
@@ -77,8 +76,8 @@ func (sp *SignaturePack) Update(dt float64) {
 func (sp *SignaturePack) Req() *graph.DrawQueue {
 	Q := graph.NewDrawQueue()
 
-	for _, flow := range sp.flows {
-		Q.Append(flow)
+	for _, f := range sp.flows {
+		Q.Append(f)
 	}
 
 	return Q
@@ -105,9 +104,9 @@ func createSignatureFlow(signature Signature, camParams graph.CamParams, layer i
 
 	velocityF, spawnPos := SignatureVelSpawn(signature)
 
-	AttrFs["Ang"] = SignatureAttrF(signature, param.AngF, SIG_ANGF)
-	AttrFs["Size"] = SignatureAttrF(signature, param.SizeF, SIG_SIZEF)
-	AttrFs["Alpha"] = SignatureAttrF(signature, param.AlphaF, SIG_ALPHAF)
+	AttrFs["Ang"] = SignatureAttrF(signature, param.AngStr, SIG_ANGF)
+	AttrFs["Size"] = SignatureAttrF(signature, param.SizeStr, SIG_SIZEF)
+	AttrFs["Alpha"] = SignatureAttrF(signature, param.AlphaStr, SIG_ALPHAF)
 
 	return flow.Params{
 		SpawnPeriod:    spawnPeriod,

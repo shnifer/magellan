@@ -23,10 +23,10 @@ const sigParticlesFN = "particles.json"
 const (
 	SIG_SPAWNPERIOD = "SpawnPeriod"
 	SIG_LIFETIME    = "LifeTime"
-	SIG_VELSPAWN    = "VelAndSpawnF"
-	SIG_ANGF        = "AngF"
-	SIG_SIZEF       = "SizeF"
-	SIG_ALPHAF      = "AlphaF"
+	SIG_VELSPAWN    = "VelAndSpawnStr"
+	SIG_ANGF        = "AngStr"
+	SIG_SIZEF       = "SizeStr"
+	SIG_ALPHAF      = "AlphaStr"
 )
 
 var signatures SignatureAtlas
@@ -44,18 +44,16 @@ type SignatureParticle struct {
 }
 
 type SignatureType struct {
-	ParticleName string
-	Color        color.RGBA
-	SpawnPeriod  float64
-	LifeTime     float64
-	VelAndSpawnF string
-	AngF         string
-	SizeF        string
-	AlphaF       string
-	ApplyDevOn   []string
-	//use Couf method to get value
-	Coefs      map[string]float64
-	applyDevOn map[string]bool
+	ParticleName   string
+	Color          color.RGBA
+	SpawnPeriod    float64
+	LifeTime       float64
+	VelAndSpawnStr string
+	AngStr         string
+	SizeStr        string
+	AlphaStr       string
+	ApplyDevOn     []string
+	applyDevOn     map[string]bool
 }
 
 func (s Signature) Type() SignatureType {
@@ -66,14 +64,6 @@ func (s Signature) Particle() SignatureParticle {
 }
 func (st SignatureType) Particle() SignatureParticle {
 	return particles[st.ParticleName]
-}
-
-func (s Signature) Coef(name string) float64 {
-	if k, ok := s.Type().Coefs[name]; ok {
-		return k
-	} else {
-		return 1
-	}
 }
 
 func (s Signature) DevV(name string) v2.V2 {
@@ -131,14 +121,14 @@ func InitSignatureAtlas() {
 func saveSignatureExample(fn string) {
 	exAtlas := make(SignatureAtlas)
 	exAtlas["name"] = SignatureType{
-		ParticleName: "particleName",
-		SpawnPeriod:  1,
-		LifeTime:     2,
-		VelAndSpawnF: "funcName",
-		AngF:         "funcName",
-		SizeF:        "funcName",
-		AlphaF:       "funcName",
-		ApplyDevOn:   []string{SIG_SPAWNPERIOD, SIG_LIFETIME, SIG_VELSPAWN, SIG_ANGF, SIG_SIZEF, SIG_ALPHAF},
+		ParticleName:   "particleName",
+		SpawnPeriod:    1,
+		LifeTime:       2,
+		VelAndSpawnStr: "funcName",
+		AngStr:         "funcName",
+		SizeStr:        "funcName",
+		AlphaStr:       "funcName",
+		ApplyDevOn:     []string{SIG_SPAWNPERIOD, SIG_LIFETIME, SIG_VELSPAWN, SIG_ANGF, SIG_SIZEF, SIG_ALPHAF},
 	}
 
 	buf, err := json.Marshal(exAtlas)
