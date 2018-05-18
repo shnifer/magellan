@@ -7,21 +7,89 @@ import (
 	"github.com/Shnifer/magellan/v2"
 )
 
-var signatureFlowCache map[Signature]*flow.Flow
-
 const (
 	spawnPeriodDev = 25
+	lifeTimeDev    = 50
 )
 
-func init (){
-	signatureFlowCache = make(map[Signature]*flow.Flow)
+type SignaturePack struct {
+	camParams  graph.CamParams
+	baseLayer  int
+	flows      map[Signature]*flow.Flow
+	deltaLayer map[Signature]int
+	deltas     []bool
 }
 
-func GetSignatureFlow(signature Signature, camParams graph.CamParams, layer int) *flow.Flow {
-	particle:=signature.Particle()
-	param:=signature.Type()
+func NewSignaturePack(camParams graph.CamParams, baseLayer int) *SignaturePack {
+	return &SignaturePack{
+		camParams:  camParams,
+		baseLayer:  baseLayer,
+		flows:      make(map[Signature]*flow.Flow),
+		deltaLayer: make(map[Signature]int),
+		deltas:     make([]bool, 0),
+	}
+}
+
+func (sp *SignaturePack) ActiveSignatures(sigs []Signature) {
+	for _, sig := range sigs {
+		if _, ok := sp.flows[sig]; !ok {
+			//found delta
+			delta := -1
+			for i, occupied := range sp.deltas {
+				if !occupied {
+					delta = i
+					break
+				}
+			}
+			if delta == -1 {
+				delta = len(sp.deltas)
+				sp.deltas = append(sp.deltas, false)
+			}
+			sp.deltas[delta] = true
+			sp.deltaLayer[sig] = delta
+			sp.flows[sig] = createSignatureFlow(sig, sp.camParams, sp.baseLayer+delta)
+		}
+	}
+
+	for sig, flow := range sp.flows {
+		found := false
+		for _, val := range sigs {
+			if val == sig {
+				found = true
+				break
+			}
+		}
+		flow.SetActive(found)
+	}
+}
+
+func (sp *SignaturePack) Update(dt float64) {
+	for sig, flow := range sp.flows {
+		flow.Update(dt)
+		if flow.IsEmpty() {
+			sp.deltas[sp.deltaLayer[sig]] = false
+			delete(sp.deltaLayer, sig)
+			delete(sp.flows, sig)
+		}
+	}
+}
+
+func (sp *SignaturePack) Req() *graph.DrawQueue {
+	Q := graph.NewDrawQueue()
+
+	for _, flow := range sp.flows {
+		Q.Append(flow)
+	}
+
+	return Q
+}
+
+func createSignatureFlow(signature Signature, camParams graph.CamParams, layer int) *flow.Flow {
+	particle := signature.Particle()
+	param := signature.Type()
 
 	sprite := NewAtlasSprite(signature.Particle().SpriteName, camParams)
+	sprite.SetColor(param.Color)
 	drawer := flow.SpriteDrawerParams{
 		Sprite:       sprite,
 		DoRandomLine: particle.DoRandomLine,
@@ -32,15 +100,20 @@ func GetSignatureFlow(signature Signature, camParams graph.CamParams, layer int)
 
 	AttrFs := flow.NewAttrFs()
 
-	spawnPeriod:=param.SpawnPeriod*signature.DevK(SIG_SPAWNPERIOD,spawnPeriodDev)
+	spawnPeriod := param.SpawnPeriod * signature.DevK(SIG_SPAWNPERIOD, spawnPeriodDev)
+	spawnLife := flow.NormRand(param.LifeTime, signature.DevK(SIG_LIFETIME, lifeTimeDev))
 
-	velocityF,spawnPos:=SignatureVelSpawn(signature)
+	velocityF, spawnPos := SignatureVelSpawn(signature)
+
+	AttrFs["Ang"] = SignatureAttrF(signature, param.AngF, SIG_ANGF)
+	AttrFs["Size"] = SignatureAttrF(signature, param.SizeF, SIG_SIZEF)
+	AttrFs["Alpha"] = SignatureAttrF(signature, param.AlphaF, SIG_ALPHAF)
 
 	return flow.Params{
 		SpawnPeriod:    spawnPeriod,
-		SpawnPos:       flow.RandomInCirc(1),
-		VelocityF:      velFs["rotation"],
-		SpawnLife:      flow.NormRand(medLife, devLife),
+		SpawnPos:       spawnPos,
+		VelocityF:      velocityF,
+		SpawnLife:      spawnLife,
 		SpawnUpdDrawer: drawer,
 		AttrFs:         AttrFs,
 	}.New()

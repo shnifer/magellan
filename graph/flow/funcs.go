@@ -6,18 +6,24 @@ import (
 	"math/rand"
 )
 
-func SinLifeTime(med, dev, period float64) func(p point) float64 {
-	return func(p point) float64 {
+func LinearLifeTime(a, b float64) func(point Point) float64 {
+	return func(point Point) float64 {
+		return a + (b-a)*point.lifeTime/point.maxTime
+	}
+}
+
+func SinLifeTime(med, dev, period float64) func(p Point) float64 {
+	return func(p Point) float64 {
 		return med + math.Sin(p.lifeTime/period*2*math.Pi)*dev
 	}
 }
-func SinMaxTime(med, dev, periods float64) func(p point) float64 {
-	return func(p point) float64 {
+func SinMaxTime(med, dev, periods float64) func(p Point) float64 {
+	return func(p Point) float64 {
 		return med + math.Sin(p.lifeTime/p.maxTime*periods*2*math.Pi)*dev
 	}
 }
 
-func ComposeRadial(tang, norm func(l, w float64) float64) func(V2) V2 {
+func ComposeRadial(tang, norm func(l, w float64) float64) VelocityF {
 	return func(pos V2) (vel V2) {
 		l := pos.Len()
 		w := pos.Dir()
@@ -27,9 +33,27 @@ func ComposeRadial(tang, norm func(l, w float64) float64) func(V2) V2 {
 	}
 }
 
-func ComposeDecart(vx, vy func(x, y float64) float64) func(V2) V2 {
+func ComposeDecart(vx, vy func(x, y float64) float64) VelocityF {
 	return func(pos V2) (vel V2) {
 		return V2{X: vx(pos.X, pos.Y), Y: vy(pos.X, pos.Y)}
+	}
+}
+
+func (f VelocityF) Add(delta V2) VelocityF {
+	return func(pos V2) (vel V2) {
+		return f(pos).Add(delta)
+	}
+}
+
+func (f VelocityF) AddMul(delta V2, t float64) VelocityF {
+	return func(pos V2) (vel V2) {
+		return f(pos).AddMul(delta, t)
+	}
+}
+
+func (f VelocityF) Rot(angle float64) VelocityF {
+	return func(pos V2) (vel V2) {
+		return f(pos.Rotate(-angle)).Rotate(angle)
 	}
 }
 

@@ -44,7 +44,7 @@ func (sd *spriteDrawer) update(dt float64) {
 	sd.cs.Update(dt)
 }
 
-func (sd *spriteDrawer) drawPoint(p point) *graph.DrawQueue {
+func (sd *spriteDrawer) drawPoint(p Point) *graph.DrawQueue {
 	sd.cs.SetPos(p.pos)
 
 	if ang, ok := p.attr["Ang"]; ok {

@@ -7,10 +7,10 @@ import (
 
 type updDrawPointer interface {
 	update(dt float64)
-	drawPoint(p point) *graph.DrawQueue
+	drawPoint(p Point) *graph.DrawQueue
 }
 
-type point struct {
+type Point struct {
 	lifeTime float64
 	maxTime  float64
 	pos      V2
@@ -18,31 +18,37 @@ type point struct {
 	attr     map[string]float64
 }
 
-func (p point) Req() *graph.DrawQueue {
+func (p Point) Req() *graph.DrawQueue {
 	return p.updDraw.drawPoint(p)
 }
 
-type attrF = func(p point) float64
+type AttrF = func(p Point) float64
 
-func NewAttrFs() map[string]attrF {
-	return make(map[string]attrF)
+func NewAttrFs() map[string]AttrF {
+	return make(map[string]AttrF)
 }
+
+type VelocityF func(pos V2) V2
+type SpawnPosF func() (pos V2)
 
 type Params struct {
 	SpawnPeriod float64
 
-	SpawnPos       func() (pos V2)
+	SpawnPos       SpawnPosF
 	SpawnLife      func() float64
 	SpawnUpdDrawer func() updDrawPointer
 
-	VelocityF func(pos V2) V2
-	AttrFs    map[string]attrF
+	VelocityF VelocityF
+	AttrFs    map[string]AttrF
 }
 
 type Flow struct {
 	params Params
-	points []point
+	points []Point
 	spawnT float64
+
+	isActiveSpawn bool
+	isEmpty       bool
 }
 
 func (fp Params) New() *Flow {
@@ -59,12 +65,13 @@ func (fp Params) New() *Flow {
 		fp.SpawnLife = func() float64 { return 1 }
 	}
 	if fp.AttrFs == nil {
-		fp.AttrFs = make(map[string]func(p point) float64)
+		fp.AttrFs = make(map[string]func(p Point) float64)
 	}
 
 	return &Flow{
-		params: fp,
-		points: []point{},
+		params:        fp,
+		points:        []Point{},
+		isActiveSpawn: true,
 	}
 }
 
@@ -80,11 +87,16 @@ func (f *Flow) Update(dt float64) {
 		}
 	}
 
-	//spawn new
-	f.spawnT += dt
-	for f.spawnT >= f.params.SpawnPeriod {
-		f.spawnT -= f.params.SpawnPeriod
-		f.newPoint()
+	if f.isActiveSpawn {
+		f.isEmpty = false
+		//spawn new
+		f.spawnT += dt
+		for f.spawnT >= f.params.SpawnPeriod {
+			f.spawnT -= f.params.SpawnPeriod
+			f.newPoint()
+		}
+	} else if l == 0 {
+		f.isEmpty = true
 	}
 
 	//move
@@ -116,11 +128,19 @@ func (f *Flow) Req() *graph.DrawQueue {
 }
 
 func (f *Flow) newPoint() {
-	p := point{
+	p := Point{
 		maxTime: f.params.SpawnLife(),
 		pos:     f.params.SpawnPos(),
 		updDraw: f.params.SpawnUpdDrawer(),
 		attr:    make(map[string]float64),
 	}
 	f.points = append(f.points, p)
+}
+
+func (f *Flow) SetActive(activeSpawn bool) {
+	f.isActiveSpawn = activeSpawn
+}
+
+func (f *Flow) IsEmpty() bool {
+	return f.isEmpty
 }
