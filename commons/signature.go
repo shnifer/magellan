@@ -19,6 +19,15 @@ type Signature struct {
 const sigAtlasFN = "signatures.json"
 const sigParticlesFN = "particles.json"
 
+const(
+	SIG_SPAWNPERIOD = "SpawnPeriod"
+	SIG_LIFETIME = "LifeTime"
+	SIG_VELSPAWN = "VelAndSpawnF"
+	SIG_ANGF = "AngF"
+	SIG_SIZEF = "SizeF"
+	SIG_ALPHA = "AlphaF"
+)
+
 var signatures SignatureAtlas
 var particles SignatureParticleAtlas
 
@@ -42,6 +51,7 @@ type SignatureType struct {
 	SizeF        string
 	AlphaF       string
 	ApplyDevOn   []string
+	applyDevOn   map[string]bool
 }
 
 func (s Signature) Type() SignatureType {
@@ -52,6 +62,23 @@ func (s Signature) Particle() SignatureParticle {
 }
 func (st SignatureType) Particle() SignatureParticle {
 	return particles[st.ParticleName]
+}
+
+
+func (s Signature) DevV(name string) v2.V2{
+	if s.Type().applyDevOn[name] {
+		return s.Dev
+	} else {
+		return v2.ZV
+	}
+}
+
+func (s Signature) DevF(name string) float64{
+	return s.DevV(name).X
+}
+
+func (s Signature) DevK(name string, widePercent float64) float64{
+	return 1+(s.DevF(name)*widePercent/100)
 }
 
 func InitSignatureAtlas() {
@@ -81,6 +108,11 @@ func InitSignatureAtlas() {
 		if _, ok := particles[v.ParticleName]; !ok {
 			log.Panicln("Signature", name, "particle", v.ParticleName, "not found")
 		}
+		v.applyDevOn = make(map[string]bool, len(v.ApplyDevOn))
+		for _,str:=range v.ApplyDevOn{
+			v.applyDevOn[str] = true
+		}
+		signatures[name] = v
 	}
 }
 
@@ -94,7 +126,9 @@ func saveSignatureExample(fn string) {
 		AngF:         "funcName",
 		SizeF:        "funcName",
 		AlphaF:       "funcName",
-		ApplyDevOn:   []string{"SpawnPeriod", "LifeTime", "VelAndSpawnF", "AngF", "SizeF", "AlphaF"}}
+		ApplyDevOn:   []string{	SIG_SPAWNPERIOD, SIG_LIFETIME,SIG_VELSPAWN,SIG_ANGF,SIG_SIZEF,SIG_ALPHA},
+	}
+
 	buf, err := json.Marshal(exAtlas)
 	if err != nil {
 		panic(err)

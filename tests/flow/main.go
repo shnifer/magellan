@@ -58,10 +58,10 @@ func main() {
 
 	var err error
 	sprite, err = graph.NewSpriteFromFile(
-		"res/textures/flame_ani.png", true, 192, 192, 19, cam, false, false)
+		"res/textures/flame_ani.png", true, 192, 192, 19, cam.Phys())
 	if err != nil {
 		sprite, err = graph.NewSpriteFromFile(
-			"flame_ani.png", true, 192, 192, 19, cam, false, false)
+			"flame_ani.png", true, 192, 192, 19, cam.Phys())
 		if err != nil {
 			panic(err)
 		}
