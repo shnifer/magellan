@@ -1,8 +1,16 @@
 {
-  "particleName": {
-    "SpriteName": "texAtlasName",
-    "DoRandomLine": true,
-    "FPS": 20,
+  "star": {
+    "SpriteName": "trail"
+  },
+  "planet1": {
+    "SpriteName": "planet",
+    "FPS": 10,
     "CycleType": 1
+  },
+  "planet2": {
+    "SpriteName": "planet2",
+    "FPS": 20,
+    "CycleType": 2
   }
+
 }

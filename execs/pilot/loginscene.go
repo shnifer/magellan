@@ -4,10 +4,12 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
+	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
+	"strconv"
 	"time"
 )
 
@@ -21,9 +23,11 @@ type LoginScene struct {
 
 	inputText string
 
-	backT      float64
-	dir        int
-	background *graph.CycledSprite
+	backT float64
+	dir   int
+
+	sigs       *SignaturePack
+	activeSigs [10]bool
 }
 
 func NewLoginScene() *LoginScene {
@@ -42,12 +46,17 @@ func NewLoginScene() *LoginScene {
 	back.SetPivot(graph.TopLeft())
 	back.SetSize(float64(WinW), float64(WinH))
 
+	cam := graph.NewCamera()
+	cam.Center = graph.ScrP(0.5, 0.5)
+	cam.Scale = cam.Center.Y * 0.8
+	cam.Recalc()
+
 	return &LoginScene{
-		face:       face,
-		question:   question,
-		errorMsg:   errorMsg,
-		background: graph.NewCycledSprite(back, graph.Cycle_PingPong, 24),
-		dir:        1,
+		face:     face,
+		question: question,
+		errorMsg: errorMsg,
+		dir:      1,
+		sigs:     NewSignaturePack(cam.Deny(), graph.Z_GAME_OBJECT),
 	}
 }
 
@@ -83,7 +92,22 @@ func (p *LoginScene) Update(dt float64) {
 		p.text.SetPosPivot(graph.ScrP(0.5, 0.5), graph.Center())
 	}
 
-	p.background.Update(dt)
+	for i := 0; i < 10; i++ {
+		if inpututil.IsKeyJustPressed(ebiten.Key0 + ebiten.Key(i)) {
+			p.activeSigs[i] = !p.activeSigs[i]
+		}
+	}
+
+	activeSigs := make([]Signature, 0, 10)
+	for i, active := range p.activeSigs {
+		if active {
+			activeSigs = append(activeSigs, Signature{
+				Dev:      v2.ZV,
+				TypeName: strconv.Itoa(i)})
+		}
+	}
+	p.sigs.ActiveSignatures(activeSigs)
+	p.sigs.Update(dt)
 }
 
 func (p *LoginScene) Draw(image *ebiten.Image) {
@@ -91,17 +115,21 @@ func (p *LoginScene) Draw(image *ebiten.Image) {
 
 	const ErrorShowtime = time.Second * 2
 
-	p.background.Draw(image)
+	Q := graph.NewDrawQueue()
 
-	p.question.Draw(image)
-	p.text.Draw(image)
+	Q.Add(p.question, graph.Z_HUD)
+	Q.Add(p.text, graph.Z_HUD)
 
 	errTime := time.Since(p.lastErrTime)
 	if errTime < ErrorShowtime {
-		if int(errTime.Seconds()*4)%2 == 0 {
-			p.errorMsg.Draw(image)
+		if int(errTime.Seconds()*8)%2 == 0 {
+			Q.Add(p.errorMsg, graph.Z_HUD)
 		}
 	}
+
+	Q.Append(p.sigs)
+
+	Q.Run(image)
 }
 
 func (p *LoginScene) Destroy() {

@@ -31,8 +31,17 @@ func sigFuncStrDecoder(data string) (fn string, params []float64) {
 }
 
 func SignatureVelSpawn(sig Signature) (VelocityF func(pos v2.V2) v2.V2, SpawnPos func() (pos v2.V2)) {
+	if sig.Type().VelAndSpawnStr == "" {
+		return nil, nil
+	}
 	fn, params := sigFuncStrDecoder(sig.Type().VelAndSpawnStr)
-	k := params[0]
+	var k float64
+	if len(params)>0{
+		k = params[0]
+	} else {
+		k=1
+	}
+
 	devV := sig.DevV(SIG_VELSPAWN)
 	devKVel := sig.DevK(SIG_VELSPAWN, velDev) * k
 	devKPos := sig.DevK(SIG_VELSPAWN, spawnPosDev) * k
@@ -45,15 +54,21 @@ func SignatureVelSpawn(sig Signature) (VelocityF func(pos v2.V2) v2.V2, SpawnPos
 		}
 
 	case "rotation":
-		VelocityF = flow.ComposeRadial(flow.ConstC(k), flow.ConstC(params[1]*devKVel)).AddMul(devV, 0.5)
+		VelocityF = flow.ComposeRadial(flow.ConstC(k), flow.ConstC(params[1]*devKVel/k)).AddMul(devV, 0.5)
 		SpawnPos = flow.RandomInCirc(1)
 	case "sinFloat":
+		if devV == v2.ZV {
+			devV = v2.InDir(0)
+		}
 		sinx := func(x, y float64) float64 {
 			return math.Sin(y*params[1]) * params[2]
 		}
-		VelocityF = flow.ComposeDecart(sinx, flow.ConstC(devV.Len())).Rot(devV.Dir())
+		VelocityF = flow.ComposeDecart(sinx, flow.ConstC(devV.Len()*k)).Rot(devV.Dir())
 		SpawnPos = flow.RandomOnSide(devV.Normed().Mul(-1), 0.2*devKPos)
 	case "linearFloat":
+		if devV == v2.ZV {
+			devV = v2.InDir(0)
+		}
 		VelocityF = func(v2.V2) v2.V2 { return devV.Mul(k) }
 		SpawnPos = flow.RandomOnSide(devV.Normed().Mul(-1), 0.2*devKPos)
 	default:
@@ -63,8 +78,17 @@ func SignatureVelSpawn(sig Signature) (VelocityF func(pos v2.V2) v2.V2, SpawnPos
 }
 
 func SignatureAttrF(sig Signature, fstr string, koefName string) (res flow.AttrF) {
+	if fstr == "" {
+		return nil
+	}
 	fn, params := sigFuncStrDecoder(fstr)
-	k := params[0]
+	var k float64
+	if len(params)>0{
+		k = params[0]
+	} else {
+		k=1
+	}
+
 	devK := sig.DevK(koefName, attrFDev) * k
 
 	switch fn {
@@ -76,7 +100,7 @@ func SignatureAttrF(sig Signature, fstr string, koefName string) (res flow.AttrF
 		res = flow.SinMaxTime(0, devK, 0.5)
 	case "sinPulse":
 		res = func(p flow.Point) float64 {
-			return flow.SinLifeTime(0, 1, params[1]*devK)(p) * k + params[2]
+			return flow.SinLifeTime(0, 1, params[1]*devK/k)(p)*k + params[2]
 		}
 	case "linear":
 		res = func(p flow.Point) float64 {

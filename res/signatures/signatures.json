@@ -1,19 +1,126 @@
 {
-  "name": {
-    "ParticleName": "particleName",
+  "1": {
+    "ParticleName": "star",
+    "Color": {
+      "R": 255,
+      "G": 255,
+      "B": 255,
+      "A": 255
+    },
     "SpawnPeriod": 1,
     "LifeTime": 2,
-    "VelAndSpawnF": "funcName",
-    "AngF": "funcName",
-    "SizeF": "funcName",
-    "AlphaF": "funcName",
-    "ApplyDevOn": [
-      "SpawnPeriod",
-      "LifeTime",
-      "VelAndSpawnF",
-      "AngF",
-      "SizeF",
-      "AlphaF"
-    ]
+    "VelAndSpawnStr": "rotation 1 0.5"
+  },
+  "2": {
+    "ParticleName": "star",
+    "Color": {
+      "R": 0,
+      "G": 255,
+      "B": 0,
+      "A": 255
+    },
+    "SpawnPeriod": 0.3,
+    "LifeTime": 1,
+    "VelAndSpawnStr": "rotation -3 -1"
+  },
+  "3": {
+    "ParticleName": "planet1",
+    "Color": {
+      "R": 255,
+      "G": 255,
+      "B": 255,
+      "A": 255
+    },
+    "SpawnPeriod": 1,
+    "LifeTime": 2,
+    "VelAndSpawnStr": "sinFloat 1 5 2",
+    "SizeStr": "upAndDown 40"
+  },
+  "4": {
+    "ParticleName": "planet2",
+    "Color": {
+      "R": 255,
+      "G": 255,
+      "B": 255,
+      "A": 255
+    },
+    "SpawnPeriod": 1,
+    "LifeTime": 2,
+    "VelAndSpawnStr": "const",
+    "AlphaStr": "upAndDown 1",
+    "SizeStr": "sinPulse 20 1 50"
+  },
+  "5": {
+    "ParticleName": "star",
+    "Color": {
+      "R": 0,
+      "G": 0,
+      "B": 255,
+      "A": 128
+    },
+    "SpawnPeriod": 0.3,
+    "LifeTime": 5,
+    "VelAndSpawnStr": "linearFloat 0.5",
+    "AngStr": "linear 5 0 360"
+  },
+  "6": {
+    "ParticleName": "star",
+    "Color": {
+      "R": 255,
+      "G": 255,
+      "B": 255,
+      "A": 255
+    },
+    "SpawnPeriod": 1,
+    "LifeTime": 2,
+    "VelAndSpawnStr": "rotation 1 0.2"
+  },
+  "7": {
+    "ParticleName": "star",
+    "Color": {
+      "R": 255,
+      "G": 255,
+      "B": 255,
+      "A": 255
+    },
+    "SpawnPeriod": 1,
+    "LifeTime": 2,
+    "VelAndSpawnStr": "rotation 1 0.2"
+  },
+  "8": {
+    "ParticleName": "star",
+    "Color": {
+      "R": 255,
+      "G": 255,
+      "B": 255,
+      "A": 255
+    },
+    "SpawnPeriod": 1,
+    "LifeTime": 2,
+    "VelAndSpawnStr": "rotation 1 0.2"
+  },
+  "9": {
+    "ParticleName": "star",
+    "Color": {
+      "R": 255,
+      "G": 255,
+      "B": 255,
+      "A": 255
+    },
+    "SpawnPeriod": 1,
+    "LifeTime": 2,
+    "VelAndSpawnStr": "rotation 1 0.2"
+  },
+  "0": {
+    "ParticleName": "star",
+    "Color": {
+      "R": 255,
+      "G": 255,
+      "B": 255,
+      "A": 255
+    },
+    "SpawnPeriod": 1,
+    "LifeTime": 2,
+    "VelAndSpawnStr": "rotation 1 0.2"
   }
 }

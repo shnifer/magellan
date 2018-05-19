@@ -27,9 +27,6 @@ func NewCycledSprite(sprite *Sprite, cycleType int, fps float64) *CycledSprite {
 }
 
 func NewCycledSpriteRange(sprite *Sprite, cycleType int, fps float64, min, max int) *CycledSprite {
-	if fps == 0 {
-		panic("zero fps!")
-	}
 	if min > max {
 		panic("NewCycledSpriteRange: max < min")
 	}
@@ -40,13 +37,17 @@ func NewCycledSpriteRange(sprite *Sprite, cycleType int, fps float64, min, max i
 		panic("NewCycledSpriteRange: max>SpritesCount()-1")
 	}
 
+	var periodT float64
+	if fps != 0 {
+		periodT = 1 / fps
+	}
 	var s Sprite
 	s = *sprite
 	return &CycledSprite{
 		Sprite:    s,
 		cycleType: cycleType,
 		curT:      0,
-		periodT:   1 / fps,
+		periodT:   periodT,
 		dir:       1,
 		min:       min,
 		max:       max,
@@ -64,7 +65,7 @@ func (cs *CycledSprite) SetPause(paused bool) {
 }
 
 func (cs *CycledSprite) Update(dt float64) {
-	if !cs.paused {
+	if !cs.paused && cs.periodT > 0 {
 		cs.curT += dt
 		for cs.curT >= cs.periodT {
 			cs.curT -= cs.periodT

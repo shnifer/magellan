@@ -65,6 +65,8 @@ func main() {
 	Data = commons.NewData()
 
 	draw.InitTexAtlas()
+	commons.InitSignatureAtlas()
+
 	commons.SetGravityConsts(DEFVAL.GravityConst, DEFVAL.WarpGravityConst)
 
 	createScenes()

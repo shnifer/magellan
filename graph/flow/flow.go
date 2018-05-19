@@ -52,9 +52,6 @@ type Flow struct {
 }
 
 func (fp Params) New() *Flow {
-	if fp.SpawnPeriod == 0 {
-		panic("NewFlow: zero SpawnPeriod")
-	}
 	if fp.VelocityF == nil {
 		fp.VelocityF = func(V2) V2 { return ZV }
 	}
@@ -87,7 +84,7 @@ func (f *Flow) Update(dt float64) {
 		}
 	}
 
-	if f.isActiveSpawn {
+	if f.isActiveSpawn && f.params.SpawnPeriod > 0 {
 		f.isEmpty = false
 		//spawn new
 		f.spawnT += dt
@@ -109,7 +106,9 @@ func (f *Flow) Update(dt float64) {
 	//attr update
 	for i, p := range f.points {
 		for name, F := range f.params.AttrFs {
-			f.points[i].attr[name] = F(p)
+			if F != nil {
+				f.points[i].attr[name] = F(p)
+			}
 		}
 	}
 

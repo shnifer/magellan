@@ -3,6 +3,7 @@ package draw
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/static"
 	"github.com/pkg/errors"
@@ -20,6 +21,7 @@ type TexAtlasRec struct {
 type TexAtlas map[string]TexAtlasRec
 
 const atlasFN = "atlas.json"
+const defaultTexFN = "dummy.png"
 
 var atlas TexAtlas
 
@@ -58,7 +60,11 @@ func getAtlasTex(name string) (graph.Tex, error) {
 func GetAtlasTex(name string) graph.Tex {
 	tex, err := getAtlasTex(name)
 	if err != nil {
-		panic(err)
+		commons.Log(commons.LVL_ERROR, "can't GetAtlasTex, name:", name)
+		tex, err = graph.GetTex(defaultTexFN, false, 0, 0, 0, atlasLoader)
+		if err != nil {
+			panic(err)
+		}
 	}
 	return tex
 }
