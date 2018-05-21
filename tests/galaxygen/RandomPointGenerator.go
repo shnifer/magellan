@@ -10,13 +10,15 @@ func init() {
 	rand.Seed(time.Now().Unix())
 }
 
-//x,y in Galaxy units
-func CreateRandomPointGenerator(dens func(int, int) byte) func() image.Point {
+func CreateRandomPointGenerator(bounds image.Rectangle, dens func(int, int) byte) func() image.Point {
 	//init
 	stop := timer("init RPG")
 	defer stop()
 
 	const NUM_ROUTINES = 4
+
+	SY:=bounds.Max.Y
+	SX:=bounds.Max.X
 
 	type calcRes struct {
 		x   int
@@ -24,27 +26,27 @@ func CreateRandomPointGenerator(dens func(int, int) byte) func() image.Point {
 	}
 	calcXrow := func(x int, r chan<- calcRes, w <-chan bool) {
 		sum := 0
-		for y := -GalaxyRadius; y < GalaxyRadius; y++ {
+		for y := 0 ; y < SY; y++ {
 			sum += int(dens(x, y))
 		}
 		r <- calcRes{x, sum}
 		<-w
 	}
 
-	sums := make([]int, GalaxyRadius*2)
+	sums := make([]int, SX)
 	rCh := make(chan calcRes)
 	wCh := make(chan bool, NUM_ROUTINES)
 
 	go func() {
-		for x := -GalaxyRadius; x < GalaxyRadius; x++ {
+		for x := 0; x < SX; x++ {
 			wCh <- true
 			go calcXrow(x, rCh, wCh)
 		}
 	}()
 
-	for i := -GalaxyRadius; i < GalaxyRadius; i++ {
+	for i := 0 ; i < SX; i++ {
 		CR := <-rCh
-		sums[CR.x+GalaxyRadius] = CR.sum
+		sums[CR.x] = CR.sum
 	}
 
 	sum := 0
@@ -61,11 +63,11 @@ func CreateRandomPointGenerator(dens func(int, int) byte) func() image.Point {
 				if x > 0 {
 					N -= sums[x-1]
 				}
-				X = x - GalaxyRadius
+				X = x
 				break
 			}
 		}
-		for y := -GalaxyRadius; y < GalaxyRadius; y++ {
+		for y := 0 ; y < SY ; y++ {
 			N -= int(dens(X, y))
 			if N < 0 {
 				Y = y

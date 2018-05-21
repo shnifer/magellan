@@ -34,7 +34,7 @@
     "SpawnPeriod": 1,
     "LifeTime": 2,
     "VelAndSpawnStr": "sinFloat 1 5 2",
-    "SizeStr": "upAndDown 40"
+    "SizeStr": "upAndDown 60"
   },
   "4": {
     "ParticleName": "planet2",
