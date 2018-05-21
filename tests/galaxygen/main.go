@@ -11,11 +11,32 @@ import (
 	"os"
 	"time"
 	"golang.org/x/image/colornames"
+	"encoding/json"
+	"io/ioutil"
 )
+
+type Options struct{
+	N int
+
+	MinRes    int
+	MaxCap    int
+	CloseDist int
+
+	DotOutSize int
+	DotInSize int
+}
+
+var Opts Options
 
 func main() {
 	stop := timer("ALL")
 	defer stop()
+
+	dat,err:=ioutil.ReadFile("ini.json")
+	if err!=nil{
+		panic(err)
+	}
+	json.Unmarshal(dat,&Opts)
 
 	backf,err:=os.Open("back.png")
 	if err!=nil{
@@ -40,45 +61,59 @@ func main() {
 		panic(err)
 	}
 
-	const minDensity = 0
-
 	DensityF:= func(x int, y int) byte{
 		R,_,_,_ := density.At(x,y).RGBA()
-		r := R>>8
+		r := int(R>>8)
 
-		res:=255-byte(r)
+		res:=255-r
 
-		if res<minDensity{
-			res=0
+		if Opts.MinRes>0 {
+			if res < Opts.MinRes {
+				res = 0
+			}
+		} else {
+			if res > 0 {
+				res -= Opts.MinRes
+			}
 		}
-		return res
+
+		if res>Opts.MaxCap && Opts.MaxCap >0{
+			res = Opts.MaxCap
+		}
+
+		if res>255 {
+			res = 255
+		}
+		return byte(res)
 	}
 
 
 	//rand.Seed(time.Now().Unix())
 	RPG := CreateRandomPointGenerator(density.Bounds(),DensityF)
 
-	stars := make([]image.Point, 1000)
+	stars := make([]image.Point, Opts.N)
 
 	for i := range stars {
 		stars[i] = RPG()
 	}
 
+	stars = deleteClose(stars)
+
 	kx:=float64(back.Bounds().Max.X/density.Bounds().Max.X)
 	ky:=float64(back.Bounds().Max.Y/density.Bounds().Max.Y)
 	log.Println("kx,ky ",kx,ky)
 
-	const dotOutSize = 5
-	const dotInnerSize = 2
+	OutSize := Opts.DotOutSize
+	InSize := Opts.DotInSize
 
 	var r2 int
 	for _,star:=range stars{
 		X:=int(kx*float64(star.X))
 		Y:=int(ky*float64(star.Y))
-		for x:=X-dotOutSize;x<=X+dotOutSize;x++{
-			for y:=Y-dotOutSize;y<=Y+dotOutSize;y++{
+		for x:=X-OutSize;x<=X+OutSize;x++{
+			for y:=Y-OutSize;y<=Y+OutSize;y++{
 				r2=(x-X)*(x-X)+(y-Y)*(y-Y)
-				if r2<=dotOutSize*dotOutSize && r2>dotInnerSize*dotInnerSize {
+				if r2<=OutSize*OutSize && r2> InSize*InSize {
 					out.Set(x,y,colornames.Orange)
 				}
 			}
@@ -105,4 +140,28 @@ func timer(caption string) func() {
 	return func() {
 		fmt.Println(caption, time.Now().Sub(start))
 	}
+}
+
+func deleteClose(stars []image.Point) (res []image.Point){
+	res = make([]image.Point,0,len(stars))
+	var f bool
+	var v image.Point
+	var r int
+	for _,star:=range stars{
+		f=false
+		for _,checkS:=range res{
+			v = star.Sub(checkS)
+			if v.X*v.X+v.Y*v.Y <= Opts.CloseDist * Opts.CloseDist {
+				f = true
+				r++
+				break
+			}
+		}
+		if !f {
+			res = append(res, star)
+		}
+	}
+
+	log.Printf("Removed %v close stars. %v left",r, len(res))
+	return res
 }
