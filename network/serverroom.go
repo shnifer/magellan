@@ -29,6 +29,7 @@ func roomHandler(srv *Server) http.Handler {
 			err := srv.opts.RoomServ.SetRoomCommon(roomName, []byte(req.Data))
 			if err != nil {
 				sendErr(w, "CANT POST in stateHandler for room"+roomName+err.Error())
+				return
 			}
 		}
 
@@ -52,6 +53,8 @@ func roomHandler(srv *Server) http.Handler {
 		resp := CommonResp{
 			Data: string(buf),
 		}
+
+		room.send.Confirm(roleName, req.ClientConfirmN)
 
 		message, err := room.send.Pack(roleName)
 		if err == nil {

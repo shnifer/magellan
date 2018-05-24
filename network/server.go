@@ -229,8 +229,9 @@ func serverRoomUpdater(serv *Server) {
 }
 
 func testHandler(srv *Server) http.Handler {
+	_ = srv
 	f := func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Magellan server responding")
+		fmt.Fprintln(w, "Magellan server responding")
 	}
 
 	return http.HandlerFunc(f)

@@ -21,6 +21,7 @@ const (
 
 const (
 	CMD_STATECHANGEFAIL = "FailedStateChange"
+	CMD_BUILDING        = "BuildEvent"
 )
 
 var (

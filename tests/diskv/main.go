@@ -14,16 +14,17 @@ func main() {
 		Transform:    transform,
 		CacheSizeMax: 1024 * 1024,
 	})
-	var b []byte
 
-	for i:=1;i<10;i++{
-		go func (n int){
-			for j:=0;j<10;j++ {
+	for i := 1; i < 10; i++ {
+		go func(n int) {
+			for j := 0; j < 10; j++ {
 				dat := []byte(strconv.Itoa(n))
 				d.Write("thesamekey", dat)
 			}
 		}(i)
 	}
+
+	d.Write("emptykey", []byte{})
 
 	time.Sleep(time.Second)
 
@@ -31,7 +32,7 @@ func main() {
 		str := d.ReadString(key)
 		log.Println(key, str)
 	}
-	for key := range d.KeysPrefix("pr",nil) {
+	for key := range d.KeysPrefix("pr", nil) {
 		str := d.ReadString(key)
 		log.Println(key, str)
 	}

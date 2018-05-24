@@ -36,10 +36,10 @@ func SignatureVelSpawn(sig Signature) (VelocityF func(pos v2.V2) v2.V2, SpawnPos
 	}
 	fn, params := sigFuncStrDecoder(sig.Type().VelAndSpawnStr)
 	var k float64
-	if len(params)>0{
+	if len(params) > 0 {
 		k = params[0]
 	} else {
-		k=1
+		k = 1
 	}
 
 	devV := sig.DevV(SIG_VELSPAWN)
@@ -83,10 +83,10 @@ func SignatureAttrF(sig Signature, fstr string, koefName string) (res flow.AttrF
 	}
 	fn, params := sigFuncStrDecoder(fstr)
 	var k float64
-	if len(params)>0{
+	if len(params) > 0 {
 		k = params[0]
 	} else {
-		k=1
+		k = 1
 	}
 
 	devK := sig.DevK(koefName, attrFDev) * k

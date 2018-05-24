@@ -8,10 +8,14 @@ import (
 	"reflect"
 )
 
+type SpaceObjects struct {
+}
+
 type StateData struct {
 	//ServerTime time.Time
-	BSP    *BSP
-	Galaxy *Galaxy
+	BSP       *BSP
+	Galaxy    *Galaxy
+	Buildings map[string]Building
 }
 
 type BSP struct {

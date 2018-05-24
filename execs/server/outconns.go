@@ -4,14 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	. "github.com/Shnifer/magellan/commons"
+	"github.com/Shnifer/magellan/network/storage"
 	"github.com/Shnifer/magellan/static"
 	"io/ioutil"
 )
 
-func loadStateData(state State) StateData {
+func (rd *roomServer) loadStateData(state State) (sd StateData, subscribe chan storage.Event) {
 	defer LogFunc("loadStateData")()
-
-	var sd StateData
 
 	if state.ShipID != "" {
 		sd.BSP = loadShipState(state.ShipID)
@@ -19,9 +18,10 @@ func loadStateData(state State) StateData {
 
 	if state.GalaxyID != "" {
 		sd.Galaxy = loadGalaxyState(state.GalaxyID)
+		sd.Buildings, subscribe = loadBuildingsAndSubscribe(rd.storage, state.GalaxyID)
 	}
 
-	return sd
+	return sd, subscribe
 }
 
 //TODO: look in DB
@@ -68,6 +68,20 @@ func loadGalaxyState(GalaxyID string) *Galaxy {
 	res.RecalcLvls()
 
 	return &res
+}
+
+func loadBuildingsAndSubscribe(storage *storage.Storage, GalaxyID string) (builds map[string]Building, subscribe chan storage.Event) {
+	diskData, subscribe := storage.Subscribe(GalaxyID)
+	builds = make(map[string]Building, len(diskData))
+	for fullkey, data := range diskData {
+		b, err := Building{}.Decode([]byte(data))
+		if err != nil {
+			Log(LVL_ERROR, "Wrong diskData", string(data))
+			continue
+		}
+		builds[fullkey] = b
+	}
+	return builds, subscribe
 }
 
 //save examples of DB data

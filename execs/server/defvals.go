@@ -14,10 +14,12 @@ const roleName = "server"
 type tDefVals struct {
 	Port        string
 	NeededRoles []string
+	NodeName    string
 
 	//in ms
-	RoomUpdatePeriod int
-	LastSeenTimeout  int
+	RoomUpdatePeriod      int
+	SubscribeUpdatePeriod int
+	LastSeenTimeout       int
 
 	DoProf bool
 
@@ -35,6 +37,8 @@ func setDefDef() {
 			ROLE_Navi,
 			ROLE_Engi},
 		SolarStartLocationName: "magellan",
+		NodeName:               "storage01",
+		SubscribeUpdatePeriod:  250,
 	}
 }
 

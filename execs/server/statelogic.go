@@ -71,9 +71,6 @@ func toWarpCommonData(common CommonData, stateData StateData, newState, prevStat
 }
 
 func (rd *roomServer) IsValidState(roomName string, stateStr string) bool {
-	rd.mu.RLock()
-	defer rd.mu.RUnlock()
-
 	var res bool
 	state := State{}.Decode(stateStr)
 	switch state.StateID {
@@ -97,6 +94,9 @@ func (rd *roomServer) isValidFlyShip(roomName string, shipID string) bool {
 	if roomName == "" || shipID == "" {
 		return false
 	}
+
+	rd.stateMu.RLock()
+	defer rd.stateMu.RUnlock()
 
 	for room, state := range rd.curState {
 		if room != roomName && state.ShipID == shipID {

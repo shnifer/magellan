@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/network"
+	"github.com/Shnifer/magellan/network/storage"
+	"github.com/peterbourgon/diskv"
 	"os"
 	"os/signal"
 	"time"
@@ -10,13 +12,23 @@ import (
 
 var server *network.Server
 
+const (
+	storagePath = "storage"
+)
+
 func main() {
 	if DEFVAL.DoProf {
 		commons.StartProfile(roleName)
 		defer commons.StopProfile(roleName)
 	}
 
-	roomServ := newRoomServer()
+	diskOpts := diskv.Options{
+		BasePath:     storagePath,
+		CacheSizeMax: 1024 * 1024,
+	}
+	disk := storage.New(DEFVAL.NodeName, diskOpts)
+
+	roomServ := newRoomServer(disk)
 
 	startState := commons.State{
 		StateID: commons.STATE_login,
@@ -33,6 +45,8 @@ func main() {
 
 	server = network.NewServer(opts)
 	defer server.Close()
+
+	go daemonUpdateSubscribes(roomServ, server, DEFVAL.SubscribeUpdatePeriod)
 
 	//waiting for enter to stop server
 	c := make(chan os.Signal)

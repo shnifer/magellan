@@ -17,8 +17,8 @@ func CreateRandomPointGenerator(bounds image.Rectangle, dens func(int, int) byte
 
 	const NUM_ROUTINES = 4
 
-	SY:=bounds.Max.Y
-	SX:=bounds.Max.X
+	SY := bounds.Max.Y
+	SX := bounds.Max.X
 
 	type calcRes struct {
 		x   int
@@ -26,7 +26,7 @@ func CreateRandomPointGenerator(bounds image.Rectangle, dens func(int, int) byte
 	}
 	calcXrow := func(x int, r chan<- calcRes, w <-chan bool) {
 		sum := 0
-		for y := 0 ; y < SY; y++ {
+		for y := 0; y < SY; y++ {
 			sum += int(dens(x, y))
 		}
 		r <- calcRes{x, sum}
@@ -44,7 +44,7 @@ func CreateRandomPointGenerator(bounds image.Rectangle, dens func(int, int) byte
 		}
 	}()
 
-	for i := 0 ; i < SX; i++ {
+	for i := 0; i < SX; i++ {
 		CR := <-rCh
 		sums[CR.x] = CR.sum
 	}
@@ -67,7 +67,7 @@ func CreateRandomPointGenerator(bounds image.Rectangle, dens func(int, int) byte
 				break
 			}
 		}
-		for y := 0 ; y < SY ; y++ {
+		for y := 0; y < SY; y++ {
 			N -= int(dens(X, y))
 			if N < 0 {
 				Y = y

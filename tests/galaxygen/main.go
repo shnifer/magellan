@@ -3,19 +3,19 @@ package main
 import (
 	"image"
 	"image/draw"
+	_ "image/jpeg"
 	"image/png"
-	_"image/jpeg"
 	"log"
 	//"math/rand"
+	"encoding/json"
 	"fmt"
+	"golang.org/x/image/colornames"
+	"io/ioutil"
 	"os"
 	"time"
-	"golang.org/x/image/colornames"
-	"encoding/json"
-	"io/ioutil"
 )
 
-type Options struct{
+type Options struct {
 	N int
 
 	MinRes    int
@@ -23,7 +23,7 @@ type Options struct{
 	CloseDist int
 
 	DotOutSize int
-	DotInSize int
+	DotInSize  int
 }
 
 var Opts Options
@@ -32,42 +32,42 @@ func main() {
 	stop := timer("ALL")
 	defer stop()
 
-	dat,err:=ioutil.ReadFile("ini.json")
-	if err!=nil{
+	dat, err := ioutil.ReadFile("ini.json")
+	if err != nil {
 		panic(err)
 	}
-	json.Unmarshal(dat,&Opts)
+	json.Unmarshal(dat, &Opts)
 
-	backf,err:=os.Open("back.png")
-	if err!=nil{
+	backf, err := os.Open("back.png")
+	if err != nil {
 		panic(err)
 	}
 	defer backf.Close()
-	back, _, err:=image.Decode(backf)
-	if err!=nil{
+	back, _, err := image.Decode(backf)
+	if err != nil {
 		panic(err)
 	}
 	out := image.NewRGBA(back.Bounds())
-	draw.Draw(out,out.Bounds(),back,image.ZP,draw.Over)
+	draw.Draw(out, out.Bounds(), back, image.ZP, draw.Over)
 
-	f,err:=os.Open("density.png")
-	if err!=nil{
+	f, err := os.Open("density.png")
+	if err != nil {
 		panic(err)
 	}
 	defer f.Close()
 
-	density, _, err:=image.Decode(f)
-	if err!=nil{
+	density, _, err := image.Decode(f)
+	if err != nil {
 		panic(err)
 	}
 
-	DensityF:= func(x int, y int) byte{
-		R,_,_,_ := density.At(x,y).RGBA()
-		r := int(R>>8)
+	DensityF := func(x int, y int) byte {
+		R, _, _, _ := density.At(x, y).RGBA()
+		r := int(R >> 8)
 
-		res:=255-r
+		res := 255 - r
 
-		if Opts.MinRes>0 {
+		if Opts.MinRes > 0 {
 			if res < Opts.MinRes {
 				res = 0
 			}
@@ -77,19 +77,18 @@ func main() {
 			}
 		}
 
-		if res>Opts.MaxCap && Opts.MaxCap >0{
+		if res > Opts.MaxCap && Opts.MaxCap > 0 {
 			res = Opts.MaxCap
 		}
 
-		if res>255 {
+		if res > 255 {
 			res = 255
 		}
 		return byte(res)
 	}
 
-
 	//rand.Seed(time.Now().Unix())
-	RPG := CreateRandomPointGenerator(density.Bounds(),DensityF)
+	RPG := CreateRandomPointGenerator(density.Bounds(), DensityF)
 
 	stars := make([]image.Point, Opts.N)
 
@@ -99,22 +98,22 @@ func main() {
 
 	stars = deleteClose(stars)
 
-	kx:=float64(back.Bounds().Max.X/density.Bounds().Max.X)
-	ky:=float64(back.Bounds().Max.Y/density.Bounds().Max.Y)
-	log.Println("kx,ky ",kx,ky)
+	kx := float64(back.Bounds().Max.X / density.Bounds().Max.X)
+	ky := float64(back.Bounds().Max.Y / density.Bounds().Max.Y)
+	log.Println("kx,ky ", kx, ky)
 
 	OutSize := Opts.DotOutSize
 	InSize := Opts.DotInSize
 
 	var r2 int
-	for _,star:=range stars{
-		X:=int(kx*float64(star.X))
-		Y:=int(ky*float64(star.Y))
-		for x:=X-OutSize;x<=X+OutSize;x++{
-			for y:=Y-OutSize;y<=Y+OutSize;y++{
-				r2=(x-X)*(x-X)+(y-Y)*(y-Y)
-				if r2<=OutSize*OutSize && r2> InSize*InSize {
-					out.Set(x,y,colornames.Orange)
+	for _, star := range stars {
+		X := int(kx * float64(star.X))
+		Y := int(ky * float64(star.Y))
+		for x := X - OutSize; x <= X+OutSize; x++ {
+			for y := Y - OutSize; y <= Y+OutSize; y++ {
+				r2 = (x-X)*(x-X) + (y-Y)*(y-Y)
+				if r2 <= OutSize*OutSize && r2 > InSize*InSize {
+					out.Set(x, y, colornames.Orange)
 				}
 			}
 		}
@@ -142,16 +141,16 @@ func timer(caption string) func() {
 	}
 }
 
-func deleteClose(stars []image.Point) (res []image.Point){
-	res = make([]image.Point,0,len(stars))
+func deleteClose(stars []image.Point) (res []image.Point) {
+	res = make([]image.Point, 0, len(stars))
 	var f bool
 	var v image.Point
 	var r int
-	for _,star:=range stars{
-		f=false
-		for _,checkS:=range res{
+	for _, star := range stars {
+		f = false
+		for _, checkS := range res {
 			v = star.Sub(checkS)
-			if v.X*v.X+v.Y*v.Y <= Opts.CloseDist * Opts.CloseDist {
+			if v.X*v.X+v.Y*v.Y <= Opts.CloseDist*Opts.CloseDist {
 				f = true
 				r++
 				break
@@ -162,6 +161,6 @@ func deleteClose(stars []image.Point) (res []image.Point){
 		}
 	}
 
-	log.Printf("Removed %v close stars. %v left",r, len(res))
+	log.Printf("Removed %v close stars. %v left", r, len(res))
 	return res
 }

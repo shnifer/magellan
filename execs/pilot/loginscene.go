@@ -9,6 +9,7 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
+	"log"
 	"strconv"
 	"time"
 )
@@ -150,5 +151,7 @@ func (p *LoginScene) OnCommand(command string) {
 	defer LogFunc("LoginScene.OnCommand")()
 	if command == CMD_STATECHANGEFAIL {
 		p.lastErrTime = time.Now()
+	} else {
+		log.Println("Unknown command ", command)
 	}
 }
