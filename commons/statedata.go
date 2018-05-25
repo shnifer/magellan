@@ -15,6 +15,7 @@ type StateData struct {
 	//ServerTime time.Time
 	BSP       *BSP
 	Galaxy    *Galaxy
+	//map[fullKey]Building
 	Buildings map[string]Building
 }
 

@@ -58,6 +58,7 @@ func New(nodeName string, diskOpts diskv.Options) *Storage {
 		curID: id,
 		disk:  disk,
 		node:  nodeName,
+		subs: make(map[chan Event]string),
 	}
 }
 

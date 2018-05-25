@@ -58,7 +58,7 @@ func doUpdateSubscribes(rs *roomServer, server *network.Server) {
 			continue
 		}
 		for event := range subscribe {
-			server.AddCommand(roomName, CMD_BUILDING+EventToCommand(event))
+			server.AddCommand(roomName, EventToCommand(event))
 		}
 	}
 }

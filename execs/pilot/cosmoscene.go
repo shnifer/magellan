@@ -93,6 +93,14 @@ func (s *cosmoScene) Init() {
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
 		s.objects[pd.ID] = cosmoPoint
 	}
+
+	for _, b:=range stateData.Buildings {
+		s.addBuilding(b)
+	}
+}
+
+func (s *cosmoScene) addBuilding(b Building){
+
 }
 
 func (s *cosmoScene) Update(dt float64) {

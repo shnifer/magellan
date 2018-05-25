@@ -7,7 +7,6 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"golang.org/x/image/colornames"
 	"image/color"
-	"log"
 	"math/rand"
 )
 
@@ -24,7 +23,6 @@ type CosmoPoint struct {
 }
 
 func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
-	log.Println(pd)
 	sprite := NewAtlasSprite(pd.Type, params)
 	zeroColor := color.RGBA{}
 	if pd.Color != zeroColor {

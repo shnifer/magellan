@@ -2,7 +2,6 @@ package commons
 
 import (
 	"encoding/json"
-	"github.com/Shnifer/flierproto1/v2"
 	"github.com/Shnifer/magellan/network/storage"
 )
 
@@ -20,9 +19,7 @@ type Building struct {
 	GalaxyID string
 	//for mines
 	PlanetID string
-	//for Blackbox
-	Pos V2.V2
-	//beckon is autoplaced on far reach of system
+	//beckon and boxes are auto placed on far reach of system
 
 	Message string
 	//for mine
