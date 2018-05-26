@@ -13,8 +13,8 @@ type SpaceObjects struct {
 
 type StateData struct {
 	//ServerTime time.Time
-	BSP       *BSP
-	Galaxy    *Galaxy
+	BSP    *BSP
+	Galaxy *Galaxy
 	//map[fullKey]Building
 	Buildings map[string]Building
 }
@@ -101,6 +101,9 @@ type GalaxyPoint struct {
 	Emissions  []Emission  `json:"emm,omitempty"`
 	Signatures []Signature `json:"sig,omitempty"`
 	Color      color.RGBA  `json:"clr"`
+
+	HasMine   bool
+	MineOwner string
 }
 
 func (sd StateData) Encode() []byte {
@@ -118,6 +121,9 @@ func (StateData) Decode(buf []byte) (sd StateData, err error) {
 		return StateData{}, err
 	}
 	sd.Galaxy.RecalcLvls()
+	for _, b := range sd.Buildings {
+		sd.Galaxy.addBuilding(b)
+	}
 	return sd, nil
 }
 

@@ -11,7 +11,8 @@ import (
 )
 
 type Signature struct {
-	TypeName string
+	TypeName  string
+	SigString string
 	//deviation of this instance
 	//supposed to be Len<=1
 	Dev v2.V2

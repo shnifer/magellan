@@ -71,6 +71,7 @@ type StateDataResp struct {
 }
 
 const (
-	COMMAND_CLIENT       = "C"
-	COMMAND_REQUESTSTATE = "S"
+	COMMAND_ROOMBROADCAST = "B"
+	COMMAND_CLIENTREQUEST = "C"
+	COMMAND_REQUESTSTATE  = "S"
 )

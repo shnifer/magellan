@@ -84,26 +84,21 @@ func serverReceiveCommands(srv *Server, req CommonReq, room *servRoomState, room
 			continue
 		}
 
+		if !room.state.IsCoherent {
+			log.Println("STRANGE: COMMAND recieved while non-coherent. Command: ", command)
+			return
+		}
+
 		prefix := command[:1]
 		command := command[1:]
 		switch prefix {
-		case COMMAND_CLIENT:
-			//ignore commands sent on not coherent state
-			if !room.state.IsCoherent {
-				log.Println("STRANGE: COMMAND_CLIENT received while non-coherent. Command: ", command)
-				continue
-			}
-			room.send.AddItems(command)
+		case COMMAND_CLIENTREQUEST:
 			srv.opts.RoomServ.OnCommand(roomName, roleName, command)
+		case COMMAND_ROOMBROADCAST:
+			room.send.AddItems(command)
 		case COMMAND_REQUESTSTATE:
-			//ignore commands sent on not coherent state
-			if !room.state.IsCoherent {
-				log.Println("Request state command in non coherent room. Is this good?", command)
-			}
-
 			stateChanged := setNewState(srv, room, roomName, command)
 			if stateChanged {
-				break
 			}
 		default:
 			log.Println("Strange prefix", prefix)

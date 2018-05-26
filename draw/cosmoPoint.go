@@ -23,6 +23,13 @@ type CosmoPoint struct {
 }
 
 func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
+
+	isMark := pd.Type == BUILDING_BLACKBOX || pd.Type == BUILDING_BEACON
+	if isMark {
+		params.DenyScale = true
+		params.DenyAngle = true
+	}
+
 	sprite := NewAtlasSprite(pd.Type, params)
 	zeroColor := color.RGBA{}
 	if pd.Color != zeroColor {
@@ -30,7 +37,10 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 	}
 
 	sprite.SetSize(pd.Size*2, pd.Size*2)
-	sprite.SetAng(rand.Float64() * 360)
+
+	if !isMark {
+		sprite.SetAng(rand.Float64() * 360)
+	}
 
 	//Random spin speed
 	fps := 20 * (0.5 + rand.Float64())

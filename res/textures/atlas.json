@@ -18,6 +18,7 @@
   "compass": {"FileName": "HUD_Radar.png", "Smooth":true},
   "background": {"FileName": "background.jpg"},
   "engibackground": {"FileName": "engibackground.jpg"},
+  "BUILDING_BEACON": {"FileName": "aim.png"},
   "rulerH":{"FileName": "HUD_RUS2.png"},
   "rulerV":{"FileName": "HUD_RUD2.png"},
   "front90": {"FileName": "HUD_TL_mini.png"},

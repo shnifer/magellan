@@ -4,6 +4,9 @@ import (
 	"github.com/Shnifer/magellan/v2"
 )
 
+//fixed
+const BuildingSize = 20
+
 func (galaxy *Galaxy) RecalcLvls() {
 	defer LogFunc("galaxy.RecalcLvls")()
 
@@ -40,6 +43,8 @@ func (galaxy *Galaxy) RecalcLvls() {
 	}
 
 	galaxy.maxLvl = maxLvl
+
+	galaxy.Ordered = galaxy.Ordered[:0]
 	for lvl := 0; lvl <= maxLvl; lvl++ {
 		for id, p := range galaxy.Points {
 			if lvls[id] == lvl {
@@ -64,4 +69,56 @@ func (galaxy *Galaxy) Update(sessionTime float64) {
 		angle := (360 / obj.Period) * sessionTime
 		obj.Pos = parent.AddMul(v2.InDir(angle), obj.Orbit)
 	}
+}
+
+//works with already calced and ordered Galaxy
+func (galaxy *Galaxy) addBuilding(b Building) {
+	fullKey := b.FullKey
+	if _, exist := galaxy.Points[fullKey]; exist {
+		//already exist
+		Log(LVL_WARNING, "trying to add building with already exist Fullkey:", fullKey)
+		return
+	}
+
+	switch b.Type {
+	case BUILDING_MINE:
+		gp, ok := galaxy.Points[b.PlanetID]
+		if !ok {
+			Log(LVL_ERROR, "trying to add mine on non existant planet with ID:", b.PlanetID)
+			return
+		}
+		if gp.HasMine {
+			Log(LVL_ERROR, "trying to add mine on planet", b.PlanetID, " but already has mine")
+			return
+		}
+		gp.HasMine = true
+		gp.MineOwner = b.OwnerID
+	case BUILDING_BEACON, BUILDING_BLACKBOX:
+		parentID := ""
+		if len(galaxy.Ordered) > 0 {
+			parentID = galaxy.Ordered[0].ID
+		}
+		gp := GalaxyPoint{}.outerFromBuilding(b, parentID, galaxy.SpawnDistance)
+		galaxy.Points[fullKey] = gp
+		galaxy.Ordered = append(galaxy.Ordered, gp)
+	}
+}
+func (GalaxyPoint) outerFromBuilding(b Building, parentID string, dist float64) (gp *GalaxyPoint) {
+	gp = &GalaxyPoint{
+		ID:         b.FullKey,
+		ParentID:   parentID,
+		Type:       b.Type,
+		Orbit:      dist,
+		Period:     b.Period,
+		ScanData:   b.Message,
+		Size:       BuildingSize,
+		Emissions:  []Emission{},
+		Signatures: []Signature{},
+	}
+
+	if b.Message != "" {
+		gp.Signatures = append(gp.Signatures, Signature{SigString: b.Message})
+	}
+
+	return gp
 }

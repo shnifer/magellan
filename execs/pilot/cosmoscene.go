@@ -94,12 +94,12 @@ func (s *cosmoScene) Init() {
 		s.objects[pd.ID] = cosmoPoint
 	}
 
-	for _, b:=range stateData.Buildings {
+	for _, b := range stateData.Buildings {
 		s.addBuilding(b)
 	}
 }
 
-func (s *cosmoScene) addBuilding(b Building){
+func (s *cosmoScene) addBuilding(b Building) {
 
 }
 
@@ -134,6 +134,10 @@ func (s *cosmoScene) Update(dt float64) {
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
 		s.toWarp()
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyP) {
+		AddBeacon("just a test beacon")
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {

@@ -105,8 +105,11 @@ func (c *Client) RequestNewState(wanted string) {
 	c.sendCommand(COMMAND_REQUESTSTATE, wanted)
 }
 
-func (c *Client) SendCommand(command string) {
-	c.sendCommand(COMMAND_CLIENT, command)
+func (c *Client) SendRoomBroadcast(command string) {
+	c.sendCommand(COMMAND_ROOMBROADCAST, command)
+}
+func (c *Client) SendRequest(command string) {
+	c.sendCommand(COMMAND_CLIENTREQUEST, command)
 }
 
 func (c *Client) Start() {

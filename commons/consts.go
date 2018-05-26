@@ -21,7 +21,9 @@ const (
 
 const (
 	CMD_STATECHANGEFAIL = "FailedStateChange"
-	CMD_BUILDING        = "BuildEvent"
+	CMD_BUILDINGEVENT   = "BuildEvent"        //from server to subscribed clients
+	CMD_ADDBUILDREQ     = "AddBuildingReq"    //from client to server
+	CMD_DELBUILDREQ     = "DeleteBuildingReq" //from client to server
 )
 
 var (

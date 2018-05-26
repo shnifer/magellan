@@ -5,6 +5,8 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/network"
 	"github.com/Shnifer/magellan/network/storage"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -162,4 +164,42 @@ func (rd *roomServer) GetStateData(room string) []byte {
 
 func (rd *roomServer) OnCommand(room, role, command string) {
 	Log(LVL_DEBUG, "room", room, "role", role, "command", command)
+
+	switch {
+	case strings.HasPrefix(command, CMD_ADDBUILDREQ):
+		buildStr := command[len(CMD_ADDBUILDREQ):]
+		b, err := Building{}.Decode([]byte(buildStr))
+		if err != nil {
+			Log(LVL_ERROR, "Command CMD_ADDBUILDREQ sent strange building: "+buildStr)
+		}
+		key := b.Type + strconv.Itoa(rd.storage.NextID())
+		err = rd.storage.Add(b.GalaxyID, key, buildStr)
+		if err != nil {
+			Log(LVL_ERROR, "OnCommand: room", room, "role", role, "command", command, ":", err)
+		}
+
+		//duplicate in warp
+		if b.Type == BUILDING_BEACON {
+			b.PlanetID = b.GalaxyID
+			b.GalaxyID = WARP_Galaxy_ID
+			b.Period = 0
+			buildStr = string(b.Encode())
+			err = rd.storage.Add(b.GalaxyID, key, buildStr)
+			if err != nil {
+				Log(LVL_ERROR, "OnCommand: room", room, "role", role, "command", command, ":", err)
+			}
+		}
+	case strings.HasPrefix(command, CMD_DELBUILDREQ):
+		fullKey := command[len(CMD_DELBUILDREQ):]
+		err := rd.storage.Remove(fullKey)
+		if err != nil {
+			Log(LVL_ERROR, err)
+		}
+		//try to delete in warp, if never was -- okey, Keys are unique, we marked as deleted something that will never spawn
+		fullKey = storage.OtherAreaKey(fullKey, WARP_Galaxy_ID)
+		err = rd.storage.Remove(fullKey)
+		if err != nil {
+			Log(LVL_ERROR, err)
+		}
+	}
 }

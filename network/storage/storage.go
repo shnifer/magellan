@@ -58,7 +58,7 @@ func New(nodeName string, diskOpts diskv.Options) *Storage {
 		curID: id,
 		disk:  disk,
 		node:  nodeName,
-		subs: make(map[chan Event]string),
+		subs:  make(map[chan Event]string),
 	}
 }
 
@@ -194,4 +194,10 @@ func splitKey(fullKey string) (glyph, area, node, key string, err error) {
 		area = area[1:]
 	}
 	return glyph, area, node, key, nil
+}
+
+func OtherAreaKey(fullKey string, newArea string) (newFullKey string) {
+	glyph, area, node, key := mustSplitKey(fullKey)
+	area = newArea
+	return newKey(glyph, area, node, key)
 }

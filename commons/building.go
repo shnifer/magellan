@@ -6,20 +6,22 @@ import (
 )
 
 const (
-	BUILDING_BLACKBOX = iota
-	BUILDING_MINE
-	BUILDING_BEACON
+	BUILDING_BLACKBOX = "BUILDING_BLACKBOX"
+	BUILDING_MINE     = "BUILDING_MINE"
+	BUILDING_BEACON   = "BUILDING_BEACON"
 )
 
 type Building struct {
 	FullKey string
 
-	Type int
+	Type string
 	//where is it
 	GalaxyID string
 	//for mines
 	PlanetID string
 	//beckon and boxes are auto placed on far reach of system
+	//very slow and some random if there are many
+	Period float64
 
 	Message string
 	//for mine
@@ -29,7 +31,7 @@ type Building struct {
 func (b Building) Encode() []byte {
 	buf, err := json.Marshal(b)
 	if err != nil {
-		Log(LVL_ERROR, "can't marshal stateData", err)
+		Log(LVL_ERROR, "can't marshal Building", err)
 		return nil
 	}
 	return buf
@@ -49,5 +51,5 @@ func EventToCommand(e storage.Event) string {
 		Log(LVL_ERROR, "can't marshal event", err)
 		return ""
 	}
-	return CMD_BUILDING + string(buf)
+	return CMD_BUILDINGEVENT + string(buf)
 }
