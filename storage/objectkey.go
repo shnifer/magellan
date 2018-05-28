@@ -38,6 +38,6 @@ func ReadKey(fullKey string) (k ObjectKey, err error) {
 	return k, nil
 }
 
-func (k ObjectKey) fullKey() string {
+func (k ObjectKey) FullKey() string {
 	return k.glyph + strings.Join([]string{k.Area, k.Node, k.Key}, separator)
 }

@@ -1,57 +1,57 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/Shnifer/magellan/storage"
+	"github.com/peterbourgon/diskv"
 	"io/ioutil"
 	"log"
-	"encoding/json"
-	"github.com/peterbourgon/diskv"
-	"github.com/Shnifer/magellan/storage"
-	"fmt"
 	"math/rand"
 	"strconv"
 	"sync"
 )
 
-var Ini struct{
-	MyPort string
-	Addrs []string
+var Ini struct {
+	MyPort   string
+	Addrs    []string
 	NodeName string
-	MyArea string
+	MyArea   string
 	PeriodMs int
 }
 
-func main(){
+func main() {
 	buf, err := ioutil.ReadFile("ini.json")
 	if err != nil {
 		log.Panicln(err)
 	}
-	err=json.Unmarshal(buf, &Ini)
-	if err !=nil{
+	err = json.Unmarshal(buf, &Ini)
+	if err != nil {
 		log.Panicln(err)
 	}
 
-	opts:=diskv.Options{
-		BasePath:"dat",
+	opts := diskv.Options{
+		BasePath: "dat",
 	}
-	store :=storage.New(Ini.NodeName,opts)
-	storage.RunExchanger(store,Ini.MyPort,Ini.Addrs,Ini.PeriodMs)
+	store := storage.New(Ini.NodeName, opts)
+	storage.RunExchanger(store, Ini.MyPort, Ini.Addrs, Ini.PeriodMs)
 
 	var datamu sync.Mutex
 
 	fmt.Printf("Node %v online \n", Ini.NodeName)
-	data,subscribe:=store.SubscribeAndData(Ini.MyArea)
+	data, subscribe := store.SubscribeAndData(Ini.MyArea)
 	fmt.Println("subscribed for area", Ini.MyArea)
-	for key, val:=range data {
-		fmt.Printf("stored data: %v == %v",key,val)
+	for key, val := range data {
+		fmt.Printf("stored data: %v == %v", key, val)
 	}
-	go func(){
+	go func() {
 		for {
-			event:=<-subscribe
-			t:="ADD"
+			event := <-subscribe
+			t := "ADD"
 			if event.Type == storage.Remove {
-				t="DEL"
+				t = "DEL"
 			}
-			fmt.Printf("Subscribe redistred new event: %v for key %v",t,event.Key)
+			fmt.Printf("Subscribe redistred new event: %v for key %v", t, event.Key)
 
 			datamu.Lock()
 			if event.Type == storage.Add {
@@ -63,28 +63,28 @@ func main(){
 		}
 	}()
 
-	s:=""
+	s := ""
 
 	for {
 		fmt.Scanln(&s)
 
-		switch s{
+		switch s {
 		//create
 		case "1":
-			areaName:=strconv.Itoa(rand.Intn(5)+1)
-			key:="obj"+strconv.Itoa(store.NextID())
-			val:="value for key"
-			fmt.Printf("create new object for in area %v with key %v \n", areaName,key)
-			store.Add(areaName,key,val)
+			areaName := strconv.Itoa(rand.Intn(5) + 1)
+			key := "obj" + strconv.Itoa(store.NextID())
+			val := "value for key " + key
+			fmt.Printf("create new object for in area %v with key %v \n", areaName, key)
+			store.Add(areaName, key, val)
 
 		//delete
 		case "2":
 			datamu.Lock()
-			n:=rand.Intn(len(data))
+			n := rand.Intn(len(data))
 			var delKey storage.ObjectKey
-			for key:=range data{
-				if n==0 {
-					delKey=key
+			for key := range data {
+				if n == 0 {
+					delKey = key
 				} else {
 					n--
 				}

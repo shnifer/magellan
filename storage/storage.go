@@ -52,7 +52,7 @@ func (s *Storage) Add(area, key string, val string) error {
 	defer s.Unlock()
 
 	objectKey := newKey(area, s.node, key)
-	fk := objectKey.fullKey()
+	fk := objectKey.FullKey()
 	err := s.disk.append(fk, val)
 	if err != nil {
 		return nil
@@ -65,7 +65,7 @@ func (s *Storage) Remove(objectKey ObjectKey) error {
 	s.Lock()
 	defer s.Unlock()
 
-	fk := objectKey.fullKey()
+	fk := objectKey.FullKey()
 	err := s.disk.append(glyphDel+fk, "")
 	if err != nil {
 		return err
@@ -92,8 +92,8 @@ func (s *Storage) SubscribeAndData(area string) (data map[ObjectKey]string, subs
 
 		val, err := s.disk.Read(key)
 		if err == nil {
-			objKey,err:=ReadKey(key)
-			if err==nil {
+			objKey, err := ReadKey(key)
+			if err == nil {
 				data[objKey] = string(val)
 			}
 		}
@@ -143,7 +143,7 @@ func (s *Storage) procNewKey(newKey string) {
 	case glyphDel:
 		//send event about the object, not deleteKey
 		objKey.glyph = ""
-		if s.disk.has(objKey.fullKey()) {
+		if s.disk.has(objKey.FullKey()) {
 			s.sendEvent(Remove, objKey, "")
 		}
 	}

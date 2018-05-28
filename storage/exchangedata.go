@@ -25,7 +25,7 @@ func (r Request) Encode() []byte {
 func (Request) Decode(buf []byte) (r Request, err error) {
 	err = json.Unmarshal(buf, &r)
 	if err != nil {
-		log.Println("Can't unmarshal request", err)
+		//		log.Println("Can't unmarshal request", string(buf), err)
 		return Request{}, err
 	}
 	return r, nil
@@ -34,7 +34,7 @@ func (Request) Decode(buf []byte) (r Request, err error) {
 func (r Responce) Encode() []byte {
 	buf, err := json.Marshal(r)
 	if err != nil {
-		log.Panicln("Can't marshal request", err)
+		log.Panicln("Can't marshal Responce", err)
 	}
 	return buf
 }
@@ -42,7 +42,7 @@ func (r Responce) Encode() []byte {
 func (Responce) Decode(buf []byte) (r Responce, err error) {
 	err = json.Unmarshal(buf, &r)
 	if err != nil {
-		log.Println("Can't unmarshal request", err)
+		//		log.Println("Can't unmarshal Responce", string(buf),err)
 		return Responce{}, err
 	}
 	return r, nil

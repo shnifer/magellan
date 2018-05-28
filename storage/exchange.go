@@ -96,9 +96,9 @@ func (ex *exchanger) exchange() {
 	}
 	reqBody := req.Encode()
 
-	respBuf, err := ex.doReq(addr, reqBody)
+	respBuf, err := ex.doReq(addr+exchangerPath, reqBody)
 	if err != nil {
-		log.Println(err)
+		//it is ok to have no access
 		return
 	}
 

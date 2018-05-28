@@ -73,14 +73,14 @@ func loadGalaxyState(GalaxyID string) *Galaxy {
 func loadBuildingsAndSubscribe(storage *storage.Storage, GalaxyID string) (builds map[string]Building, subscribe chan storage.Event) {
 	diskData, subscribe := storage.SubscribeAndData(GalaxyID)
 	builds = make(map[string]Building, len(diskData))
-	for fullKey, data := range diskData {
+	for objectKey, data := range diskData {
 		b, err := Building{}.Decode([]byte(data))
 		if err != nil {
 			Log(LVL_ERROR, "Wrong diskData", string(data))
 			continue
 		}
-		b.FullKey = fullKey
-		builds[fullKey] = b
+		b.FullKey = objectKey.FullKey()
+		builds[b.FullKey] = b
 	}
 	return builds, subscribe
 }
