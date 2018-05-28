@@ -2,7 +2,7 @@ package commons
 
 import (
 	"encoding/json"
-	"github.com/Shnifer/magellan/network/storage"
+	"github.com/Shnifer/magellan/storage"
 )
 
 const (

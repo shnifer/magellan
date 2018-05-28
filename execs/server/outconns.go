@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	. "github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/network/storage"
 	"github.com/Shnifer/magellan/static"
+	"github.com/Shnifer/magellan/storage"
 	"io/ioutil"
 )
 
@@ -71,7 +71,7 @@ func loadGalaxyState(GalaxyID string) *Galaxy {
 }
 
 func loadBuildingsAndSubscribe(storage *storage.Storage, GalaxyID string) (builds map[string]Building, subscribe chan storage.Event) {
-	diskData, subscribe := storage.Subscribe(GalaxyID)
+	diskData, subscribe := storage.SubscribeAndData(GalaxyID)
 	builds = make(map[string]Building, len(diskData))
 	for fullKey, data := range diskData {
 		b, err := Building{}.Decode([]byte(data))

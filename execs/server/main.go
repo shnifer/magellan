@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/network"
-	"github.com/Shnifer/magellan/network/storage"
+	"github.com/Shnifer/magellan/storage"
 	"github.com/peterbourgon/diskv"
 	"os"
 	"os/signal"
@@ -13,7 +13,7 @@ import (
 var server *network.Server
 
 const (
-	storagePath = "storage"
+	storagePath = "xstore"
 )
 
 func main() {
