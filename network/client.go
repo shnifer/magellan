@@ -171,7 +171,7 @@ func checkWantedState(c *Client, pingResp PingResp) {
 				log.Println("can't get new ServData", err)
 				return
 			}
-
+			//TODO: refactor goroutine
 			//After successfully got and passed new StateData change cur state
 			if c.opts.OnGetStateData == nil {
 				//set wanted state now
