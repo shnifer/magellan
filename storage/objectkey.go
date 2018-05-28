@@ -8,13 +8,13 @@ import (
 const separator = "~"
 
 type ObjectKey struct {
-	Glyph, Area, Node, Key string
+	glyph, Area, Node, Key string
 }
 
 // strings must not have "/","\" or "~" symbols
-func newKey(glyph, area, node, key string) ObjectKey {
+func newKey(area, node, key string) ObjectKey {
 	return ObjectKey{
-		Glyph: glyph,
+		glyph: "",
 		Area:  area,
 		Node:  node,
 		Key:   key,
@@ -32,12 +32,12 @@ func ReadKey(fullKey string) (k ObjectKey, err error) {
 	}
 	switch k.Area[:1] {
 	case glyphDel:
-		k.Glyph = glyphDel
+		k.glyph = glyphDel
 		k.Area = k.Area[1:]
 	}
 	return k, nil
 }
 
 func (k ObjectKey) fullKey() string {
-	return k.Glyph + strings.Join([]string{k.Area, k.Node, k.Key}, separator)
+	return k.glyph + strings.Join([]string{k.Area, k.Node, k.Key}, separator)
 }

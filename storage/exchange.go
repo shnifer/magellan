@@ -12,7 +12,7 @@ import (
 
 const exchangerPath = "/exchange/"
 
-type Exchanger struct {
+type exchanger struct {
 	disk *disk
 
 	addrN int
@@ -26,7 +26,7 @@ type Exchanger struct {
 	server *http.Server
 }
 
-func NewExchanger(disk *disk, listenAddr string, addrs []string, periodMs int) *Exchanger {
+func RunExchanger(storage *Storage, listenAddr string, addrs []string, periodMs int) {
 
 	if len(addrs) == 0 {
 		panic("NewExchanger: addrs must have at least one address")
@@ -44,8 +44,8 @@ func NewExchanger(disk *disk, listenAddr string, addrs []string, periodMs int) *
 	mux := http.NewServeMux()
 	server := &http.Server{Addr: listenAddr, Handler: mux}
 
-	res := &Exchanger{
-		disk:     disk,
+	res := &exchanger{
+		disk:     storage.disk,
 		addrs:    addrs,
 		client:   client,
 		server:   server,
@@ -69,11 +69,9 @@ func NewExchanger(disk *disk, listenAddr string, addrs []string, periodMs int) *
 			}
 		}
 	}()
-
-	return res
 }
 
-func (ex *Exchanger) exchange() {
+func (ex *exchanger) exchange() {
 	ex.addrN = (ex.addrN + 1) % len(ex.addrs)
 	addr := ex.addrs[ex.addrN]
 
@@ -122,13 +120,13 @@ func (ex *Exchanger) exchange() {
 		}
 	}
 
-	//Glyph of delete "!" must be first, to get delete flags first
+	//glyph of delete "!" must be first, to get delete flags first
 	sort.Strings(needed)
 
 	ex.needKeys[addr] = needed
 }
 
-func exchangeHandler(ex *Exchanger) http.Handler {
+func exchangeHandler(ex *exchanger) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
 		reqBuf, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -157,7 +155,7 @@ func exchangeHandler(ex *Exchanger) http.Handler {
 	return http.HandlerFunc(f)
 }
 
-func (ex *Exchanger) doReq(addr string, reqBody []byte) (respBody []byte, er error) {
+func (ex *exchanger) doReq(addr string, reqBody []byte) (respBody []byte, er error) {
 	bodyBuf := bytes.NewBuffer(reqBody)
 	req, err := http.NewRequest(http.MethodGet, addr, bodyBuf)
 	if err != nil {

@@ -1,0 +1,7 @@
+{
+  "MyPort":":8001",
+  "Addrs":["http://localhost:8002"],
+  "NodeName":"Node1",
+  "MyArea":"1",
+  "PeriodMs":1000
+}
