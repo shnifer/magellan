@@ -6,11 +6,25 @@ import (
 	"log"
 	"net/http"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 )
 
 const exchangerPath = "/exchange/"
+
+type neededKeys []string
+
+func (x neededKeys) Len() int { return len(x) }
+func (x neededKeys) Less(i, j int) bool {
+	if strings.HasPrefix(x[i], glyphDel) &&
+		!strings.HasPrefix(x[j], glyphDel) {
+		return true
+	} else {
+		return x[i] < x[j]
+	}
+}
+func (x neededKeys) Swap(i, j int) { x[i], x[j] = x[j], x[i] }
 
 type exchanger struct {
 	disk *disk
@@ -20,7 +34,7 @@ type exchanger struct {
 
 	sync.RWMutex
 	//map[addr] []fullkeys
-	needKeys map[string][]string
+	needKeys map[string]neededKeys
 
 	client *http.Client
 	server *http.Server
@@ -49,7 +63,7 @@ func RunExchanger(storage *Storage, listenAddr string, addrs []string, periodMs 
 		addrs:    addrs,
 		client:   client,
 		server:   server,
-		needKeys: make(map[string][]string, 0),
+		needKeys: make(map[string]neededKeys, 0),
 	}
 
 	mux.Handle(exchangerPath, exchangeHandler(res))
