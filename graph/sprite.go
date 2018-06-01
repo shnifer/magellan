@@ -201,6 +201,17 @@ func (s *Sprite) Draw(dest *ebiten.Image) {
 		log.Println("Draw called for nil Sprite")
 		return
 	}
+
+	//Check for camera clipping
+	if s.camParams.Cam!=nil{
+		w:=float64(s.tex.sw)*s.sx
+		h:=float64(s.tex.sh)*s.sy
+		inRect:=s.camParams.Cam.RectInSpace(s.pos,w,h)
+		if !inRect{
+			return
+		}
+	}
+
 	img, op := s.ImageOp()
 	dest.DrawImage(img, op)
 }

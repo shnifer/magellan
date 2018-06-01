@@ -3,6 +3,8 @@ package graph
 import (
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
+	"math"
+	"log"
 )
 
 //exec Recalc() after changes
@@ -15,7 +17,11 @@ type Camera struct {
 	AngleDeg float64
 	//scale
 	Scale float64
+
 	g, r  ebiten.GeoM
+
+	//in screen pixels, zero means no clipping
+	ClipW, ClipH float64
 }
 
 var NoCam CamParams
@@ -49,6 +55,8 @@ func (c *Camera) FixS() CamParams {
 func NewCamera() *Camera {
 	res := &Camera{
 		Scale: 1,
+		ClipW: winW,
+		ClipH: winH,
 	}
 	res.Recalc()
 	return res
@@ -79,4 +87,52 @@ func (c *Camera) Recalc() {
 	c.g = G
 	G.Invert()
 	c.r = G
+}
+
+//if object is in camera space always return true
+//may return true if object is out of space
+func (c *Camera) PointInSpace(p v2.V2) bool{
+	if c.ClipW*c.ClipH==0 {
+		return true
+	}
+	delta:=c.Apply(p).Sub(c.Center)
+	maxX:=c.ClipW/2
+	maxY:=c.ClipH/2
+	if delta.X>maxX|| delta.X<(-maxX) ||
+	delta.Y>maxY || delta.Y<(-maxY) {
+		return false
+	}
+	return true
+}
+func (c *Camera) CircleInSpace(center v2.V2, radius float64) bool{
+	if c.ClipW*c.ClipH==0 {
+		return true
+	}
+	delta:=c.Apply(center).Sub(c.Center)
+	scrRadius:=radius*c.Scale
+	maxX:=c.ClipW/2+scrRadius
+	maxY:=c.ClipH/2+scrRadius
+
+	log.Printf("center:%v radius:%v delta:%v, scrRadius:%v, maxX:%v maxY:%v \n",
+		center,radius,delta,scrRadius,maxX,maxY)
+
+	if delta.X>maxX|| delta.X<(-maxX) ||
+		delta.Y>maxY || delta.Y<(-maxY) {
+		return false
+	}
+	return true
+}
+
+//do not count angle, just use outer circle
+func (c *Camera) RectInSpace(center v2.V2, w,h float64) bool{
+	if c.ClipW*c.ClipH==0 {
+		return true
+	}
+	radius:=math.Sqrt(w*w+h*h)/2
+	return c.CircleInSpace(center, radius)
+}
+
+func (c *Camera) SetClip(w,h int) {
+	c.ClipW=float64(w)
+	c.ClipH=float64(h)
 }

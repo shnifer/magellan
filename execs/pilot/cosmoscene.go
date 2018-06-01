@@ -32,6 +32,7 @@ type cosmoScene struct {
 
 	hud cosmoSceneHUD
 
+	showPredictor bool
 	predictorZero   *TrackPredictor
 	predictorThrust *TrackPredictor
 }
@@ -69,6 +70,7 @@ func newCosmoScene() *cosmoScene {
 		naviMarker:      marker,
 		hud:             hud,
 		objects:         make(map[string]*CosmoPoint),
+		showPredictor: true,
 		predictorThrust: predictorThrust,
 		predictorZero:   predictorZero,
 	}
@@ -136,6 +138,18 @@ func (s *cosmoScene) Update(dt float64) {
 		s.toWarp()
 	}
 
+	if inpututil.IsKeyJustPressed(ebiten.Key1) {
+		s.showPredictor = !s.showPredictor
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.Key2) {
+		if s.cam.ClipH==0{
+			s.cam.SetClip(WinW/2,WinH/2)
+		} else {
+			s.cam.SetClip(0,0)
+		}
+	}
+
 	if inpututil.IsKeyJustPressed(ebiten.KeyP) {
 		AddBeacon("just a test beacon")
 	}
@@ -197,8 +211,10 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 
 	//Q.Add(s.caption, graph.Z_STAT_HUD)
 
-	Q.Append(s.predictorThrust)
-	Q.Append(s.predictorZero)
+	if s.showPredictor {
+		Q.Append(s.predictorThrust)
+		Q.Append(s.predictorZero)
+	}
 
 	Q.Run(image)
 }
