@@ -2,9 +2,8 @@ package scene
 
 import (
 	"fmt"
-	"github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
-	"log"
 	"sync"
 )
 
@@ -56,7 +55,7 @@ func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
 
 	logStr := fmt.Sprintf("manager.UpdateAndDraw %v paused: %v inited: %v",
 		m.current, m.paused, m.inited[m.current])
-	defer commons.LogFunc(logStr)()
+	defer LogFunc(logStr)()
 
 	if doDraw {
 		image.Clear()
@@ -72,7 +71,7 @@ func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
 	}
 
 	if !m.inited[actualScene] {
-		log.Println("trying to update not inited scene", m.current, "while actual ", actualScene)
+		Log(LVL_ERROR, "trying to update not inited scene", m.current, "while actual ", actualScene)
 		return
 	}
 

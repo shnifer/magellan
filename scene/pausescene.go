@@ -1,8 +1,8 @@
 package scene
 
 import (
-	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/network"
 	"github.com/hajimehoshi/ebiten"
 	"golang.org/x/image/colornames"
@@ -31,7 +31,7 @@ func (p *PauseScene) Init() {
 }
 
 func (p *PauseScene) Update(float64) {
-	commons.LogFunc("pauseScene.Update")()
+	LogFunc("pauseScene.Update")()
 
 	reason := p.getReason()
 	if reason != p.reason {
@@ -56,7 +56,7 @@ func (p *PauseScene) Update(float64) {
 		default:
 			str = ""
 			captionColor = colornames.White
-			commons.Log(commons.LVL_WARNING, "strange pause reason! ", reason)
+			Log(LVL_WARN, "strange pause reason! ", reason)
 		}
 		p.caption = graph.NewText(str, p.face, captionColor)
 		p.caption.SetPosPivot(graph.ScrP(0.5, 0.5), graph.Center())
@@ -64,7 +64,7 @@ func (p *PauseScene) Update(float64) {
 }
 
 func (p *PauseScene) Draw(image *ebiten.Image) {
-	commons.LogFunc("pauseScene.Draw")()
+	LogFunc("pauseScene.Draw")()
 	p.caption.Draw(image)
 }
 

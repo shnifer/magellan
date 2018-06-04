@@ -1,6 +1,7 @@
 package commons
 
 import (
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
 )
 
@@ -76,7 +77,7 @@ func (galaxy *Galaxy) addBuilding(b Building) {
 	fullKey := b.FullKey
 	if _, exist := galaxy.Points[fullKey]; exist {
 		//already exist
-		Log(LVL_WARNING, "trying to add building with already exist Fullkey:", fullKey)
+		Log(LVL_WARN, "trying to add building with already exist Fullkey:", fullKey)
 		return
 	}
 

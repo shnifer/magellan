@@ -9,8 +9,8 @@ package network
 import (
 	"encoding/gob"
 	"fmt"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/wrnt"
-	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -56,6 +56,8 @@ type servRoomState struct {
 }
 
 func newServRoomState(commandReceivers []string) *servRoomState {
+	defer LogFunc("network.newServRoomState")()
+
 	recvs := make(map[string]*wrnt.Recv)
 	for _, name := range commandReceivers {
 		recvs[name] = wrnt.NewRecv()
@@ -148,6 +150,8 @@ func requestStateData(srv *Server, roomName string, newState string) {
 
 func stateHandler(srv *Server) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
+		defer LogFunc("network.stateHandler")()
+
 		roomName, _ := roomRole(r)
 		srv.mu.RLock()
 		defer srv.mu.RUnlock()
@@ -172,7 +176,7 @@ func stateHandler(srv *Server) http.Handler {
 		enc := gob.NewEncoder(w)
 		err = enc.Encode(SendData)
 		if err != nil {
-			log.Println("error: gob.encode.SendData: ", err)
+			Log(LVL_ERROR, "error: gob.encode.SendData: ", err)
 		}
 	}
 	return http.HandlerFunc(f)
@@ -180,15 +184,15 @@ func stateHandler(srv *Server) http.Handler {
 
 func setNewState(srv *Server, room *servRoomState, roomName, newState string) bool {
 	if !room.state.IsCoherent {
-		log.Println("already changing state!", newState)
+		Log(LVL_ERROR, "already changing state!", newState)
 		return false
 	}
 	if room.state.Wanted == newState {
-		log.Println("state is the same")
+		Log(LVL_ERROR, "state is the same")
 		return false
 	}
 	if !srv.opts.RoomServ.IsValidState(roomName, newState) {
-		log.Println("not valid state", newState)
+		Log(LVL_ERROR, "not valid state", newState)
 		return false
 	}
 
@@ -204,6 +208,7 @@ func setNewState(srv *Server, room *servRoomState, roomName, newState string) bo
 }
 
 func serverRoomUpdater(serv *Server) {
+	defer LogFunc("network.stateHandler")()
 
 	//Only update last seen timeout
 	//state update's on changes
@@ -248,7 +253,6 @@ func roomRole(r *http.Request) (room, role string) {
 }
 
 func sendErr(w http.ResponseWriter, err string) {
-	log.Println("Error : ", err)
 	w.Header().Set("error", "1")
 	w.Write([]byte(err))
 }

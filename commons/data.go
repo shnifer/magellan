@@ -1,6 +1,9 @@
 package commons
 
-import "sync"
+import (
+	. "github.com/Shnifer/magellan/log"
+	"sync"
+)
 
 type TData struct {
 	//Main game loop will handle this

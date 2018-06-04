@@ -3,6 +3,7 @@ package commons
 import (
 	"bytes"
 	"encoding/json"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
 	"image/color"
 	"reflect"

@@ -2,8 +2,8 @@ package storage
 
 import (
 	"bytes"
+	. "github.com/Shnifer/magellan/log"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"sort"
 	"strings"
@@ -124,7 +124,7 @@ func (ex *exchanger) exchange() {
 	if needKey != "" {
 		err := ex.disk.append(needKey, resp.YourKeyVal)
 		if err != nil {
-			log.Println("downloaded needKey already exist:", needKey)
+			Log(LVL_ERROR, "downloaded needKey already exist:", needKey)
 		}
 	}
 
@@ -144,19 +144,19 @@ func exchangeHandler(ex *exchanger) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
 		reqBuf, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			log.Println(err)
+			Log(LVL_ERROR, err)
 			return
 		}
 		req, err := Request{}.Decode(reqBuf)
 		if err != nil {
-			log.Println(err)
+			Log(LVL_ERROR, err)
 			return
 		}
 		resp := Responce{}
 		if req.INeedFullKey != "" {
 			val, err := ex.disk.Read(req.INeedFullKey)
 			if err != nil {
-				log.Println("Can't read fullkey ", req.INeedFullKey)
+				Log(LVL_ERROR, "Can't read fullkey ", req.INeedFullKey)
 				return
 			}
 			resp.YourKeyVal = string(val)

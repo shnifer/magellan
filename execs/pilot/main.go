@@ -6,9 +6,9 @@ import (
 	"github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/input"
+	"github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
-	"log"
 	"time"
 )
 
@@ -45,6 +45,11 @@ func mainLoop(window *ebiten.Image) error {
 }
 
 func main() {
+	log.Start(time.Duration(DEFVAL.LogLogTimeoutMs)*time.Millisecond,
+		time.Duration(DEFVAL.LogRetryMinMs)*time.Millisecond,
+		time.Duration(DEFVAL.LogRetryMaxMs)*time.Millisecond,
+		DEFVAL.LogIP)
+
 	if DEFVAL.DoProf {
 		commons.StartProfile(roleName)
 		defer commons.StopProfile(roleName)
@@ -78,6 +83,6 @@ func main() {
 	last = time.Now()
 
 	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "PILOT"); err != nil {
-		log.Fatal(err)
+		log.Log(log.LVL_FATAL, err)
 	}
 }

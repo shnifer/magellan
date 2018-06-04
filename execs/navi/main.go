@@ -6,9 +6,9 @@ import (
 	"github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/input"
+	"github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
-	"log"
 	"time"
 )
 
@@ -30,7 +30,7 @@ func mainLoop(window *ebiten.Image) error {
 
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
 
-	if commons.LOG_LEVEL <= commons.LVL_ERROR {
+	if log.IsLogDebug() {
 		fps := ebiten.CurrentFPS()
 		msg := fmt.Sprintf("FPS: %v\ndt = %.2f\n", fps, dt)
 		if ebiten.IsRunningSlowly() {
@@ -45,6 +45,11 @@ func mainLoop(window *ebiten.Image) error {
 }
 
 func main() {
+	log.Start(time.Duration(DEFVAL.LogLogTimeoutMs)*time.Millisecond,
+		time.Duration(DEFVAL.LogRetryMinMs)*time.Millisecond,
+		time.Duration(DEFVAL.LogRetryMaxMs)*time.Millisecond,
+		DEFVAL.LogIP)
+
 	if DEFVAL.DoProf {
 		commons.StartProfile(roleName)
 		defer commons.StopProfile(roleName)
@@ -74,6 +79,6 @@ func main() {
 	ebiten.SetRunnableInBackground(true)
 	last = time.Now()
 	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "NAVIGATOR"); err != nil {
-		log.Fatal(err)
+		log.Log(log.LVL_FATAL, err)
 	}
 }

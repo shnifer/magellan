@@ -7,5 +7,9 @@
         "Pilot"
     ],
     "DoProf": false,
-    "SolarStartLocationName": "magellan"
+    "SolarStartLocationName": "magellan",
+    "LogLogTimeoutMs": 1000,
+    "LogRetryMinMs": 10,
+    "LogRetryMaxMs": 10000,
+    "LogIP": "http://magellan2018.aerem.in:9200"
 }

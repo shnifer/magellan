@@ -5,9 +5,9 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"errors"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/wrnt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"sync"
@@ -49,6 +49,8 @@ type Client struct {
 }
 
 func NewClient(opts ClientOpts) (*Client, error) {
+	defer LogFunc("network.NewClient")()
+
 	if opts.Timeout == 0 {
 		opts.Timeout = ClientDefaultTimeout
 	}
@@ -105,6 +107,8 @@ func (c *Client) setOnPause(pause bool) {
 }
 
 func doPingReq(c *Client) (PingResp, error) {
+	defer LogFunc("network.doPingReq")()
+
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -122,9 +126,9 @@ func doPingReq(c *Client) (PingResp, error) {
 
 		urlErr, ok := err.(*url.Error)
 		if !ok {
-			log.Println("network.doPingReq: Strange non-URL error client ping", err)
+			Log(LVL_WARN, "network.doPingReq: Strange non-URL error client ping", err)
 		} else if !urlErr.Timeout() {
-			log.Println("network.doPingReq: Strange non-timeout error client ping", err)
+			Log(LVL_WARN, "network.doPingReq: Strange non-timeout error client ping", err)
 		}
 		return PingResp{}, err
 	}
@@ -148,6 +152,8 @@ func doPingReq(c *Client) (PingResp, error) {
 }
 
 func checkWantedState(c *Client, pingResp PingResp) {
+	defer LogFunc("network.checkWantedState")()
+
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -171,11 +177,13 @@ func checkWantedState(c *Client, pingResp PingResp) {
 
 //runned in goroutine
 func getStateData(c *Client) {
+	defer LogFunc("network.getStateDate")()
+
 	resp, err := c.doReq(GET, statePattern, nil, true)
 
 	if err != nil {
 		//weird, but will try next ping circle
-		log.Println("can't get new ServData", err)
+		Log(LVL_WARN, "can't get new ServData", err)
 		c.mu.Lock()
 		c.recvGoroutineStarted = false
 		c.mu.Unlock()
@@ -209,6 +217,8 @@ func getStateData(c *Client) {
 }
 
 func clientReceiveCommands(c *Client, resp CommonResp) {
+	defer LogFunc("network.clientReceiveCommands")()
+
 	if c.opts.OnCommand == nil {
 		return
 	}
@@ -221,6 +231,8 @@ func clientReceiveCommands(c *Client, resp CommonResp) {
 }
 
 func doCommonReq(c *Client) {
+	defer LogFunc("network.doCommonReq")()
+
 	var req CommonReq
 	var sentData []byte
 
@@ -247,19 +259,19 @@ func doCommonReq(c *Client) {
 
 	buf, err := json.Marshal(req)
 	if err != nil {
-		log.Println("can't marshal commonReq")
+		Log(LVL_ERROR, "can't marshal commonReq")
 		return
 	}
 
 	respBytes, err := c.doReq(POST, roomPattern, buf, false)
 	if err != nil {
-		log.Println("CANT SEND common room data request", err)
+		Log(LVL_WARN, "CANT SEND common room data request", err)
 		return
 	}
 	var resp CommonResp
 	err = json.Unmarshal(respBytes, &resp)
 	if err != nil {
-		log.Println("Can't unmarshal common resp")
+		Log(LVL_ERROR, "Can't unmarshal common resp")
 	}
 
 	clientReceiveCommands(c, resp)
@@ -274,6 +286,8 @@ func doCommonReq(c *Client) {
 }
 
 func clientPing(c *Client) {
+	defer LogFunc("network.clientPing")()
+
 	tick := time.Tick(c.opts.PingPeriod)
 	for {
 		<-tick
@@ -323,7 +337,7 @@ func (c *Client) doReq(method, path string, reqBody []byte, largeTimeout bool) (
 
 	if resp.Header.Get("error") == "1" {
 		errStr := string(buf)
-		log.Println(errStr)
+		Log(LVL_ERROR, errStr)
 		return nil, errors.New(errStr)
 	}
 

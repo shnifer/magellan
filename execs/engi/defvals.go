@@ -18,17 +18,26 @@ type tDefVals struct {
 	WinW, WinH int
 
 	DoProf bool
+
+	//in ms
+	LogLogTimeoutMs int
+	LogRetryMinMs   int
+	LogRetryMaxMs   int
+	LogIP           string
 }
 
 var DEFVAL tDefVals
 
 func setDefDef() {
 	DEFVAL = tDefVals{
-		Port: "http://localhost:8000",
-		Room: "room101",
-		Role: commons.ROLE_Engi,
-		WinW: 1024,
-		WinH: 768,
+		Port:            "http://localhost:8000",
+		Room:            "room101",
+		Role:            commons.ROLE_Engi,
+		WinW:            1024,
+		WinH:            768,
+		LogLogTimeoutMs: 1000,
+		LogRetryMinMs:   10,
+		LogRetryMaxMs:   60000,
 	}
 }
 

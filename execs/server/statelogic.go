@@ -2,6 +2,7 @@ package main
 
 import (
 	. "github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/static"
 	"github.com/Shnifer/magellan/v2"
 	"time"

@@ -1,8 +1,8 @@
 package storage
 
 import (
+	. "github.com/Shnifer/magellan/log"
 	"github.com/peterbourgon/diskv"
-	"log"
 	"sync"
 )
 
@@ -125,7 +125,7 @@ func (s *Storage) procNewKey(newKey string) {
 
 	objKey, err := ReadKey(newKey)
 	if err != nil {
-		log.Println("subscribeLoop: can't read objKey ", newKey)
+		Log(LVL_ERROR, "subscribeLoop: can't read objKey ", newKey)
 		return
 	}
 

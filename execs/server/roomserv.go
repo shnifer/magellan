@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	. "github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/network"
 	"github.com/Shnifer/magellan/storage"
 	"strconv"

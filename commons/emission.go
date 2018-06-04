@@ -1,6 +1,7 @@
 package commons
 
 import (
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
 )
 

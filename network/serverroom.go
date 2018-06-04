@@ -2,8 +2,8 @@ package network
 
 import (
 	"encoding/json"
+	. "github.com/Shnifer/magellan/log"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -80,12 +80,12 @@ func serverReceiveCommands(srv *Server, req CommonReq, room *servRoomState, room
 	for _, command := range commands {
 
 		if len(command) < 1 {
-			log.Println("empty command!")
+			Log(LVL_WARN, "empty command!")
 			continue
 		}
 
 		if !room.state.IsCoherent {
-			log.Println("STRANGE: COMMAND recieved while non-coherent. Command: ", command)
+			Log(LVL_WARN, "STRANGE: COMMAND recieved while non-coherent. Command: ", command)
 			return
 		}
 
@@ -101,7 +101,7 @@ func serverReceiveCommands(srv *Server, req CommonReq, room *servRoomState, room
 			if stateChanged {
 			}
 		default:
-			log.Println("Strange prefix", prefix)
+			Log(LVL_ERROR, "Strange prefix", prefix)
 			continue
 		}
 	}

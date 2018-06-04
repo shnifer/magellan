@@ -1,7 +1,7 @@
 package wrnt
 
 import (
-	"log"
+	. "github.com/Shnifer/magellan/log"
 	"sync"
 )
 
@@ -34,11 +34,11 @@ func (s *storage) get(fromN int) []string {
 	defer s.mu.RUnlock()
 
 	if fromN < s.BaseN {
-		log.Panicln("storage.get fromN<BaseN", fromN, "<", s.BaseN)
+		Log(LVL_PANIC, "storage.get fromN<BaseN", fromN, "<", s.BaseN)
 	}
 	count := len(s.Items) - (fromN - s.BaseN)
 	if count < 0 {
-		log.Println("storage.get count<0")
+		Log(LVL_ERROR, "storage.get count<0")
 		return []string{}
 	}
 	res := make([]string, count)

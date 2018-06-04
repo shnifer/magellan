@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/log"
 	"io/ioutil"
-	"log"
 )
 
 const DefValPath = "./"
@@ -24,6 +24,12 @@ type tDefVals struct {
 
 	GravityConst     float64
 	WarpGravityConst float64
+
+	//in ms
+	LogLogTimeoutMs int
+	LogRetryMinMs   int
+	LogRetryMaxMs   int
+	LogIP           string
 }
 
 var DEFVAL tDefVals
@@ -37,6 +43,9 @@ func setDefDef() {
 		WinH:             768,
 		GravityConst:     100,
 		WarpGravityConst: 100,
+		LogLogTimeoutMs:  1000,
+		LogRetryMinMs:    10,
+		LogRetryMaxMs:    60000,
 	}
 }
 
@@ -48,14 +57,14 @@ func init() {
 	identbuf := bytes.Buffer{}
 	json.Indent(&identbuf, exbuf, "", "    ")
 	if err := ioutil.WriteFile(exfn, identbuf.Bytes(), 0); err != nil {
-		log.Println("can't even write ", exfn)
+		Log(LVL_WARN, "can't even write ", exfn)
 	}
 
 	fn := DefValPath + "ini_" + roleName + ".json"
 
 	buf, err := ioutil.ReadFile(fn)
 	if err != nil {
-		log.Println("cant read ", fn, "using default")
+		Log(LVL_WARN, "cant read ", fn, "using default")
 		return
 	}
 	json.Unmarshal(buf, &DEFVAL)

@@ -3,11 +3,11 @@ package input
 import (
 	"bytes"
 	"encoding/json"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/pkg/errors"
 	"io/ioutil"
-	"log"
 	"math"
 	"strconv"
 	"sync"
@@ -152,7 +152,7 @@ func LoadConf(fileName string) {
 
 	buf, err := ioutil.ReadFile(fn)
 	if err != nil {
-		log.Println("cant read ", fn, "using default")
+		Log(LVL_WARN, "cant read ", fn, "using default")
 		return
 	}
 	json.Unmarshal(buf, &conf)
@@ -176,7 +176,7 @@ func defConf(filePath string) {
 	identbuf := bytes.Buffer{}
 	json.Indent(&identbuf, exbuf, "", "    ")
 	if err := ioutil.WriteFile(exfn, identbuf.Bytes(), 0); err != nil {
-		log.Println("can't even write ", exfn)
+		Log(LVL_WARN, "can't even write ", exfn)
 	}
 
 	var str string
@@ -202,7 +202,7 @@ func defConf(filePath string) {
 
 	excodesfn := filePath + "example_input_codes.txt"
 	if err := ioutil.WriteFile(excodesfn, []byte(str), 0); err != nil {
-		log.Println("can't even write ", excodesfn)
+		Log(LVL_WARN, "can't even write ", excodesfn)
 	}
 }
 

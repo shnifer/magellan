@@ -1,6 +1,7 @@
 package commons
 
 import (
+	. "github.com/Shnifer/magellan/log"
 	"log"
 	"os"
 	"runtime"

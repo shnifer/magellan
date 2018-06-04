@@ -2,7 +2,7 @@ package storage
 
 import (
 	"encoding/json"
-	"log"
+	. "github.com/Shnifer/magellan/log"
 )
 
 type Request struct {
@@ -17,7 +17,7 @@ type Responce struct {
 func (r Request) Encode() []byte {
 	buf, err := json.Marshal(r)
 	if err != nil {
-		log.Panicln("Can't marshal request", err)
+		Log(LVL_PANIC, "Can't marshal request", err)
 	}
 	return buf
 }
@@ -34,7 +34,7 @@ func (Request) Decode(buf []byte) (r Request, err error) {
 func (r Responce) Encode() []byte {
 	buf, err := json.Marshal(r)
 	if err != nil {
-		log.Panicln("Can't marshal Responce", err)
+		Log(LVL_PANIC, "Can't marshal Responce", err)
 	}
 	return buf
 }

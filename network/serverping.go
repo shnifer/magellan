@@ -2,7 +2,7 @@ package network
 
 import (
 	"encoding/json"
-	"log"
+	. "github.com/Shnifer/magellan/log"
 	"math/rand"
 	"net/http"
 	"time"
@@ -49,7 +49,7 @@ func pingHandler(srv *Server) http.Handler {
 		if recv, ok := room.recvs[roleName]; ok {
 			lastRecv = recv.LastRecv()
 		} else {
-			log.Println("NO RECIEVER ROOM", roomName, "ROLE", roleName)
+			Log(LVL_ERROR, "NO RECIEVER ROOM", roomName, "ROLE", roleName)
 		}
 
 		pingResp := PingResp{

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Shnifer/magellan/commons"
+	"github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/network"
 	"github.com/Shnifer/magellan/storage"
 	"github.com/peterbourgon/diskv"
@@ -17,6 +18,11 @@ const (
 )
 
 func main() {
+	log.Start(time.Duration(DEFVAL.LogLogTimeoutMs)*time.Millisecond,
+		time.Duration(DEFVAL.LogRetryMinMs)*time.Millisecond,
+		time.Duration(DEFVAL.LogRetryMaxMs)*time.Millisecond,
+		DEFVAL.LogIP)
+
 	if DEFVAL.DoProf {
 		commons.StartProfile(roleName)
 		defer commons.StopProfile(roleName)

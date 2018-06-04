@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	. "github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/static"
 	"github.com/Shnifer/magellan/storage"
 	"io/ioutil"

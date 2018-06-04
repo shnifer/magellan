@@ -3,8 +3,8 @@ package main
 import (
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/scene"
-	"log"
 )
 
 const (
@@ -69,7 +69,7 @@ func initSceneState() {
 		Scenes.Init(sceneName)
 		Scenes.WaitDone()
 	} else {
-		log.Println("unknown scene to init for state = ", stateID)
+		Log(LVL_ERROR, "unknown scene to init for state = ", stateID)
 	}
 }
 
@@ -79,20 +79,20 @@ func onCommand(command string) {
 
 func pause() {
 	defer LogFunc("state.pause")()
-	Log(LVL_WARNING, "pause")
+	Log(LVL_WARN, "pause")
 	Scenes.SetPaused(true)
 }
 
 func unpause() {
 	defer LogFunc("state.unpause")()
-	Log(LVL_WARNING, "upause")
+	Log(LVL_WARN, "upause")
 	Scenes.SetPaused(false)
 }
 
 func discon() {
-	Log(LVL_WARNING, "lost connect")
+	Log(LVL_WARN, "lost connect")
 }
 
 func recon() {
-	Log(LVL_WARNING, "recon!")
+	Log(LVL_WARN, "recon!")
 }

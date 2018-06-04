@@ -1,7 +1,7 @@
 package network
 
 import (
-	"log"
+	. "github.com/Shnifer/magellan/log"
 	"strings"
 	"time"
 )
@@ -98,7 +98,7 @@ func (c *Client) PauseReason() PauseReason {
 
 func (c *Client) RequestNewState(wanted string) {
 	if c.wantState != c.curState {
-		log.Println("client is already changing state")
+		Log(LVL_ERROR, "client is already changing state")
 	}
 	//_, err := c.doReq(POST, statePattern, []byte(wanted))
 

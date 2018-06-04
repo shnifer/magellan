@@ -2,6 +2,7 @@ package commons
 
 import (
 	"encoding/json"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/storage"
 )
 
