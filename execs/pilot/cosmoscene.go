@@ -8,7 +8,6 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
-	"log"
 )
 
 const trailPeriod = 0.25
@@ -33,7 +32,7 @@ type cosmoScene struct {
 
 	hud cosmoSceneHUD
 
-	showPredictor bool
+	showPredictor   bool
 	predictorZero   *TrackPredictor
 	predictorThrust *TrackPredictor
 }
@@ -71,7 +70,7 @@ func newCosmoScene() *cosmoScene {
 		naviMarker:      marker,
 		hud:             hud,
 		objects:         make(map[string]*CosmoPoint),
-		showPredictor: true,
+		showPredictor:   true,
 		predictorThrust: predictorThrust,
 		predictorZero:   predictorZero,
 	}
@@ -141,16 +140,6 @@ func (s *cosmoScene) Update(dt float64) {
 
 	if inpututil.IsKeyJustPressed(ebiten.Key1) {
 		s.showPredictor = !s.showPredictor
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.Key2) {
-		if s.cam.ClipH==0{
-			s.cam.SetClip(WinW,WinH)
-			log.Println("clipping on")
-		} else {
-			s.cam.SetClip(0,0)
-			log.Println("clipping off")
-		}
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyP) {

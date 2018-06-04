@@ -19,7 +19,7 @@ type Frame9HUD struct {
 	//top, left, right, bot float64
 }
 
-func NewFrame9(sprites [9]*Sprite, w, h float64,layer int) (res *Frame9HUD) {
+func NewFrame9(sprites [9]*Sprite, w, h float64, layer int) (res *Frame9HUD) {
 	res = &Frame9HUD{
 		sprite: sprites,
 		scale:  1,
@@ -106,10 +106,10 @@ func (f9 *Frame9HUD) recalc() {
 }
 
 func (f9 *Frame9HUD) Req() *DrawQueue {
-	Q:=NewDrawQueue()
+	Q := NewDrawQueue()
 	for i := 0; i < 9; i++ {
 		if f9.sprite[i] != nil {
-			Q.Add(f9.sprite[i],f9.layer)
+			Q.Add(f9.sprite[i], f9.layer)
 		}
 	}
 	return Q

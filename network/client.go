@@ -162,43 +162,50 @@ func checkWantedState(c *Client, pingResp PingResp) {
 		}
 	}
 
-	if !c.recvGoroutineStarted && c.wantState != c.curState {
-		//rdy to grab new state Data
-		if pingResp.Room.RdyServData {
-			resp, err := c.doReq(GET, statePattern, nil, true)
-			if err != nil {
-				//weird, but will try next ping circle
-				log.Println("can't get new ServData", err)
-				return
-			}
-			//TODO: refactor goroutine
-			//After successfully got and passed new StateData change cur state
-			if c.opts.OnGetStateData == nil {
-				//set wanted state now
-				c.curState = c.wantState
-			} else {
-				if !c.recvGoroutineStarted {
-					c.recvGoroutineStarted = true
-					//run hook and wait for done chan close
-					go func() {
-						buf := bytes.NewBuffer(resp)
-						dec := gob.NewDecoder(buf)
-						var DataResp StateDataResp
-						dec.Decode(&DataResp)
-						c.opts.OnGetStateData(DataResp.StateData)
-						if c.opts.OnCommonRecv != nil {
-							c.opts.OnCommonRecv(DataResp.StartCommon, true)
-						}
-						c.mu.Lock()
-						c.curState = c.wantState
-						c.isMyPartActual = true
-						c.recvGoroutineStarted = false
-						c.mu.Unlock()
-					}()
-				}
-			}
-		}
+	//run GetStateData goroutine if needed
+	if c.curState != c.wantState && !c.recvGoroutineStarted && pingResp.Room.RdyServData {
+		c.recvGoroutineStarted = true
+		go getStateData(c)
 	}
+}
+
+//runned in goroutine
+func getStateData(c *Client) {
+	resp, err := c.doReq(GET, statePattern, nil, true)
+
+	if err != nil {
+		//weird, but will try next ping circle
+		log.Println("can't get new ServData", err)
+		c.mu.Lock()
+		c.recvGoroutineStarted = false
+		c.mu.Unlock()
+		return
+	}
+
+	if c.opts.OnGetStateData == nil {
+		//set wanted state now
+		c.mu.Lock()
+		c.curState = c.wantState
+		c.isMyPartActual = true
+		c.recvGoroutineStarted = false
+		c.mu.Unlock()
+		return
+	}
+
+	//run hook and wait for done chan close
+	buf := bytes.NewBuffer(resp)
+	dec := gob.NewDecoder(buf)
+	var DataResp StateDataResp
+	dec.Decode(&DataResp)
+	c.opts.OnGetStateData(DataResp.StateData)
+	if c.opts.OnCommonRecv != nil {
+		c.opts.OnCommonRecv(DataResp.StartCommon, true)
+	}
+	c.mu.Lock()
+	c.curState = c.wantState
+	c.isMyPartActual = true
+	c.recvGoroutineStarted = false
+	c.mu.Unlock()
 }
 
 func clientReceiveCommands(c *Client, resp CommonResp) {

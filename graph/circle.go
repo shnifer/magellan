@@ -2,7 +2,7 @@ package graph
 
 import "github.com/hajimehoshi/ebiten"
 
-const defaultTexRadius = 256
+const defaultTexRadius = 127
 
 var defaultCircle Tex
 
