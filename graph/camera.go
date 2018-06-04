@@ -4,7 +4,6 @@ import (
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"math"
-	"log"
 )
 
 //exec Recalc() after changes
@@ -112,9 +111,6 @@ func (c *Camera) CircleInSpace(center v2.V2, radius float64) bool{
 	scrRadius:=radius*c.Scale
 	maxX:=c.ClipW/2+scrRadius
 	maxY:=c.ClipH/2+scrRadius
-
-	log.Printf("center:%v radius:%v delta:%v, scrRadius:%v, maxX:%v maxY:%v \n",
-		center,radius,delta,scrRadius,maxX,maxY)
 
 	if delta.X>maxX|| delta.X<(-maxX) ||
 		delta.Y>maxY || delta.Y<(-maxY) {

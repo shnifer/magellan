@@ -24,7 +24,6 @@ func (rd *roomServer) loadStateData(state State) (sd StateData, subscribe chan s
 	return sd, subscribe
 }
 
-//TODO: look in DB
 func loadShipState(shipID string) *BSP {
 	var res BSP
 
@@ -42,7 +41,6 @@ func loadShipState(shipID string) *BSP {
 	return &res
 }
 
-//TODO: look in DB
 func loadGalaxyState(GalaxyID string) *Galaxy {
 	var res Galaxy
 	buf, err := static.Load("DB", "galaxy_"+GalaxyID+".json")

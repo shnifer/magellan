@@ -24,6 +24,8 @@ const (
 
 type drawF = func(image *ebiten.Image)
 
+var drawFZero = func(image *ebiten.Image){}
+
 type DrawReq struct {
 	drawReq drawF
 	layer   int

@@ -2,13 +2,12 @@ package graph
 
 import (
 	"github.com/Shnifer/magellan/v2"
-	"github.com/hajimehoshi/ebiten"
 )
 
 type V2 = v2.V2
 
 type Frame9HUD struct {
-	*Sprite
+	layer int
 
 	sprite      [9]*Sprite
 	scale       float64
@@ -20,12 +19,13 @@ type Frame9HUD struct {
 	//top, left, right, bot float64
 }
 
-func NewFrame9(sprites [9]*Sprite, w, h float64) (res *Frame9HUD) {
+func NewFrame9(sprites [9]*Sprite, w, h float64,layer int) (res *Frame9HUD) {
 	res = &Frame9HUD{
 		sprite: sprites,
 		scale:  1,
 		w:      w,
 		h:      h,
+		layer:  layer,
 	}
 	res.setPivots()
 	res.recalc()
@@ -103,16 +103,16 @@ func (f9 *Frame9HUD) recalc() {
 			sprite.SetPos(V2{X: f9.w, Y: f9.h})
 		}
 	}
-	image, _ := ebiten.NewImage(int(f9.w), int(f9.h), ebiten.FilterDefault)
+}
+
+func (f9 *Frame9HUD) Req() *DrawQueue {
+	Q:=NewDrawQueue()
 	for i := 0; i < 9; i++ {
 		if f9.sprite[i] != nil {
-			f9.sprite[i].Draw(image)
+			Q.Add(f9.sprite[i],f9.layer)
 		}
 	}
-
-	tex := TexFromImage(image, ebiten.FilterDefault, 0, 0, 1, "")
-	f9.Sprite = NewSpriteHUD(tex)
-	f9.Sprite.SetPivot(TopLeft())
+	return Q
 }
 
 /*

@@ -118,7 +118,6 @@ func Confer(n int) {
 	}
 }
 
-//TODO: why blocks???
 const treads = 3
 
 func main() {

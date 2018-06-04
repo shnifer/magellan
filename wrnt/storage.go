@@ -39,6 +39,7 @@ func (s *storage) get(fromN int) []string {
 	count := len(s.Items) - (fromN - s.BaseN)
 	if count < 0 {
 		log.Println("storage.get count<0")
+		return []string{}
 	}
 	res := make([]string, count)
 	copy(res, s.Items[fromN-s.BaseN:])

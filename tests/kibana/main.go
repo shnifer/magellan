@@ -1,27 +1,25 @@
 package main
 
 import (
-	"github.com/bshuster-repo/logrus-logstash-hook"
+	"github.com/olivere/elastic"
 	"github.com/sirupsen/logrus"
-	"github.com/firstrow/goautosocket"
-	"time"
+	"gopkg.in/sohlich/elogrus.v3"
 )
 
 func main() {
 	log := logrus.New()
-	conn, err := gas.Dial("tcp", "magellan2018.aerem.in:5000")
+	client, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL("http://magellan2018.aerem.in:9200"))
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
-	defer conn.Close()
-
-	hook := logrustash.New(conn, logrustash.DefaultFormatter(logrus.Fields{}))
-
+	hook, err := elogrus.NewElasticHook(client, "localhost", logrus.DebugLevel, "logstash")
+	if err != nil {
+		log.Panic(err)
+	}
 	log.Hooks.Add(hook)
 
-	for {
-		rec:=log.WithFields(logrus.Fields{"EventType":"ping event"})
-		rec.Infoln("current time ",time.Now())
-		time.Sleep(time.Second*15)
-	}
+	log.WithFields(logrus.Fields{
+		"name": "joe",
+		"age":  42,
+	}).Error("Hello world!")
 }

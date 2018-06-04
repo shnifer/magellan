@@ -196,10 +196,10 @@ func (s *Sprite) ImageOp() (*ebiten.Image, *ebiten.DrawImageOptions) {
 	return s.tex.image, op
 }
 
-func (s *Sprite) Draw(dest *ebiten.Image) {
-	if s == nil {
+func (s *Sprite) skipDrawCheck() bool{
+	if s==nil{
 		log.Println("Draw called for nil Sprite")
-		return
+		return true
 	}
 
 	//Check for camera clipping
@@ -208,15 +208,27 @@ func (s *Sprite) Draw(dest *ebiten.Image) {
 		h:=float64(s.tex.sh)*s.sy
 		inRect:=s.camParams.Cam.RectInSpace(s.pos,w,h)
 		if !inRect{
-			return
+			return true
 		}
+	}
+	return false
+}
+
+func (s *Sprite) Draw(dest *ebiten.Image) {
+	if s.skipDrawCheck() {
+		return
 	}
 
 	img, op := s.ImageOp()
 	dest.DrawImage(img, op)
 }
 
+//MUST support multiple draw with different parameters
 func (s *Sprite) DrawF() (drawF, string) {
+	if s.skipDrawCheck(){
+		return drawFZero, ""
+	}
+	//so we calc draw ops on s.DrawF() call not drawF resolve
 	img, op := s.ImageOp()
 	f := func(dest *ebiten.Image) {
 		dest.DrawImage(img, op)

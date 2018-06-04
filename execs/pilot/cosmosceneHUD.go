@@ -46,7 +46,7 @@ func newCosmoSceneHUD(cam *graph.Camera) cosmoSceneHUD {
 	compass.SetSize(compassSize, compassSize)
 	compass.SetAlpha(1)
 
-	f9 := NewAtlasFrame9HUD("front9", WinW, WinH)
+	f9 := NewAtlasFrame9HUD("front9", WinW, WinH, graph.Z_HUD-1)
 
 	arrowSize := float64(WinH) * arrSize
 	arrowTex := GetAtlasTex("arrow")
@@ -123,7 +123,7 @@ func (h cosmoSceneHUD) Req() *graph.DrawQueue {
 	Q.Add(h.turnLevel, graph.Z_HUD+1)
 	Q.Add(h.turnControl, graph.Z_HUD+1)
 
-	Q.Add(h.f9, graph.Z_HUD-1)
+	Q.Append(h.f9)
 
 	return Q
 }

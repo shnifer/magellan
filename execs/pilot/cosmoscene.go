@@ -8,6 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
+	"log"
 )
 
 const trailPeriod = 0.25
@@ -144,9 +145,11 @@ func (s *cosmoScene) Update(dt float64) {
 
 	if inpututil.IsKeyJustPressed(ebiten.Key2) {
 		if s.cam.ClipH==0{
-			s.cam.SetClip(WinW/2,WinH/2)
+			s.cam.SetClip(WinW,WinH)
+			log.Println("clipping on")
 		} else {
 			s.cam.SetClip(0,0)
+			log.Println("clipping off")
 		}
 	}
 

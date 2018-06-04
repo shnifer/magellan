@@ -77,7 +77,7 @@ func NewAtlasSpriteHUD(atlasName string) *graph.Sprite {
 	return graph.NewSpriteHUD(GetAtlasTex(atlasName))
 }
 
-func NewAtlasFrame9HUD(atlasName string, w, h int) *graph.Frame9HUD {
+func NewAtlasFrame9HUD(atlasName string, w, h int, layer int) *graph.Frame9HUD {
 	var sprites [9]*graph.Sprite
 	for i := 0; i < 9; i++ {
 		tex, err := getAtlasTex(atlasName + strconv.Itoa(i))
@@ -87,7 +87,7 @@ func NewAtlasFrame9HUD(atlasName string, w, h int) *graph.Frame9HUD {
 		sprites[i] = graph.NewSpriteHUD(tex)
 
 	}
-	return graph.NewFrame9(sprites, float64(w), float64(h))
+	return graph.NewFrame9(sprites, float64(w), float64(h), layer)
 }
 
 func saveAtlasExample(fn string) {
