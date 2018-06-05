@@ -17,8 +17,11 @@ type tDefVals struct {
 	PingPeriod int
 	Room       string
 	Role       string
+
+
 	FullScreen bool
 	WinW, WinH int
+	HalfResolution bool
 
 	DoProf bool
 
