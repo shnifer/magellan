@@ -10,6 +10,8 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"time"
+	"image/color"
+	"github.com/Shnifer/magellan/v2"
 )
 
 const roleName = "navi"
@@ -30,14 +32,12 @@ func mainLoop(window *ebiten.Image) error {
 
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
 
-	if log.IsLogDebug() {
-		fps := ebiten.CurrentFPS()
-		msg := fmt.Sprintf("FPS: %v\ndt = %.2f\n", fps, dt)
-		if ebiten.IsRunningSlowly() {
-			msg = msg + "is running SLOWLY!\n"
-		}
-		ebitenutil.DebugPrint(window, msg)
-	}
+	fps := ebiten.CurrentFPS()
+	msg := fmt.Sprintf("FPS: %.0f\nALT-F4 to close\nWASD to control\nQ-E scale\nSPACE - stop\nENTER - reset position", fps)
+	fpsText:=graph.NewText(msg,draw.Fonts[draw.Face_list],color.White)
+	fpsText.SetPosPivot(graph.ScrP(0.1,0.1),v2.ZV)
+	fpsText.Draw(window)
+
 	t := time.Now()
 	dt = t.Sub(last).Seconds()
 	last = t
@@ -70,6 +70,7 @@ func main() {
 	initClient()
 	input.LoadConf("input_" + roleName + ".json")
 
+	draw.InitFonts()
 	draw.InitTexAtlas()
 	commons.InitSignatureAtlas()
 

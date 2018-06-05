@@ -8,8 +8,9 @@ import (
 	"github.com/Shnifer/magellan/input"
 	"github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"time"
+	"image/color"
+	"github.com/Shnifer/magellan/v2"
 )
 
 const roleName = "pilot"
@@ -34,8 +35,10 @@ func mainLoop(window *ebiten.Image) error {
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
 
 	fps := ebiten.CurrentFPS()
-	msg := fmt.Sprintf("FPS: %v\nALT-F4 to close\nWASD to control\nQ-E scale\nSPACE - stop\nENTER - reset position", fps)
-	ebitenutil.DebugPrint(window, msg)
+	msg := fmt.Sprintf("FPS: %.0f\nALT-F4 to close\nWASD to control\nQ-E scale\nSPACE - stop\nENTER - reset position", fps)
+	fpsText:=graph.NewText(msg,draw.Fonts[draw.Face_list],color.White)
+	fpsText.SetPosPivot(graph.ScrP(0.1,0.1),v2.ZV)
+	fpsText.Draw(window)
 
 	t := time.Now()
 	dt = t.Sub(last).Seconds()
@@ -69,6 +72,7 @@ func main() {
 	input.LoadConf("input_" + roleName + ".json")
 	Data = commons.NewData()
 
+	draw.InitFonts()
 	draw.InitTexAtlas()
 	commons.InitSignatureAtlas()
 

@@ -85,10 +85,10 @@ func loadBuildingsAndSubscribe(storage *storage.Storage, GalaxyID string) (build
 }
 
 //save examples of DB data
-func init() {
+//func init() {
 	//do not save it now
 	//saveDataExamples(DBPath)
-}
+//}
 
 func saveDataExamples(path string) {
 	bsp, _ := json.Marshal(BSP{})

@@ -31,7 +31,7 @@ func newFace(b []byte, size float64) (font.Face, error) {
 func GetFace(fileName string, size float64, loader func(filename string) ([]byte, error)) (font.Face, error) {
 	sign := faceSign{
 		filename: fileName,
-		size:     size,
+		size:     size*globalScale,
 	}
 	if face, ok := faceCache[sign]; ok {
 		return face, nil
