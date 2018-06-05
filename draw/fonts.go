@@ -19,7 +19,7 @@ func fontLoader(filename string) ([]byte, error) {
 	return static.Load("fonts", filename)
 }
 
-func init() {
+func InitFonts() {
 	Fonts = make(map[string]font.Face)
 
 	face, err := graph.GetFace("phantom.ttf", 20, fontLoader)

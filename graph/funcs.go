@@ -7,6 +7,10 @@ import (
 var winH, winW float64
 var globalScale float64
 
+func init() {
+	globalScale = 1
+}
+
 func SetScreenSize(W, H int) {
 	winW = float64(W)
 	winH = float64(H)

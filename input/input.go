@@ -32,6 +32,9 @@ var conf []Impl
 
 func init() {
 	inputState = make(map[string]float64)
+
+	//disable example saving
+	savedDef = true
 }
 
 type Impl struct {
@@ -133,11 +136,6 @@ func Update() {
 }
 
 var savedDef bool
-
-func init() {
-	//disable example saving
-	savedDef = true
-}
 
 func LoadConf(fileName string) {
 	mu.Lock()
