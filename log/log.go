@@ -48,7 +48,6 @@ func Log(lvl int, args ...interface{}) {
 	log(lvl, entry, args)
 }
 
-//TODO: use this in execs
 func SetLogFields(keys map[string]string) {
 	stateFields = make(logrus.Fields, len(keys))
 	for k, v := range keys {
@@ -80,6 +79,7 @@ func IsLogDebug() bool {
 	return logger.Level == logrus.DebugLevel
 }
 
+//TODO: check somethere and set dynamically
 func SetLogLevel(lvl int) {
 	if logger == nil {
 		return
