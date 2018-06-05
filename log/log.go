@@ -48,6 +48,7 @@ func Log(lvl int, args ...interface{}) {
 	log(lvl, entry, args)
 }
 
+//TODO: use this in execs
 func SetLogFields(keys map[string]string) {
 	stateFields = make(logrus.Fields, len(keys))
 	for k, v := range keys {

@@ -80,7 +80,7 @@ func (c *Camera) Recalc() {
 	G.Translate(-c.Pos.X, -c.Pos.Y)
 	//Rotate and scale
 	G.Rotate(-c.AngleDeg * Deg2Rad)
-	G.Scale(c.Scale, -c.Scale)
+	G.Scale(c.Scale*globalScale, -c.Scale*globalScale)
 	//Translate to screen center
 	G.Translate(c.Center.X, c.Center.Y)
 	c.g = G

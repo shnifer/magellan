@@ -5,10 +5,37 @@ import (
 )
 
 var winH, winW float64
+var globalScale float64
 
 func SetScreenSize(W, H int) {
 	winW = float64(W)
 	winH = float64(H)
+
+	globalScale = calcGlobalScale(H)
+}
+
+func calcGlobalScale(H int) float64{
+	bounds:=[]float64{0.75, 0.8, 0.9, 1.0, 1.1, 1.2, 1.25, 1.333333, 1.4, 1.5, 1.6, 1.666666,
+						1.75,1.8,2.0,2.25,2.5,2.75,3.0,4.0,5.0}
+	res:=float64(H)/1000
+	l:=len(bounds)
+	if res<=bounds[0]{
+		return bounds[0] 
+	}
+	if res>=bounds[l-1] {
+		return bounds[l-1]
+	}
+	for i,v:=range bounds{
+		if  i==0 || res>v {
+			continue
+		}
+		if res/bounds[i-1]<v/res {
+			return bounds[i-1]
+		} else {
+			return v
+		}
+	}
+	return bounds[l-1]
 }
 
 func ScrP(x, y float64) v2.V2 {
