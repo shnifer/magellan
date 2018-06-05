@@ -22,7 +22,7 @@ type Frame9HUD struct {
 func NewFrame9(sprites [9]*Sprite, w, h float64, layer int) (res *Frame9HUD) {
 	res = &Frame9HUD{
 		sprite: sprites,
-		scale:  1,
+		scale:  globalScale,
 		w:      w,
 		h:      h,
 		layer:  layer,

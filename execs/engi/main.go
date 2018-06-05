@@ -8,7 +8,6 @@ import (
 	"github.com/Shnifer/magellan/input"
 	"github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"time"
 	"image/color"
 	"github.com/Shnifer/magellan/v2"
