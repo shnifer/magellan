@@ -32,6 +32,7 @@ type Storage struct {
 }
 
 func New(nodeName string, diskOpts diskv.Options) *Storage {
+	LogFunc("storage.New")
 	disk := newDisk(diskOpts)
 	_, keySub := disk.subscribe()
 
@@ -48,6 +49,8 @@ func New(nodeName string, diskOpts diskv.Options) *Storage {
 }
 
 func (s *Storage) Add(area, key string, val string) error {
+	LogFunc("storage.Add area: " + area + " key: " + key + " val: " + val)
+
 	s.Lock()
 	defer s.Unlock()
 
@@ -62,6 +65,8 @@ func (s *Storage) Add(area, key string, val string) error {
 }
 
 func (s *Storage) Remove(objectKey ObjectKey) error {
+	LogFunc("storage.Remove fullKey:" + objectKey.FullKey())
+
 	s.Lock()
 	defer s.Unlock()
 
@@ -75,10 +80,13 @@ func (s *Storage) Remove(objectKey ObjectKey) error {
 }
 
 func (s *Storage) NextID() int {
+	LogFunc("storage.NextID")
 	return s.disk.nextID()
 }
 
 func (s *Storage) SubscribeAndData(area string) (data map[ObjectKey]string, subscribe chan Event) {
+	LogFunc("storage.SubscribeAndData area: " + area)
+
 	s.Lock()
 	defer s.Unlock()
 
@@ -106,6 +114,8 @@ func (s *Storage) SubscribeAndData(area string) (data map[ObjectKey]string, subs
 }
 
 func (s *Storage) Unsubscribe(subscribe chan Event) {
+	LogFunc("storage.Unsubscribe")
+
 	s.Lock()
 	defer s.Unlock()
 
@@ -122,6 +132,7 @@ func subscribeLoop(s *Storage) {
 }
 
 func (s *Storage) procNewKey(newKey string) {
+	LogFunc("storage.procNewKey: " + newKey)
 
 	objKey, err := ReadKey(newKey)
 	if err != nil {

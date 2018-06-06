@@ -18,7 +18,7 @@ type PilotData struct {
 	ThrustVector   v2.V2
 	HeatProduction float64
 
-	//do not reload same Msg, cz of extrapolate
+	//do not reload same Msg, cz of ship.Pos extrapolate and SessionTime+=dt
 	MsgID int
 }
 

@@ -160,6 +160,7 @@ func checkWantedState(c *Client, pingResp PingResp) {
 	//state changed
 	wanted := pingResp.Room.Wanted
 	if wanted != c.wantState {
+		Log(LVL_DEBUG, "wanted != c.wantState:", wanted, "!=", c.wantState)
 		c.wantState = wanted
 		c.isMyPartActual = false
 		//aware client about new state
@@ -170,6 +171,7 @@ func checkWantedState(c *Client, pingResp PingResp) {
 
 	//run GetStateData goroutine if needed
 	if c.curState != c.wantState && !c.recvGoroutineStarted && pingResp.Room.RdyServData {
+		Log(LVL_DEBUG, "started go getStateData(c)")
 		c.recvGoroutineStarted = true
 		go getStateData(c)
 	}
@@ -177,7 +179,7 @@ func checkWantedState(c *Client, pingResp PingResp) {
 
 //runned in goroutine
 func getStateData(c *Client) {
-	defer LogFunc("network.getStateDate")()
+	defer LogFunc("network.getStateData")()
 
 	resp, err := c.doReq(GET, statePattern, nil, true)
 

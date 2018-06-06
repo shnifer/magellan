@@ -11,12 +11,15 @@ import (
 var logger *logrus.Logger
 
 const (
-	DefaultLevel = logrus.InfoLevel
-	indexName    = "logstash"
+	LoggerLevel = logrus.InfoLevel
+	ELKLevel    = logrus.InfoLevel
+	indexName   = "logstash"
 )
 
 func Start(timeout, minRetry, maxRetry time.Duration, logTCP string) {
 	l := logrus.New()
+	l.Level = LoggerLevel
+
 	httpClient := &http.Client{
 		Timeout: timeout,
 	}
@@ -36,7 +39,7 @@ func Start(timeout, minRetry, maxRetry time.Duration, logTCP string) {
 		return
 	}
 
-	hook, err := elogrus.NewElasticHook(client, "localhost", DefaultLevel, indexName)
+	hook, err := elogrus.NewElasticHook(client, "localhost", ELKLevel, indexName)
 	if err != nil {
 		Log(LVL_ERROR, "elogrus.NewElasticHook", err)
 		return

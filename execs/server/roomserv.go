@@ -21,6 +21,7 @@ type roomServer struct {
 	stateDataMu sync.RWMutex
 	stateData   map[string]StateData
 
+	//map[roomName]subscribe
 	subsMu     sync.RWMutex
 	subscribes map[string]chan storage.Event
 
@@ -53,6 +54,7 @@ func daemonUpdateSubscribes(rs *roomServer, server *network.Server, updatePeriod
 }
 
 func doUpdateSubscribes(rs *roomServer, server *network.Server) {
+	LogFunc("doUpdateSubscribes")
 	rs.subsMu.RLock()
 	defer rs.subsMu.RUnlock()
 
@@ -60,8 +62,14 @@ func doUpdateSubscribes(rs *roomServer, server *network.Server) {
 		if subscribe == nil {
 			continue
 		}
-		for event := range subscribe {
-			server.AddCommand(roomName, EventToCommand(event))
+	innerloop:
+		for {
+			select {
+			case event := <-subscribe:
+				server.AddCommand(roomName, EventToCommand(event))
+			default:
+				break innerloop
+			}
 		}
 	}
 }
@@ -108,6 +116,7 @@ func (rd *roomServer) SetRoomCommon(room string, data []byte) error {
 func (rd *roomServer) RdyStateData(room string, stateStr string) {
 	defer LogFunc("RdyStateData")()
 
+	Log(LVL_DEBUG, "RdyStateData: try rd.stateMu.Lock()")
 	rd.stateMu.Lock()
 	prevState := rd.curState[room]
 	state := State{}.Decode(stateStr)
@@ -116,17 +125,21 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 
 	stateData, subscribe := rd.loadStateData(state)
 
+	Log(LVL_DEBUG, "RdyStateData: try rd.stateDataMu.Lock()")
 	rd.stateDataMu.Lock()
 	rd.stateData[room] = stateData
 	rd.stateDataMu.Unlock()
 
+	Log(LVL_DEBUG, "RdyStateData: try rd.subsMu.Lock()")
 	rd.subsMu.Lock()
+	Log(LVL_DEBUG, "RdyStateData: set rd.subsMu")
 	if rd.subscribes[room] != nil {
 		rd.storage.Unsubscribe(rd.subscribes[room])
 	}
 	rd.subscribes[room] = subscribe
 	rd.subsMu.Unlock()
 
+	Log(LVL_DEBUG, "RdyStateData: try rd.commonMu.RLock()")
 	rd.commonMu.RLock()
 	commonData, ok := rd.commonData[room]
 	rd.commonMu.RUnlock()
@@ -140,6 +153,7 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 	}
 	genData := generateCommonData(commonData, stateData, state, prevState)
 
+	Log(LVL_DEBUG, "RdyStateData: try rd.commonMu.Lock()")
 	rd.commonMu.Lock()
 	rd.commonData[room] = genData
 	rd.commonMu.Unlock()

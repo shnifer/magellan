@@ -1,13 +1,13 @@
 package draw
 
 import (
+	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph/flow"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
-	."github.com/Shnifer/magellan/log"
 	"math"
 	"strconv"
 	"strings"
-	"github.com/Shnifer/magellan/commons"
 )
 
 const (
@@ -24,7 +24,7 @@ func sigFuncStrDecoder(data string) (fn string, params []float64) {
 		f, err := strconv.ParseFloat(a[i+1], 64)
 		if err != nil {
 			f = 0
-			Log(LVL_ERROR,"can't parse ", data, "value", a[i+1])
+			Log(LVL_ERROR, "can't parse ", data, "value", a[i+1])
 		}
 		params[i] = f
 	}
@@ -73,7 +73,7 @@ func SignatureVelSpawn(sig commons.Signature) (VelocityF func(pos v2.V2) v2.V2, 
 		VelocityF = func(v2.V2) v2.V2 { return devV.Mul(k) }
 		SpawnPos = flow.RandomOnSide(devV.Normed().Mul(-1), 0.2*devKPos)
 	default:
-		Log(LVL_PANIC,"unknown VelAndSpawnStr", sig.Type().VelAndSpawnStr)
+		Log(LVL_PANIC, "unknown VelAndSpawnStr", sig.Type().VelAndSpawnStr)
 	}
 	return VelocityF, SpawnPos
 }
@@ -108,7 +108,7 @@ func SignatureAttrF(sig commons.Signature, fstr string, koefName string) (res fl
 			return flow.LinearLifeTime(params[1], params[2])(p) * devK
 		}
 	default:
-		Log(LVL_PANIC,"unknown SignatureAttrF", fn)
+		Log(LVL_PANIC, "unknown SignatureAttrF", fn)
 	}
 
 	return res

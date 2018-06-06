@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	. "github.com/Shnifer/magellan/log"
@@ -8,12 +9,11 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
-	"github.com/Shnifer/magellan/commons"
 )
 
 type cosmoScene struct {
-	ship    *graph.Sprite
-	shipRB  *commons.RBFollower
+	ship         *graph.Sprite
+	shipRB       *commons.RBFollower
 	lastPilotMsg int
 
 	caption *graph.Text
@@ -53,7 +53,7 @@ func (s *cosmoScene) Init() {
 	s.objects = make(map[string]*CosmoPoint)
 	s.naviMarkerT = 0
 	s.scanner = newScanner(s.cam)
-	s.shipRB = commons.NewRBFollower(float64(DEFVAL.PingPeriod)/1000)
+	s.shipRB = commons.NewRBFollower(float64(DEFVAL.PingPeriod) / 1000)
 
 	for id, pd := range stateData.Galaxy.Points {
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
@@ -64,12 +64,12 @@ func (s *cosmoScene) Init() {
 func (s *cosmoScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
 	//PilotData Rigid Body emulation
-	if Data.PilotData.MsgID != s.lastPilotMsg{
+	if Data.PilotData.MsgID != s.lastPilotMsg {
 		s.shipRB.MoveTo(Data.PilotData.Ship)
 		s.lastPilotMsg = Data.PilotData.MsgID
 	}
 	s.shipRB.Update(dt)
-	ship:= s.shipRB.RB()
+	ship := s.shipRB.RB()
 	s.cam.Pos = ship.Pos
 	s.cam.Recalc()
 

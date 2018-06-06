@@ -45,12 +45,12 @@ func stateChanged(wanted string) {
 
 	state := State{}.Decode(wanted)
 
-	logKeys:=make(map[string]string,5)
-	logKeys["Room"]=DEFVAL.Room
-	logKeys["Role"]=DEFVAL.Role
-	logKeys["Galaxy"]=state.GalaxyID
-	logKeys["Ship"]=state.ShipID
-	logKeys["State"]=state.StateID
+	logKeys := make(map[string]string, 5)
+	logKeys["Room"] = DEFVAL.Room
+	logKeys["Role"] = DEFVAL.Role
+	logKeys["Galaxy"] = state.GalaxyID
+	logKeys["Ship"] = state.ShipID
+	logKeys["State"] = state.StateID
 
 	SetLogFields(logKeys)
 

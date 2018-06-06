@@ -150,7 +150,7 @@ func requestStateData(srv *Server, roomName string, newState string) {
 
 func stateHandler(srv *Server) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
-		defer LogFunc("network.stateHandler")()
+		defer LogFunc("network.stateHandler f")()
 
 		roomName, _ := roomRole(r)
 		srv.mu.RLock()

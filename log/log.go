@@ -92,7 +92,6 @@ func LogFunc(name string) func() {
 	if logger == nil {
 		return func() {}
 	}
-
 	if logger.Level != logrus.DebugLevel {
 		return func() {}
 	}

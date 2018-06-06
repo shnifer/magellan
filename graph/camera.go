@@ -108,7 +108,7 @@ func (c *Camera) CircleInSpace(center v2.V2, radius float64) bool {
 		return true
 	}
 	delta := c.Apply(center).Sub(c.Center)
-	scrRadius := radius * c.Scale *globalScale
+	scrRadius := radius * c.Scale * globalScale
 	maxX := c.ClipW/2 + scrRadius
 	maxY := c.ClipH/2 + scrRadius
 

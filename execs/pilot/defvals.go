@@ -18,9 +18,8 @@ type tDefVals struct {
 	Room       string
 	Role       string
 
-
-	FullScreen bool
-	WinW, WinH int
+	FullScreen     bool
+	WinW, WinH     int
 	HalfResolution bool
 
 	DoProf bool

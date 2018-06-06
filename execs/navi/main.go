@@ -7,10 +7,10 @@ import (
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/input"
 	"github.com/Shnifer/magellan/log"
-	"github.com/hajimehoshi/ebiten"
-	"time"
-	"image/color"
 	"github.com/Shnifer/magellan/v2"
+	"github.com/hajimehoshi/ebiten"
+	"image/color"
+	"time"
 )
 
 const roleName = "navi"
@@ -25,7 +25,7 @@ var Data commons.TData
 var dt float64
 
 var fpsText *graph.Text
-var showFps  <-chan time.Time
+var showFps <-chan time.Time
 
 func mainLoop(window *ebiten.Image) error {
 	input.Update()
@@ -38,11 +38,11 @@ func mainLoop(window *ebiten.Image) error {
 	case <-showFps:
 		fps := ebiten.CurrentFPS()
 		msg := fmt.Sprintf("FPS: %.0f\n", fps)
-		fpsText=graph.NewText(msg,draw.Fonts[draw.Face_list],color.White)
-		fpsText.SetPosPivot(graph.ScrP(0.1,0.1),v2.ZV)
+		fpsText = graph.NewText(msg, draw.Fonts[draw.Face_list], color.White)
+		fpsText.SetPosPivot(graph.ScrP(0.1, 0.1), v2.ZV)
 	default:
 	}
-	if fpsText!=nil {
+	if fpsText != nil {
 		fpsText.Draw(window)
 	}
 
@@ -87,7 +87,7 @@ func main() {
 	Client.Start()
 	ebiten.SetRunnableInBackground(true)
 	last = time.Now()
-	showFps=time.Tick(time.Second)
+	showFps = time.Tick(time.Second)
 	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "NAVIGATOR"); err != nil {
 		log.Log(log.LVL_FATAL, err)
 	}
