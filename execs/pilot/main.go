@@ -30,6 +30,7 @@ var showFps  <-chan time.Time
 func mainLoop(window *ebiten.Image) error {
 	input.Update()
 
+	//Pilot data must not be overwriten by other clients each tick, cz of Ship.Pos.Extrapolate
 	if Data.CommonData.PilotData != nil {
 		Data.CommonData.PilotData.MsgID++
 	}

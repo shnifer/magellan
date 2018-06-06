@@ -37,7 +37,7 @@ func mainLoop(window *ebiten.Image) error {
 	select {
 	case <-showFps:
 		fps := ebiten.CurrentFPS()
-		msg := fmt.Sprintf("FPS: %.0f\nALT-F4 to close\nWASD to control\nQ-E scale\nSPACE - stop\nENTER - reset position", fps)
+		msg := fmt.Sprintf("FPS: %.0f\n", fps)
 		fpsText=graph.NewText(msg,draw.Fonts[draw.Face_list],color.White)
 		fpsText.SetPosPivot(graph.ScrP(0.1,0.1),v2.ZV)
 	default:

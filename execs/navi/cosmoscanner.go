@@ -66,9 +66,9 @@ func (s *scanner) clicked(obj *CosmoPoint) {
 	s.obj = obj
 }
 
-func (s *scanner) update(dt float64) {
-	ship := Data.PilotData.Ship.Pos
+func (s *scanner) update(ship v2.V2, dt float64) {
 	s.scanRange.SetPos(ship)
+	s.maxRange2 = Data.SP.Scan_range * Data.SP.Scan_range
 
 	if s.obj == nil {
 		return
@@ -79,8 +79,6 @@ func (s *scanner) update(dt float64) {
 	} else {
 		s.totalT = 0
 	}
-
-	s.maxRange2 = Data.SP.Scan_range * Data.SP.Scan_range
 
 	v := s.obj.Pos.Sub(ship)
 	dist := v.Len() + 0.1

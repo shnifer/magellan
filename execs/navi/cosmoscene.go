@@ -8,10 +8,14 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
+	"github.com/Shnifer/magellan/commons"
 )
 
 type cosmoScene struct {
 	ship    *graph.Sprite
+	shipRB  *commons.RBFollower
+	lastPilotMsg int
+
 	caption *graph.Text
 	cam     *graph.Camera
 
@@ -49,6 +53,7 @@ func (s *cosmoScene) Init() {
 	s.objects = make(map[string]*CosmoPoint)
 	s.naviMarkerT = 0
 	s.scanner = newScanner(s.cam)
+	s.shipRB = commons.NewRBFollower(float64(DEFVAL.PingPeriod)/1000)
 
 	for id, pd := range stateData.Galaxy.Points {
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
@@ -59,8 +64,13 @@ func (s *cosmoScene) Init() {
 func (s *cosmoScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
 	//PilotData Rigid Body emulation
-	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
-	s.cam.Pos = Data.PilotData.Ship.Pos
+	if Data.PilotData.MsgID != s.lastPilotMsg{
+		s.shipRB.MoveTo(Data.PilotData.Ship)
+		s.lastPilotMsg = Data.PilotData.MsgID
+	}
+	s.shipRB.Update(dt)
+	ship:= s.shipRB.RB()
+	s.cam.Pos = ship.Pos
 	s.cam.Recalc()
 
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
@@ -91,8 +101,8 @@ func (s *cosmoScene) Update(dt float64) {
 		s.cam.Scale /= 1 + dt
 	}
 
-	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
-	s.scanner.update(dt)
+	s.ship.SetPosAng(ship.Pos, ship.Ang)
+	s.scanner.update(ship.Pos, dt)
 }
 
 func (s *cosmoScene) Draw(image *ebiten.Image) {
@@ -106,8 +116,8 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Append(co)
 	}
 
-	Q.Add(s.caption, graph.Z_STAT_HUD)
-	Q.Add(s.ship, graph.Z_GAME_OBJECT)
+	//Q.Add(s.caption, graph.Z_STAT_HUD)
+	Q.Add(s.ship, graph.Z_HUD)
 
 	Q.Run(image)
 }
