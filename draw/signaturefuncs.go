@@ -1,12 +1,13 @@
-package commons
+package draw
 
 import (
 	"github.com/Shnifer/magellan/graph/flow"
 	"github.com/Shnifer/magellan/v2"
-	"log"
+	."github.com/Shnifer/magellan/log"
 	"math"
 	"strconv"
 	"strings"
+	"github.com/Shnifer/magellan/commons"
 )
 
 const (
@@ -23,14 +24,14 @@ func sigFuncStrDecoder(data string) (fn string, params []float64) {
 		f, err := strconv.ParseFloat(a[i+1], 64)
 		if err != nil {
 			f = 0
-			log.Println("can't parse ", data, "value", a[i+1])
+			Log(LVL_ERROR,"can't parse ", data, "value", a[i+1])
 		}
 		params[i] = f
 	}
 	return fn, params
 }
 
-func SignatureVelSpawn(sig Signature) (VelocityF func(pos v2.V2) v2.V2, SpawnPos func() (pos v2.V2)) {
+func SignatureVelSpawn(sig commons.Signature) (VelocityF func(pos v2.V2) v2.V2, SpawnPos func() (pos v2.V2)) {
 	if sig.Type().VelAndSpawnStr == "" {
 		return nil, nil
 	}
@@ -42,9 +43,9 @@ func SignatureVelSpawn(sig Signature) (VelocityF func(pos v2.V2) v2.V2, SpawnPos
 		k = 1
 	}
 
-	devV := sig.DevV(SIG_VELSPAWN)
-	devKVel := sig.DevK(SIG_VELSPAWN, velDev) * k
-	devKPos := sig.DevK(SIG_VELSPAWN, spawnPosDev) * k
+	devV := sig.DevV(commons.SIG_VELSPAWN)
+	devKVel := sig.DevK(commons.SIG_VELSPAWN, velDev) * k
+	devKPos := sig.DevK(commons.SIG_VELSPAWN, spawnPosDev) * k
 
 	switch fn {
 	case "const":
@@ -72,12 +73,12 @@ func SignatureVelSpawn(sig Signature) (VelocityF func(pos v2.V2) v2.V2, SpawnPos
 		VelocityF = func(v2.V2) v2.V2 { return devV.Mul(k) }
 		SpawnPos = flow.RandomOnSide(devV.Normed().Mul(-1), 0.2*devKPos)
 	default:
-		log.Panicln("unknown VelAndSpawnStr", sig.Type().VelAndSpawnStr)
+		Log(LVL_PANIC,"unknown VelAndSpawnStr", sig.Type().VelAndSpawnStr)
 	}
 	return VelocityF, SpawnPos
 }
 
-func SignatureAttrF(sig Signature, fstr string, koefName string) (res flow.AttrF) {
+func SignatureAttrF(sig commons.Signature, fstr string, koefName string) (res flow.AttrF) {
 	if fstr == "" {
 		return nil
 	}
@@ -107,7 +108,7 @@ func SignatureAttrF(sig Signature, fstr string, koefName string) (res flow.AttrF
 			return flow.LinearLifeTime(params[1], params[2])(p) * devK
 		}
 	default:
-		log.Panicln("unknown SignatureAttrF", fn)
+		Log(LVL_PANIC,"unknown SignatureAttrF", fn)
 	}
 
 	return res
