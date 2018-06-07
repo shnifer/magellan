@@ -43,11 +43,11 @@ type exchanger struct {
 func RunExchanger(storage *Storage, listenAddr string, addrs []string, periodMs int) {
 
 	if len(addrs) == 0 {
-		Log(LVL_ERROR,"NewExchanger: addrs must have at least one address")
+		Log(LVL_ERROR, "NewExchanger: addrs must have at least one address")
 		return
 	}
 	if periodMs == 0 {
-		Log(LVL_ERROR,"NewExchanger: zero periodMs")
+		Log(LVL_ERROR, "NewExchanger: zero periodMs")
 		return
 	}
 

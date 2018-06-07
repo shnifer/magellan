@@ -21,6 +21,8 @@ type StateData struct {
 }
 
 type BSP struct {
+	ShipName string //human name
+
 	//0...100
 	Thrust,
 	Thrust_rev,

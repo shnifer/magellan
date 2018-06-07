@@ -11,5 +11,11 @@
     "LogLogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 10000,
-    "LogIP": "http://magellan2018.aerem.in:9200"
+    "LogIP": "http://magellan2018.aerem.in:9200",
+    "GameExchPort": "8001",
+    "GameExchAddrs": ["192.168.0.1:8001"],
+    "GameExchPeriodMs": 0,
+    "LogExchPort": "8002",
+    "LogExchAddrs": ["192.168.0.1:8002"],
+    "LogExchPeriodMs": 0
 }

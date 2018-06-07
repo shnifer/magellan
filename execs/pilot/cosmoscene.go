@@ -109,6 +109,10 @@ func (s *cosmoScene) addBuilding(b Building) {
 func (s *cosmoScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
 
+	for _,other:=range Data.ServerData.OtherShips{
+		Log(LVL_INFO,"other ship",other.Id,"at", other.Ship.Pos)
+	}
+
 	Data.PilotData.SessionTime += dt
 	sessionTime := Data.PilotData.SessionTime
 	Data.Galaxy.Update(sessionTime)

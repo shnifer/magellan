@@ -1,9 +1,9 @@
 package log
 
 import (
+	"fmt"
 	"github.com/sirupsen/logrus"
 	native "log"
-	"fmt"
 	"sync"
 )
 
@@ -23,6 +23,7 @@ const (
 type iStorage interface {
 	Add(area, key string, val string) error
 }
+
 var logStorage iStorage
 
 var sfmu sync.RWMutex
@@ -63,13 +64,14 @@ func Log(lvl int, args ...interface{}) {
 }
 
 func SetLogFields(keys map[string]string) {
-	sfmu.Lock()
-	defer sfmu.Unlock()
+	defer LogFunc("SetLogFields")()
 
+	sfmu.Lock()
 	stateFields = make(logrus.Fields, len(keys))
 	for k, v := range keys {
 		stateFields[k] = v
 	}
+	sfmu.Unlock()
 
 	if logger == nil {
 		return
@@ -78,7 +80,7 @@ func SetLogFields(keys map[string]string) {
 }
 
 func LogGame(key string, args ...interface{}) {
-	if logStorage!=nil{
+	if logStorage != nil {
 		go saveToStorage(key, args)
 	}
 
@@ -118,7 +120,7 @@ func LogFunc(name string) func() {
 	}
 }
 
-func SetStorage (storage iStorage) {
+func SetStorage(storage iStorage) {
 	logStorage = storage
 }
 

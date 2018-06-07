@@ -24,7 +24,7 @@ func Start(timeout, minRetry, maxRetry time.Duration, logTCP string) {
 		Timeout: timeout,
 	}
 
-	if logTCP!="" {
+	if logTCP != "" {
 		backoff := elastic.NewExponentialBackoff(minRetry, maxRetry)
 		retrier := elastic.NewBackoffRetrier(backoff)
 

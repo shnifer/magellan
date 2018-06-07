@@ -20,6 +20,7 @@ type tDefVals struct {
 	RoomUpdatePeriod      int
 	SubscribeUpdatePeriod int
 	LastSeenTimeout       int
+	OtherShipsUpdatePeriod int
 
 	DoProf bool
 

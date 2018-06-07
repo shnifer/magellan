@@ -2,14 +2,15 @@ package commons
 
 import (
 	"encoding/json"
-	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
+	."github.com/Shnifer/magellan/log"
 )
 
 type CommonData struct {
 	PilotData *PilotData
 	NaviData  *NaviData
 	EngiData  *EngiData
+	ServerData *ServerData
 }
 
 type PilotData struct {
@@ -44,6 +45,18 @@ type EngiData struct {
 	DmgCumulated  [8]float64
 }
 
+type OtherShip struct{
+	Id string
+	Name string
+	Ship RBData
+}
+
+type ServerData struct {
+	OtherShips []OtherShip
+
+	MsgID int
+}
+
 func (cd CommonData) Encode() []byte {
 	buf, err := json.Marshal(cd)
 	if err != nil {
@@ -70,6 +83,8 @@ func (cd CommonData) Part(roleName string) CommonData {
 		res.NaviData = cd.NaviData
 	case ROLE_Engi:
 		res.EngiData = cd.EngiData
+	case ROLE_Server:
+		res.ServerData = cd.ServerData
 	default:
 		panic("CommonData.Part: Unknown role " + roleName)
 	}
@@ -88,6 +103,11 @@ func (cd CommonData) FillNotNil(dest *CommonData) {
 	if cd.EngiData != nil {
 		dest.EngiData = cd.EngiData
 	}
+	if cd.ServerData != nil {
+		if dest.ServerData == nil || dest.ServerData .MsgID != cd.ServerData.MsgID {
+			dest.ServerData = cd.ServerData
+		}
+	}
 }
 
 func (cd CommonData) WithoutRole(roleName string) CommonData {
@@ -98,6 +118,8 @@ func (cd CommonData) WithoutRole(roleName string) CommonData {
 		cd.NaviData = nil
 	case ROLE_Engi:
 		cd.EngiData = nil
+	case ROLE_Server:
+		cd.ServerData = nil
 	default:
 		panic("CommonData.WithoutRole: Unknown role " + roleName)
 	}
@@ -109,6 +131,7 @@ func (CommonData) Empty() CommonData {
 		PilotData: &PilotData{},
 		NaviData:  &NaviData{},
 		EngiData:  &EngiData{BSPDegrade: &BSP{}},
+		ServerData: &ServerData{OtherShips:[]OtherShip{}},
 	}
 }
 
@@ -125,6 +148,10 @@ func (cd CommonData) Copy() (res CommonData) {
 	if cd.EngiData != nil {
 		val := *cd.EngiData
 		res.EngiData = &val
+	}
+	if cd.ServerData != nil {
+		val := *cd.ServerData
+		res.ServerData = &val
 	}
 	return res
 }

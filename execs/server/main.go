@@ -14,7 +14,7 @@ import (
 var server *network.Server
 
 const (
-	storagePath = "xstore"
+	storagePath  = "xstore"
 	localLogPath = "gamelog"
 )
 
@@ -35,7 +35,7 @@ func main() {
 	}
 	logDisk := storage.New(DEFVAL.NodeName, logDiskOpts)
 
-	if DEFVAL.LogExchPort!="" && DEFVAL.LogExchPeriodMs>0{
+	if DEFVAL.LogExchPort != "" && DEFVAL.LogExchPeriodMs > 0 {
 		storage.RunExchanger(logDisk, DEFVAL.LogExchPort, DEFVAL.LogExchAddrs, DEFVAL.LogExchPeriodMs)
 	}
 	log.SetStorage(logDisk)
@@ -45,7 +45,7 @@ func main() {
 		CacheSizeMax: 1024 * 1024,
 	}
 	disk := storage.New(DEFVAL.NodeName, diskOpts)
-	if DEFVAL.GameExchPort!="" && DEFVAL.GameExchPeriodMs>0{
+	if DEFVAL.GameExchPort != "" && DEFVAL.GameExchPeriodMs > 0 {
 		storage.RunExchanger(disk, DEFVAL.GameExchPort, DEFVAL.GameExchAddrs, DEFVAL.GameExchPeriodMs)
 	}
 
@@ -68,6 +68,7 @@ func main() {
 	defer server.Close()
 
 	go daemonUpdateSubscribes(roomServ, server, DEFVAL.SubscribeUpdatePeriod)
+	go daemonUpdateOtherShips(roomServ, DEFVAL.OtherShipsUpdatePeriod)
 
 	//waiting for enter to stop server
 	c := make(chan os.Signal)
