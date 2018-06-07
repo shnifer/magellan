@@ -85,7 +85,7 @@ func doUpdateOtherShips(rs *roomServer){
 				if i!=j {
 					otherShip = OtherShip{
 						Id: rs.curState[room].ShipID,
-						Name: rs.stateData[room].BSP.ShipName,
+//						Name: rs.stateData[room].BSP.ShipName, check here!
 						Ship: rs.commonData[otherRoom].PilotData.Ship,
 					}
 					CD.ServerData.OtherShips =append(CD.ServerData.OtherShips, otherShip)
