@@ -32,8 +32,8 @@ type exchanger struct {
 	addrN int
 	addrs []string
 
-	sync.RWMutex
 	//map[addr] []fullkeys
+	sync.RWMutex
 	needKeys map[string]neededKeys
 
 	client *http.Client
@@ -43,10 +43,12 @@ type exchanger struct {
 func RunExchanger(storage *Storage, listenAddr string, addrs []string, periodMs int) {
 
 	if len(addrs) == 0 {
-		panic("NewExchanger: addrs must have at least one address")
+		Log(LVL_ERROR,"NewExchanger: addrs must have at least one address")
+		return
 	}
 	if periodMs == 0 {
-		panic("NewExchanger: zero periodMs")
+		Log(LVL_ERROR,"NewExchanger: zero periodMs")
+		return
 	}
 
 	period := time.Duration(periodMs) * time.Millisecond

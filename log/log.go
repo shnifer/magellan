@@ -3,6 +3,8 @@ package log
 import (
 	"github.com/sirupsen/logrus"
 	native "log"
+	"fmt"
+	"sync"
 )
 
 const (
@@ -14,6 +16,16 @@ const (
 	LVL_ERROR = int(logrus.ErrorLevel)
 )
 
+const (
+	GameEventKey = "GameEvent"
+)
+
+type iStorage interface {
+	Add(area, key string, val string) error
+}
+var logStorage iStorage
+
+var sfmu sync.RWMutex
 var stateFields logrus.Fields
 
 func init() {
@@ -44,11 +56,16 @@ func Log(lvl int, args ...interface{}) {
 	}
 
 	entry := logrus.NewEntry(logger)
+	sfmu.RLock()
 	entry.WithFields(stateFields)
+	sfmu.RUnlock()
 	log(lvl, entry, args)
 }
 
 func SetLogFields(keys map[string]string) {
+	sfmu.Lock()
+	defer sfmu.Unlock()
+
 	stateFields = make(logrus.Fields, len(keys))
 	for k, v := range keys {
 		stateFields[k] = v
@@ -61,22 +78,21 @@ func SetLogFields(keys map[string]string) {
 }
 
 func LogGame(key string, args ...interface{}) {
+	if logStorage!=nil{
+		go saveToStorage(key, args)
+	}
+
 	if logger == nil {
 		native.Println("key = ", key, args)
 		return
+	} else {
+		entry := logrus.NewEntry(logger)
+		sfmu.RLock()
+		entry.WithFields(stateFields)
+		sfmu.RUnlock()
+		entry.WithField(GameEventKey, key)
+		entry.Info(args)
 	}
-
-	entry := logrus.NewEntry(logger)
-	entry.WithField("Key", key)
-	entry.Info(args)
-}
-
-func IsLogDebug() bool {
-	if logger == nil {
-		return false
-	}
-
-	return logger.Level == logrus.DebugLevel
 }
 
 //TODO: check somethere and set dynamically
@@ -100,4 +116,17 @@ func LogFunc(name string) func() {
 	return func() {
 		Log(LVL_DEBUG, "Func: ", name, "ended")
 	}
+}
+
+func SetStorage (storage iStorage) {
+	logStorage = storage
+}
+
+func saveToStorage(eventKey string, args ...interface{}) {
+	area := eventKey
+	key := fmt.Sprint(args)
+	sfmu.RLock()
+	val := fmt.Sprint(stateFields)
+	sfmu.RUnlock()
+	logStorage.Add(area, key, val)
 }

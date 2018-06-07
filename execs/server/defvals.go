@@ -31,6 +31,13 @@ type tDefVals struct {
 	LogRetryMinMs   int
 	LogRetryMaxMs   int
 	LogIP           string
+	//storage exchanger
+	GameExchPort     string
+	GameExchAddrs    []string
+	GameExchPeriodMs int
+	LogExchPort      string
+	LogExchAddrs     []string
+	LogExchPeriodMs  int
 }
 
 var DEFVAL tDefVals

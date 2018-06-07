@@ -15,6 +15,7 @@ var server *network.Server
 
 const (
 	storagePath = "xstore"
+	localLogPath = "gamelog"
 )
 
 func main() {
@@ -28,11 +29,25 @@ func main() {
 		defer commons.StopProfile(roleName)
 	}
 
+	logDiskOpts := diskv.Options{
+		BasePath:     localLogPath,
+		CacheSizeMax: 1024,
+	}
+	logDisk := storage.New(DEFVAL.NodeName, logDiskOpts)
+
+	if DEFVAL.LogExchPort!="" && DEFVAL.LogExchPeriodMs>0{
+		storage.RunExchanger(logDisk, DEFVAL.LogExchPort, DEFVAL.LogExchAddrs, DEFVAL.LogExchPeriodMs)
+	}
+	log.SetStorage(logDisk)
+
 	diskOpts := diskv.Options{
 		BasePath:     storagePath,
 		CacheSizeMax: 1024 * 1024,
 	}
 	disk := storage.New(DEFVAL.NodeName, diskOpts)
+	if DEFVAL.GameExchPort!="" && DEFVAL.GameExchPeriodMs>0{
+		storage.RunExchanger(disk, DEFVAL.GameExchPort, DEFVAL.GameExchAddrs, DEFVAL.GameExchPeriodMs)
+	}
 
 	roomServ := newRoomServer(disk)
 
