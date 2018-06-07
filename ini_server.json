@@ -3,6 +3,7 @@
     "StartWarpSpeed":10,
     "RoomUpdatePeriod": 200,
     "LastSeenTimeout": 1000,
+    "OtherShipsUpdatePeriod": 400,
     "NeededRoles": [
         "Pilot"
     ],

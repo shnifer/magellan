@@ -1,5 +1,6 @@
 {
   "ship": {"FileName": "HUD_Ship.png"},
+  "othership": {"FileName": "HUD_Ship.png"},
   "star": {"FileName": "sun.png", "Smooth":true},
   "sun": {"FileName": "sun.png", "Smooth":true},
   "earth": {"FileName": "earth.png", "Smooth":true},

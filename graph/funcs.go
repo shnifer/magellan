@@ -78,3 +78,8 @@ func NormAngRange(start, end float64) (float64, float64) {
 	}
 	return start, end
 }
+
+//global scale factor
+func GS() float64 {
+	return globalScale
+}

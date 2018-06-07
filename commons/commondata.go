@@ -2,14 +2,14 @@ package commons
 
 import (
 	"encoding/json"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
-	."github.com/Shnifer/magellan/log"
 )
 
 type CommonData struct {
-	PilotData *PilotData
-	NaviData  *NaviData
-	EngiData  *EngiData
+	PilotData  *PilotData
+	NaviData   *NaviData
+	EngiData   *EngiData
 	ServerData *ServerData
 }
 
@@ -45,14 +45,14 @@ type EngiData struct {
 	DmgCumulated  [8]float64
 }
 
-type OtherShip struct{
-	Id string
+type OtherShipData struct {
+	Id   string
 	Name string
 	Ship RBData
 }
 
 type ServerData struct {
-	OtherShips []OtherShip
+	OtherShips []OtherShipData
 
 	MsgID int
 }
@@ -104,7 +104,7 @@ func (cd CommonData) FillNotNil(dest *CommonData) {
 		dest.EngiData = cd.EngiData
 	}
 	if cd.ServerData != nil {
-		if dest.ServerData == nil || dest.ServerData .MsgID != cd.ServerData.MsgID {
+		if dest.ServerData == nil || dest.ServerData.MsgID != cd.ServerData.MsgID {
 			dest.ServerData = cd.ServerData
 		}
 	}
@@ -128,10 +128,10 @@ func (cd CommonData) WithoutRole(roleName string) CommonData {
 
 func (CommonData) Empty() CommonData {
 	return CommonData{
-		PilotData: &PilotData{},
-		NaviData:  &NaviData{},
-		EngiData:  &EngiData{BSPDegrade: &BSP{}},
-		ServerData: &ServerData{OtherShips:[]OtherShip{}},
+		PilotData:  &PilotData{},
+		NaviData:   &NaviData{},
+		EngiData:   &EngiData{BSPDegrade: &BSP{}},
+		ServerData: &ServerData{OtherShips: []OtherShipData{}},
 	}
 }
 

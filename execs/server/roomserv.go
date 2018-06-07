@@ -46,56 +46,6 @@ func newRoomServer(disk *storage.Storage) *roomServer {
 	return roomServ
 }
 
-func daemonUpdateOtherShips(rs *roomServer, updatePeriodMs int) {
-	for {
-		doUpdateOtherShips(rs)
-		time.Sleep(time.Duration(updatePeriodMs) * time.Millisecond)
-	}
-}
-
-func doUpdateOtherShips(rs *roomServer){
-	//map[galaxyName][]rooms
-	rs.stateMu.RLock()
-	defer rs.stateMu.RUnlock()
-
-	m:=make(map[string][]string,len(rs.curState))
-	for room,state:=range rs.curState{
-		if (state.StateID!=STATE_cosmo && state.StateID!=STATE_warp) || state.GalaxyID=="" {
-			continue
-		}
-		m[state.GalaxyID] = append(m[state.GalaxyID], room)
-	}
-
-	rs.stateDataMu.RLock()
-	defer rs.stateDataMu.RUnlock()
-
-	rs.commonMu.Lock()
-	defer rs.commonMu.Unlock()
-
-	var otherShip OtherShip
-	for _,rooms:=range m{
-		if len(rooms)<2 {
-			continue
-		}
-		for i,room:=range rooms {
-			CD:=rs.commonData[room]
-			CD.ServerData.MsgID++
-			CD.ServerData.OtherShips = CD.ServerData.OtherShips[:0]
-			for j,otherRoom := range rooms{
-				if i!=j {
-					otherShip = OtherShip{
-						Id: rs.curState[room].ShipID,
-//						Name: rs.stateData[room].BSP.ShipName, check here!
-						Ship: rs.commonData[otherRoom].PilotData.Ship,
-					}
-					CD.ServerData.OtherShips =append(CD.ServerData.OtherShips, otherShip)
-				}
-			}
-			rs.commonData[room] = CD
-		}
-	}
-}
-
 func daemonUpdateSubscribes(rs *roomServer, server *network.Server, updatePeriodMs int) {
 	for {
 		doUpdateSubscribes(rs, server)
@@ -128,11 +78,14 @@ func (rd *roomServer) GetRoomCommon(room string) ([]byte, error) {
 
 	rd.commonMu.RLock()
 	commonData, ok := rd.commonData[room]
+	commonData = commonData.Copy()
 	rd.commonMu.RUnlock()
 
 	if !ok {
+		rd.commonMu.Lock()
 		commonData = CommonData{}.Empty()
 		rd.commonData[room] = commonData
+		rd.commonMu.Unlock()
 	}
 
 	msg := commonData.Encode()
@@ -190,6 +143,7 @@ func (rd *roomServer) RdyStateData(room string, stateStr string) {
 	Log(LVL_DEBUG, "RdyStateData: try rd.commonMu.RLock()")
 	rd.commonMu.RLock()
 	commonData, ok := rd.commonData[room]
+	commonData = commonData.Copy()
 	rd.commonMu.RUnlock()
 
 	if !ok {
@@ -212,6 +166,7 @@ func (rd *roomServer) GetStateData(room string) []byte {
 
 	rd.stateDataMu.RLock()
 	stateData, ok := rd.stateData[room]
+	stateData = stateData.Copy()
 	rd.stateDataMu.RUnlock()
 
 	if !ok {

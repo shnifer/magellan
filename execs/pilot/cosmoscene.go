@@ -23,6 +23,9 @@ type cosmoScene struct {
 
 	objects map[string]*CosmoPoint
 
+	lastServerID int
+	otherShips   map[string]*OtherShip
+
 	//control
 	thrustLevel float64
 	maneurLevel float64
@@ -71,6 +74,7 @@ func newCosmoScene() *cosmoScene {
 		naviMarker:      marker,
 		hud:             hud,
 		objects:         make(map[string]*CosmoPoint),
+		otherShips:      make(map[string]*OtherShip),
 		showPredictor:   true,
 		predictorThrust: predictorThrust,
 		predictorZero:   predictorZero,
@@ -85,9 +89,11 @@ func (s *cosmoScene) Init() {
 	defer LogFunc("cosmoScene.Init")()
 
 	s.objects = make(map[string]*CosmoPoint)
+	s.otherShips = make(map[string]*OtherShip)
 	s.thrustLevel = 0
 	s.maneurLevel = 0
 	s.trailT = 0
+	s.lastServerID = 0
 	s.trail.Clear()
 
 	stateData := Data.GetStateData()
@@ -109,8 +115,34 @@ func (s *cosmoScene) addBuilding(b Building) {
 func (s *cosmoScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
 
-	for _,other:=range Data.ServerData.OtherShips{
-		Log(LVL_INFO,"other ship",other.Id,"at", other.Ship.Pos)
+	if Data.ServerData.MsgID != s.lastServerID {
+		s.lastServerID = Data.ServerData.MsgID
+
+		for _, otherData := range Data.ServerData.OtherShips {
+			otherShip, ok := s.otherShips[otherData.Id]
+			if !ok {
+				otherShip = NewOtherShip(s.cam.FixS(), otherData.Name, float64(DEFVAL.OtherShipElastic)/1000)
+				s.otherShips[otherData.Id] = otherShip
+			}
+			otherShip.SetRB(otherData.Ship)
+		}
+
+		for id := range s.otherShips {
+			found := false
+			for _, otherData := range Data.ServerData.OtherShips {
+				if otherData.Id == id {
+					found = true
+					break
+				}
+			}
+			if !found {
+				delete(s.otherShips, id)
+			}
+		}
+	}
+
+	for id := range s.otherShips {
+		s.otherShips[id].Update(dt)
 	}
 
 	Data.PilotData.SessionTime += dt
@@ -207,6 +239,10 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	Q.Add(s.ship, graph.Z_HUD)
 
 	//Q.Add(s.caption, graph.Z_STAT_HUD)
+
+	for _, os := range s.otherShips {
+		Q.Append(os)
+	}
 
 	if s.showPredictor {
 		Q.Append(s.predictorThrust)

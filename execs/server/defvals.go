@@ -17,9 +17,9 @@ type tDefVals struct {
 	NodeName    string
 
 	//in ms
-	RoomUpdatePeriod      int
-	SubscribeUpdatePeriod int
-	LastSeenTimeout       int
+	RoomUpdatePeriod       int
+	SubscribeUpdatePeriod  int
+	LastSeenTimeout        int
 	OtherShipsUpdatePeriod int
 
 	DoProf bool
@@ -53,6 +53,7 @@ func setDefDef() {
 		SolarStartLocationName: "magellan",
 		NodeName:               "storage01",
 		SubscribeUpdatePeriod:  250,
+		OtherShipsUpdatePeriod: 1000,
 		LogLogTimeoutMs:        1000,
 		LogRetryMinMs:          10,
 		LogRetryMaxMs:          60000,

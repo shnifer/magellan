@@ -113,3 +113,75 @@ func (rd *roomServer) isValidFlyShip(roomName string, shipID string) bool {
 func (rd *roomServer) isValidFlyGalaxy(galaxyID string) bool {
 	return static.Exist("DB", "galaxy_"+galaxyID+".json")
 }
+
+func daemonUpdateOtherShips(rs *roomServer, updatePeriodMs int) {
+	for {
+		doUpdateOtherShips(rs)
+		time.Sleep(time.Duration(updatePeriodMs) * time.Millisecond)
+	}
+}
+
+func doUpdateOtherShips(rs *roomServer) {
+	rs.stateMu.RLock()
+	defer rs.stateMu.RUnlock()
+
+	//map[galaxyName][]rooms
+	m := make(map[string][]string, len(rs.curState))
+	//map[room]galaxyName
+	r := make(map[string]string, len(rs.curState))
+	for room, state := range rs.curState {
+		if (state.StateID != STATE_cosmo && state.StateID != STATE_warp) || state.GalaxyID == "" {
+			continue
+		}
+		galaxy := state.GalaxyID
+		m[galaxy] = append(m[state.GalaxyID], room)
+		r[room] = galaxy
+	}
+
+	for galaxy, rooms := range m {
+		if len(rooms) < 2 {
+			delete(m, galaxy)
+		}
+	}
+
+	rs.stateDataMu.RLock()
+	defer rs.stateDataMu.RUnlock()
+
+	rs.commonMu.Lock()
+	defer rs.commonMu.Unlock()
+
+	var otherShip OtherShipData
+	for room, galaxy := range r {
+		CD := rs.commonData[room]
+		CD.ServerData.MsgID++
+		CD.ServerData.OtherShips = CD.ServerData.OtherShips[:0]
+		otherRooms, ok := m[galaxy]
+		if ok {
+			for _, otherRoom := range otherRooms {
+				if otherRoom != room {
+					sd, ok := rs.stateData[otherRoom]
+					if !ok {
+						continue
+					}
+					if sd.BSP == nil {
+						continue
+					}
+					ocd, ok := rs.commonData[otherRoom]
+					if !ok {
+						continue
+					}
+					if ocd.PilotData == nil {
+						continue
+					}
+					otherShip = OtherShipData{
+						Id:   rs.curState[otherRoom].ShipID,
+						Name: sd.BSP.ShipName,
+						Ship: ocd.PilotData.Ship,
+					}
+					CD.ServerData.OtherShips = append(CD.ServerData.OtherShips, otherShip)
+				}
+			}
+		}
+		rs.commonData[room] = CD
+	}
+}

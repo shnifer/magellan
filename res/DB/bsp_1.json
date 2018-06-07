@@ -1,4 +1,5 @@
 {
+    "ShipName": "falcon",
     "Thrust": 100,
     "Thrust_acc": 20,
     "Thrust_slow": 40,

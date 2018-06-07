@@ -3,16 +3,16 @@ package commons
 import "time"
 
 const (
-	ROLE_Pilot = "Pilot"
-	ROLE_Engi  = "Engi"
-	ROLE_Navi  = "Navi"
-	ROLE_Server  = "Server"
+	ROLE_Pilot  = "Pilot"
+	ROLE_Engi   = "Engi"
+	ROLE_Navi   = "Navi"
+	ROLE_Server = "Server"
 )
 
 const (
 	STATE_login = "login"
 	STATE_cosmo = "cosmo"
-	STATE_warp  = "star"
+	STATE_warp  = "warp"
 )
 
 const (

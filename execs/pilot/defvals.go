@@ -32,6 +32,9 @@ type tDefVals struct {
 	LogRetryMinMs   int
 	LogRetryMaxMs   int
 	LogIP           string
+
+	//inms
+	OtherShipElastic int
 }
 
 var DEFVAL tDefVals
@@ -48,6 +51,7 @@ func setDefDef() {
 		LogLogTimeoutMs:  1000,
 		LogRetryMinMs:    10,
 		LogRetryMaxMs:    60000,
+		OtherShipElastic: 400,
 	}
 }
 

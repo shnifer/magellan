@@ -173,7 +173,7 @@ func (BSP) CalcDegrade(base, degrade *BSP) (res *BSP) {
 	fc := t.NumField()
 
 	for i := 0; i < fc; i++ {
-		if vBase.Field(i).Type()==reflect.TypeOf("") {
+		if vBase.Field(i).Type() == reflect.TypeOf("") {
 			continue
 		}
 		x := vBase.Field(i).Float() * (1.0 - vDegrade.Field(i).Float())
