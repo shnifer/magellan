@@ -115,9 +115,11 @@ func (s *cosmoScene) addBuilding(b Building) {
 func (s *cosmoScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
 
+	//received new data about otherShips
 	if Data.ServerData.MsgID != s.lastServerID {
 		s.lastServerID = Data.ServerData.MsgID
 
+		//Create new otherShip and move all to new positions
 		for _, otherData := range Data.ServerData.OtherShips {
 			otherShip, ok := s.otherShips[otherData.Id]
 			if !ok {
@@ -127,6 +129,7 @@ func (s *cosmoScene) Update(dt float64) {
 			otherShip.SetRB(otherData.Ship)
 		}
 
+		//check for lost otherShips to delete
 		for id := range s.otherShips {
 			found := false
 			for _, otherData := range Data.ServerData.OtherShips {
@@ -141,6 +144,7 @@ func (s *cosmoScene) Update(dt float64) {
 		}
 	}
 
+	//update actual otherShips
 	for id := range s.otherShips {
 		s.otherShips[id].Update(dt)
 	}

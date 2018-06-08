@@ -23,6 +23,7 @@ type StateData struct {
 type BSP struct {
 	ShipName string //human name
 
+	Mass float64
 	//0...100
 	Thrust,
 	Thrust_rev,
@@ -30,9 +31,7 @@ type BSP struct {
 	Thrust_rev_acc,
 	Thrust_slow,
 	Thrust_rev_slow,
-	Thrust_heat_capacity,
-	Thrust_heat_prod,
-	Thrust_heat_sink float64
+	Thrust_heat_prod float64
 
 	Distort_level,
 	Warp_enter_consumption,
@@ -52,16 +51,11 @@ type BSP struct {
 	Maneur_heat_prod,
 	Maneur_heat_sink float64
 
-	Radar_range_min,
-	Radar_range_max,
-	Radar_angle_min,
-	Radar_angle_max,
-	Radar_angle_change,
-	Radar_range_change,
+	Radar_range,
+	Radar_angle,
 	Scan_range,
 	Scan_speed float64
 
-	Sonar_range_min,
 	Sonar_range_max,
 	Sonar_angle_min,
 	Sonar_angle_max,

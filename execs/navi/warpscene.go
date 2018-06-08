@@ -66,7 +66,7 @@ func (s *warpScene) Update(dt float64) {
 
 	Data.NaviData.SonarDir += turn * dt * Data.SP.Sonar_rotate_speed
 	Data.NaviData.SonarRange += rang * dt * Data.SP.Sonar_range_change
-	Data.NaviData.SonarRange = Clamp(Data.NaviData.SonarRange, Data.SP.Sonar_range_min, Data.SP.Sonar_range_max)
+	Data.NaviData.SonarRange = Clamp(Data.NaviData.SonarRange, 0, Data.SP.Sonar_range_max)
 	Data.NaviData.SonarWide += wide * dt * Data.SP.Sonar_angle_change
 	Data.NaviData.SonarWide = Clamp(Data.NaviData.SonarWide, Data.SP.Sonar_angle_min, Data.SP.Sonar_angle_max)
 

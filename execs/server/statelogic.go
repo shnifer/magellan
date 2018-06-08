@@ -156,31 +156,35 @@ func doUpdateOtherShips(rs *roomServer) {
 		CD.ServerData.MsgID++
 		CD.ServerData.OtherShips = CD.ServerData.OtherShips[:0]
 		otherRooms, ok := m[galaxy]
-		if ok {
-			for _, otherRoom := range otherRooms {
-				if otherRoom != room {
-					sd, ok := rs.stateData[otherRoom]
-					if !ok {
-						continue
-					}
-					if sd.BSP == nil {
-						continue
-					}
-					ocd, ok := rs.commonData[otherRoom]
-					if !ok {
-						continue
-					}
-					if ocd.PilotData == nil {
-						continue
-					}
-					otherShip = OtherShipData{
-						Id:   rs.curState[otherRoom].ShipID,
-						Name: sd.BSP.ShipName,
-						Ship: ocd.PilotData.Ship,
-					}
-					CD.ServerData.OtherShips = append(CD.ServerData.OtherShips, otherShip)
-				}
+		if !ok {
+			rs.commonData[room] = CD
+			continue
+		}
+		for _, otherRoom := range otherRooms {
+			if otherRoom == room {
+				continue
 			}
+			sd, ok := rs.stateData[otherRoom]
+			if !ok {
+				continue
+			}
+			if sd.BSP == nil {
+				continue
+			}
+			ocd, ok := rs.commonData[otherRoom]
+			if !ok {
+				continue
+			}
+			if ocd.PilotData == nil {
+				continue
+			}
+			otherShip = OtherShipData{
+				Id:   rs.curState[otherRoom].ShipID,
+				Name: sd.BSP.ShipName,
+				Ship: ocd.PilotData.Ship,
+			}
+			CD.ServerData.OtherShips = append(CD.ServerData.OtherShips, otherShip)
+
 		}
 		rs.commonData[room] = CD
 	}
