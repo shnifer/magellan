@@ -116,10 +116,10 @@ func LogFunc(name string) func() {
 	}
 
 	Log(LVL_DEBUG, "Func: ", name, "started")
-	t1:=time.Now().UnixNano()
+	t1 := time.Now().UnixNano()
 	return func() {
-		d:=(time.Now().UnixNano()-t1)/1000
-		Log(LVL_DEBUG, "Func: ", name, "ended time:",d,"McS")
+		d := (time.Now().UnixNano() - t1) / 1000
+		Log(LVL_DEBUG, "Func: ", name, "ended time:", d, "McS")
 	}
 }
 

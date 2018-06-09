@@ -68,14 +68,14 @@ func (s *scanner) clicked(obj *CosmoPoint) {
 
 func (s *scanner) update(ship v2.V2, dt float64) {
 	s.scanRange.SetPos(ship)
-	s.maxRange2 = Data.SP.Scan_range * Data.SP.Scan_range
+	s.maxRange2 = Data.SP.Radar.Scan_range * Data.SP.Radar.Scan_range
 
 	if s.obj == nil {
 		return
 	}
 
-	if Data.SP.Scan_speed > 0 {
-		s.totalT = 1 / Data.SP.Scan_speed
+	if Data.SP.Radar.Scan_speed > 0 {
+		s.totalT = 1 / Data.SP.Radar.Scan_speed
 	} else {
 		s.totalT = 0
 	}
@@ -105,7 +105,7 @@ func (s *scanner) update(ship v2.V2, dt float64) {
 func (s *scanner) Req() *graph.DrawQueue {
 	Q := graph.NewDrawQueue()
 
-	Range := Data.SP.Scan_range * 2
+	Range := Data.SP.Radar.Scan_range * 2
 	s.scanRange.SetSize(Range, Range)
 	Q.Add(s.scanRange, graph.Z_UNDER_OBJECT)
 

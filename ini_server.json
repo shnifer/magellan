@@ -1,5 +1,5 @@
 {
-    "Port": ":8000",
+    "Port": ":8010",
     "StartWarpSpeed":10,
     "RoomUpdatePeriod": 200,
     "LastSeenTimeout": 1000,
@@ -13,10 +13,10 @@
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 10000,
     "LogIP": "http://magellan2018.aerem.in:9200",
-    "GameExchPort": "8001",
-    "GameExchAddrs": ["192.168.0.1:8001"],
+    "GameExchPort": "8011",
+    "GameExchAddrs": ["192.168.0.1:8011"],
     "GameExchPeriodMs": 0,
-    "LogExchPort": "8002",
-    "LogExchAddrs": ["192.168.0.1:8002"],
+    "LogExchPort": "8012",
+    "LogExchAddrs": ["192.168.0.1:8012"],
     "LogExchPeriodMs": 0
 }

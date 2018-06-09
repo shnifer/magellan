@@ -210,7 +210,7 @@ func (s *cosmoScene) Update(dt float64) {
 	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 
 	if s.thrustLevel > 0 {
-		Data.PilotData.HeatProduction = Data.SP.Thrust_heat_prod * s.thrustLevel
+		Data.PilotData.HeatProduction = Data.SP.March_engine.Heat_prod * s.thrustLevel
 	} else {
 		Data.PilotData.HeatProduction = 0
 	}

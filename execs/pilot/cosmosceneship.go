@@ -13,33 +13,33 @@ func (s *cosmoScene) updateShipControl(dt float64) {
 
 func (s *cosmoScene) procControlTurn(dt float64) {
 	turnInput := input.GetF("turn")
-	massK:=1000/Data.BSP.Mass
+	massK := 1000 / Data.BSP.Mass
 	var min, max float64
 	switch {
 	case s.maneurLevel >= 0:
-		max = s.maneurLevel + Data.SP.Turn_acc*massK/100*dt
-		min = s.maneurLevel - Data.SP.Turn_slow*massK/100*dt
+		max = s.maneurLevel + Data.SP.Shunter.Turn_acc*massK/100*dt
+		min = s.maneurLevel - Data.SP.Shunter.Turn_slow*massK/100*dt
 	case s.maneurLevel < 0:
-		max = s.maneurLevel + Data.SP.Turn_slow*massK/100*dt
-		min = s.maneurLevel - Data.SP.Turn_acc*massK/100*dt
+		max = s.maneurLevel + Data.SP.Shunter.Turn_slow*massK/100*dt
+		min = s.maneurLevel - Data.SP.Shunter.Turn_acc*massK/100*dt
 	}
 	s.maneurLevel = Clamp(turnInput, min, max)
-	Data.PilotData.Ship.AngVel = s.maneurLevel * Data.SP.Turn_max
+	Data.PilotData.Ship.AngVel = s.maneurLevel * Data.SP.Shunter.Turn_max
 }
 
 func (s *cosmoScene) procControlForward(dt float64) {
 	thrustInput := input.GetF("forward")
-	massK:=1000/Data.BSP.Mass
+	massK := 1000 / Data.BSP.Mass
 	var min, max float64
 	switch {
 	case s.thrustLevel >= 0:
-		max = s.thrustLevel + Data.SP.Thrust_acc*massK/100*dt
-		min = s.thrustLevel - Data.SP.Thrust_slow*massK/100*dt
+		max = s.thrustLevel + Data.SP.March_engine.Thrust_acc*massK/100*dt
+		min = s.thrustLevel - Data.SP.March_engine.Thrust_slow*massK/100*dt
 	case s.thrustLevel < 0:
-		max = s.thrustLevel + Data.SP.Thrust_rev_slow*massK/100*dt
-		min = s.thrustLevel - Data.SP.Thrust_rev_acc*massK/100*dt
+		max = s.thrustLevel + Data.SP.March_engine.Thrust_rev_slow*massK/100*dt
+		min = s.thrustLevel - Data.SP.March_engine.Thrust_rev_acc*massK/100*dt
 	}
-	if Data.SP.Thrust_rev == 0 && min < 0 {
+	if Data.SP.March_engine.Thrust_rev == 0 && min < 0 {
 		min = 0
 	}
 	s.thrustLevel = Clamp(thrustInput, min, max)
@@ -47,9 +47,9 @@ func (s *cosmoScene) procControlForward(dt float64) {
 	var accel float64
 	switch {
 	case s.thrustLevel >= 0:
-		accel = s.thrustLevel * Data.SP.Thrust / Data.BSP.Mass
+		accel = s.thrustLevel * Data.SP.March_engine.Thrust / Data.BSP.Mass
 	case s.thrustLevel < 0:
-		accel = s.thrustLevel * Data.SP.Thrust_rev / Data.BSP.Mass
+		accel = s.thrustLevel * Data.SP.March_engine.Thrust_rev / Data.BSP.Mass
 	}
 
 	Data.PilotData.ThrustVector = v2.InDir(Data.PilotData.Ship.Ang).Mul(accel)

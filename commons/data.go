@@ -66,7 +66,7 @@ func (d *TData) SetStateData(stateData StateData) {
 func (d *TData) LoadCommonData(src CommonData) {
 	d.actionQ <- func() {
 		src.FillNotNil(&d.CommonData)
-		d.SP = BSP{}.CalcDegrade(d.BSP, d.EngiData.BSPDegrade)
+		d.SP = d.BSP.CalcDegrade(d.EngiData.BSPDegrade)
 	}
 }
 

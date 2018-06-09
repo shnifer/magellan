@@ -1,35 +1,65 @@
 {
     "ShipName": "early one",
     "Mass": 1000,
-    "Thrust": 1000,
-    "Thrust_acc": 20,
-    "Thrust_slow": 20,
-    "Thrust_rev": 0,
-    "Thrust_rev_acc": 0,
-    "Thrust_rev_slow": 0,
-    "Thrust_heat_prod": 80,
-    "Distort_level": 1000,
-    "Warp_enter_consumption": 0,
-    "Distort_level_acc": 2,
-    "Distort_level_slow": 10,
-    "Distort_consumption": 0,
-    "Distort_turn": 10,
-    "Distort_turn_consumption": 0,
-    "Turn_max": 60,
-    "Turn_acc": 30,
-    "Turn_slow": 30,
-    "Strafe_max": 0,
-    "Strafe_acc": 0,
-    "Strafe_slow": 0,
-    "Maneur_heat_prod": 80,
-    "Radar_range": 40000,
-    "Radar_angle": 15,
-    "Scan_range": 30,
-    "Scan_speed": 0.028,
-    "Sonar_range_max": 40000,
-    "Sonar_angle_min": 20,
-    "Sonar_angle_max": 35,
-    "Sonar_angle_change": 1,
-    "Sonar_range_change": 1000,
-    "Sonar_rotate_speed": 12
+    "March_engine": {
+        "Thrust": 1000,
+        "Thrust_acc": 20,
+        "Thrust_slow": 20,
+        "Thrust_rev": 0,
+        "Thrust_rev_acc": 0,
+        "Thrust_rev_slow": 0,
+        "Heat_prod": 80
+    },
+    "Warp_engine": {
+        "Distort_level": 1000,
+        "Distort_level_acc": 2,
+        "Distort_level_slow": 10,
+        "Distort_consumption": 0,
+        "Warp_enter_consumption": 0,
+        "Turn_speed": 10,
+        "Distort_turn_consumption": 0
+    },
+    "Shunter": {
+        "Turn_max": 60,
+        "Turn_acc": 30,
+        "Turn_slow": 30,
+        "Strafe_max": 0,
+        "Strafe_acc": 0,
+        "Strafe_slow": 0,
+        "Heat_prod": 80
+    },
+    "Radar": {
+        "Range": 40000,
+        "Angle": 15,
+        "Scan_range": 30,
+        "Scan_speed": 0.028
+    },
+    "Sonar": {
+        "Range_max": 40000,
+        "Angle_min": 15,
+        "Angle_max": 30,
+        "Angle_change": 1,
+        "Range_change": 1000,
+        "Rotate_speed": 12
+    },
+    "Fuel_tank": {
+        "Fuel_volume": 0,
+        "Compact": 0,
+        "Radiation_def": 0
+    },
+    "Lss": {
+        "Thermal_def": 0,
+        "Co2_level": 0,
+        "Air_volume": 0,
+        "Air_prepare_speed": 0,
+        "Lightness": 0
+    },
+    "Shields": {
+        "Radiation_def": 0,
+        "Disinfect_level": 0,
+        "Mechanical_def": 0,
+        "Heat_reflection": 0,
+        "Heat_capacity": 0,
+        "Heat_sink": 0
+    }
 }
