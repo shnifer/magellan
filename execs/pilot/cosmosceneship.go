@@ -36,10 +36,10 @@ func (s *cosmoScene) procControlForward(dt float64) {
 		max = s.thrustLevel + Data.SP.March_engine.Thrust_acc*massK/100*dt
 		min = s.thrustLevel - Data.SP.March_engine.Thrust_slow*massK/100*dt
 	case s.thrustLevel < 0:
-		max = s.thrustLevel + Data.SP.March_engine.Thrust_rev_slow*massK/100*dt
-		min = s.thrustLevel - Data.SP.March_engine.Thrust_rev_acc*massK/100*dt
+		max = s.thrustLevel + Data.SP.March_engine.Reverse_slow*massK/100*dt
+		min = s.thrustLevel - Data.SP.March_engine.Reverse_acc*massK/100*dt
 	}
-	if Data.SP.March_engine.Thrust_rev == 0 && min < 0 {
+	if Data.SP.March_engine.Reverse_max == 0 && min < 0 {
 		min = 0
 	}
 	s.thrustLevel = Clamp(thrustInput, min, max)
@@ -47,9 +47,9 @@ func (s *cosmoScene) procControlForward(dt float64) {
 	var accel float64
 	switch {
 	case s.thrustLevel >= 0:
-		accel = s.thrustLevel * Data.SP.March_engine.Thrust / Data.BSP.Mass
+		accel = s.thrustLevel * Data.SP.March_engine.Thrust_max / Data.BSP.Mass
 	case s.thrustLevel < 0:
-		accel = s.thrustLevel * Data.SP.March_engine.Thrust_rev / Data.BSP.Mass
+		accel = s.thrustLevel * Data.SP.March_engine.Reverse_max / Data.BSP.Mass
 	}
 
 	Data.PilotData.ThrustVector = v2.InDir(Data.PilotData.Ship.Ang).Mul(accel)
@@ -57,7 +57,7 @@ func (s *cosmoScene) procControlForward(dt float64) {
 }
 
 func (s *cosmoScene) procShipGravity(dt float64) {
-	sumF := SumGravity(Data.PilotData.Ship.Pos, Data.StateData.Galaxy)
+	sumF := SumGravityF(Data.PilotData.Ship.Pos, Data.StateData.Galaxy)
 	Data.PilotData.Ship.Vel.DoAddMul(sumF, dt/Data.BSP.Mass)
 }
 

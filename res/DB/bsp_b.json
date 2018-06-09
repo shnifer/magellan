@@ -1,65 +1,65 @@
 {
-    "ShipName": "mid one",
-    "Mass": 1000,
-    "March_engine": {
-        "Thrust": 3000,
-        "Thrust_acc": 100,
-        "Thrust_slow": 100,
-        "Thrust_rev": 1500,
-        "Thrust_rev_acc": 100,
-        "Thrust_rev_slow": 100,
-        "Heat_prod": 40
+    "ship_name": "mid one",
+    "mass": 1000,
+    "march_engine": {
+        "thrust_max": 3000,
+        "thrust_acc": 100,
+        "thrust_slow": 100,
+        "reverse_max": 1500,
+        "reverse_acc": 100,
+        "reverse_slow": 100,
+        "heat_prod": 40
     },
-    "Warp_engine": {
-        "Distort_level": 1500,
-        "Distort_level_acc": 5,
-        "Distort_level_slow": 13,
-        "Distort_consumption": 0,
-        "Warp_enter_consumption": 0,
-        "Turn_speed": 10,
-        "Distort_turn_consumption": 0
+    "warp_engine": {
+        "distort_max": 1500,
+        "distort_acc": 5,
+        "distort_slow": 13,
+        "consumption": 0,
+        "warp_enter_consumption": 0,
+        "turn_speed": 10,
+        "turn_consumption": 0
     },
-    "Shunter": {
-        "Turn_max": 240,
-        "Turn_acc": 70,
-        "Turn_slow": 70,
-        "Strafe_max": 1500,
-        "Strafe_acc": 100,
-        "Strafe_slow": 100,
-        "Heat_prod": 80
+    "shunter": {
+        "turn_max": 240,
+        "turn_acc": 70,
+        "turn_slow": 70,
+        "strafe_max": 1500,
+        "strafe_acc": 100,
+        "strafe_slow": 100,
+        "heat_prod": 80
     },
-    "Radar": {
-        "Range": 120000,
-        "Angle": 15,
-        "Scan_range": 150,
-        "Scan_speed": 0.05
+    "radar": {
+        "range": 120000,
+        "angle": 15,
+        "scan_range": 150,
+        "scan_speed": 0.05
     },
-    "Sonar": {
-        "Range_max": 120000,
-        "Angle_min": 10,
-        "Angle_max": 60,
-        "Angle_change": 3,
-        "Range_change": 8000,
-        "Rotate_speed": 45
+    "sonar": {
+        "range_max": 120000,
+        "angle_min": 10,
+        "angle_max": 60,
+        "angle_change": 3,
+        "range_change": 8000,
+        "rotate_speed": 45
     },
-    "Fuel_tank": {
-        "Fuel_volume": 0,
-        "Compact": 0,
-        "Radiation_def": 0
+    "fuel_tank": {
+        "fuel_volume": 0,
+        "compact": 0,
+        "radiation_def": 0
     },
-    "Lss": {
-        "Thermal_def": 0,
-        "Co2_level": 0,
-        "Air_volume": 0,
-        "Air_prepare_speed": 0,
-        "Lightness": 0
+    "lss": {
+        "thermal_def": 0,
+        "co2_level": 0,
+        "air_volume": 0,
+        "air_prepare_speed": 0,
+        "lightness": 0
     },
-    "Shields": {
-        "Radiation_def": 0,
-        "Disinfect_level": 0,
-        "Mechanical_def": 0,
-        "Heat_reflection": 0,
-        "Heat_capacity": 0,
-        "Heat_sink": 0
+    "shields": {
+        "radiation_def": 0,
+        "disinfect_level": 0,
+        "mechanical_def": 0,
+        "heat_reflection": 0,
+        "heat_capacity": 0,
+        "heat_sink": 0
     }
 }

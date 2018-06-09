@@ -86,7 +86,7 @@ func loadBuildingsAndSubscribe(storage *storage.Storage, GalaxyID string) (build
 
 //save examples of DB data
 func init() {
-	//saveDataExamples("")
+	saveDataExamples("")
 }
 
 func saveDataExamples(path string) {

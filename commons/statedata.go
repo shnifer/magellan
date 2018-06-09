@@ -21,78 +21,78 @@ type StateData struct {
 
 //Rework CalcDegrade on change
 type BSP struct {
-	ShipName string //human name
+	ShipName string `json:"ship_name"`//human name
 
-	Mass float64
+	Mass float64 `json:"mass"`
 	//0...100
 	March_engine struct {
-		Thrust,
-		Thrust_acc,
-		Thrust_slow,
-		Thrust_rev,
-		Thrust_rev_acc,
-		Thrust_rev_slow,
-		Heat_prod float64
-	}
+		Thrust_max   float64 `json:"thrust_max"`
+		Thrust_acc   float64 `json:"thrust_acc"`
+		Thrust_slow  float64 `json:"thrust_slow"`
+		Reverse_max  float64 `json:"reverse_max"`
+		Reverse_acc  float64 `json:"reverse_acc"`
+		Reverse_slow float64 `json:"reverse_slow"`
+		Heat_prod    float64 `json:"heat_prod"`
+	}`json:"march_engine"`
 
 	Warp_engine struct {
-		Distort_level,
-		Distort_level_acc,
-		Distort_level_slow,
-		Distort_consumption,
-		Warp_enter_consumption,
-		Turn_speed,
-		Distort_turn_consumption float64
-	}
+		Distort_max            float64 `json:"distort_max"`
+		Distort_acc            float64 `json:"distort_acc"`
+		Distort_slow           float64 `json:"distort_slow"`
+		Consumption            float64 `json:"consumption"`
+		Warp_enter_consumption float64 `json:"warp_enter_consumption"`
+		Turn_speed             float64 `json:"turn_speed"`
+		Turn_consumption       float64 `json:"turn_consumption"`
+	} `json:"warp_engine"`
 
 	Shunter struct {
-		Turn_max,
-		Turn_acc,
-		Turn_slow,
-		Strafe_max,
-		Strafe_acc,
-		Strafe_slow,
-		Heat_prod float64
-	}
+		Turn_max float64 `json:"turn_max"`
+		Turn_acc float64 `json:"turn_acc"`
+		Turn_slow float64 `json:"turn_slow"`
+		Strafe_max float64 `json:"strafe_max"`
+		Strafe_acc float64 `json:"strafe_acc"`
+		Strafe_slow float64 `json:"strafe_slow"`
+		Heat_prod float64  `json:"heat_prod"`
+	} `json:"shunter"`
 
 	Radar struct {
-		Range,
-		Angle,
-		Scan_range,
-		Scan_speed float64
-	}
+		Range float64  `json:"range"`
+		Angle float64  `json:"angle"`
+		Scan_range float64  `json:"scan_range"`
+		Scan_speed  float64  `json:"scan_speed"`
+	}`json:"radar"`
 
 	Sonar struct {
-		Range_max,
-		Angle_min,
-		Angle_max,
-		Angle_change,
-		Range_change,
-		Rotate_speed float64
-	}
+		Range_max float64  `json:"range_max"`
+		Angle_min float64  `json:"angle_min"`
+		Angle_max float64  `json:"angle_max"`
+		Angle_change float64  `json:"angle_change"`
+		Range_change float64  `json:"range_change"`
+		Rotate_speed float64  `json:"rotate_speed"`
+	}`json:"sonar"`
 
 	Fuel_tank struct {
-		Fuel_volume,
-		Compact,
-		Radiation_def float64
-	}
+		Fuel_volume float64  `json:"fuel_volume"`
+		Compact float64  `json:"compact"`
+		Radiation_def float64  `json:"radiation_def"`
+	}`json:"fuel_tank"`
 
 	Lss struct {
-		Thermal_def,
-		Co2_level,
-		Air_volume,
-		Air_prepare_speed,
-		Lightness float64
-	}
+		Thermal_def float64  `json:"thermal_def"`
+		Co2_level float64  `json:"co2_level"`
+		Air_volume float64  `json:"air_volume"`
+		Air_prepare_speed float64  `json:"air_prepare_speed"`
+		Lightness float64  `json:"lightness"`
+	}`json:"lss"`
 
 	Shields struct {
-		Radiation_def,
-		Disinfect_level,
-		Mechanical_def,
-		Heat_reflection,
-		Heat_capacity,
-		Heat_sink float64
-	}
+		Radiation_def float64  `json:"radiation_def"`
+		Disinfect_level float64  `json:"disinfect_level"`
+		Mechanical_def float64  `json:"mechanical_def"`
+		Heat_reflection float64  `json:"heat_reflection"`
+		Heat_capacity float64  `json:"heat_capacity"`
+		Heat_sink float64  `json:"heat_sink"`
+	}`json:"shields"`
 }
 
 type Galaxy struct {
@@ -195,21 +195,21 @@ func (base *BSP) CalcDegrade(degrade BSPDegrade) (result *BSP) {
 	}
 	res := *base
 
-	res.March_engine.Thrust = base.March_engine.Thrust * (1 - degrade.Thrust)
-	res.March_engine.Thrust_rev = base.March_engine.Thrust_rev * (1 - degrade.Thrust_rev)
+	res.March_engine.Thrust_max = base.March_engine.Thrust_max * (1 - degrade.Thrust)
+	res.March_engine.Reverse_max = base.March_engine.Reverse_max * (1 - degrade.Thrust_rev)
 	res.March_engine.Thrust_acc = base.March_engine.Thrust_acc * (1 - degrade.Thrust_acc)
-	res.March_engine.Thrust_rev_acc = base.March_engine.Thrust_rev_acc * (1 - degrade.Thrust_rev_acc)
+	res.March_engine.Reverse_acc = base.March_engine.Reverse_acc * (1 - degrade.Thrust_rev_acc)
 	res.March_engine.Thrust_slow = base.March_engine.Thrust_slow * (1 - degrade.Thrust_slow)
-	res.March_engine.Thrust_rev_slow = base.March_engine.Thrust_rev_slow * (1 - degrade.Thrust_rev_slow)
+	res.March_engine.Reverse_slow = base.March_engine.Reverse_slow * (1 - degrade.Thrust_rev_slow)
 	res.March_engine.Heat_prod = base.March_engine.Heat_prod * (1 + degrade.Thrust_heat_prod)
 
-	res.Warp_engine.Distort_level = base.Warp_engine.Distort_level * (1 - degrade.Distort_level)
+	res.Warp_engine.Distort_max = base.Warp_engine.Distort_max * (1 - degrade.Distort_level)
 	res.Warp_engine.Warp_enter_consumption = base.Warp_engine.Warp_enter_consumption * (1 + degrade.Warp_enter_consumption)
-	res.Warp_engine.Distort_level_acc = base.Warp_engine.Distort_level_acc * (1 - degrade.Distort_level_acc)
-	res.Warp_engine.Distort_level_slow = base.Warp_engine.Distort_level_slow * (1 - degrade.Distort_level_slow)
-	res.Warp_engine.Distort_consumption = base.Warp_engine.Distort_consumption * (1 + degrade.Distort_consumption)
+	res.Warp_engine.Distort_acc = base.Warp_engine.Distort_acc * (1 - degrade.Distort_level_acc)
+	res.Warp_engine.Distort_slow = base.Warp_engine.Distort_slow * (1 - degrade.Distort_level_slow)
+	res.Warp_engine.Consumption = base.Warp_engine.Consumption * (1 + degrade.Distort_consumption)
 	res.Warp_engine.Turn_speed = base.Warp_engine.Turn_speed * (1 - degrade.Distort_turn)
-	res.Warp_engine.Distort_turn_consumption = base.Warp_engine.Distort_turn_consumption * (1 + degrade.Distort_turn_consumption)
+	res.Warp_engine.Turn_consumption = base.Warp_engine.Turn_consumption * (1 + degrade.Distort_turn_consumption)
 
 	res.Shunter.Turn_max = base.Shunter.Turn_max * (1 - degrade.Turn_max)
 	res.Shunter.Turn_acc = base.Shunter.Turn_acc * (1 - degrade.Turn_acc)

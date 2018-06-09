@@ -47,7 +47,7 @@ func Gravity(mass, lenSqr, zDist float64) float64 {
 	return gravityConst * mass * lenSqr / d2
 }
 
-func SumGravity(pos v2.V2, galaxy *Galaxy) (sumF v2.V2) {
+func SumGravityF(pos v2.V2, galaxy *Galaxy) (sumF v2.V2) {
 	var v v2.V2
 	var len2, F float64
 	for _, obj := range galaxy.Ordered {
