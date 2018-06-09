@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	native "log"
 	"sync"
+	"time"
 )
 
 const (
@@ -115,8 +116,10 @@ func LogFunc(name string) func() {
 	}
 
 	Log(LVL_DEBUG, "Func: ", name, "started")
+	t1:=time.Now().UnixNano()
 	return func() {
-		Log(LVL_DEBUG, "Func: ", name, "ended")
+		d:=(time.Now().UnixNano()-t1)/1000
+		Log(LVL_DEBUG, "Func: ", name, "ended time:",d,"McS")
 	}
 }
 
