@@ -27,7 +27,7 @@ type LoginScene struct {
 	backT float64
 	dir   int
 
-	sigs       *SignaturePack
+	sonarHUD       *SonarHUD
 	activeSigs [10]bool
 }
 
@@ -43,10 +43,6 @@ func NewLoginScene() *LoginScene {
 	errorMsg := graph.NewText(errorText, face, colornames.Indianred)
 	errorMsg.SetPosPivot(graph.ScrP(0.5, 0.7), graph.Center())
 
-	back := NewAtlasSpriteHUD("noise")
-	back.SetPivot(graph.TopLeft())
-	back.SetSize(float64(WinW), float64(WinH))
-
 	cam := graph.NewCamera()
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Scale = cam.Center.Y * 0.8
@@ -57,7 +53,7 @@ func NewLoginScene() *LoginScene {
 		question: question,
 		errorMsg: errorMsg,
 		dir:      1,
-		sigs:     NewSignaturePack(cam.Deny(), graph.Z_GAME_OBJECT),
+		sonarHUD:  NewSonarHUD(graph.ScrP(0.3,0.7),500,graph.NoCam,graph.Z_HUD),
 	}
 }
 
@@ -107,8 +103,8 @@ func (p *LoginScene) Update(dt float64) {
 				TypeName: strconv.Itoa(i)})
 		}
 	}
-	p.sigs.ActiveSignatures(activeSigs)
-	p.sigs.Update(dt)
+	p.sonarHUD.ActiveSignatures(activeSigs)
+	p.sonarHUD.Update(dt)
 }
 
 func (p *LoginScene) Draw(image *ebiten.Image) {
@@ -128,7 +124,7 @@ func (p *LoginScene) Draw(image *ebiten.Image) {
 		}
 	}
 
-	Q.Append(p.sigs)
+	Q.Append(p.sonarHUD)
 
 	Q.Run(image)
 }

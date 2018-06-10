@@ -16,6 +16,7 @@ type Camera struct {
 	AngleDeg float64
 	//scale
 	Scale float64
+	DenyGlobalScale bool
 
 	g, r ebiten.GeoM
 
@@ -80,7 +81,10 @@ func (c *Camera) Recalc() {
 	G.Translate(-c.Pos.X, -c.Pos.Y)
 	//Rotate and scale
 	G.Rotate(-c.AngleDeg * Deg2Rad)
-	G.Scale(c.Scale*globalScale, -c.Scale*globalScale)
+	G.Scale(c.Scale, -c.Scale)
+	if !c.DenyGlobalScale{
+		G.Scale(globalScale,globalScale)
+	}
 	//Translate to screen center
 	G.Translate(c.Center.X, c.Center.Y)
 	c.g = G

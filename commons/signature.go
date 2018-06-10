@@ -34,7 +34,6 @@ var signatures SignatureAtlas
 var particles SignatureParticleAtlas
 
 type SignatureAtlas map[string]SignatureType
-
 type SignatureParticleAtlas map[string]SignatureParticle
 
 type SignatureParticle struct {
