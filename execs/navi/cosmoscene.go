@@ -14,6 +14,7 @@ import (
 type cosmoScene struct {
 	ship         *graph.Sprite
 	shipRB       *commons.RBFollower
+	sessionTime  *commons.SessionTime
 	lastPilotMsg int
 
 	caption *graph.Text
@@ -54,6 +55,7 @@ func (s *cosmoScene) Init() {
 	s.naviMarkerT = 0
 	s.scanner = newScanner(s.cam)
 	s.shipRB = commons.NewRBFollower(float64(DEFVAL.PingPeriod) / 1000)
+	s.sessionTime = commons.NewSessionTime(Data.PilotData.SessionTime)
 
 	for id, pd := range stateData.Galaxy.Points {
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
@@ -66,10 +68,15 @@ func (s *cosmoScene) Update(dt float64) {
 	//PilotData Rigid Body emulation
 	if Data.PilotData.MsgID != s.lastPilotMsg {
 		s.shipRB.MoveTo(Data.PilotData.Ship)
+		s.sessionTime.MoveTo(Data.PilotData.SessionTime)
 		s.lastPilotMsg = Data.PilotData.MsgID
 	}
+	s.sessionTime.Update(dt)
+	Data.Galaxy.Update(s.sessionTime.Get())
+
 	s.shipRB.Update(dt)
 	ship := s.shipRB.RB()
+
 	s.cam.Pos = ship.Pos
 	s.cam.Recalc()
 
@@ -82,10 +89,6 @@ func (s *cosmoScene) Update(dt float64) {
 		s.naviMarkerT = 0
 		Data.NaviData.ActiveMarker = false
 	}
-
-	Data.PilotData.SessionTime += dt
-	sessionTime := Data.PilotData.SessionTime
-	Data.Galaxy.Update(sessionTime)
 
 	for id, co := range s.objects {
 		if gp, ok := Data.Galaxy.Points[id]; ok {
