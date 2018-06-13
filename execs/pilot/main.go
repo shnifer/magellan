@@ -35,7 +35,6 @@ func mainLoop(window *ebiten.Image) error {
 		Data.CommonData.PilotData.MsgID++
 	}
 	Data.Update(DEFVAL.Role)
-
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
 
 	select {

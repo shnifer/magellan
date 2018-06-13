@@ -98,6 +98,10 @@ func (s *cosmoScene) Init() {
 
 	stateData := Data.GetStateData()
 
+	if stateData.BSP.Mass==0{
+		Log(LVL_PANIC,"Zero mass for ship!")
+	}
+
 	for _, pd := range stateData.Galaxy.Ordered {
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
 		s.objects[pd.ID] = cosmoPoint
@@ -159,7 +163,6 @@ func (s *cosmoScene) Update(dt float64) {
 		}
 		co.Update(dt)
 	}
-
 	s.updateShipControl(dt)
 	s.procShipGravity(dt)
 	s.procEmissions(dt)

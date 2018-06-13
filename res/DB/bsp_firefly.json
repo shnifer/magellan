@@ -1,43 +1,65 @@
 {
-    "ShipName": "glorious BlueBird",
-    "Thrust": 100,
-    "Thrust_acc": 20,
-    "Thrust_slow": 40,
-    "Thrust_rev": 60,
-    "Thrust_rev_acc": 20,
-    "Thrust_rev_slow": 40,
-    "Thrust_heat_capacity": 1000,
-    "Thrust_heat_prod": 100,
-    "Thrust_heat_sink": 30,
-    "Distort_level": 100,
-    "Warp_enter_consumption": 0,
-    "Distort_level_acc": 60,
-    "Distort_level_slow": 80,
-    "Distort_consumption": 0,
-    "Distort_turn": 10,
-    "Distort_turn_consumption": 0,
-    "Turn_max": 180,
-    "Turn_acc": 20,
-    "Turn_slow": 40,
-    "Strafe_max": 0,
-    "Strafe_acc": 0,
-    "Strafe_slow": 0,
-    "Maneur_heat_capacity": 0,
-    "Maneur_heat_prod": 0,
-    "Maneur_heat_sink": 0,
-    "Radar_range_min": 0,
-    "Radar_range_max": 0,
-    "Radar_angle_min": 0,
-    "Radar_angle_max": 0,
-    "Radar_angle_change": 0,
-    "Radar_range_change": 0,
-    "Scan_range": 200,
-    "Scan_speed": 0.5,
-    "Sonar_range_min": 100,
-    "Sonar_range_max": 1000,
-    "Sonar_angle_min": 10,
-    "Sonar_angle_max": 90,
-    "Sonar_angle_change": 30,
-    "Sonar_range_change": 200,
-    "Sonar_rotate_speed": 90
+    "ship_name": "firefly",
+    "mass": 1000,
+    "march_engine": {
+        "thrust_max": 3000,
+        "thrust_acc": 100,
+        "thrust_slow": 100,
+        "reverse_max": 1500,
+        "reverse_acc": 100,
+        "reverse_slow": 100,
+        "heat_prod": 40
+    },
+    "warp_engine": {
+        "distort_max": 1500,
+        "distort_acc": 5,
+        "distort_slow": 13,
+        "consumption": 0,
+        "warp_enter_consumption": 0,
+        "turn_speed": 10,
+        "turn_consumption": 0
+    },
+    "shunter": {
+        "turn_max": 240,
+        "turn_acc": 70,
+        "turn_slow": 70,
+        "strafe_max": 1500,
+        "strafe_acc": 100,
+        "strafe_slow": 100,
+        "heat_prod": 80
+    },
+    "radar": {
+        "range": 120000,
+        "angle": 15,
+        "scan_range": 150,
+        "scan_speed": 0.05
+    },
+    "sonar": {
+        "range_max": 120000,
+        "angle_min": 10,
+        "angle_max": 60,
+        "angle_change": 3,
+        "range_change": 8000,
+        "rotate_speed": 45
+    },
+    "fuel_tank": {
+        "fuel_volume": 0,
+        "compact": 0,
+        "radiation_def": 0
+    },
+    "lss": {
+        "thermal_def": 0,
+        "co2_level": 0,
+        "air_volume": 0,
+        "air_prepare_speed": 0,
+        "lightness": 0
+    },
+    "shields": {
+        "radiation_def": 0,
+        "disinfect_level": 0,
+        "mechanical_def": 0,
+        "heat_reflection": 0,
+        "heat_capacity": 0,
+        "heat_sink": 0
+    }
 }
