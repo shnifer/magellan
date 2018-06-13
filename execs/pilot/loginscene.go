@@ -27,7 +27,7 @@ type LoginScene struct {
 	backT float64
 	dir   int
 
-	sonarHUD       *SonarHUD
+	sonarHUD   *SonarHUD
 	activeSigs [10]bool
 }
 
@@ -53,7 +53,7 @@ func NewLoginScene() *LoginScene {
 		question: question,
 		errorMsg: errorMsg,
 		dir:      1,
-		sonarHUD:  NewSonarHUD(graph.ScrP(0.3,0.7),500,graph.NoCam,graph.Z_HUD),
+		sonarHUD: NewSonarHUD(graph.ScrP(0.3, 0.7), 500, graph.NoCam, graph.Z_HUD),
 	}
 }
 

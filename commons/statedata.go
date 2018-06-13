@@ -21,7 +21,7 @@ type StateData struct {
 
 //Rework CalcDegrade on change
 type BSP struct {
-	ShipName string `json:"ship_name"`//human name
+	ShipName string `json:"ship_name"` //human name
 
 	Mass float64 `json:"mass"`
 	//0...100
@@ -33,7 +33,7 @@ type BSP struct {
 		Reverse_acc  float64 `json:"reverse_acc"`
 		Reverse_slow float64 `json:"reverse_slow"`
 		Heat_prod    float64 `json:"heat_prod"`
-	}`json:"march_engine"`
+	} `json:"march_engine"`
 
 	Warp_engine struct {
 		Distort_max            float64 `json:"distort_max"`
@@ -46,53 +46,53 @@ type BSP struct {
 	} `json:"warp_engine"`
 
 	Shunter struct {
-		Turn_max float64 `json:"turn_max"`
-		Turn_acc float64 `json:"turn_acc"`
-		Turn_slow float64 `json:"turn_slow"`
-		Strafe_max float64 `json:"strafe_max"`
-		Strafe_acc float64 `json:"strafe_acc"`
+		Turn_max    float64 `json:"turn_max"`
+		Turn_acc    float64 `json:"turn_acc"`
+		Turn_slow   float64 `json:"turn_slow"`
+		Strafe_max  float64 `json:"strafe_max"`
+		Strafe_acc  float64 `json:"strafe_acc"`
 		Strafe_slow float64 `json:"strafe_slow"`
-		Heat_prod float64  `json:"heat_prod"`
+		Heat_prod   float64 `json:"heat_prod"`
 	} `json:"shunter"`
 
 	Radar struct {
-		Range float64  `json:"range"`
-		Angle float64  `json:"angle"`
-		Scan_range float64  `json:"scan_range"`
-		Scan_speed  float64  `json:"scan_speed"`
-	}`json:"radar"`
+		Range      float64 `json:"range"`
+		Angle      float64 `json:"angle"`
+		Scan_range float64 `json:"scan_range"`
+		Scan_speed float64 `json:"scan_speed"`
+	} `json:"radar"`
 
 	Sonar struct {
-		Range_max float64  `json:"range_max"`
-		Angle_min float64  `json:"angle_min"`
-		Angle_max float64  `json:"angle_max"`
-		Angle_change float64  `json:"angle_change"`
-		Range_change float64  `json:"range_change"`
-		Rotate_speed float64  `json:"rotate_speed"`
-	}`json:"sonar"`
+		Range_max    float64 `json:"range_max"`
+		Angle_min    float64 `json:"angle_min"`
+		Angle_max    float64 `json:"angle_max"`
+		Angle_change float64 `json:"angle_change"`
+		Range_change float64 `json:"range_change"`
+		Rotate_speed float64 `json:"rotate_speed"`
+	} `json:"sonar"`
 
 	Fuel_tank struct {
-		Fuel_volume float64  `json:"fuel_volume"`
-		Compact float64  `json:"compact"`
-		Radiation_def float64  `json:"radiation_def"`
-	}`json:"fuel_tank"`
+		Fuel_volume   float64 `json:"fuel_volume"`
+		Compact       float64 `json:"compact"`
+		Radiation_def float64 `json:"radiation_def"`
+	} `json:"fuel_tank"`
 
 	Lss struct {
-		Thermal_def float64  `json:"thermal_def"`
-		Co2_level float64  `json:"co2_level"`
-		Air_volume float64  `json:"air_volume"`
-		Air_prepare_speed float64  `json:"air_prepare_speed"`
-		Lightness float64  `json:"lightness"`
-	}`json:"lss"`
+		Thermal_def       float64 `json:"thermal_def"`
+		Co2_level         float64 `json:"co2_level"`
+		Air_volume        float64 `json:"air_volume"`
+		Air_prepare_speed float64 `json:"air_prepare_speed"`
+		Lightness         float64 `json:"lightness"`
+	} `json:"lss"`
 
 	Shields struct {
-		Radiation_def float64  `json:"radiation_def"`
-		Disinfect_level float64  `json:"disinfect_level"`
-		Mechanical_def float64  `json:"mechanical_def"`
-		Heat_reflection float64  `json:"heat_reflection"`
-		Heat_capacity float64  `json:"heat_capacity"`
-		Heat_sink float64  `json:"heat_sink"`
-	}`json:"shields"`
+		Radiation_def   float64 `json:"radiation_def"`
+		Disinfect_level float64 `json:"disinfect_level"`
+		Mechanical_def  float64 `json:"mechanical_def"`
+		Heat_reflection float64 `json:"heat_reflection"`
+		Heat_capacity   float64 `json:"heat_capacity"`
+		Heat_sink       float64 `json:"heat_sink"`
+	} `json:"shields"`
 }
 
 type Galaxy struct {
