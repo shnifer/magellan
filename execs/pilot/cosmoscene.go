@@ -98,8 +98,8 @@ func (s *cosmoScene) Init() {
 
 	stateData := Data.GetStateData()
 
-	if stateData.BSP.Mass==0{
-		Log(LVL_PANIC,"Zero mass for ship!")
+	if stateData.BSP.Mass == 0 {
+		Log(LVL_PANIC, "Zero mass for ship!")
 	}
 
 	for _, pd := range stateData.Galaxy.Ordered {
