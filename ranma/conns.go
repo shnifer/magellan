@@ -33,7 +33,7 @@ func (r *Ranma) recv(sn int) {
 	if err != nil {
 		Log(LVL_ERROR, "Ranma.recv can't unmarshal \"", string(buf), "\" error", err)
 	}
-	r.corrected[sn].set(reqResp.Corrected, reqResp.Id)
+	r.corrected[sn].setMsg(reqResp.Corrected, reqResp.Id)
 }
 
 func (r *Ranma) send(sn int, x uint16) {

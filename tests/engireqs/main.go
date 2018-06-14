@@ -42,7 +42,7 @@ func main() {
 	smokeSprite = draw.NewAtlasSprite("smoke", graph.NoCam)
 	smokeSprite.SetSize(60, 60)
 
-	Ranma = ranma.NewRanma(addr, 1000, 16)
+	Ranma = ranma.NewRanma(addr, true, 1000, 16)
 
 	ebiten.Run(run, 1325, 725, 1, "Engi")
 }
