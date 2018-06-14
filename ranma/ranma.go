@@ -86,7 +86,7 @@ func (r *Ranma) reset() {
 
 func reqDaemon(r *Ranma) {
 	for {
-		time.Sleep(time.Second)
+		time.Sleep(time.Second/2)
 		for i := 0; i < sCount; i++ {
 			r.recv(i)
 		}
