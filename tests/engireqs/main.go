@@ -12,9 +12,11 @@ import (
 
 const addr = "http://tagunil.ru:8000/system/"
 
-var slotSprite *graph.Sprite
-var dotSprite *graph.Sprite
-var smokeSprite *graph.Sprite
+var (
+	slotSprite  *graph.Sprite
+	dotSprite   *graph.Sprite
+	smokeSprite *graph.Sprite
+)
 
 var Ranma *ranma.Ranma
 
