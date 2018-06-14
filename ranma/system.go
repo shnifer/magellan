@@ -37,6 +37,13 @@ func (s *system) getByte(b int) bool {
 	return n&1 > 0
 }
 
+func (s *system) xor(x uint16) {
+	s.Lock()
+	defer s.Unlock()
+
+	s.dat = x ^ s.dat
+}
+
 func (s *system) set(x uint16, id int) {
 	s.Lock()
 	defer s.Unlock()

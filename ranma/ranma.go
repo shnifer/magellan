@@ -50,7 +50,9 @@ func (r *Ranma) SetIn(sn int, x uint16) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
+	xorV :=r.programmed[sn]^x
 	r.programmed[sn] = x
+	r.corrected[sn].xor(xorV)
 	go r.send(sn, x)
 }
 
@@ -59,6 +61,7 @@ func (r *Ranma) XorIn(sn int, x uint16) {
 	defer r.mu.Unlock()
 
 	r.programmed[sn] = x ^ r.programmed[sn]
+	r.corrected[sn].xor(x)
 	go r.send(sn, r.programmed[sn])
 }
 
@@ -85,8 +88,9 @@ func (r *Ranma) reset() {
 }
 
 func reqDaemon(r *Ranma) {
+	tick:=time.Tick(time.Second)
 	for {
-		time.Sleep(time.Second/2)
+		<-tick
 		for i := 0; i < sCount; i++ {
 			r.recv(i)
 		}
