@@ -14,6 +14,7 @@
   "arrow": {"FileName": "HUD_Arrow.png"},
   "warpstar": {"FileName": "particle.png"},
   "trail": {"FileName": "particle.png"},
+  "smoke": {"FileName": "smoke.png"},
   "marker": {"FileName": "marker.png"},
   "noise": {"FileName": "noisesheet.png","Sx": 400,"Sy": 400},
   "compass": {"FileName": "HUD_Radar.png", "Smooth":true},
