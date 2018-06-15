@@ -41,10 +41,10 @@ func Gravity(mass, lenSqr, zDist float64) float64 {
 		return 0
 	}
 
-	//return gravityConst * mass / d2
+	return gravityConst * mass / d2
 
-	d2 = d2 * d2
-	return gravityConst * mass * lenSqr / d2
+	//d2 = d2 * d2
+	//return gravityConst * mass * lenSqr / d2
 }
 
 func SumGravityAcc(pos v2.V2, galaxy *Galaxy) (sumF v2.V2) {
