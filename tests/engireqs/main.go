@@ -84,5 +84,5 @@ func procClick() {
 }
 
 func pos(s, b int) v2.V2 {
-	return v2.V2{100, 100}.AddMul(v2.V2{75, 0}, float64(b)).AddMul(v2.V2{0, 75}, float64(s))
+	return v2.V2{X: 100, Y: 100}.AddMul(v2.V2{X: 75, Y: 0}, float64(b)).AddMul(v2.V2{X: 0, Y: 75}, float64(s))
 }

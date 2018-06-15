@@ -33,7 +33,7 @@ func SetGravityConsts(G, W float64) {
 	warpGravityConst = W
 }
 
-//
+//gravity accelleration (g) from planet with given mass at given range
 func Gravity(mass, lenSqr, zDist float64) float64 {
 	d2 := lenSqr + zDist*zDist
 
@@ -47,17 +47,17 @@ func Gravity(mass, lenSqr, zDist float64) float64 {
 	return gravityConst * mass * lenSqr / d2
 }
 
-func SumGravityF(pos v2.V2, galaxy *Galaxy) (sumF v2.V2) {
+func SumGravityAcc(pos v2.V2, galaxy *Galaxy) (sumF v2.V2) {
 	var v v2.V2
-	var len2, F float64
+	var len2, G float64
 	for _, obj := range galaxy.Ordered {
 		if obj.Mass == 0 {
 			continue
 		}
 		v = obj.Pos.Sub(pos)
 		len2 = v.LenSqr()
-		F = Gravity(obj.Mass, len2, obj.Size/2)
-		sumF.DoAddMul(v.Normed(), F)
+		G = Gravity(obj.Mass, len2, obj.Size/2)
+		sumF.DoAddMul(v.Normed(), G)
 	}
 	return sumF
 }

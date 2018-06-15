@@ -65,12 +65,12 @@ func (tp *TrackPredictor) Req() *graph.DrawQueue {
 	}
 
 	ship := tp.data.PilotData.Ship
-	var grav v2.V2
+	var gravAcc v2.V2
 	for n := 0; n <= trackLen/dt; n++ {
 		if (n % recalcGravEach) == 0 {
-			grav = SumGravityF(ship.Pos, tp.data.Galaxy).Mul(1 / tp.data.BSP.Mass)
+			gravAcc = SumGravityAcc(ship.Pos, tp.data.Galaxy)
 		}
-		ship.Vel.DoAddMul(v2.Add(grav, accel), dt)
+		ship.Vel.DoAddMul(v2.Add(gravAcc, accel), dt)
 		prevPos := ship.Pos
 		ship = ship.Extrapolate(dt)
 		tp.q.Add(graph.Line(tp.cam, prevPos, ship.Pos, tp.clr), tp.layer)

@@ -51,14 +51,15 @@ func (s *cosmoScene) procControlForward(dt float64) {
 	case s.thrustLevel < 0:
 		accel = s.thrustLevel * Data.SP.March_engine.Reverse_max / Data.BSP.Mass
 	}
+	accelV := v2.InDir(Data.PilotData.Ship.Ang).Mul(accel)
 
-	Data.PilotData.ThrustVector = v2.InDir(Data.PilotData.Ship.Ang).Mul(accel)
-	Data.PilotData.Ship.Vel.DoAddMul(v2.InDir(Data.PilotData.Ship.Ang), accel*dt)
+	Data.PilotData.ThrustVector = accelV
+	Data.PilotData.Ship.Vel.DoAddMul(accelV, dt)
 }
 
 func (s *cosmoScene) procShipGravity(dt float64) {
-	sumF := SumGravityF(Data.PilotData.Ship.Pos, Data.StateData.Galaxy)
-	Data.PilotData.Ship.Vel.DoAddMul(sumF, dt/Data.BSP.Mass)
+	sumGravityAcc := SumGravityAcc(Data.PilotData.Ship.Pos, Data.StateData.Galaxy)
+	Data.PilotData.Ship.Vel.DoAddMul(sumGravityAcc, dt)
 }
 
 func (s *cosmoScene) procEmissions(dt float64) {
