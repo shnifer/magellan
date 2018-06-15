@@ -17,8 +17,9 @@ import (
 type Client struct {
 	mu sync.RWMutex
 
-	httpCli http.Client
-	opts    ClientOpts
+	httpCli     http.Client
+	httpCliLong http.Client
+	opts        ClientOpts
 
 	started         bool
 	pingLostCounter int
@@ -62,10 +63,14 @@ func NewClient(opts ClientOpts) (*Client, error) {
 	httpCli := http.Client{
 		Timeout: opts.Timeout,
 	}
+	httpCliLong := http.Client{
+		Timeout: ClientLargeTimeout,
+	}
 
 	res := &Client{
-		httpCli: httpCli,
-		opts:    opts,
+		httpCli:     httpCli,
+		httpCliLong: httpCliLong,
+		opts:        opts,
 
 		//starts from unconnected states,
 		//so opt.OnReconnect and opt.OnUnpause will be called on first connection
@@ -312,10 +317,6 @@ func clientPing(c *Client) {
 
 func (c *Client) doReq(method, path string, reqBody []byte, largeTimeout bool) (respBody []byte, er error) {
 
-	if largeTimeout {
-		c.httpCli.Timeout = ClientLargeTimeout
-	}
-
 	bodyBuf := bytes.NewBuffer(reqBody)
 
 	req, err := http.NewRequest(method, c.opts.Addr+path, bodyBuf)
@@ -326,7 +327,12 @@ func (c *Client) doReq(method, path string, reqBody []byte, largeTimeout bool) (
 	req.Header.Set(roleAttr, c.opts.Role)
 	req.Header.Set(stateAttr, c.curState)
 
-	resp, err := c.httpCli.Do(req)
+	var resp *http.Response
+	if largeTimeout {
+		resp, err = c.httpCliLong.Do(req)
+	} else {
+		resp, err = c.httpCli.Do(req)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -342,8 +348,6 @@ func (c *Client) doReq(method, path string, reqBody []byte, largeTimeout bool) (
 		Log(LVL_ERROR, errStr)
 		return nil, errors.New(errStr)
 	}
-
-	c.httpCli.Timeout = c.opts.Timeout
 
 	return buf, nil
 }
