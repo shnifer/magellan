@@ -7,7 +7,7 @@
     "WinW": 1000,
     "WinH": 1000,
     "DoProf": false,
-    "GravityConst": 1.0,
+    "GravityConst": 1,
     "WarpGravityConst": 1000,
     "LogLogTimeoutMs": 1000,
     "LogRetryMinMs": 10,

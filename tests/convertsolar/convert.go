@@ -15,7 +15,8 @@ type fileData struct {
 	ID, Parent  string
 	Diameter    float64
 	Distance    float64
-	Mass        float64
+	MaxGravity  float64
+	GravityR10  float64
 	OrbitPeriod float64
 	Color       struct{ R, G, B byte }
 	Count       int
@@ -32,6 +33,7 @@ const DEFType = "planet"
 const K_OrbitPeriod = 1.0
 const K_Radius = 2.7
 const K_Mass = 1.0
+const K_Depth = 1.0
 const K_Size = 1.0
 
 func main() {
@@ -69,7 +71,8 @@ func main() {
 
 				kRadMass := commons.KDev(v.RadMassDev)
 				w.Diameter *= kRadMass
-				w.Mass *= kRadMass
+				w.MaxGravity *= kRadMass
+				w.GravityR10 *= kRadMass
 
 				gp, id := createGP(w)
 				outData.Points[id] = gp
@@ -104,15 +107,19 @@ func createGP(v fileData) (*commons.GalaxyPoint, string) {
 		return float64(int(x*sgn)) / sgn
 	}
 
+	zd:=v.GravityR10/3
+	mass:=v.MaxGravity *zd*zd
+
 	gp := commons.GalaxyPoint{
 		ParentID:  v.Parent,
-		Pos:       v2.V2{},
+		Pos:       v2.ZV,
 		Orbit:     okr(v.Distance * K_Radius),
 		Period:    okr(v.OrbitPeriod * K_OrbitPeriod),
 		Type:      objType,
 		Size:      okr(v.Diameter / 2 * K_Size),
 		Color:     clr,
-		Mass:      okr(v.Mass * K_Mass),
+		Mass:      okr(mass * K_Mass),
+		GDepth:    okr(zd * K_Depth),
 		ScanData:  v.ID,
 		Emissions: v.Emissions,
 	}

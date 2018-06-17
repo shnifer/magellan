@@ -56,7 +56,7 @@ func SumGravityAcc(pos v2.V2, galaxy *Galaxy) (sumF v2.V2) {
 		}
 		v = obj.Pos.Sub(pos)
 		len2 = v.LenSqr()
-		G = Gravity(obj.Mass, len2, obj.Size/2)
+		G = Gravity(obj.Mass, len2, obj.GDepth)
 		sumF.DoAddMul(v.Normed(), G)
 	}
 	return sumF
