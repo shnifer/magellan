@@ -112,6 +112,7 @@ func (s *cosmoScene) UpdateHUD() {
 }
 
 func (h cosmoSceneHUD) Req() *graph.DrawQueue {
+
 	Q := graph.NewDrawQueue()
 	Q.Add(h.background, graph.Z_STAT_BACKGROUND)
 	Q.Add(h.compass, graph.Z_HUD)

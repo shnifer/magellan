@@ -37,5 +37,13 @@
         "InputType": "KP",
         "Key": 13,
         "Val": -1
+    },
+    {
+        "InputName": "warpspeed",
+        "InputType": "JA",
+        "JoyID": 0,
+        "MinAxis": 0.1,
+        "JoyAxis": 3,
+        "Val": -1
     }
 ]

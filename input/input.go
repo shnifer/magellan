@@ -129,8 +129,9 @@ func Update() {
 		in := impl.InputName
 		cur := inputState[in]
 		val := impl.get()
+		//needed cz many confs may affect one input i.e. joy+keyboard
 		if math.Abs(val) > math.Abs(cur) {
-			inputState[impl.InputName] = val
+			inputState[in] = val
 		}
 	}
 }

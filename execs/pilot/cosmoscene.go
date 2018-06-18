@@ -34,7 +34,8 @@ type cosmoScene struct {
 	trailT float64
 	trail  *graph.FadingArray
 
-	hud cosmoSceneHUD
+	warpEngine *cosmoSceneWarpEngine
+	hud        cosmoSceneHUD
 
 	showPredictor   bool
 	predictorZero   *TrackPredictor
@@ -90,6 +91,7 @@ func (s *cosmoScene) Init() {
 
 	s.objects = make(map[string]*CosmoPoint)
 	s.otherShips = make(map[string]*OtherShip)
+	s.warpEngine = newCosmoSceneWarpEngine()
 	s.thrustLevel = 0
 	s.maneurLevel = 0
 	s.trailT = 0
@@ -121,31 +123,7 @@ func (s *cosmoScene) Update(dt float64) {
 
 	//received new data about otherShips
 	if Data.ServerData.MsgID != s.lastServerID {
-		s.lastServerID = Data.ServerData.MsgID
-
-		//Create new otherShip and move all to new positions
-		for _, otherData := range Data.ServerData.OtherShips {
-			otherShip, ok := s.otherShips[otherData.Id]
-			if !ok {
-				otherShip = NewOtherShip(s.cam.FixS(), otherData.Name, float64(DEFVAL.OtherShipElastic)/1000)
-				s.otherShips[otherData.Id] = otherShip
-			}
-			otherShip.SetRB(otherData.Ship)
-		}
-
-		//check for lost otherShips to delete
-		for id := range s.otherShips {
-			found := false
-			for _, otherData := range Data.ServerData.OtherShips {
-				if otherData.Id == id {
-					found = true
-					break
-				}
-			}
-			if !found {
-				delete(s.otherShips, id)
-			}
-		}
+		s.actualizeOtherShips()
 	}
 
 	//update actual otherShips
@@ -178,10 +156,6 @@ func (s *cosmoScene) Update(dt float64) {
 		Data.PilotData.Ship.Pos = Data.Galaxy.Points["magellan"].Pos
 	}
 
-	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
-		s.toWarp()
-	}
-
 	if inpututil.IsKeyJustPressed(ebiten.Key1) {
 		s.showPredictor = !s.showPredictor
 	}
@@ -210,15 +184,16 @@ func (s *cosmoScene) Update(dt float64) {
 		})
 	}
 	s.trail.Update(dt)
-	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 
 	if s.thrustLevel > 0 {
 		Data.PilotData.HeatProduction = Data.SP.March_engine.Heat_prod * s.thrustLevel
 	} else {
 		Data.PilotData.HeatProduction = 0
 	}
-	s.UpdateHUD()
-	s.camRecalc()
+	s.warpEngine.update(dt)
+	//moved to draw
+	//s.UpdateHUD()
+	//s.camRecalc()
 }
 func (s *cosmoScene) camRecalc() {
 	s.cam.Pos = Data.PilotData.Ship.Pos
@@ -229,9 +204,14 @@ func (s *cosmoScene) camRecalc() {
 func (s *cosmoScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
+	s.camRecalc()
+	s.UpdateHUD()
+	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
+
 	Q := graph.NewDrawQueue()
 
 	Q.Append(s.hud)
+	Q.Append(s.warpEngine)
 
 	for _, co := range s.objects {
 		Q.Append(co)
@@ -265,9 +245,30 @@ func (s *cosmoScene) OnCommand(command string) {
 func (*cosmoScene) Destroy() {
 }
 
-func (s *cosmoScene) toWarp() {
-	state := Data.State
-	state.StateID = STATE_warp
-	state.GalaxyID = WARP_Galaxy_ID
-	Client.RequestNewState(state.Encode())
+func (s *cosmoScene) actualizeOtherShips() {
+	s.lastServerID = Data.ServerData.MsgID
+
+	//Create new otherShip and move all to new positions
+	for _, otherData := range Data.ServerData.OtherShips {
+		otherShip, ok := s.otherShips[otherData.Id]
+		if !ok {
+			otherShip = NewOtherShip(s.cam.FixS(), otherData.Name, float64(DEFVAL.OtherShipElastic)/1000)
+			s.otherShips[otherData.Id] = otherShip
+		}
+		otherShip.SetRB(otherData.Ship)
+	}
+
+	//check for lost otherShips to delete
+	for id := range s.otherShips {
+		found := false
+		for _, otherData := range Data.ServerData.OtherShips {
+			if otherData.Id == id {
+				found = true
+				break
+			}
+		}
+		if !found {
+			delete(s.otherShips, id)
+		}
+	}
 }
