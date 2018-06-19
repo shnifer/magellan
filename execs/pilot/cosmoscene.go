@@ -1,6 +1,7 @@
 package main
 
 import (
+	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	. "github.com/Shnifer/magellan/log"
@@ -230,7 +231,7 @@ func (s *cosmoScene) updateDebugControl(dt float64) {
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyP) {
-		AddBeacon("just a test beacon")
+		AddBeacon(Data, Client, "just a test beacon")
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {

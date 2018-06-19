@@ -147,9 +147,16 @@ func (s *scanner) procScanned(obj *CosmoPoint) {
 	if gp.Type == commons.BUILDING_BEACON {
 		commons.RequestRemoveBuilding(Client, obj.ID)
 	}
+	if !gp.HasMine {
+		commons.AddMine(Data, Client, obj.ID, "corp1")
+	} else {
+		commons.RequestRemoveBuilding(Client, gp.MineFullKey)
+	}
 
+	return
 	s.scannedImg = qr.NewQRSpriteHUD(gp.ScanData, 256)
 	s.scannedImg.SetPivot(graph.TopLeft())
 	s.scannedImg.SetPos(graph.ScrP(0, 0))
+	//todo: do this normal! drops sometime
 	time.AfterFunc(time.Second*3, func() { s.scannedImg.TexImageDispose(); s.scannedImg = nil })
 }

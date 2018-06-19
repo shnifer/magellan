@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 )
 
+//todo: WHY BUILDINGS DO NOT LOAD ON SCENE START!?
 func (rd *roomServer) loadStateData(state State) (sd StateData, subscribe chan storage.Event) {
 	defer LogFunc("loadStateData")()
 

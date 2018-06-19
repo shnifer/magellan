@@ -4,13 +4,13 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
-	"github.com/hajimehoshi/ebiten"
 	"golang.org/x/image/colornames"
 	"image/color"
 	"math/rand"
 )
 
-//TODO: add mines and fishhouses
+const glyphSize = 64
+
 type CosmoPoint struct {
 	Sprite        *graph.CycledSprite
 	EmissionRange *graph.Sprite
@@ -20,7 +20,8 @@ type CosmoPoint struct {
 	Size float64
 	Type string
 
-	lastT float64
+	Glyphs []*graph.Sprite
+	cam    *graph.Camera
 }
 
 func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
@@ -62,6 +63,14 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		emissionRange.SetPos(pd.Pos)
 	}
 
+	Glyphs := make([]*graph.Sprite, 0)
+	if pd.HasMine {
+		Glyphs = append(Glyphs, newGlyph(BUILDING_MINE, pd.MineOwner))
+	}
+	if pd.HasFishHouse {
+		Glyphs = append(Glyphs, newGlyph(BUILDING_FISHHOUSE, pd.MineOwner))
+	}
+
 	res := CosmoPoint{
 		Sprite:        cycledSprite,
 		EmissionRange: emissionRange,
@@ -69,6 +78,8 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		ID:            pd.ID,
 		Size:          pd.Size,
 		Type:          pd.Type,
+		Glyphs:        Glyphs,
+		cam:           params.Cam,
 	}
 	res.recalcSprite()
 	return &res
@@ -80,12 +91,14 @@ func (co *CosmoPoint) Update(dt float64) {
 	co.recalcSprite()
 }
 
+/*
 func (co *CosmoPoint) Draw(dest *ebiten.Image) {
 	if co.EmissionRange != nil {
 		co.EmissionRange.Draw(dest)
 	}
 	co.Sprite.Draw(dest)
 }
+*/
 
 func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 	res = graph.NewDrawQueue()
@@ -93,6 +106,14 @@ func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 		res.Add(co.EmissionRange, graph.Z_ABOVE_OBJECT)
 	}
 	res.Add(co.Sprite, graph.Z_GAME_OBJECT)
+	for i, sprite := range co.Glyphs {
+		pos := co.cam.Apply(co.Pos)
+		size := co.cam.Scale * co.Size
+		pos.DoAddMul(v2.V2{X: -1, Y: -1}, size)
+		pos.DoAddMul(v2.V2{X: glyphSize, Y: 0}, float64(i-1))
+		sprite.SetPos(pos)
+		res.Add(sprite, graph.Z_ABOVE_OBJECT)
+	}
 	return res
 }
 
@@ -101,4 +122,12 @@ func (co *CosmoPoint) recalcSprite() {
 	if co.EmissionRange != nil {
 		co.EmissionRange.SetPos(co.Pos)
 	}
+}
+
+func newGlyph(t string, owner string) *graph.Sprite {
+	res := NewAtlasSprite(t, graph.NoCam)
+	res.SetSize(glyphSize, glyphSize)
+	clr := ColorByOwner(owner)
+	res.SetColor(clr)
+	return res
 }

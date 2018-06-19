@@ -9,7 +9,6 @@ import (
 )
 
 func (s *cosmoScene) addBuilding(b Building) {
-	Data.Galaxy.AddBuilding(b)
 	switch b.Type {
 	case BUILDING_MINE:
 		pd, ok := Data.Galaxy.Points[b.PlanetID]
@@ -31,8 +30,6 @@ func (s *cosmoScene) addBuilding(b Building) {
 }
 
 func (s *cosmoScene) delBuilding(b Building) {
-	Data.Galaxy.DelBuilding(b)
-
 	switch b.Type {
 	case BUILDING_MINE:
 		pd, ok := Data.Galaxy.Points[b.PlanetID]
@@ -61,8 +58,10 @@ func (s *cosmoScene) OnCommand(command string) {
 			Log(LVL_ERROR, "onCommand can't decode event", string(buf), ":", err)
 		}
 		if way == storage.Add {
+			Data.Galaxy.AddBuilding(b)
 			s.addBuilding(b)
 		} else if way == storage.Remove {
+			Data.Galaxy.DelBuilding(b)
 			s.delBuilding(b)
 		}
 	default:

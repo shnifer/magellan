@@ -94,6 +94,7 @@ func (galaxy *Galaxy) AddBuilding(b Building) {
 		}
 		gp.HasMine = true
 		gp.MineOwner = b.OwnerID
+		gp.MineFullKey = b.FullKey
 	case BUILDING_FISHHOUSE:
 		gp, ok := galaxy.Points[b.PlanetID]
 		if !ok {
@@ -106,6 +107,7 @@ func (galaxy *Galaxy) AddBuilding(b Building) {
 		}
 		gp.HasFishHouse = true
 		gp.FishHouseOwner = b.OwnerID
+		gp.FishHouseFullKey = b.FullKey
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
 		parentID := ""
 		if len(galaxy.Ordered) > 0 {
@@ -135,6 +137,7 @@ func (galaxy *Galaxy) DelBuilding(b Building) {
 		}
 		gp.HasMine = false
 		gp.MineOwner = ""
+		gp.MineFullKey = ""
 	case BUILDING_FISHHOUSE:
 		gp, ok := galaxy.Points[b.PlanetID]
 		if !ok {
@@ -147,6 +150,7 @@ func (galaxy *Galaxy) DelBuilding(b Building) {
 		}
 		gp.HasFishHouse = false
 		gp.FishHouseOwner = ""
+		gp.FishHouseFullKey = ""
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
 		fullKey := b.FullKey
 		pointer, exist := galaxy.Points[fullKey]

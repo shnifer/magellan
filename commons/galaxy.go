@@ -43,11 +43,13 @@ type GalaxyPoint struct {
 	Signatures []Signature `json:"sig,omitempty"`
 	Color      color.RGBA  `json:"clr"`
 
-	HasMine   bool
-	MineOwner string
+	HasMine     bool
+	MineOwner   string
+	MineFullKey string
 
-	HasFishHouse   bool
-	FishHouseOwner string
+	HasFishHouse     bool
+	FishHouseOwner   string
+	FishHouseFullKey string
 }
 
 func (gp GalaxyPoint) MarshalJSON() ([]byte, error) {
