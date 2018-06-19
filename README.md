@@ -10,16 +10,24 @@ Using [diskv](https://github.com/peterbourgon/diskv) for disk storage and [packr
 
 ## install compilers
 
-you need go compiler https://dl.google.com/go/go1.10.3.windows-386.msi
+you need [go compiler](https://dl.google.com/go/go1.10.3.windows-386.msi)
 
-to compile non-server parts also needs mingw32 https://sourceforge.net/projects/mingw/files/Installer/mingw-get-setup.exe/download
+to compile non-server parts also needs [mingw32](https://sourceforge.net/projects/mingw/files/Installer/mingw-get-setup.exe/download)
 
-maybe you will need to set %PATH% variable
+maybe you will need to add into %PATH% variable `/go/bin/` , `%UserName%/go/bin/` , `mingw32/bin/`
 
 ## install packr
 
-`go get https://github.com/gobuffalo/packr`
-`go install`
+```
+go get -u github.com/gobuffalo/packr
+go install github.com/gobuffalo/packr
+```
+## generate static
+
+_%UserName%/go/src/github.com/Shnifer/magellan/_
+`packr`
+
+## compile
 
 use command to get server part:
 
@@ -29,8 +37,13 @@ or use to get all project:
 
 `go get -u -d -v github.com/Shnifer/magellan/...`
 
-then use from %UserName%/go/src/github.com/Shnifer/magellan/execs/server/
+then run
 
-`go install`
+```
+go install github.com/Shnifer/magellan/execs/server/
+go install github.com/Shnifer/magellan/execs/pilot/
+go install github.com/Shnifer/magellan/execs/navi/
+go install github.com/Shnifer/magellan/execs/engi/
+```
 
-Congratulations! You got server.exe in %UserName%/go/bin/
+Congratulations! You got your exes in _%UserName%/go/bin/_
