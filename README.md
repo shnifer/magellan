@@ -9,6 +9,7 @@ Using diskv for disk storage and packr for embedding static data
 # how to install
 
 you need go compiler https://dl.google.com/go/go1.10.3.windows-386.msi
+
 to compile non-server parts also needs mingw32 https://sourceforge.net/projects/mingw/files/Installer/mingw-get-setup.exe/download
 
 maybe you will need to set %PATH% variable
