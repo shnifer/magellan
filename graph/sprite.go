@@ -12,7 +12,6 @@ import (
 	"math"
 )
 
-//TODO: Global scale
 const Deg2Rad = math.Pi / 180
 
 //const Rad2Deg = 180 / math.Pi
