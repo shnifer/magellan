@@ -22,6 +22,8 @@ or use to get all project:
 
 `go get -v github.com/Shnifer/magellan/...`
 
-then use from %UserName%/go/src/github.com/Shnifer/magellan/execs/server
+then use from %UserName%/go/src/github.com/Shnifer/magellan/execs/server/
 
 `go install`
+
+Gratz! You got server.exe in %UserName%/go/bin/
