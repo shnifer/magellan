@@ -18,6 +18,7 @@
   "marker": {"FileName": "marker.png"},
   "noise": {"FileName": "noisesheet.png","Sx": 400,"Sy": 400},
   "compass": {"FileName": "HUD_Radar.png", "Smooth":true},
+  "mine": {"FileName": "mine.png"},
   "background": {"FileName": "background.jpg"},
   "engibackground": {"FileName": "engibackground.jpg"},
   "BUILDING_BEACON": {"FileName": "aim.png"},

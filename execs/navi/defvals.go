@@ -24,10 +24,10 @@ type tDefVals struct {
 	NaviMarketDuration float64
 
 	//in ms
-	LogLogTimeoutMs int
-	LogRetryMinMs   int
-	LogRetryMaxMs   int
-	LogIP           string
+	LogTimeoutMs  int
+	LogRetryMinMs int
+	LogRetryMaxMs int
+	LogIP         string
 }
 
 var DEFVAL tDefVals
@@ -40,7 +40,7 @@ func setDefDef() {
 		WinW:               1024,
 		WinH:               768,
 		NaviMarketDuration: 5.0,
-		LogLogTimeoutMs:    1000,
+		LogTimeoutMs:       1000,
 		LogRetryMinMs:      10,
 		LogRetryMaxMs:      60000,
 	}

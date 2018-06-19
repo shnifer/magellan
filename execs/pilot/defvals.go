@@ -29,10 +29,10 @@ type tDefVals struct {
 	WarpGravityConst float64
 
 	//in ms
-	LogLogTimeoutMs int
-	LogRetryMinMs   int
-	LogRetryMaxMs   int
-	LogIP           string
+	LogTimeoutMs  int
+	LogRetryMinMs int
+	LogRetryMaxMs int
+	LogIP         string
 
 	//inms
 	OtherShipElastic int
@@ -49,7 +49,7 @@ func setDefDef() {
 		WinH:             768,
 		GravityConst:     100,
 		WarpGravityConst: 100,
-		LogLogTimeoutMs:  1000,
+		LogTimeoutMs:     1000,
 		LogRetryMinMs:    10,
 		LogRetryMaxMs:    60000,
 		OtherShipElastic: 400,

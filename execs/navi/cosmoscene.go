@@ -24,6 +24,10 @@ type cosmoScene struct {
 
 	scanner *scanner
 
+	showPredictor   bool
+	predictorZero   *TrackPredictor
+	predictorThrust *TrackPredictor
+
 	naviMarkerT float64
 }
 
@@ -38,11 +42,23 @@ func newCosmoScene() *cosmoScene {
 	ship := NewAtlasSprite("ship", cam.Phys())
 	ship.SetSize(50, 50)
 
+	predictorSprite := NewAtlasSprite("trail", cam.Deny())
+	predictorSprite.SetSize(20, 20)
+	predictorThrust := NewTrackPredictor(cam, predictorSprite, &Data, Track_CurrentThrust, colornames.Palevioletred, graph.Z_ABOVE_OBJECT+1)
+
+	predictor2Sprite := NewAtlasSprite("trail", cam.Deny())
+	predictor2Sprite.SetSize(15, 15)
+	predictor2Sprite.SetColor(colornames.Darkgray)
+
+	predictorZero := NewTrackPredictor(cam, predictor2Sprite, &Data, Track_ZeroThrust, colornames.Cadetblue, graph.Z_ABOVE_OBJECT)
+
 	return &cosmoScene{
-		caption: caption,
-		ship:    ship,
-		cam:     cam,
-		objects: make(map[string]*CosmoPoint),
+		caption:         caption,
+		ship:            ship,
+		cam:             cam,
+		objects:         make(map[string]*CosmoPoint),
+		predictorThrust: predictorThrust,
+		predictorZero:   predictorZero,
 	}
 }
 
@@ -119,6 +135,11 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Append(co)
 	}
 
+	if s.showPredictor {
+		Q.Append(s.predictorThrust)
+		Q.Append(s.predictorZero)
+	}
+
 	//Q.Add(s.caption, graph.Z_STAT_HUD)
 	Q.Add(s.ship, graph.Z_HUD)
 
@@ -136,9 +157,6 @@ func (s *cosmoScene) procMouseClick(scrPos v2.V2) {
 	Data.NaviData.ActiveMarker = true
 	Data.NaviData.MarkerPos = worldPos
 	s.naviMarkerT = DEFVAL.NaviMarketDuration
-}
-
-func (s *cosmoScene) OnCommand(command string) {
 }
 
 func (*cosmoScene) Destroy() {

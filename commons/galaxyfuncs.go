@@ -94,6 +94,18 @@ func (galaxy *Galaxy) AddBuilding(b Building) {
 		}
 		gp.HasMine = true
 		gp.MineOwner = b.OwnerID
+	case BUILDING_FISHHOUSE:
+		gp, ok := galaxy.Points[b.PlanetID]
+		if !ok {
+			Log(LVL_ERROR, "trying to add fishhouse on non existant planet with ID:", b.PlanetID)
+			return
+		}
+		if gp.HasFishHouse {
+			Log(LVL_ERROR, "trying to add fishhouse on planet", b.PlanetID, " but already has mine")
+			return
+		}
+		gp.HasFishHouse = true
+		gp.FishHouseOwner = b.OwnerID
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
 		parentID := ""
 		if len(galaxy.Ordered) > 0 {
@@ -114,15 +126,27 @@ func (galaxy *Galaxy) DelBuilding(b Building) {
 	case BUILDING_MINE:
 		gp, ok := galaxy.Points[b.PlanetID]
 		if !ok {
-			Log(LVL_ERROR, "trying to add mine on non existant planet with ID:", b.PlanetID)
+			Log(LVL_ERROR, "trying to add del on non existant planet with ID:", b.PlanetID)
 			return
 		}
-		if gp.HasMine {
-			Log(LVL_ERROR, "trying to add mine on planet", b.PlanetID, " but already has mine")
+		if !gp.HasMine {
+			Log(LVL_ERROR, "trying to del mine on planet", b.PlanetID, "but do not has mine")
 			return
 		}
 		gp.HasMine = false
 		gp.MineOwner = ""
+	case BUILDING_FISHHOUSE:
+		gp, ok := galaxy.Points[b.PlanetID]
+		if !ok {
+			Log(LVL_ERROR, "trying to add fishhouse on non existant planet with ID:", b.PlanetID)
+			return
+		}
+		if !gp.HasFishHouse {
+			Log(LVL_ERROR, "trying to del fishhouse on planet", b.PlanetID, "but do not has mine")
+			return
+		}
+		gp.HasFishHouse = false
+		gp.FishHouseOwner = ""
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
 		fullKey := b.FullKey
 		pointer, exist := galaxy.Points[fullKey]

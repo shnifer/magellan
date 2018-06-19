@@ -44,6 +44,9 @@ func newDisk(diskOpts diskv.Options) *disk {
 	//preload in cache
 	for key := range diskV.Keys(nil) {
 		_ = diskV.ReadString(key)
+		if key == generatorID {
+			continue
+		}
 		keys[key] = struct{}{}
 	}
 
@@ -55,6 +58,8 @@ func newDisk(diskOpts diskv.Options) *disk {
 	}
 }
 
+//use this to add new pairs.
+//announce new key for subscribers
 func (d *disk) append(key, val string) error {
 	if d.has(key) {
 		return ErrAlreadyExist
@@ -74,16 +79,14 @@ func (d *disk) append(key, val string) error {
 	return nil
 }
 
+//get list of all keys in storage and subscribe for new
 func (d *disk) subscribe() (fullKeys map[string]struct{}, subscribe chan string) {
 	d.Lock()
 	defer d.Unlock()
 
 	fullKeys = make(map[string]struct{}, 0)
 
-	for key := range d.Keys(nil) {
-		if key == generatorID {
-			continue
-		}
+	for key := range d.keys {
 		fullKeys[key] = struct{}{}
 	}
 

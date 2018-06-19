@@ -122,6 +122,7 @@ func (s *cosmoScene) Update(dt float64) {
 		s.otherShips[id].Update(dt)
 	}
 
+	//update galaxy now to calc right gravity
 	Data.PilotData.SessionTime += dt
 	sessionTime := Data.PilotData.SessionTime
 	Data.Galaxy.Update(sessionTime)
@@ -142,17 +143,7 @@ func (s *cosmoScene) Update(dt float64) {
 
 	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
 
-	s.trailT += dt
-	if s.trailT > trailPeriod {
-		s.trailT -= trailPeriod
-
-		s.trail.Add(graph.ArrayElem{
-			Size:     5,
-			Pos:      Data.PilotData.Ship.Pos,
-			LifeTime: trailLifeTime,
-		})
-	}
-	s.trail.Update(dt)
+	s.trailUpdate(dt)
 
 	if s.thrustLevel > 0 {
 		Data.PilotData.HeatProduction = Data.SP.March_engine.Heat_prod * s.thrustLevel
@@ -206,6 +197,20 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	}
 
 	Q.Run(image)
+}
+
+func (s *cosmoScene) trailUpdate(dt float64) {
+	s.trailT += dt
+	if s.trailT > trailPeriod {
+		s.trailT -= trailPeriod
+
+		s.trail.Add(graph.ArrayElem{
+			Size:     5,
+			Pos:      Data.PilotData.Ship.Pos,
+			LifeTime: trailLifeTime,
+		})
+	}
+	s.trail.Update(dt)
 }
 
 func (s *cosmoScene) updateDebugControl(dt float64) {

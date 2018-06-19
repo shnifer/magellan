@@ -5,7 +5,7 @@
     "LastSeenTimeout": 1000,
     "OtherShipsUpdatePeriod": 400,
     "NeededRoles": [
-        "Pilot"
+        "Pilot", "Navi"
     ],
     "DoProf": false,
     "SolarStartLocationName": "magellan",

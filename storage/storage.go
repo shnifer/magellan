@@ -154,8 +154,10 @@ func (s *Storage) procNewKey(newKey string) {
 	case glyphDel:
 		//send event about the object, not deleteKey
 		objKey.glyph = ""
-		if s.disk.has(objKey.FullKey()) {
-			s.sendEvent(Remove, objKey, "")
+		fk:=objKey.FullKey()
+		if s.disk.has(fk) {
+			val := s.disk.ReadString(fk)
+			s.sendEvent(Remove, objKey, val)
 		}
 	}
 

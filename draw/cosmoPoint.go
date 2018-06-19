@@ -10,6 +10,7 @@ import (
 	"math/rand"
 )
 
+//TODO: add mines and fishhouses
 type CosmoPoint struct {
 	Sprite        *graph.CycledSprite
 	EmissionRange *graph.Sprite

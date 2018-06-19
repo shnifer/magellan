@@ -1,23 +1,25 @@
 package main
 
-import . "github.com/Shnifer/magellan/commons"
+import (
+	. "github.com/Shnifer/magellan/commons"
+	"log"
+)
 
 func AddBeacon(msg string) {
+	sessionTime := Data.PilotData.SessionTime
+	angle := Data.PilotData.Ship.Pos.Dir() / 360
+	basePeriod := 5000 * KDev(10)
+
+	N := int(sessionTime / basePeriod)
+	log.Println("N", N)
+	period := sessionTime / (angle + float64(N))
+
 	b1 := Building{
 		Type:     BUILDING_BEACON,
 		GalaxyID: Data.State.GalaxyID,
-		Period:   5000 * KDev(10),
+		Period:   period,
 		Message:  msg,
 	}
-	requestNewBuilding(b1)
 	//duplicated into warp on server side
-}
-
-func requestNewBuilding(b Building) {
-	buf := string(b.Encode())
-	Client.SendRequest(CMD_ADDBUILDREQ + buf)
-}
-
-func requestRemoveBuilding(fullKey string) {
-	Client.SendRequest(CMD_DELBUILDREQ + fullKey)
+	RequestNewBuilding(Client, b1)
 }

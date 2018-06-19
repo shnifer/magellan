@@ -4,10 +4,10 @@
     "PingPeriod": 100,
     "Room": "room101",
     "FullScreen": false,
-    "WinW": 1000,
-    "WinH": 1000,
+    "WinW": 600,
+    "WinH": 600,
     "DoProf": false,
-    "LogLogTimeoutMs": 1000,
+    "LogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 10000,
     "LogIP": "http://magellan2018.aerem.in:9200"

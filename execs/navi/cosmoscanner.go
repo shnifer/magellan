@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/graph/qr"
@@ -143,6 +144,10 @@ func (s *scanner) procScanned(obj *CosmoPoint) {
 	if gp.ScanData == "" {
 		return
 	}
+	if gp.Type == commons.BUILDING_BEACON {
+		commons.RequestRemoveBuilding(Client, obj.ID)
+	}
+
 	s.scannedImg = qr.NewQRSpriteHUD(gp.ScanData, 256)
 	s.scannedImg.SetPivot(graph.TopLeft())
 	s.scannedImg.SetPos(graph.ScrP(0, 0))

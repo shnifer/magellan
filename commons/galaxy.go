@@ -45,6 +45,9 @@ type GalaxyPoint struct {
 
 	HasMine   bool
 	MineOwner string
+
+	HasFishHouse   bool
+	FishHouseOwner string
 }
 
 func (gp GalaxyPoint) MarshalJSON() ([]byte, error) {

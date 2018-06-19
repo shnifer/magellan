@@ -3,13 +3,17 @@ package commons
 import (
 	"encoding/json"
 	. "github.com/Shnifer/magellan/log"
+	"github.com/Shnifer/magellan/network"
 	"github.com/Shnifer/magellan/storage"
+	"golang.org/x/image/colornames"
+	"image/color"
 )
 
 const (
-	BUILDING_BLACKBOX = "BUILDING_BLACKBOX"
-	BUILDING_MINE     = "BUILDING_MINE"
-	BUILDING_BEACON   = "BUILDING_BEACON"
+	BUILDING_BLACKBOX  = "BUILDING_BLACKBOX"
+	BUILDING_MINE      = "BUILDING_MINE"
+	BUILDING_BEACON    = "BUILDING_BEACON"
+	BUILDING_FISHHOUSE = "BUILDING_FISHHOUSE"
 )
 
 type Building struct {
@@ -61,10 +65,38 @@ func DecodeEvent(buf []byte) (t int, b Building, err error) {
 	if err != nil {
 		return 0, Building{}, err
 	}
-	b, err = Building{}.Decode([]byte(e.Data))
-	if err != nil {
-		return 0, Building{}, err
+	if e.Data != "" {
+		b, err = Building{}.Decode([]byte(e.Data))
+		if err != nil {
+			return 0, Building{}, err
+		}
+		b.FullKey = e.Key.FullKey()
+	} else {
+		Log(LVL_ERROR, "decode event empty data field")
 	}
-	b.FullKey = e.Key.FullKey()
+
 	return e.Type, b, nil
+}
+
+func RequestNewBuilding(client *network.Client, b Building) {
+	buf := string(b.Encode())
+	client.SendRequest(CMD_ADDBUILDREQ + buf)
+}
+
+func RequestRemoveBuilding(client *network.Client, fullKey string) {
+	client.SendRequest(CMD_DELBUILDREQ + fullKey)
+}
+
+func ColorByOwner(owner string) color.Color {
+	switch owner {
+	case "corp1":
+		return colornames.Red
+	case "corp2":
+		return colornames.Green
+	case "corp3":
+		return colornames.Blue
+	default:
+		Log(LVL_ERROR, "ColorByOwner unknown owner:", owner)
+		return colornames.White
+	}
 }
