@@ -42,7 +42,7 @@
         "InputName": "warpspeed",
         "InputType": "JA",
         "JoyID": 0,
-        "MinAxis": 0.1,
+        "MinAxis": 0,
         "JoyAxis": 3,
         "Val": -1
     }

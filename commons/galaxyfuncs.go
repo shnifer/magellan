@@ -73,7 +73,7 @@ func (galaxy *Galaxy) Update(sessionTime float64) {
 }
 
 //works with already calced and ordered Galaxy
-func (galaxy *Galaxy) addBuilding(b Building) {
+func (galaxy *Galaxy) AddBuilding(b Building) {
 	fullKey := b.FullKey
 	if _, exist := galaxy.Points[fullKey]; exist {
 		//already exist
@@ -100,10 +100,48 @@ func (galaxy *Galaxy) addBuilding(b Building) {
 			parentID = galaxy.Ordered[0].ID
 		}
 		gp := GalaxyPoint{}.outerFromBuilding(b, parentID, galaxy.SpawnDistance)
+		//append to the end without resorting cz buildings has no child
 		galaxy.Points[fullKey] = gp
 		galaxy.Ordered = append(galaxy.Ordered, gp)
+	default:
+		Log(LVL_ERROR, "cosmoscene addBuilding, unknown building type", b.Type)
 	}
 }
+
+//works with already calced and ordered Galaxy
+func (galaxy *Galaxy) DelBuilding(b Building) {
+	switch b.Type {
+	case BUILDING_MINE:
+		gp, ok := galaxy.Points[b.PlanetID]
+		if !ok {
+			Log(LVL_ERROR, "trying to add mine on non existant planet with ID:", b.PlanetID)
+			return
+		}
+		if gp.HasMine {
+			Log(LVL_ERROR, "trying to add mine on planet", b.PlanetID, " but already has mine")
+			return
+		}
+		gp.HasMine = false
+		gp.MineOwner = ""
+	case BUILDING_BEACON, BUILDING_BLACKBOX:
+		fullKey := b.FullKey
+		pointer, exist := galaxy.Points[fullKey]
+		if !exist {
+			Log(LVL_WARN, "trying to del building but can't find full key:", fullKey)
+			return
+		}
+		for i, v := range galaxy.Ordered {
+			if v == pointer {
+				galaxy.Ordered = append(galaxy.Ordered[:i], galaxy.Ordered[i+1:]...)
+				break
+			}
+		}
+		delete(galaxy.Points, fullKey)
+	default:
+		Log(LVL_ERROR, "galaxy delBuilding, unknown building type", b.Type)
+	}
+}
+
 func (GalaxyPoint) outerFromBuilding(b Building, parentID string, dist float64) (gp *GalaxyPoint) {
 	gp = &GalaxyPoint{
 		ID:         b.FullKey,

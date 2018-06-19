@@ -13,7 +13,6 @@ import (
 
 //in sec
 const TimeToWarp = 3
-const toWarpAxisLevel = 0.25
 
 type cosmoSceneWarpEngine struct {
 	wasReset bool
@@ -26,14 +25,13 @@ func newCosmoSceneWarpEngine() *cosmoSceneWarpEngine {
 }
 
 func (h *cosmoSceneWarpEngine) update(dt float64) {
-	v := (input.GetF("warpspeed") + 1) / 2
-	v = Clamp(v, 0, 1)
-	if v < toWarpAxisLevel {
+	v := input.WarpLevel("warpspeed")
+	if v <= 0 {
 		h.wasReset = true
 		h.fired = false
 		h.toWarpT = 0
 	}
-	if v > toWarpAxisLevel && h.wasReset {
+	if v > 0 && h.wasReset {
 		h.toWarpT += dt
 	}
 	if h.toWarpT > TimeToWarp && !h.fired {

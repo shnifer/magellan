@@ -54,3 +54,17 @@ func EventToCommand(e storage.Event) string {
 	}
 	return CMD_BUILDINGEVENT + string(buf)
 }
+
+func DecodeEvent(buf []byte) (t int, b Building, err error) {
+	var e storage.Event
+	err = json.Unmarshal(buf, &e)
+	if err != nil {
+		return 0, Building{}, err
+	}
+	b, err = Building{}.Decode([]byte(e.Data))
+	if err != nil {
+		return 0, Building{}, err
+	}
+	b.FullKey = e.Key.FullKey()
+	return e.Type, b, nil
+}

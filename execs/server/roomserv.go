@@ -185,7 +185,7 @@ func (rd *roomServer) OnCommand(room, role, command string) {
 
 	switch {
 	case strings.HasPrefix(command, CMD_ADDBUILDREQ):
-		buildStr := command[len(CMD_ADDBUILDREQ):]
+		buildStr := strings.TrimPrefix(command, CMD_ADDBUILDREQ)
 		b, err := Building{}.Decode([]byte(buildStr))
 		if err != nil {
 			Log(LVL_ERROR, "Command CMD_ADDBUILDREQ sent strange building: "+buildStr)

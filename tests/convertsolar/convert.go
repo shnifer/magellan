@@ -80,7 +80,7 @@ func main() {
 		}
 	}
 
-	outData.SpawnDistance = maxOrbit * 1.1
+	outData.SpawnDistance = maxOrbit * 1.1 *K_Radius
 
 	buf, err = json.Marshal(outData)
 	if err != nil {

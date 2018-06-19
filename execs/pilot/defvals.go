@@ -22,7 +22,8 @@ type tDefVals struct {
 	WinW, WinH     int
 	HalfResolution bool
 
-	DoProf bool
+	DebugControl bool
+	DoProf       bool
 
 	GravityConst     float64
 	WarpGravityConst float64

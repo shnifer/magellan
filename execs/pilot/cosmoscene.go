@@ -1,7 +1,6 @@
 package main
 
 import (
-	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	. "github.com/Shnifer/magellan/log"
@@ -108,14 +107,6 @@ func (s *cosmoScene) Init() {
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
 		s.objects[pd.ID] = cosmoPoint
 	}
-
-	for _, b := range stateData.Buildings {
-		s.addBuilding(b)
-	}
-}
-
-func (s *cosmoScene) addBuilding(b Building) {
-
 }
 
 func (s *cosmoScene) Update(dt float64) {
@@ -145,30 +136,8 @@ func (s *cosmoScene) Update(dt float64) {
 	s.procShipGravity(dt)
 	s.procEmissions(dt)
 
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-		Data.PilotData.Ship.Vel = v2.V2{}
-		Data.PilotData.Ship.AngVel = 0
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
-		Data.PilotData.Ship.Vel = v2.V2{}
-		Data.PilotData.Ship.AngVel = 0
-		Data.PilotData.Ship.Pos = Data.Galaxy.Points["magellan"].Pos
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.Key1) {
-		s.showPredictor = !s.showPredictor
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.KeyP) {
-		AddBeacon("just a test beacon")
-	}
-
-	if ebiten.IsKeyPressed(ebiten.KeyQ) {
-		s.cam.Scale *= 1 + dt
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyE) {
-		s.cam.Scale /= 1 + dt
+	if DEFVAL.DebugControl {
+		s.updateDebugControl(dt)
 	}
 
 	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
@@ -239,7 +208,32 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	Q.Run(image)
 }
 
-func (s *cosmoScene) OnCommand(command string) {
+func (s *cosmoScene) updateDebugControl(dt float64) {
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		Data.PilotData.Ship.Vel = v2.V2{}
+		Data.PilotData.Ship.AngVel = 0
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
+		Data.PilotData.Ship.Vel = v2.V2{}
+		Data.PilotData.Ship.AngVel = 0
+		Data.PilotData.Ship.Pos = Data.Galaxy.Points["magellan"].Pos
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.Key1) {
+		s.showPredictor = !s.showPredictor
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyP) {
+		AddBeacon("just a test beacon")
+	}
+
+	if ebiten.IsKeyPressed(ebiten.KeyQ) {
+		s.cam.Scale *= 1 + dt
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyE) {
+		s.cam.Scale /= 1 + dt
+	}
 }
 
 func (*cosmoScene) Destroy() {

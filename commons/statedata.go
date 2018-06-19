@@ -105,7 +105,7 @@ func (StateData) Decode(buf []byte) (sd StateData, err error) {
 	}
 	sd.Galaxy.RecalcLvls()
 	for _, b := range sd.Buildings {
-		sd.Galaxy.addBuilding(b)
+		sd.Galaxy.AddBuilding(b)
 	}
 	return sd, nil
 }
