@@ -25,17 +25,20 @@ go install github.com/gobuffalo/packr
 ## generate static
 
 _%UserName%/go/src/github.com/Shnifer/magellan/_
-`packr`
+```
+packr clean
+packr
+```
 
 ## compile
 
 use command to get server part:
 
-`go get -u -d -v github.com/Shnifer/magellan/execs/server/...`
+`go get -u -v github.com/Shnifer/magellan/execs/server/...`
 
 or use to get all project:
 
-`go get -u -d -v github.com/Shnifer/magellan/...`
+`go get -u -v github.com/Shnifer/magellan/...`
 
 then run
 
