@@ -3,7 +3,6 @@ package commons
 import (
 	"encoding/json"
 	. "github.com/Shnifer/magellan/log"
-	"log"
 )
 
 type StateData struct {
@@ -106,7 +105,6 @@ func (StateData) Decode(buf []byte) (sd StateData, err error) {
 	}
 	sd.Galaxy.RecalcLvls()
 	for _, b := range sd.Buildings {
-		log.Println("building: ", b)
 		sd.Galaxy.AddBuilding(b)
 	}
 	return sd, nil

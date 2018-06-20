@@ -3,12 +3,14 @@ package main
 import (
 	"github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
-	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/graph/qr"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
 	"golang.org/x/image/colornames"
 	"math"
+	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -147,10 +149,11 @@ func (s *scanner) procScanned(obj *CosmoPoint) {
 	if gp.Type == commons.BUILDING_BEACON {
 		commons.RequestRemoveBuilding(Client, obj.ID)
 	}
+	corp := "corp" + strconv.Itoa(rand.Intn(3)+1)
 	if !gp.HasMine {
-		commons.AddMine(Data, Client, obj.ID, "corp2")
-	}else if !gp.HasMine {
-			commons.AddMine(Data, Client, obj.ID, "corp2")
+		commons.AddMine(Data, Client, obj.ID, corp)
+	} else if !gp.HasFishHouse {
+		commons.AddFishHouse(Data, Client, obj.ID, corp)
 	} else {
 		commons.RequestRemoveBuilding(Client, gp.MineFullKey)
 		commons.RequestRemoveBuilding(Client, gp.FishHouseFullKey)

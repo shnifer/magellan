@@ -19,6 +19,7 @@
   "noise": {"FileName": "noisesheet.png","Sx": 400,"Sy": 400},
   "compass": {"FileName": "HUD_Radar.png", "Smooth":true},
   "BUILDING_MINE": {"FileName": "mine.png"},
+  "BUILDING_FISHHOUSE": {"FileName": "fishhouse.png"},
   "background": {"FileName": "background.jpg"},
   "engibackground": {"FileName": "engibackground.jpg"},
   "BUILDING_BEACON": {"FileName": "aim.png"},
