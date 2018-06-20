@@ -9,7 +9,7 @@ import (
 	"math/rand"
 )
 
-const glyphSize = 64
+const glyphSize = 32
 
 type CosmoPoint struct {
 	Sprite        *graph.CycledSprite
@@ -108,9 +108,9 @@ func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 	res.Add(co.Sprite, graph.Z_GAME_OBJECT)
 	for i, sprite := range co.Glyphs {
 		pos := co.cam.Apply(co.Pos)
-		size := co.cam.Scale * co.Size
+		size := co.cam.Scale*co.Size/2 + glyphSize/2
 		pos.DoAddMul(v2.V2{X: -1, Y: -1}, size)
-		pos.DoAddMul(v2.V2{X: glyphSize, Y: 0}, float64(i-1))
+		pos.DoAddMul(v2.V2{X: glyphSize, Y: 0}, float64(i))
 		sprite.SetPos(pos)
 		res.Add(sprite, graph.Z_ABOVE_OBJECT)
 	}

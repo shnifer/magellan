@@ -7,7 +7,6 @@ import (
 	"github.com/Shnifer/magellan/storage"
 	"golang.org/x/image/colornames"
 	"image/color"
-	"log"
 )
 
 const (
@@ -108,7 +107,6 @@ func AddBeacon(Data TData, Client *network.Client, msg string) {
 	basePeriod := 5000 * KDev(10)
 
 	N := int(sessionTime / basePeriod)
-	log.Println("N", N)
 	period := sessionTime / (angle + float64(N))
 
 	b1 := Building{

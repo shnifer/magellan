@@ -54,6 +54,8 @@ func daemonUpdateSubscribes(rs *roomServer, server *network.Server, updatePeriod
 }
 
 func doUpdateSubscribes(rs *roomServer, server *network.Server) {
+	rs.stateDataMu.Lock()
+	defer rs.stateDataMu.Unlock()
 	rs.subsMu.RLock()
 	defer rs.subsMu.RUnlock()
 
@@ -66,6 +68,23 @@ func doUpdateSubscribes(rs *roomServer, server *network.Server) {
 			select {
 			case event := <-subscribe:
 				server.AddCommand(roomName, EventToCommand(event))
+
+				fk := event.Key.FullKey()
+				switch event.Type {
+				case storage.Add:
+					b, err := Building{}.Decode([]byte(event.Data))
+					if err != nil {
+						Log(LVL_ERROR, "doUpdateSubscribes can't Decode building", err)
+						continue
+					}
+					b.FullKey = fk
+
+					rs.stateData[roomName].Buildings[b.FullKey] = b
+				case storage.Remove:
+					delete(rs.stateData[roomName].Buildings, fk)
+				default:
+					Log(LVL_ERROR, "doUpdateSubscribes unknown event type", event.Type)
+				}
 			default:
 				break innerloop
 			}

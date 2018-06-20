@@ -8,9 +8,9 @@ import (
 	"github.com/Shnifer/magellan/static"
 	"github.com/Shnifer/magellan/storage"
 	"io/ioutil"
+	"log"
 )
 
-//todo: WHY BUILDINGS DO NOT LOAD ON SCENE START!?
 func (rd *roomServer) loadStateData(state State) (sd StateData, subscribe chan storage.Event) {
 	defer LogFunc("loadStateData")()
 
@@ -72,6 +72,8 @@ func loadGalaxyState(GalaxyID string) *Galaxy {
 
 func loadBuildingsAndSubscribe(storage *storage.Storage, GalaxyID string) (builds map[string]Building, subscribe chan storage.Event) {
 	diskData, subscribe := storage.SubscribeAndData(GalaxyID)
+	log.Println(GalaxyID)
+	log.Println(diskData)
 	builds = make(map[string]Building, len(diskData))
 	for objectKey, data := range diskData {
 		b, err := Building{}.Decode([]byte(data))

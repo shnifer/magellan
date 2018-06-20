@@ -148,7 +148,7 @@ func (s *scanner) procScanned(obj *CosmoPoint) {
 		commons.RequestRemoveBuilding(Client, obj.ID)
 	}
 	if !gp.HasMine {
-		commons.AddMine(Data, Client, obj.ID, "corp1")
+		commons.AddMine(Data, Client, obj.ID, "corp2")
 	} else {
 		commons.RequestRemoveBuilding(Client, gp.MineFullKey)
 	}
