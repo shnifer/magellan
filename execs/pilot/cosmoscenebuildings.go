@@ -10,10 +10,10 @@ import (
 
 func (s *cosmoScene) addBuilding(b Building) {
 	switch b.Type {
-	case BUILDING_MINE:
+	case BUILDING_MINE, BUILDING_FISHHOUSE:
 		pd, ok := Data.Galaxy.Points[b.PlanetID]
 		if !ok {
-			Log(LVL_ERROR, "cosmoscene addBuilding: can't find added mine on planet", b.PlanetID)
+			Log(LVL_ERROR, "cosmoscene addBuilding: can't find added mine or fishhouse on planet", b.PlanetID)
 			return
 		}
 		s.objects[b.PlanetID] = NewCosmoPoint(pd, s.cam.Phys())
@@ -31,10 +31,10 @@ func (s *cosmoScene) addBuilding(b Building) {
 
 func (s *cosmoScene) delBuilding(b Building) {
 	switch b.Type {
-	case BUILDING_MINE:
+	case BUILDING_MINE, BUILDING_FISHHOUSE:
 		pd, ok := Data.Galaxy.Points[b.PlanetID]
 		if !ok {
-			Log(LVL_ERROR, "cosmoscene addBuilding: can't find added mine on planet", b.PlanetID)
+			Log(LVL_ERROR, "cosmoscene delBuilding: can't find added mine on planet", b.PlanetID)
 			return
 		}
 		s.objects[b.PlanetID] = NewCosmoPoint(pd, s.cam.Phys())
@@ -45,7 +45,7 @@ func (s *cosmoScene) delBuilding(b Building) {
 		}
 		delete(s.objects, b.FullKey)
 	default:
-		Log(LVL_ERROR, "cosmoscene addBuilding, unknown building type", b.Type)
+		Log(LVL_ERROR, "cosmoscene delBuilding, unknown building type", b.Type)
 	}
 }
 

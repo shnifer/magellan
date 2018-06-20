@@ -68,7 +68,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		Glyphs = append(Glyphs, newGlyph(BUILDING_MINE, pd.MineOwner))
 	}
 	if pd.HasFishHouse {
-		Glyphs = append(Glyphs, newGlyph(BUILDING_FISHHOUSE, pd.MineOwner))
+		Glyphs = append(Glyphs, newGlyph(BUILDING_FISHHOUSE, pd.FishHouseOwner))
 	}
 
 	res := CosmoPoint{

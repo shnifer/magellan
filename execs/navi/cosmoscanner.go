@@ -3,9 +3,9 @@ package main
 import (
 	"github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/graph/qr"
-	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
 	"golang.org/x/image/colornames"
 	"math"
@@ -149,11 +149,16 @@ func (s *scanner) procScanned(obj *CosmoPoint) {
 	}
 	if !gp.HasMine {
 		commons.AddMine(Data, Client, obj.ID, "corp2")
+	}else if !gp.HasMine {
+			commons.AddMine(Data, Client, obj.ID, "corp2")
 	} else {
 		commons.RequestRemoveBuilding(Client, gp.MineFullKey)
+		commons.RequestRemoveBuilding(Client, gp.FishHouseFullKey)
 	}
 
 	return
+
+	//do we need this at all??
 	s.scannedImg = qr.NewQRSpriteHUD(gp.ScanData, 256)
 	s.scannedImg.SetPivot(graph.TopLeft())
 	s.scannedImg.SetPos(graph.ScrP(0, 0))

@@ -118,6 +118,7 @@ func AddBeacon(Data TData, Client *network.Client, msg string) {
 	//duplicated into warp on server side
 	RequestNewBuilding(Client, b1)
 }
+
 func AddMine(Data TData, Client *network.Client, planetID string, owner string) {
 
 	b := Building{
@@ -126,6 +127,16 @@ func AddMine(Data TData, Client *network.Client, planetID string, owner string) 
 		PlanetID: planetID,
 		OwnerID:  owner,
 	}
-	//duplicated into warp on server side
+	RequestNewBuilding(Client, b)
+}
+
+func AddFishHouse(Data TData, Client *network.Client, planetID string, owner string) {
+
+	b := Building{
+		Type:     BUILDING_FISHHOUSE,
+		GalaxyID: Data.State.GalaxyID,
+		PlanetID: planetID,
+		OwnerID:  owner,
+	}
 	RequestNewBuilding(Client, b)
 }
