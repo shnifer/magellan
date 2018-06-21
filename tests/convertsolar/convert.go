@@ -29,16 +29,29 @@ type fileData struct {
 	TexName        string
 }
 
+type TParams struct {
+	K_OrbitPeriod float64
+	K_Radius float64
+	K_Mass float64
+	A_Mass float64
+	K_ZDepth float64
+	K_Size float64
+}
 const DEFType = "planet"
-const K_OrbitPeriod = 3.0
-const K_Radius = 3.7
-const K_Mass = 1.0
-const A_Mass = 3.0
-const K_ZDepth = 1.0
-const K_Size = 0.0033 *100
+
+var Params TParams
 
 func main() {
-	buf, err := ioutil.ReadFile("galaxyPredata.json")
+	buf, err := ioutil.ReadFile("params.json")
+	if err != nil {
+		panic(err)
+	}
+	err=json.Unmarshal(buf, &Params)
+	if err!=nil{
+		panic(err)
+	}
+
+	buf, err = ioutil.ReadFile("galaxyPredata.json")
 	if err != nil {
 		panic(err)
 	}
@@ -81,7 +94,7 @@ func main() {
 		}
 	}
 
-	outData.SpawnDistance = maxOrbit * 1.1 *K_Radius
+	outData.SpawnDistance = maxOrbit * 1.1 *Params.K_Radius
 
 	buf, err = json.Marshal(outData)
 	if err != nil {
@@ -108,19 +121,19 @@ func createGP(v fileData) (*commons.GalaxyPoint, string) {
 		return float64(int(x*sgn)) / sgn
 	}
 
-	zd:=v.GravityR10/3 * K_ZDepth
-	maxGrav:=1-(1-v.MaxGravity)/A_Mass
+	zd:=v.GravityR10/3 * Params.K_ZDepth
+	maxGrav:=1-(1-v.MaxGravity)/Params.A_Mass
 	mass:=maxGrav*zd*zd
 
 	gp := commons.GalaxyPoint{
 		ParentID:  v.Parent,
 		Pos:       v2.ZV,
-		Orbit:     okr(v.Distance * K_Radius),
-		Period:    okr(v.OrbitPeriod * K_OrbitPeriod),
+		Orbit:     okr(v.Distance * Params.K_Radius),
+		Period:    okr(v.OrbitPeriod * Params.K_OrbitPeriod),
 		Type:      objType,
-		Size:      okr(v.Diameter / 2 * K_Size),
+		Size:      okr(v.Diameter / 2 * Params.K_Size),
 		Color:     clr,
-		Mass:      okr(mass * K_Mass),
+		Mass:      okr(mass * Params.K_Mass),
 		GDepth:    okr(zd),
 		ScanData:  v.ID,
 		Emissions: v.Emissions,
