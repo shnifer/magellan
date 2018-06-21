@@ -52,12 +52,17 @@ func (h *cosmoSceneWarpEngine) Req() *graph.DrawQueue {
 
 	R := graph.NewDrawQueue()
 	courseMsg := fmt.Sprintf("Course: %.1f", 360-Data.PilotData.Ship.Vel.Dir())
-	courseText := graph.NewText(courseMsg, draw.Fonts[draw.Face_list], color.White)
+	courseText := graph.NewText(courseMsg, draw.Fonts[draw.Face_mono], color.White)
 	courseText.SetPosPivot(basePoint, graph.TopLeft())
 	R.Add(courseText, graph.Z_STAT_HUD+2)
 
 	_, h_int := courseText.GetSize()
 	interV := v2.V2{X: 0, Y: float64(h_int) * 1.4}
+
+	velMsg := fmt.Sprintf("Velocity: %f", Data.PilotData.Ship.Vel.Len())
+	velText := graph.NewText(velMsg, draw.Fonts[draw.Face_mono], color.White)
+	velText.SetPosPivot(basePoint.AddMul(interV, 1), graph.TopLeft())
+	R.Add(velText, graph.Z_STAT_HUD+2)
 
 	gravAcc := SumGravityAcc(Data.PilotData.Ship.Pos, Data.Galaxy).Len() * 100
 	gravityMsg := fmt.Sprintf("Gravity: %.1f%%", gravAcc)
@@ -73,8 +78,8 @@ func (h *cosmoSceneWarpEngine) Req() *graph.DrawQueue {
 		gravityColor = colornames.Lightgreen
 	}
 
-	gravText := graph.NewText(gravityMsg, draw.Fonts[draw.Face_list], gravityColor)
-	gravText.SetPosPivot(basePoint.AddMul(interV, 1), graph.TopLeft())
+	gravText := graph.NewText(gravityMsg, draw.Fonts[draw.Face_mono], gravityColor)
+	gravText.SetPosPivot(basePoint.AddMul(interV, 2), graph.TopLeft())
 	R.Add(gravText, graph.Z_STAT_HUD+2)
 
 	warpMsg := ""
@@ -89,8 +94,8 @@ func (h *cosmoSceneWarpEngine) Req() *graph.DrawQueue {
 	default:
 		warpMsg = fmt.Sprintf("warping: %.0f%%", h.toWarpT/TimeToWarp*100)
 	}
-	warpText := graph.NewText(warpMsg, draw.Fonts[draw.Face_list], warpColor)
-	warpText.SetPosPivot(basePoint.AddMul(interV, 2), graph.TopLeft())
+	warpText := graph.NewText(warpMsg, draw.Fonts[draw.Face_mono], warpColor)
+	warpText.SetPosPivot(basePoint.AddMul(interV, 3), graph.TopLeft())
 	R.Add(warpText, graph.Z_STAT_HUD+2)
 
 	return R

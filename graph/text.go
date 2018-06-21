@@ -16,6 +16,11 @@ const interlinesK = 1.2
 func TopLeft() v2.V2 {
 	return v2.V2{X: 0.0, Y: 0.0}
 }
+
+func TopMiddle() v2.V2 {
+	return v2.V2{X: 0.5, Y: 0.0}
+}
+
 func TopRight() v2.V2 {
 	return v2.V2{X: 1.0, Y: 0.0}
 }

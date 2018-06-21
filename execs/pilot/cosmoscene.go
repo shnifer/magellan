@@ -9,6 +9,8 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
+	"math"
+	"fmt"
 )
 
 const trailPeriod = 0.25
@@ -197,6 +199,28 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Append(s.predictorZero)
 	}
 
+	//Scale factor hud
+	camScale:=s.cam.Scale * graph.GS()
+	maxLen:=float64(WinW)*0.8
+	order:=math.Floor(math.Log10(maxLen/camScale))
+	val:=math.Pow10(int(order))
+	len:=camScale*val
+
+	from:=graph.ScrP(0.1, 0.9)
+	to:=from.AddMul(v2.V2{X:1, Y:0}, len)
+	mid:=from.AddMul(v2.V2{X:1, Y:0}, len/2)
+	mid.Y+=10
+
+	tick:=v2.V2{X:0,Y:5}
+
+	Q.Add(graph.LineScr(from, to, colornames.White),graph.Z_STAT_HUD+10)
+	Q.Add(graph.LineScr(from.Sub(tick), from.Add(tick), colornames.White),graph.Z_STAT_HUD+10)
+	Q.Add(graph.LineScr(to.Sub(tick), to.Add(tick), colornames.White),graph.Z_STAT_HUD+10)
+
+	msg:=fmt.Sprintf("%v",val)
+	scaleText:=graph.NewText(msg,Fonts[Face_mono],colornames.White)
+	scaleText.SetPosPivot(mid, graph.TopMiddle())
+	Q.Add(scaleText,graph.Z_STAT_HUD+10)
 	Q.Run(image)
 }
 
@@ -223,7 +247,7 @@ func (s *cosmoScene) updateDebugControl(dt float64) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		Data.PilotData.Ship.Vel = v2.V2{}
 		Data.PilotData.Ship.AngVel = 0
-		Data.PilotData.Ship.Pos = Data.Galaxy.Points["sun"].Pos
+		Data.PilotData.Ship.Pos = Data.Galaxy.Points["earth"].Pos
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.Key1) {

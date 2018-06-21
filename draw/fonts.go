@@ -11,6 +11,7 @@ const (
 	Face_cap   = "caption"
 	Face_stats = "stats"
 	Face_list  = "list"
+	Face_mono  = "mono"
 )
 
 var Fonts map[string]font.Face
@@ -39,4 +40,10 @@ func InitFonts() {
 		Log(LVL_ERROR, err)
 	}
 	Fonts[Face_list] = face
+
+	face, err = graph.GetFace("anonymous.ttf", 12, fontLoader)
+	if err != nil {
+		Log(LVL_ERROR, err)
+	}
+	Fonts[Face_mono] = face
 }
