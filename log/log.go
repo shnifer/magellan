@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	native "log"
+	"strings"
 	"sync"
 	"time"
 )
@@ -23,6 +24,7 @@ const (
 
 type iStorage interface {
 	Add(area, key string, val string) error
+	NextID() int
 }
 
 var logStorage iStorage
@@ -64,6 +66,20 @@ func Log(lvl int, args ...interface{}) {
 	log(lvl, entry, args)
 }
 
+func LogGame(key string, args ...interface{}) {
+	if logger == nil {
+		native.Println("key = ", key, args)
+		return
+	} else {
+		entry := logrus.NewEntry(logger)
+		sfmu.RLock()
+		entry.WithFields(stateFields)
+		sfmu.RUnlock()
+		entry.WithField(GameEventKey, key)
+		entry.Info(args)
+	}
+}
+
 func SetLogFields(keys map[string]string) {
 	defer LogFunc("SetLogFields")()
 
@@ -78,24 +94,6 @@ func SetLogFields(keys map[string]string) {
 		return
 	}
 	Log(LVL_INFO, "become", keys)
-}
-
-func LogGame(key string, args ...interface{}) {
-	if logStorage != nil {
-		go saveToStorage(key, args)
-	}
-
-	if logger == nil {
-		native.Println("key = ", key, args)
-		return
-	} else {
-		entry := logrus.NewEntry(logger)
-		sfmu.RLock()
-		entry.WithFields(stateFields)
-		sfmu.RUnlock()
-		entry.WithField(GameEventKey, key)
-		entry.Info(args)
-	}
 }
 
 //TODO: check somethere and set dynamically
@@ -127,11 +125,20 @@ func SetStorage(storage iStorage) {
 	logStorage = storage
 }
 
-func saveToStorage(eventKey string, args ...interface{}) {
+func GetLogStateFieldsStr() string {
+	sfmu.Lock()
+	defer sfmu.Unlock()
+	return fmt.Sprint(stateFields)
+}
+
+func SaveToStorage(eventKey string, args string, stateFields string) {
 	area := eventKey
-	key := fmt.Sprint(args)
-	sfmu.RLock()
-	val := fmt.Sprint(stateFields)
-	sfmu.RUnlock()
-	logStorage.Add(area, key, val)
+	nID := logStorage.NextID()
+	tStr := time.Now().Format(time.Stamp)
+	tStr = strings.Replace(tStr, ":", ".", -1)
+	key := fmt.Sprintf("%v at %v (%v)", args, tStr, nID)
+	err := logStorage.Add(area, key, stateFields)
+	if err != nil {
+		Log(LVL_ERROR, "save to storage error", err)
+	}
 }

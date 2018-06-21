@@ -138,7 +138,7 @@ func (s *scanner) Req() *graph.DrawQueue {
 }
 
 func (s *scanner) procScanned(obj *CosmoPoint) {
-	LogGame("scan", "SCANNED ", obj.ID)
+	commons.ClientLogGame(Client, "scan", "SCANNED ", obj.ID)
 	gp, ok := Data.Galaxy.Points[obj.ID]
 	if !ok {
 		return

@@ -58,7 +58,7 @@ func (s *Storage) Add(area, key string, val string) error {
 	fk := objectKey.FullKey()
 	err := s.disk.append(fk, val)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	return nil
@@ -154,7 +154,7 @@ func (s *Storage) procNewKey(newKey string) {
 	case glyphDel:
 		//send event about the object, not deleteKey
 		objKey.glyph = ""
-		fk:=objKey.FullKey()
+		fk := objKey.FullKey()
 		if s.disk.has(fk) {
 			val := s.disk.ReadString(fk)
 			s.sendEvent(Remove, objKey, val)

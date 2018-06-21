@@ -25,6 +25,7 @@ const (
 	CMD_BUILDINGEVENT   = "BuildEvent"        //from server to subscribed clients
 	CMD_ADDBUILDREQ     = "AddBuildingReq"    //from client to server
 	CMD_DELBUILDREQ     = "DeleteBuildingReq" //from client to server
+	CMD_LOGGAMEEVENT    = "LogGameEvent"      //from client to server
 )
 
 var (
