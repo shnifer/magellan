@@ -24,6 +24,7 @@ type tDefVals struct {
 	LogRetryMinMs   int
 	LogRetryMaxMs   int
 	LogIP           string
+	LogHostName     string
 }
 
 var DEFVAL tDefVals

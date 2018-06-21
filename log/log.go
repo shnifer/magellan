@@ -61,7 +61,7 @@ func Log(lvl int, args ...interface{}) {
 
 	entry := logrus.NewEntry(logger)
 	sfmu.RLock()
-	entry.WithFields(stateFields)
+	entry = entry.WithFields(stateFields)
 	sfmu.RUnlock()
 	log(lvl, entry, args...)
 }
@@ -73,10 +73,10 @@ func LogGame(key string, args ...interface{}) {
 	} else {
 		entry := logrus.NewEntry(logger)
 		sfmu.RLock()
-		entry.WithFields(stateFields)
+		entry = entry.WithFields(stateFields)
 		sfmu.RUnlock()
-		entry.WithField(GameEventKey, key)
-		entry.Info(args)
+		entry = entry.WithField(GameEventKey, key)
+		entry.Info(args...)
 	}
 }
 

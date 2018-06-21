@@ -89,7 +89,7 @@ func (galaxy *Galaxy) AddBuilding(b Building) {
 			return
 		}
 		if gp.HasMine {
-			Log(LVL_ERROR, "trying to add mine on planet", b.PlanetID, " but already has mine")
+			Log(LVL_ERROR, "trying to add mine on planet ", b.PlanetID, " but already has mine")
 			return
 		}
 		gp.HasMine = true

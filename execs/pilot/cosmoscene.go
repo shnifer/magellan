@@ -246,7 +246,6 @@ func (s *cosmoScene) updateDebugControl(dt float64) {
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyP) {
 		AddBeacon(Data, Client, "just a test beacon")
-		//TODO: why this works partially
 		ClientLogGame(Client, "ADD BEACKON KEY", "just a test beacon")
 	}
 

@@ -56,7 +56,7 @@ func main() {
 	log.Start(time.Duration(DEFVAL.LogLogTimeoutMs)*time.Millisecond,
 		time.Duration(DEFVAL.LogRetryMinMs)*time.Millisecond,
 		time.Duration(DEFVAL.LogRetryMaxMs)*time.Millisecond,
-		DEFVAL.LogIP)
+		DEFVAL.LogIP, DEFVAL.LogHostName)
 
 	if DEFVAL.DoProf {
 		commons.StartProfile(roleName)

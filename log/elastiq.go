@@ -16,12 +16,35 @@ const (
 	indexName   = "logstash"
 )
 
-func Start(timeout, minRetry, maxRetry time.Duration, logTCP string) {
+/*
+used to check elastiq output
+type MyTransport struct{
+	transport http.RoundTripper
+}
+
+func (mt MyTransport) RoundTrip(r *http.Request) (*http.Response, error)  {
+	native.Println("======")
+	native.Println(r.Header)
+	if r.Body!=nil {
+		buf, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			native.Println(err)
+		}
+		native.Println(string(buf))
+	}
+
+	return mt.transport.RoundTrip(r)
+}
+*/
+
+func Start(timeout, minRetry, maxRetry time.Duration, logTCP string, hostname string) {
 	l := logrus.New()
 	l.Level = LoggerLevel
 
+	//var myTransport http.RoundTripper = MyTransport{transport: http.DefaultTransport}
 	httpClient := &http.Client{
 		Timeout: timeout,
+	//	Transport: myTransport,
 	}
 
 	if logTCP != "" {
@@ -40,7 +63,7 @@ func Start(timeout, minRetry, maxRetry time.Duration, logTCP string) {
 			return
 		}
 
-		hook, err := elogrus.NewAsyncElasticHook(client, "localhost", ELKLevel, indexName)
+		hook, err := elogrus.NewAsyncElasticHook(client, hostname, ELKLevel, indexName)
 		if err != nil {
 			Log(LVL_ERROR, "elogrus.NewElasticHook", err)
 			return
