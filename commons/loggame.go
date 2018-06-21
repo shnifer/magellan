@@ -15,8 +15,8 @@ type LogGameEvent struct {
 
 //for clients
 func ClientLogGame(Client *network.Client, key string, args ...interface{}) {
-	LogGame(key, args)
-	requestLogGame(Client, key, fmt.Sprint(args))
+	LogGame(key, args...)
+	requestLogGame(Client, key, fmt.Sprint(args...))
 }
 
 func requestLogGame(Client *network.Client, key string, args string) {
