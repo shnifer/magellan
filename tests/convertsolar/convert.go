@@ -122,7 +122,7 @@ func createGP(v fileData) (*commons.GalaxyPoint, string) {
 	}
 
 	zd:=v.GravityR10/3 * Params.K_ZDepth
-	maxGrav:=1-(1-v.MaxGravity)/Params.A_Mass
+	maxGrav:=1-(1-v.MaxGravity)*Params.A_Mass
 	mass:=maxGrav*zd*zd
 
 	gp := commons.GalaxyPoint{

@@ -39,23 +39,23 @@ func init() {
 func log(lvl int, entry *logrus.Entry, args ...interface{}) {
 	switch lvl {
 	case LVL_DEBUG:
-		entry.Debug(args)
+		entry.Debug(args...)
 	case LVL_INFO:
-		logger.Info(args)
+		logger.Info(args...)
 	case LVL_WARN:
-		logger.Warn(args)
+		logger.Warn(args...)
 	case LVL_ERROR:
-		logger.Error(args)
+		logger.Error(args...)
 	case LVL_PANIC:
-		logger.Panic(args)
+		logger.Panic(args...)
 	case LVL_FATAL:
-		logger.Fatal(args)
+		logger.Fatal(args...)
 	}
 }
 
 func Log(lvl int, args ...interface{}) {
 	if logger == nil {
-		native.Println(args)
+		native.Println(args...)
 		return
 	}
 
@@ -63,7 +63,7 @@ func Log(lvl int, args ...interface{}) {
 	sfmu.RLock()
 	entry.WithFields(stateFields)
 	sfmu.RUnlock()
-	log(lvl, entry, args)
+	log(lvl, entry, args...)
 }
 
 func LogGame(key string, args ...interface{}) {
