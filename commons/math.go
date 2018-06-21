@@ -62,6 +62,25 @@ func SumGravityAcc(pos v2.V2, galaxy *Galaxy) (sumF v2.V2) {
 	return sumF
 }
 
+func SumGravityAccWithReport(pos v2.V2, galaxy *Galaxy, reportLevel float64) (sumF v2.V2, report []v2.V2) {
+	var v v2.V2
+	var len2, G float64
+	report = make([]v2.V2,0,len(galaxy.Ordered))
+	for _, obj := range galaxy.Ordered {
+		if obj.Mass == 0 {
+			continue
+		}
+		v = obj.Pos.Sub(pos)
+		len2 = v.LenSqr()
+		G = Gravity(obj.Mass, len2, obj.GDepth)
+		sumF.DoAddMul(v.Normed(), G)
+		if G>reportLevel {
+			report = append(report, v.Normed().Mul(G))
+		}
+	}
+	return sumF,report
+}
+
 func WarpGravity(mass, lenSqr, velSqr, zDist float64) float64 {
 
 	d2 := lenSqr + zDist*zDist

@@ -11,6 +11,7 @@ import (
 	"golang.org/x/image/colornames"
 	"math"
 	"fmt"
+	"image/color"
 )
 
 const trailPeriod = 0.25
@@ -42,6 +43,10 @@ type cosmoScene struct {
 	showPredictor   bool
 	predictorZero   *TrackPredictor
 	predictorThrust *TrackPredictor
+
+	//update eachUpdate
+	gravityAcc    v2.V2
+	gravityReport []v2.V2
 }
 
 func newCosmoScene() *cosmoScene {
@@ -130,6 +135,12 @@ func (s *cosmoScene) Update(dt float64) {
 	sessionTime := Data.PilotData.SessionTime
 	Data.Galaxy.Update(sessionTime)
 
+	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
+
+	s.gravityAcc, s.gravityReport = SumGravityAccWithReport(Data.PilotData.Ship.Pos, Data.Galaxy,
+		0.02)
+	s.warpEngine.gravityAcc = s.gravityAcc
+
 	for id, co := range s.objects {
 		if gp, ok := Data.Galaxy.Points[id]; ok {
 			s.objects[id].Pos = gp.Pos
@@ -143,8 +154,6 @@ func (s *cosmoScene) Update(dt float64) {
 	if DEFVAL.DebugControl {
 		s.updateDebugControl(dt)
 	}
-
-	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
 
 	s.trailUpdate(dt)
 
@@ -199,28 +208,9 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Append(s.predictorZero)
 	}
 
-	//Scale factor hud
-	camScale:=s.cam.Scale * graph.GS()
-	maxLen:=float64(WinW)*0.8
-	order:=math.Floor(math.Log10(maxLen/camScale))
-	val:=math.Pow10(int(order))
-	len:=camScale*val
+	s.drawScale(Q)
+	s.drawGravity(Q)
 
-	from:=graph.ScrP(0.1, 0.9)
-	to:=from.AddMul(v2.V2{X:1, Y:0}, len)
-	mid:=from.AddMul(v2.V2{X:1, Y:0}, len/2)
-	mid.Y+=10
-
-	tick:=v2.V2{X:0,Y:5}
-
-	Q.Add(graph.LineScr(from, to, colornames.White),graph.Z_STAT_HUD+10)
-	Q.Add(graph.LineScr(from.Sub(tick), from.Add(tick), colornames.White),graph.Z_STAT_HUD+10)
-	Q.Add(graph.LineScr(to.Sub(tick), to.Add(tick), colornames.White),graph.Z_STAT_HUD+10)
-
-	msg:=fmt.Sprintf("%v",val)
-	scaleText:=graph.NewText(msg,Fonts[Face_mono],colornames.White)
-	scaleText.SetPosPivot(mid, graph.TopMiddle())
-	Q.Add(scaleText,graph.Z_STAT_HUD+10)
 	Q.Run(image)
 }
 
@@ -247,7 +237,7 @@ func (s *cosmoScene) updateDebugControl(dt float64) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		Data.PilotData.Ship.Vel = v2.V2{}
 		Data.PilotData.Ship.AngVel = 0
-		Data.PilotData.Ship.Pos = Data.Galaxy.Points["earth"].Pos
+		Data.PilotData.Ship.Pos = Data.Galaxy.Points["moon"].Pos
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.Key1) {
@@ -295,4 +285,60 @@ func (s *cosmoScene) actualizeOtherShips() {
 			delete(s.otherShips, id)
 		}
 	}
+}
+
+func (s *cosmoScene) drawScale(Q *graph.DrawQueue){
+	//Scale factor hud
+	camScale := s.cam.Scale * graph.GS()
+	maxLen := float64(WinW) * 0.8
+	order := math.Floor(math.Log10(maxLen / camScale))
+	val := math.Pow10(int(order))
+	l := camScale * val
+
+	from := graph.ScrP(0.1, 0.9)
+	to := from.AddMul(v2.V2{X: 1, Y: 0}, l)
+	mid := from.AddMul(v2.V2{X: 1, Y: 0}, l/2)
+	mid.Y += 10
+
+	tick := v2.V2{X: 0, Y: 5}
+
+	Q.Add(graph.LineScr(from, to, colornames.White), graph.Z_STAT_HUD+10)
+	Q.Add(graph.LineScr(from.Sub(tick), from.Add(tick), colornames.White), graph.Z_STAT_HUD+10)
+	Q.Add(graph.LineScr(to.Sub(tick), to.Add(tick), colornames.White), graph.Z_STAT_HUD+10)
+
+	msg := fmt.Sprintf("%v", val)
+	scaleText := graph.NewText(msg, Fonts[Face_mono], colornames.White)
+	scaleText.SetPosPivot(mid, graph.TopMiddle())
+	Q.Add(scaleText, graph.Z_STAT_HUD+10)
+
+	circleRadPx := float64(WinH)*0.3
+	physRad:= circleRadPx/s.cam.Scale/graph.GS()
+
+	p:=func(i int) v2.V2{
+		return s.cam.Center.AddMul(v2.InDir(float64(360/32)*float64(i)), circleRadPx)
+	}
+	for i:=0; i<=32; i++{
+		Q.Add(graph.LineScr(p(i), p(i+1), colornames.Olivedrab), graph.Z_STAT_HUD+10)
+	}
+
+	msg = fmt.Sprintf("circle radius: %f", physRad)
+	physRadText := graph.NewText(msg, Fonts[Face_mono], colornames.Olivedrab)
+	physRadText.SetPosPivot(graph.ScrP(0.5,0.4), graph.TopMiddle())
+	Q.Add(physRadText, graph.Z_STAT_HUD+10)
+}
+
+func (s *cosmoScene) drawGravity(Q *graph.DrawQueue) {
+	scale:=float64(WinH)*0.3/(s.cam.Scale*graph.GS())
+	ship:=Data.PilotData.Ship.Pos
+	thrust:=Data.PilotData.ThrustVector
+	drawv:=func (v v2.V2, clr color.Color) {
+		line:=graph.Line(s.cam,ship,ship.AddMul(v,scale),clr)
+		Q.Add(line,graph.Z_STAT_HUD+10)
+	}
+	for _,v:=range s.gravityReport{
+		drawv(v,colornames.Deepskyblue)
+	}
+	drawv(s.gravityAcc,colornames.Lightblue)
+	drawv(Data.PilotData.ThrustVector,colornames.Darkolivegreen)
+	drawv(thrust.Add(s.gravityAcc),colornames.White)
 }

@@ -105,7 +105,7 @@ func (t *Text) Draw(dst *ebiten.Image) {
 
 	for i, str := range t.text {
 		et.Draw(dst, str, t.face,
-			int(t.pos.X-t.pivot.Y*float64(t.w))-t.bounds.Min.X,
+			int(t.pos.X-t.pivot.X*float64(t.w))-t.bounds.Min.X,
 			int(t.pos.Y-t.pivot.Y*float64(t.h))-t.bounds.Min.Y+i*t.strH, t.color)
 	}
 }

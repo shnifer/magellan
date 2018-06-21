@@ -15,6 +15,8 @@ import (
 const TimeToWarp = 3
 
 type cosmoSceneWarpEngine struct {
+	gravityAcc v2.V2
+
 	wasReset bool
 	toWarpT  float64
 	fired    bool
@@ -64,7 +66,7 @@ func (h *cosmoSceneWarpEngine) Req() *graph.DrawQueue {
 	velText.SetPosPivot(basePoint.AddMul(interV, 1), graph.TopLeft())
 	R.Add(velText, graph.Z_STAT_HUD+2)
 
-	gravAcc := SumGravityAcc(Data.PilotData.Ship.Pos, Data.Galaxy).Len() * 100
+	gravAcc := h.gravityAcc.Len() * 100
 	gravityMsg := fmt.Sprintf("Gravity: %.1f%%", gravAcc)
 	var gravityColor color.Color
 	switch {
