@@ -318,11 +318,11 @@ func (s *cosmoScene) drawScale(Q *graph.DrawQueue){
 		return s.cam.Center.AddMul(v2.InDir(float64(360/32)*float64(i)), circleRadPx)
 	}
 	for i:=0; i<=32; i++{
-		Q.Add(graph.LineScr(p(i), p(i+1), colornames.Olivedrab), graph.Z_STAT_HUD+10)
+		Q.Add(graph.LineScr(p(i), p(i+1), colornames.Oldlace), graph.Z_STAT_HUD+10)
 	}
 
 	msg = fmt.Sprintf("circle radius: %f", physRad)
-	physRadText := graph.NewText(msg, Fonts[Face_mono], colornames.Olivedrab)
+	physRadText := graph.NewText(msg, Fonts[Face_mono], colornames.Oldlace)
 	physRadText.SetPosPivot(graph.ScrP(0.5,0.4), graph.TopMiddle())
 	Q.Add(physRadText, graph.Z_STAT_HUD+10)
 }
