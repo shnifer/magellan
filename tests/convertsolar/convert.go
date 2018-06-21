@@ -31,10 +31,10 @@ type fileData struct {
 
 const DEFType = "planet"
 const K_OrbitPeriod = 1.0
-const K_Radius = 2.7
+const K_Radius = 3.7
 const K_Mass = 1.0
-const K_Depth = 1.0
-const K_Size = 1.0
+const K_ZDepth = 1.0
+const K_Size = 0.0033
 
 func main() {
 	buf, err := ioutil.ReadFile("galaxyPredata.json")
@@ -107,7 +107,7 @@ func createGP(v fileData) (*commons.GalaxyPoint, string) {
 		return float64(int(x*sgn)) / sgn
 	}
 
-	zd:=v.GravityR10/3
+	zd:=v.GravityR10/3 * K_ZDepth
 	mass:=v.MaxGravity *zd*zd
 
 	gp := commons.GalaxyPoint{
@@ -119,7 +119,7 @@ func createGP(v fileData) (*commons.GalaxyPoint, string) {
 		Size:      okr(v.Diameter / 2 * K_Size),
 		Color:     clr,
 		Mass:      okr(mass * K_Mass),
-		GDepth:    okr(zd * K_Depth),
+		GDepth:    okr(zd),
 		ScanData:  v.ID,
 		Emissions: v.Emissions,
 	}

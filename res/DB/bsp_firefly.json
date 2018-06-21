@@ -2,7 +2,7 @@
     "ship_name": "firefly",
     "mass": 1000,
     "march_engine": {
-        "thrust_max": 3000,
+        "thrust_max": 1000,
         "thrust_acc": 100,
         "thrust_slow": 100,
         "reverse_max": 1500,
