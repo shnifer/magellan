@@ -19,6 +19,7 @@ const (
 )
 
 const (
+	ShowMasterKey = "ShowMaster"
 	GameEventKey = "GameEvent"
 )
 
@@ -75,6 +76,7 @@ func LogGame(key string, args ...interface{}) {
 		sfmu.RLock()
 		entry = entry.WithFields(stateFields)
 		sfmu.RUnlock()
+		entry = entry.WithField(ShowMasterKey, true)
 		entry = entry.WithField(GameEventKey, key)
 		entry.Info(args...)
 	}

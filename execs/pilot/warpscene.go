@@ -205,7 +205,7 @@ func (s *warpScene) toCosmo() {
 
 	if systemID != "" {
 		state.GalaxyID = systemID
-		Client.RequestNewState(state.Encode())
+		Client.RequestNewState(state.Encode(), false)
 	}
 }
 

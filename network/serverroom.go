@@ -75,6 +75,16 @@ func roomHandler(srv *Server) http.Handler {
 //room.mu must be already locked
 func serverReceiveCommands(srv *Server, req CommonReq, room *servRoomState, roomName, roleName string) {
 
+	if !room.state.IsCoherent {
+		if len(req.Message.Items) > 0 {
+			Log(LVL_WARN, "STRANGE: COMMANDs recieved while non-coherent.")
+		}
+
+		return
+	}
+
+	//we do NOT recv commands if room is not coherent
+	//so we do not count them as received
 	commands := room.recvs[roleName].Unpack(req.Message)
 
 	for _, command := range commands {
@@ -82,11 +92,6 @@ func serverReceiveCommands(srv *Server, req CommonReq, room *servRoomState, room
 		if len(command) < 1 {
 			Log(LVL_WARN, "empty command!")
 			continue
-		}
-
-		if !room.state.IsCoherent {
-			Log(LVL_WARN, "STRANGE: COMMAND recieved while non-coherent. Command: ", command)
-			return
 		}
 
 		prefix := command[:1]
@@ -97,9 +102,14 @@ func serverReceiveCommands(srv *Server, req CommonReq, room *servRoomState, room
 		case COMMAND_ROOMBROADCAST:
 			room.send.AddItems(command)
 		case COMMAND_REQUESTSTATE:
-			stateChanged := setNewState(srv, room, roomName, command)
-			if stateChanged {
-			}
+			dropCommands := command[:1] == "+"
+			command := command[1:]
+			setNewState(srv, room, roomName, command, dropCommands)
+			//non valid states reported by implementation
+			/*stateChanged :=
+			if !stateChanged {
+
+			}*/
 		default:
 			Log(LVL_ERROR, "Strange prefix", prefix)
 			continue

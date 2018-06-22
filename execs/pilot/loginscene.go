@@ -140,7 +140,7 @@ func (p *LoginScene) tryToStartFly() {
 		ShipID:   p.inputText,
 		GalaxyID: START_Galaxy_ID,
 	}.Encode()
-	Client.RequestNewState(state)
+	Client.RequestNewState(state, false)
 }
 
 func (p *LoginScene) OnCommand(command string) {

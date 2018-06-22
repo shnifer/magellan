@@ -111,6 +111,6 @@ func main() {
 		if str == "quit" {
 			return
 		}
-		client.RequestNewState(str)
+		client.RequestNewState(str, false)
 	}
 }

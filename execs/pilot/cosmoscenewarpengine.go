@@ -46,7 +46,7 @@ func toWarp() {
 	state := Data.State
 	state.StateID = STATE_warp
 	state.GalaxyID = WARP_Galaxy_ID
-	Client.RequestNewState(state.Encode())
+	Client.RequestNewState(state.Encode(), false)
 }
 
 func (h *cosmoSceneWarpEngine) Req() *graph.DrawQueue {

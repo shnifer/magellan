@@ -16,6 +16,7 @@ import (
 	"time"
 )
 
+//Options to create and start server
 type ServerOpts struct {
 	Addr string
 
@@ -29,6 +30,7 @@ type ServerOpts struct {
 	LastSeenTimeout  time.Duration
 }
 
+//Interface all-in-one for server implementation
 type RoomCheckGetSetter interface {
 	//mb role separation needed, but now Common and State data get full and common
 	GetRoomCommon(room string) ([]byte, error)
@@ -40,6 +42,7 @@ type RoomCheckGetSetter interface {
 	OnCommand(room string, role string, command string)
 }
 
+//network.server data for one room
 type servRoomState struct {
 	mu sync.Mutex
 	//map[role]isOnline
@@ -119,6 +122,7 @@ func NewServer(opts ServerOpts) *Server {
 	return srv
 }
 
+//sends command to all clients in room
 func (s *Server) AddCommand(roomName string, command string) {
 	go func() {
 		s.mu.RLock()
@@ -133,6 +137,7 @@ func (s *Server) AddCommand(roomName string, command string) {
 	}()
 }
 
+//used as goroutine
 func requestStateData(srv *Server, roomName string, newState string) {
 	//may be implemented by a long time operation, timeouts provided by implementation
 	//while GetStateData do not return room state can not be coherented
@@ -182,7 +187,8 @@ func stateHandler(srv *Server) http.Handler {
 	return http.HandlerFunc(f)
 }
 
-func setNewState(srv *Server, room *servRoomState, roomName, newState string) bool {
+//room.mu must be already locked
+func setNewState(srv *Server, room *servRoomState, roomName, newState string, dropCommands bool) bool {
 	if !room.state.IsCoherent {
 		Log(LVL_ERROR, "already changing state!", newState)
 		return false
@@ -201,7 +207,9 @@ func setNewState(srv *Server, room *servRoomState, roomName, newState string) bo
 	room.state.RdyServData = false
 
 	//flush commands
-	room.send.DropNotSent()
+	if dropCommands {
+		room.send.DropNotSent()
+	}
 
 	go requestStateData(srv, roomName, newState)
 	return true

@@ -96,13 +96,16 @@ func (c *Client) PauseReason() PauseReason {
 	return c.pr
 }
 
-func (c *Client) RequestNewState(wanted string) {
+func (c *Client) RequestNewState(wanted string, dropCommands bool) {
 	if c.wantState != c.curState {
 		Log(LVL_ERROR, "client is already changing state")
 	}
 	//_, err := c.doReq(POST, statePattern, []byte(wanted))
-
-	c.sendCommand(COMMAND_REQUESTSTATE, wanted)
+	prefix := "-"
+	if dropCommands {
+		prefix = "+"
+	}
+	c.sendCommand(COMMAND_REQUESTSTATE, prefix+wanted)
 }
 
 func (c *Client) SendRoomBroadcast(command string) {
