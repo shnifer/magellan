@@ -39,14 +39,14 @@ func newCosmoScene() *cosmoScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := NewAtlasSprite("ship", cam.Phys())
+	ship := NewAtlasSprite(commons.ShipAN, cam.Phys())
 	ship.SetSize(50, 50)
 
-	predictorSprite := NewAtlasSprite("trail", cam.Deny())
+	predictorSprite := NewAtlasSprite(commons.PredictorAN, cam.Deny())
 	predictorSprite.SetSize(20, 20)
 	predictorThrust := NewTrackPredictor(cam, predictorSprite, &Data, Track_CurrentThrust, colornames.Palevioletred, graph.Z_ABOVE_OBJECT+1)
 
-	predictor2Sprite := NewAtlasSprite("trail", cam.Deny())
+	predictor2Sprite := NewAtlasSprite(commons.PredictorAN, cam.Deny())
 	predictor2Sprite.SetSize(15, 15)
 	predictor2Sprite.SetColor(colornames.Darkgray)
 

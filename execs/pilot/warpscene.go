@@ -43,7 +43,7 @@ func newWarpScene() *warpScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := NewAtlasSprite("ship", cam.FixS())
+	ship := NewAtlasSprite(ShipAN, cam.FixS())
 	ship.SetSize(50, 50)
 
 	sonarSector := graph.NewSector(cam.Phys())
@@ -57,10 +57,10 @@ func newWarpScene() *warpScene {
 		sonarSector: sonarSector,
 	}
 
-	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod,
+	res.trail = graph.NewFadingArray(GetAtlasTex(TrailAN), trailLifeTime/trailPeriod,
 		cam.Deny())
 
-	arrowTex := GetAtlasTex("arrow")
+	arrowTex := GetAtlasTex(ThrustArrowAN)
 	res.thrustLevelHUD = graph.NewSpriteHUD(arrowTex)
 	res.thrustLevelHUD.SetSize(50, 50)
 	res.thrustLevelHUD.SetAng(180)

@@ -28,6 +28,22 @@ const (
 	CMD_LOGGAMEEVENT    = "LogGameEvent"      //from client to server
 )
 
+const (
+	ShipAN ="MAGIC_ship"
+	OtherShipAN = "MAGIC_othership"
+	PredictorAN = "MAGIC_predictor"
+	NaviMarkerAN = "MAGIC_navimarker"
+	TrailAN = "MAGIC_trail"
+    ScannerAN  = "MAGIC_scanner"
+    ThrustArrowAN = "MAGIC_thurstarrow"
+	RulerHAN = "MAGIC_rulerh"
+	RulerVAN = "MAGIC_rulerv"
+	DefaultBackgroundAN = "MAGIC_DEFAULT_background"
+	EngiBackgroundAN = "MAGIC_engibackground"
+	CompassAN = "MAGIC_compass"
+	Frame9AN = "front9"
+)
+
 var (
 	StartDateTime = time.Date(2018, 01, 01, 01, 01, 01, 01, time.Local)
 )

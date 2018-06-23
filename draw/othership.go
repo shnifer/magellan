@@ -15,7 +15,7 @@ type OtherShip struct {
 }
 
 func NewOtherShip(params graph.CamParams, caption string, elastic float64) *OtherShip {
-	sprite := NewAtlasSprite("othership", params)
+	sprite := NewAtlasSprite(commons.OtherShipAN, params)
 	sprite.SetSize(30, 30)
 
 	capText := graph.NewText(caption, Fonts[Face_list], color.White)

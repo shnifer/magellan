@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
@@ -9,9 +10,8 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
-	"math"
-	"fmt"
 	"image/color"
+	"math"
 )
 
 const trailPeriod = 0.25
@@ -57,17 +57,17 @@ func newCosmoScene() *cosmoScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := NewAtlasSprite("ship", cam.FixS())
+	ship := NewAtlasSprite(ShipAN, cam.FixS())
 	ship.SetSize(50, 50)
 
-	marker := NewAtlasSprite("marker", cam.Deny())
+	marker := NewAtlasSprite(NaviMarkerAN, cam.Deny())
 	marker.SetPivot(graph.MidBottom())
 
-	predictorSprite := NewAtlasSprite("trail", cam.Deny())
+	predictorSprite := NewAtlasSprite(PredictorAN, cam.Deny())
 	predictorSprite.SetSize(20, 20)
 	predictorThrust := NewTrackPredictor(cam, predictorSprite, &Data, Track_CurrentThrust, colornames.Palevioletred, graph.Z_ABOVE_OBJECT+1)
 
-	predictor2Sprite := NewAtlasSprite("trail", cam.Deny())
+	predictor2Sprite := NewAtlasSprite(PredictorAN, cam.Deny())
 	predictor2Sprite.SetSize(15, 15)
 	predictor2Sprite.SetColor(colornames.Darkgray)
 
@@ -88,7 +88,7 @@ func newCosmoScene() *cosmoScene {
 		predictorZero:   predictorZero,
 	}
 
-	res.trail = graph.NewFadingArray(GetAtlasTex("trail"), trailLifeTime/trailPeriod, cam.Deny())
+	res.trail = graph.NewFadingArray(GetAtlasTex(TrailAN), trailLifeTime/trailPeriod, cam.Deny())
 
 	return &res
 }
@@ -288,7 +288,7 @@ func (s *cosmoScene) actualizeOtherShips() {
 	}
 }
 
-func (s *cosmoScene) drawScale(Q *graph.DrawQueue){
+func (s *cosmoScene) drawScale(Q *graph.DrawQueue) {
 	//Scale factor hud
 	camScale := s.cam.Scale * graph.GS()
 	maxLen := float64(WinW) * 0.8
@@ -312,34 +312,34 @@ func (s *cosmoScene) drawScale(Q *graph.DrawQueue){
 	scaleText.SetPosPivot(mid, graph.TopMiddle())
 	Q.Add(scaleText, graph.Z_STAT_HUD+10)
 
-	circleRadPx := float64(WinH)*0.3
-	physRad:= circleRadPx/s.cam.Scale/graph.GS()
+	circleRadPx := float64(WinH) * 0.3
+	physRad := circleRadPx / s.cam.Scale / graph.GS()
 
-	p:=func(i int) v2.V2{
+	p := func(i int) v2.V2 {
 		return s.cam.Center.AddMul(v2.InDir(float64(360/32)*float64(i)), circleRadPx)
 	}
-	for i:=0; i<=32; i++{
+	for i := 0; i <= 32; i++ {
 		Q.Add(graph.LineScr(p(i), p(i+1), colornames.Oldlace), graph.Z_STAT_HUD+10)
 	}
 
 	msg = fmt.Sprintf("circle radius: %f", physRad)
 	physRadText := graph.NewText(msg, Fonts[Face_mono], colornames.Oldlace)
-	physRadText.SetPosPivot(graph.ScrP(0.5,0.4), graph.TopMiddle())
+	physRadText.SetPosPivot(graph.ScrP(0.5, 0.4), graph.TopMiddle())
 	Q.Add(physRadText, graph.Z_STAT_HUD+10)
 }
 
 func (s *cosmoScene) drawGravity(Q *graph.DrawQueue) {
-	scale:=float64(WinH)*0.3/(s.cam.Scale*graph.GS())
-	ship:=Data.PilotData.Ship.Pos
-	thrust:=Data.PilotData.ThrustVector
-	drawv:=func (v v2.V2, clr color.Color) {
-		line:=graph.Line(s.cam,ship,ship.AddMul(v,scale),clr)
-		Q.Add(line,graph.Z_STAT_HUD+10)
+	scale := float64(WinH) * 0.3 / (s.cam.Scale * graph.GS())
+	ship := Data.PilotData.Ship.Pos
+	thrust := Data.PilotData.ThrustVector
+	drawv := func(v v2.V2, clr color.Color) {
+		line := graph.Line(s.cam, ship, ship.AddMul(v, scale), clr)
+		Q.Add(line, graph.Z_STAT_HUD+10)
 	}
-	for _,v:=range s.gravityReport{
-		drawv(v,colornames.Deepskyblue)
+	for _, v := range s.gravityReport {
+		drawv(v, colornames.Deepskyblue)
 	}
-	drawv(s.gravityAcc,colornames.Lightblue)
-	drawv(Data.PilotData.ThrustVector,colornames.Darkolivegreen)
-	drawv(thrust.Add(s.gravityAcc),colornames.White)
+	drawv(s.gravityAcc, colornames.Lightblue)
+	drawv(Data.PilotData.ThrustVector, colornames.Darkolivegreen)
+	drawv(thrust.Add(s.gravityAcc), colornames.White)
 }

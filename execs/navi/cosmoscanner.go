@@ -35,7 +35,7 @@ func newScanner(cam *graph.Camera) *scanner {
 
 	const countN = 12
 
-	sprite := graph.NewSprite(GetAtlasTex("trail"), cam.Deny())
+	sprite := graph.NewSprite(GetAtlasTex(commons.ScannerAN), cam.Deny())
 	sprite.SetSize(15, 15)
 
 	scanRange := graph.NewSprite(graph.CircleTex(), cam.Phys())

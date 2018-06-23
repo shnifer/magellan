@@ -32,7 +32,7 @@ func newWarpScene() *warpScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := graph.NewSprite(GetAtlasTex("ship"), cam.Phys())
+	ship := graph.NewSprite(GetAtlasTex(ShipAN), cam.Phys())
 	ship.SetSize(100, 100)
 	ship.SetAlpha(0.5)
 

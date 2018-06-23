@@ -22,7 +22,7 @@ func newEngiScene() *engiScene {
 	caption := graph.NewText("Engi scene", Fonts[Face_cap], colornames.Aliceblue)
 	caption.SetPosPivot(graph.ScrP(0.8, 0.1), graph.TopLeft())
 
-	back := NewAtlasSpriteHUD("engibackground")
+	back := NewAtlasSpriteHUD(EngiBackgroundAN)
 	back.SetSize(float64(WinW), float64(WinH))
 	back.SetPivot(graph.TopLeft())
 

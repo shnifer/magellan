@@ -7,9 +7,9 @@ import (
 	"image"
 	_"image/jpeg"
 	_"image/gif"
+	_"golang.org/x/image/bmp"
 	"bytes"
 	"image/png"
-	"image/color"
 )
 
 //change to non-transparent to white
@@ -37,7 +37,7 @@ func main(){
 			src:=img.At(x*2,y*2)
 			_,_,_,a:=src.RGBA()
 			if a>0 {
-				src=color.White
+	//			src=color.White
 			}
 			res.Set(x,y,src)
 		}

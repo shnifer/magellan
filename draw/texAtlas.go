@@ -21,7 +21,7 @@ type TexAtlasRec struct {
 type TexAtlas map[string]TexAtlasRec
 
 const atlasFN = "atlas.json"
-const defaultTexFN = "dummy.png"
+const defaultTexFN = "MAGIC_default.png"
 
 var atlas TexAtlas
 

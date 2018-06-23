@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/input"
@@ -36,20 +37,20 @@ const (
 )
 
 func newCosmoSceneHUD(cam *graph.Camera) cosmoSceneHUD {
-	background := NewAtlasSpriteHUD("background")
+	background := NewAtlasSpriteHUD(commons.DefaultBackgroundAN)
 	background.SetSize(float64(WinW), float64(WinH))
 	background.SetPivot(graph.TopLeft())
 	background.SetColor(colornames.Dimgrey)
 
-	compass := NewAtlasSprite("compass", cam.FixS())
+	compass := NewAtlasSprite(commons.CompassAN, cam.FixS())
 	compassSize := float64(WinH) * compassSize
 	compass.SetSize(compassSize, compassSize)
 	compass.SetAlpha(1)
 
-	f9 := NewAtlasFrame9HUD("front9", WinW, WinH, graph.Z_HUD-1)
+	f9 := NewAtlasFrame9HUD(commons.Frame9AN, WinW, WinH, graph.Z_HUD-1)
 
 	arrowSize := float64(WinH) * arrSize
-	arrowTex := GetAtlasTex("arrow")
+	arrowTex := GetAtlasTex(commons.ThrustArrowAN)
 	thrustLevel := graph.NewSpriteHUD(arrowTex)
 	thrustLevel.SetSizeProportion(arrowSize)
 	thrustLevel.SetAng(-90)
@@ -64,10 +65,10 @@ func newCosmoSceneHUD(cam *graph.Camera) cosmoSceneHUD {
 	turnControl.SetAng(180)
 
 	rulerSize := float64(WinH) * wide
-	rulerH := NewAtlasSpriteHUD("rulerH")
+	rulerH := NewAtlasSpriteHUD(commons.RulerHAN)
 	rulerH.SetSizeProportion(rulerSize * rulerWideK)
 	rulerH.SetPos(graph.ScrP(0.5, rulerY))
-	rulerV := NewAtlasSpriteHUD("rulerV")
+	rulerV := NewAtlasSpriteHUD(commons.RulerVAN)
 	rulerV.SetSizeProportion(rulerSize * rulerWideK)
 	rulerV.SetPos(graph.ScrP(rulerX, 0.5))
 
