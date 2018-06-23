@@ -267,3 +267,9 @@ func (s *Sprite) Cols() int {
 func (s *Sprite) Rows() int {
 	return s.tex.rows
 }
+
+//do not check for new tex size or sprite count
+//so it is highly recommended to use the same size textures
+func (s *Sprite) SetTex(t Tex) {
+	s.tex = t
+}

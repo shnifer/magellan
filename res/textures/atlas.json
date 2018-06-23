@@ -32,5 +32,6 @@
   "front95": {"FileName": "HUD_CR_mini.png"},
   "front96": {"FileName": "HUD_BL_mini.png"},
   "front97": {"FileName": "HUD_BC_mini.png"},
-  "front98": {"FileName": "HUD_BR_mini.png"}
+  "front98": {"FileName": "HUD_BR_mini.png"},
+  "terr1": {"FileName": "terr1.png","Sx": 180,"Sy": 180}
 }

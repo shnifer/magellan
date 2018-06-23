@@ -13,6 +13,7 @@ const glyphSize = 32
 
 type CosmoPoint struct {
 	Sprite        *graph.CycledSprite
+	SlidingSphere *SlidingSphere
 	EmissionRange *graph.Sprite
 
 	ID   string
@@ -71,8 +72,20 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		Glyphs = append(Glyphs, newGlyph(BUILDING_FISHHOUSE, pd.FishHouseOwner))
 	}
 
+	var slidingSphere *SlidingSphere
+	if pd.ID == "earth" {
+		period := 2 + rand.Float64()*2
+		slidingSphere = NewAtlasSlidingSphere("terr1", params, graph.Z_GAME_OBJECT, period)
+		slidingSphere.SetSize(pd.Size*2, pd.Size*2)
+
+		if !isMark {
+			slidingSphere.SetAng(rand.Float64() * 360)
+		}
+	}
+
 	res := CosmoPoint{
 		Sprite:        cycledSprite,
+		SlidingSphere: slidingSphere,
 		EmissionRange: emissionRange,
 		Pos:           pd.Pos,
 		ID:            pd.ID,
@@ -88,6 +101,9 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 //CosmoPoint update takes Absolute session time to calculate cosmic clocks position
 func (co *CosmoPoint) Update(dt float64) {
 	co.Sprite.Update(dt)
+	if co.SlidingSphere != nil {
+		co.SlidingSphere.Update(dt)
+	}
 	co.recalcSprite()
 }
 
@@ -105,7 +121,12 @@ func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 	if co.EmissionRange != nil {
 		res.Add(co.EmissionRange, graph.Z_ABOVE_OBJECT)
 	}
-	res.Add(co.Sprite, graph.Z_GAME_OBJECT)
+	if co.SlidingSphere == nil {
+		res.Add(co.Sprite, graph.Z_GAME_OBJECT)
+	} else {
+		res.Append(co.SlidingSphere)
+	}
+
 	for i, sprite := range co.Glyphs {
 		pos := co.cam.Apply(co.Pos)
 		size := co.cam.Scale*co.Size/2 + glyphSize/2
@@ -119,6 +140,9 @@ func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 
 func (co *CosmoPoint) recalcSprite() {
 	co.Sprite.SetPos(co.Pos)
+	if co.SlidingSphere != nil {
+		co.SlidingSphere.SetPos(co.Pos)
+	}
 	if co.EmissionRange != nil {
 		co.EmissionRange.SetPos(co.Pos)
 	}

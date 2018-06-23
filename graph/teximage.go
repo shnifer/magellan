@@ -102,3 +102,7 @@ func GetTex(filename string, smoothFilter bool, sw, sh int, count int,
 	texCache[cacheKey] = t
 	return t, nil
 }
+
+func (t Tex) Size() (w, h int) {
+	return t.sw, t.sh
+}

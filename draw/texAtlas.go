@@ -56,7 +56,8 @@ func getAtlasTex(name string) (graph.Tex, error) {
 	return tex, nil
 }
 
-//return tex, panic on error
+//return tex. if can't find return default tex
+// panic on error
 func GetAtlasTex(name string) graph.Tex {
 	tex, err := getAtlasTex(name)
 	if err != nil {
