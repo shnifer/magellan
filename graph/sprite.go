@@ -99,8 +99,10 @@ func (s *Sprite) SetColor(color color.Color) {
 }
 
 func (s *Sprite) SetAlpha(a float64) {
-	s.alpha = a
-	s.colorDirty = true
+	if s.alpha!=a {
+		s.alpha = a
+		s.colorDirty = true
+	}
 }
 
 func (s *Sprite) SetScale(x, y float64) {

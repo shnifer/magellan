@@ -46,10 +46,10 @@ func (ss *SlidingSphere) Req() (res *graph.DrawQueue) {
 	res = graph.NewDrawQueue()
 
 	ss.temp.Clear()
-	ss.slidingSprite.Draw(ss.temp)
-	img, op := ss.maskSprite.ImageOp()
-	op.CompositeMode = ebiten.CompositeModeDestinationIn
-	ss.temp.DrawImage(img, op)
+	//ss.slidingSprite.Draw(ss.temp)
+	//img, op := ss.maskSprite.ImageOp()
+	//op.CompositeMode = ebiten.CompositeModeDestinationIn
+	//ss.temp.DrawImage(img, op)
 
 	t := graph.TexFromImage(ss.temp, ebiten.FilterDefault, ss.w, ss.h, 0, "~slidingthing")
 	ss.Sprite.SetTex(t)

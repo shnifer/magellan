@@ -7,14 +7,24 @@ import (
 	"golang.org/x/image/colornames"
 	"image/color"
 	"math/rand"
-	"golang.org/x/mobile/exp/sprite"
 )
 
 const glyphSize = 32
 
+var lowQ bool
+
+const (
+	mark_size   = 30
+	sprite_size = 50
+)
+
 type CosmoPoint struct {
-	Sprite        *graph.CycledSprite
+	MarkSprite    *graph.Sprite
+	SimpleSprite  *graph.Sprite
 	SlidingSphere *SlidingSphere
+
+	onlyMark bool
+
 	EmissionRange *graph.Sprite
 
 	ID   string
@@ -28,31 +38,47 @@ type CosmoPoint struct {
 
 func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 
-	isMark := pd.Type == BUILDING_BLACKBOX || pd.Type == BUILDING_BEACON
-	if isMark {
-		params.DenyScale = true
-		params.DenyAngle = true
+	markParam := params
+	markParam.DenyScale = true
+	markParam.DenyAngle = true
+
+	var markSprite *graph.Sprite
+
+	onlyMark := pd.Type == BUILDING_BLACKBOX || pd.Type == BUILDING_BEACON
+	if onlyMark {
+		markSprite = NewAtlasSprite("MAGIC_"+pd.Type, markParam)
+	} else {
+		markSprite = NewAtlasSprite("MAGIC_MARK_"+pd.Type, markParam)
 	}
 	spriteAN := pd.SpriteAN
-	if spriteAN=="" {
-		spriteAN="MAGIC_DEFAULT_"+pd.Type
+	if spriteAN == "" && !onlyMark {
+		spriteAN = "MAGIC_DEFAULT_" + pd.Type
 	}
 
-	sprite := NewAtlasSprite(pd.SpriteAN, params)
-	zeroColor := color.RGBA{}
-	if pd.Color != zeroColor {
-		sprite.SetColor(pd.Color)
+	var simpleSprite *graph.Sprite
+	var slidingSphere *SlidingSphere
+
+	if !onlyMark {
+		zeroColor := color.RGBA{}
+		ang := rand.Float64() * 360
+		if lowQ {
+			simpleSprite = NewAtlasSprite(spriteAN, params)
+			if pd.Color != zeroColor {
+				simpleSprite.SetColor(pd.Color)
+			}
+			simpleSprite.SetSize(pd.Size*2, pd.Size*2)
+			simpleSprite.SetAng(ang)
+		} else {
+			period := 2 + rand.Float64()*2
+
+			slidingSphere = NewAtlasSlidingSphere(spriteAN, params, graph.Z_GAME_OBJECT, period)
+			if pd.Color != zeroColor {
+				slidingSphere.SetColor(pd.Color)
+			}
+			slidingSphere.SetSize(pd.Size*2, pd.Size*2)
+			slidingSphere.SetAng(ang)
+		}
 	}
-
-	sprite.SetSize(pd.Size*2, pd.Size*2)
-
-	if !isMark {
-		sprite.SetAng(rand.Float64() * 360)
-	}
-
-	//Random spin speed
-	fps := 20 * (0.5 + rand.Float64())
-	cycledSprite := graph.NewCycledSprite(sprite, graph.Cycle_Loop, fps)
 
 	emiR := 0.0
 	for _, emi := range pd.Emissions {
@@ -77,21 +103,12 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		Glyphs = append(Glyphs, newGlyph(BUILDING_FISHHOUSE, pd.FishHouseOwner))
 	}
 
-	var slidingSphere *SlidingSphere
-	if pd.ID == "earth" {
-		period := 2 + rand.Float64()*2
-		slidingSphere = NewAtlasSlidingSphere("terr1", params, graph.Z_GAME_OBJECT, period)
-		slidingSphere.SetSize(pd.Size*2, pd.Size*2)
-
-		if !isMark {
-			slidingSphere.SetAng(rand.Float64() * 360)
-		}
-	}
-
 	res := CosmoPoint{
-		Sprite:        cycledSprite,
+		MarkSprite:    markSprite,
+		SimpleSprite:  simpleSprite,
 		SlidingSphere: slidingSphere,
 		EmissionRange: emissionRange,
+		onlyMark:      onlyMark,
 		Pos:           pd.Pos,
 		ID:            pd.ID,
 		Size:          pd.Size,
@@ -105,36 +122,57 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 
 //CosmoPoint update takes Absolute session time to calculate cosmic clocks position
 func (co *CosmoPoint) Update(dt float64) {
-	co.Sprite.Update(dt)
 	if co.SlidingSphere != nil {
 		co.SlidingSphere.Update(dt)
 	}
 	co.recalcSprite()
 }
 
-/*
-func (co *CosmoPoint) Draw(dest *ebiten.Image) {
-	if co.EmissionRange != nil {
-		co.EmissionRange.Draw(dest)
-	}
-	co.Sprite.Draw(dest)
-}
-*/
-
 func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 	res = graph.NewDrawQueue()
 	if co.EmissionRange != nil {
-		res.Add(co.EmissionRange, graph.Z_ABOVE_OBJECT)
+		res.Add(co.EmissionRange, graph.Z_UNDER_OBJECT)
 	}
-	if co.SlidingSphere == nil {
-		res.Add(co.Sprite, graph.Z_GAME_OBJECT)
-	} else {
-		res.Append(co.SlidingSphere)
+
+	if co.MarkSprite!=nil{
+		res.Add(co.MarkSprite, graph.Z_GAME_OBJECT)
+	}
+
+	if !co.onlyMark {
+		size := co.Size
+		if co.cam != nil {
+			size *= co.cam.Scale
+		}
+		var markAlpha float64
+		var spriteAlpha float64
+		if size <= mark_size {
+			markAlpha = 1
+			spriteAlpha = 0
+		} else if size >= sprite_size {
+			markAlpha = 0
+			spriteAlpha = 1
+		} else {
+			k := (size - mark_size) / (sprite_size - mark_size)
+			markAlpha = 1 - k
+			spriteAlpha = k
+		}
+
+		if lowQ {
+			co.MarkSprite.SetAlpha(markAlpha)
+			co.SimpleSprite.SetAlpha(spriteAlpha)
+			res.Add(co.SimpleSprite, graph.Z_GAME_OBJECT)
+		} else {
+			co.SlidingSphere.SetAlpha(spriteAlpha)
+			res.Append(co.SlidingSphere)
+		}
 	}
 
 	for i, sprite := range co.Glyphs {
 		pos := co.cam.Apply(co.Pos)
 		size := co.cam.Scale*co.Size/2 + glyphSize/2
+		if size < mark_size/2 {
+			size = mark_size / 2
+		}
 		pos.DoAddMul(v2.V2{X: -1, Y: -1}, size)
 		pos.DoAddMul(v2.V2{X: glyphSize, Y: 0}, float64(i))
 		sprite.SetPos(pos)
@@ -144,9 +182,14 @@ func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 }
 
 func (co *CosmoPoint) recalcSprite() {
-	co.Sprite.SetPos(co.Pos)
+	if co.SimpleSprite != nil {
+		co.SimpleSprite.SetPos(co.Pos)
+	}
 	if co.SlidingSphere != nil {
 		co.SlidingSphere.SetPos(co.Pos)
+	}
+	if co.MarkSprite != nil {
+		co.MarkSprite.SetPos(co.Pos)
 	}
 	if co.EmissionRange != nil {
 		co.EmissionRange.SetPos(co.Pos)
@@ -154,9 +197,14 @@ func (co *CosmoPoint) recalcSprite() {
 }
 
 func newGlyph(t string, owner string) *graph.Sprite {
-	res := NewAtlasSprite(t, graph.NoCam)
+	res := NewAtlasSprite("MAGIC_"+t, graph.NoCam)
 	res.SetSize(glyphSize, glyphSize)
 	clr := ColorByOwner(owner)
 	res.SetColor(clr)
 	return res
+}
+
+//must be set once before creating CosmoPoints
+func LowQualityCosmoPoint(v bool) {
+	lowQ = v
 }

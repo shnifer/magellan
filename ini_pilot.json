@@ -1,7 +1,7 @@
 {
     "Port": "http://localhost:8010",
-    "Timeout":1000,
-    "PingPeriod": 1000,
+    "Timeout":100,
+    "PingPeriod": 100,
     "Room": "room101",
     "FullScreen": false,
     "WinW": 1000,
