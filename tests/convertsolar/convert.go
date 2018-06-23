@@ -13,6 +13,7 @@ import (
 
 type fileData struct {
 	ID, Parent  string
+	Type string
 	Diameter    float64
 	Distance    float64
 	MaxGravity  float64
@@ -108,10 +109,11 @@ func main() {
 }
 
 func createGP(v fileData) (*commons.GalaxyPoint, string) {
-	objType := DEFType
+
+	texName := ""
 	if v.TexName != "" {
 		s := strings.Split(v.TexName, ".")
-		objType = s[0]
+		texName = s[0]
 	}
 
 	clr := color.RGBA{R: v.Color.R, G: v.Color.G, B: v.Color.B, A: 255}
@@ -130,7 +132,8 @@ func createGP(v fileData) (*commons.GalaxyPoint, string) {
 		Pos:       v2.ZV,
 		Orbit:     okr(v.Distance * Params.K_Radius),
 		Period:    okr(v.OrbitPeriod * Params.K_OrbitPeriod),
-		Type:      objType,
+		Type:      v.Type,
+		SpriteAN:  texName,
 		Size:      okr(v.Diameter / 2 * Params.K_Size),
 		Color:     clr,
 		Mass:      okr(mass * Params.K_Mass),

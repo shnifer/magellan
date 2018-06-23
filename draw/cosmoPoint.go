@@ -7,6 +7,7 @@ import (
 	"golang.org/x/image/colornames"
 	"image/color"
 	"math/rand"
+	"golang.org/x/mobile/exp/sprite"
 )
 
 const glyphSize = 32
@@ -32,8 +33,12 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		params.DenyScale = true
 		params.DenyAngle = true
 	}
+	spriteAN := pd.SpriteAN
+	if spriteAN=="" {
+		spriteAN="MAGIC_DEFAULT_"+pd.Type
+	}
 
-	sprite := NewAtlasSprite(pd.Type, params)
+	sprite := NewAtlasSprite(pd.SpriteAN, params)
 	zeroColor := color.RGBA{}
 	if pd.Color != zeroColor {
 		sprite.SetColor(pd.Color)

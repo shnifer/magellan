@@ -29,6 +29,10 @@ const (
 )
 
 const (
+	//also MAGIC_BUILDING_MINE, MAGIC_BUILDING_MINE
+	//
+	//also MAGIC_DEFAULT_STAR, MAGIC_DEFAULT_PLANET, MAGIC_DEFAULT_ASTEROID,
+	//also MAGIC_DEFAULT_SATELLITE, MAGIC_DEFAULT_WARP
 	ShipAN ="MAGIC_ship"
 	OtherShipAN = "MAGIC_othership"
 	PredictorAN = "MAGIC_predictor"

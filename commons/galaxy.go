@@ -7,6 +7,16 @@ import (
 	"image/color"
 )
 
+const (
+	//GalaxyPoint.Type
+	//also includes outerBuilds (BUILDING_BLACKBOX, BUILDING_BEACKON)
+	GPT_STAR = "STAR"
+	GPT_WARP = "WARP"
+	GPS_PLANET = "PLANET"
+	GPS_ASTEROID = "ASTEROID"
+	GPS_SATELLITE = "SATELLITE"
+)
+
 type Galaxy struct {
 	//for systems - range of "system borders"
 	SpawnDistance float64
@@ -27,7 +37,9 @@ type GalaxyPoint struct {
 	Orbit  float64 `json:"orb,omitempty"`
 	Period float64 `json:"per,omitempty"`
 
+
 	Type string  `json:"t,omitempty"`
+	SpriteAN string `json:"sp,omitempty"`
 	Size float64 `json:"s,omitempty"`
 
 	Mass   float64 `json:"m,omitempty"`
