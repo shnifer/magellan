@@ -5,25 +5,28 @@ import (
 	"github.com/hajimehoshi/ebiten"
 )
 
+var mixerTemp *ebiten.Image
+
+func init() {
+	mixerTemp, _ = ebiten.NewImage(1024, 1024, ebiten.FilterDefault)
+}
+
 type SlidingSphere struct {
 	*graph.Sprite
 
-	temp          *ebiten.Image
 	w, h          int
 	slidingSprite *graph.SlidingSprite
 	maskSprite    *graph.Sprite
-	layer         int
 	periodS       float64
 }
 
-func NewAtlasSlidingSphere(atlasName string, params graph.CamParams, layer int, periodS float64) *SlidingSphere {
-	tex := GetAtlasTex(atlasName)
-	tex = graph.SlidingTex(tex)
+func NewAtlasSlidingSphere(atlasName string, params graph.CamParams, periodS float64) *SlidingSphere {
+	tex := GetSlidingAtlasTex(atlasName)
 	underSprite := graph.NewSprite(tex, graph.NoCam)
 	underSprite.SetPivot(graph.TopLeft())
 	slidingSprite := graph.NewSlidingSprite(underSprite)
 	w, h := tex.Size()
-	temp, _ := ebiten.NewImage(w, h, ebiten.FilterDefault)
+	//mixerTemp, _ := ebiten.NewImage(w, h, ebiten.FilterDefault)
 	sprite := graph.NewSprite(tex, params)
 
 	mask := graph.NewSprite(graph.CircleTex(), graph.NoCam)
@@ -31,32 +34,32 @@ func NewAtlasSlidingSphere(atlasName string, params graph.CamParams, layer int, 
 	mask.SetSize(float64(w), float64(h))
 
 	return &SlidingSphere{
-		Sprite:        sprite,
-		temp:          temp,
+		Sprite: sprite,
+		//	mixerTemp:          mixerTemp,
 		w:             w,
 		h:             h,
 		slidingSprite: slidingSprite,
 		maskSprite:    mask,
-		layer:         layer,
 		periodS:       periodS,
 	}
 }
 
-func (ss *SlidingSphere) Req() (res *graph.DrawQueue) {
-	res = graph.NewDrawQueue()
+func (ss *SlidingSphere) DrawF() (graph.DrawF, string) {
+	if ss.Sprite.SkipDrawCheck() {
+		return graph.DrawFZero, ""
+	}
 
-	ss.temp.Clear()
-	//ss.slidingSprite.Draw(ss.temp)
-	//img, op := ss.maskSprite.ImageOp()
-	//op.CompositeMode = ebiten.CompositeModeDestinationIn
-	//ss.temp.DrawImage(img, op)
-
-	t := graph.TexFromImage(ss.temp, ebiten.FilterDefault, ss.w, ss.h, 0, "~slidingthing")
-	ss.Sprite.SetTex(t)
-
-	res.Add(ss.Sprite, ss.layer)
-
-	return res
+	f := func(dest *ebiten.Image) {
+		mixerTemp.Clear()
+		ss.slidingSprite.Draw(mixerTemp)
+		img, op := ss.maskSprite.ImageOp()
+		op.CompositeMode = ebiten.CompositeModeDestinationIn
+		mixerTemp.DrawImage(img, op)
+		t := graph.TexFromImage(mixerTemp, ebiten.FilterDefault, ss.w, ss.h, 0, "~slidingthing")
+		ss.Sprite.SetTex(t)
+		ss.Draw(dest)
+	}
+	return f, ""
 }
 
 func (ss *SlidingSphere) Update(dt float64) {

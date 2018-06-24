@@ -95,7 +95,7 @@ func (sa *FadingArray) Draw(img *ebiten.Image) {
 	}
 }
 
-func (sa *FadingArray) DrawF() (drawF, string) {
+func (sa *FadingArray) DrawF() (DrawF, string) {
 	return sa.Draw, sa.tex.name
 }
 

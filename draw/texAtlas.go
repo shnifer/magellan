@@ -70,6 +70,17 @@ func GetAtlasTex(name string) graph.Tex {
 	return tex
 }
 
+func GetSlidingAtlasTex(name string) graph.Tex {
+	cacheName := "sliding~" + name
+	if tex, exist := graph.CheckTexCache(cacheName); exist {
+		return tex
+	}
+	tex := GetAtlasTex(name)
+	tex = graph.SlidingTex(tex)
+	graph.StoreTexCache(cacheName, tex)
+	return tex
+}
+
 func NewAtlasSprite(atlasName string, params graph.CamParams) *graph.Sprite {
 	return graph.NewSprite(GetAtlasTex(atlasName), params)
 }

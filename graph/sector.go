@@ -81,7 +81,7 @@ func (s *Sector) Draw(dest *ebiten.Image) {
 	}
 }
 
-func (s *Sector) DrawF() (drawF, string) {
+func (s *Sector) DrawF() (DrawF, string) {
 	return s.Draw, "~oneDegree"
 }
 

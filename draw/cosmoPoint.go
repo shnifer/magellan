@@ -14,7 +14,7 @@ const glyphSize = 32
 var lowQ bool
 
 const (
-	mark_size   = 30
+	mark_size   = 40
 	sprite_size = 50
 )
 
@@ -71,7 +71,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		} else {
 			period := 2 + rand.Float64()*2
 
-			slidingSphere = NewAtlasSlidingSphere(spriteAN, params, graph.Z_GAME_OBJECT, period)
+			slidingSphere = NewAtlasSlidingSphere(spriteAN, params, period)
 			if pd.Color != zeroColor {
 				slidingSphere.SetColor(pd.Color)
 			}
@@ -134,7 +134,7 @@ func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 		res.Add(co.EmissionRange, graph.Z_UNDER_OBJECT)
 	}
 
-	if co.MarkSprite!=nil{
+	if co.MarkSprite != nil {
 		res.Add(co.MarkSprite, graph.Z_GAME_OBJECT)
 	}
 
@@ -160,10 +160,14 @@ func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 		if lowQ {
 			co.MarkSprite.SetAlpha(markAlpha)
 			co.SimpleSprite.SetAlpha(spriteAlpha)
-			res.Add(co.SimpleSprite, graph.Z_GAME_OBJECT)
+			if spriteAlpha > 0 {
+				res.Add(co.SimpleSprite, graph.Z_GAME_OBJECT)
+			}
 		} else {
 			co.SlidingSphere.SetAlpha(spriteAlpha)
-			res.Append(co.SlidingSphere)
+			if spriteAlpha > 0 {
+				res.Add(co.SlidingSphere, graph.Z_GAME_OBJECT)
+			}
 		}
 	}
 

@@ -110,7 +110,7 @@ func (t *Text) Draw(dst *ebiten.Image) {
 	}
 }
 
-func (t *Text) DrawF() (drawF, string) {
+func (t *Text) DrawF() (DrawF, string) {
 	return t.Draw, "~text"
 }
 

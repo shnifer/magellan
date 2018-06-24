@@ -37,7 +37,7 @@ func (s *SlidingSprite) AddSlide(deltaSlide float64) {
 }
 
 func (s *SlidingSprite) Draw(dest *ebiten.Image) {
-	if s.sprite.skipDrawCheck() {
+	if s.sprite.SkipDrawCheck() {
 		return
 	}
 
@@ -46,11 +46,11 @@ func (s *SlidingSprite) Draw(dest *ebiten.Image) {
 }
 
 //MUST support multiple draw with different parameters
-func (s *SlidingSprite) DrawF() (drawF, string) {
-	if s.sprite.skipDrawCheck() {
-		return drawFZero, ""
+func (s *SlidingSprite) DrawF() (DrawF, string) {
+	if s.sprite.SkipDrawCheck() {
+		return DrawFZero, ""
 	}
-	//so we calc draw ops on s.DrawF() call not drawF resolve
+	//so we calc draw ops on s.DrawF() call not DrawF resolve
 	img, op := s.ImageOp()
 	f := func(dest *ebiten.Image) {
 		dest.DrawImage(img, op)
@@ -66,18 +66,4 @@ func (s *SlidingSprite) ImageOp() (*ebiten.Image, *ebiten.DrawImageOptions) {
 	sr = sr.Add(move)
 	op.SourceRect = &sr
 	return img, op
-}
-
-func SlidingTex(source Tex) (result Tex) {
-	result = source
-	w, h := source.image.Size()
-	newImage, _ := ebiten.NewImage(w+h, h, source.filter)
-	op := &ebiten.DrawImageOptions{}
-	newImage.DrawImage(source.image, op)
-	rect := image.Rect(0, 0, source.sw, h)
-	op.SourceRect = &rect
-	op.GeoM.Translate(float64(w), 0)
-	newImage.DrawImage(source.image, op)
-	result.image = newImage
-	return result
 }

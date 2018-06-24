@@ -22,17 +22,17 @@ const (
 	Z_STAT_HUD
 )
 
-type drawF = func(image *ebiten.Image)
+type DrawF = func(image *ebiten.Image)
 
-var drawFZero = func(image *ebiten.Image) {}
+var DrawFZero = func(image *ebiten.Image) {}
 
 type DrawReq struct {
-	drawReq drawF
+	drawReq DrawF
 	layer   int
 	group   string
 }
 
-func NewReq(layer int, group string, f drawF) DrawReq {
+func NewReq(layer int, group string, f DrawF) DrawReq {
 	return DrawReq{
 		drawReq: f,
 		layer:   layer,
@@ -41,7 +41,7 @@ func NewReq(layer int, group string, f drawF) DrawReq {
 }
 
 type drawer interface {
-	DrawF() (f drawF, group string)
+	DrawF() (f DrawF, group string)
 }
 
 type drawQueuer interface {

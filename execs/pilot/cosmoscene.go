@@ -237,7 +237,7 @@ func (s *cosmoScene) updateDebugControl(dt float64) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 		Data.PilotData.Ship.Vel = v2.V2{}
 		Data.PilotData.Ship.AngVel = 0
-		Data.PilotData.Ship.Pos = Data.Galaxy.Points["sun"].Pos
+		Data.PilotData.Ship.Pos = Data.Galaxy.Points["mars"].Pos
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.Key1) {

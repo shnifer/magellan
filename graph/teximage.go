@@ -21,6 +21,10 @@ type Tex struct {
 	name  string
 }
 
+func (t Tex) Size() (w, h int) {
+	return t.sw, t.sh
+}
+
 func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int, count int, name string) Tex {
 	if image == nil {
 		return Tex{}
@@ -68,10 +72,12 @@ func GetTex(filename string, smoothFilter bool, sw, sh int, count int,
 
 	var cacheKey string
 	if smoothFilter {
-		cacheKey = "0" + filename
+		cacheKey += "0"
 	} else {
-		cacheKey = "1" + filename
+		cacheKey = "1"
 	}
+
+	cacheKey += filename
 	if Tex, ok := texCache[cacheKey]; ok {
 		return Tex, nil
 	}
@@ -99,10 +105,31 @@ func GetTex(filename string, smoothFilter bool, sw, sh int, count int,
 	if err != nil {
 		return Tex{}, err
 	}
+
 	texCache[cacheKey] = t
 	return t, nil
 }
 
-func (t Tex) Size() (w, h int) {
-	return t.sw, t.sh
+func CheckTexCache(cacheName string) (Tex, bool) {
+	t, ok := texCache[cacheName]
+	return t, ok
+}
+
+func StoreTexCache(cacheName string, tex Tex) {
+	texCache[cacheName] = tex
+}
+
+//cache it manually
+func SlidingTex(source Tex) (result Tex) {
+	result = source
+	w, h := source.image.Size()
+	newImage, _ := ebiten.NewImage(w+h, h, source.filter)
+	op := &ebiten.DrawImageOptions{}
+	newImage.DrawImage(source.image, op)
+	rect := image.Rect(0, 0, source.sw, h)
+	op.SourceRect = &rect
+	op.GeoM.Translate(float64(w), 0)
+	newImage.DrawImage(source.image, op)
+	result.image = newImage
+	return result
 }

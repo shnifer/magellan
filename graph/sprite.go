@@ -99,7 +99,7 @@ func (s *Sprite) SetColor(color color.Color) {
 }
 
 func (s *Sprite) SetAlpha(a float64) {
-	if s.alpha!=a {
+	if s.alpha != a {
 		s.alpha = a
 		s.colorDirty = true
 	}
@@ -198,7 +198,7 @@ func (s *Sprite) ImageOp() (*ebiten.Image, *ebiten.DrawImageOptions) {
 	return s.tex.image, op
 }
 
-func (s *Sprite) skipDrawCheck() bool {
+func (s *Sprite) SkipDrawCheck() bool {
 	if s == nil {
 		log.Println("Draw called for nil Sprite")
 		return true
@@ -217,7 +217,7 @@ func (s *Sprite) skipDrawCheck() bool {
 }
 
 func (s *Sprite) Draw(dest *ebiten.Image) {
-	if s.skipDrawCheck() {
+	if s.SkipDrawCheck() {
 		return
 	}
 
@@ -226,11 +226,11 @@ func (s *Sprite) Draw(dest *ebiten.Image) {
 }
 
 //MUST support multiple draw with different parameters
-func (s *Sprite) DrawF() (drawF, string) {
-	if s.skipDrawCheck() {
-		return drawFZero, ""
+func (s *Sprite) DrawF() (DrawF, string) {
+	if s.SkipDrawCheck() {
+		return DrawFZero, ""
 	}
-	//so we calc draw ops on s.DrawF() call not drawF resolve
+	//so we calc draw ops on s.DrawF() call not DrawF resolve
 	img, op := s.ImageOp()
 	f := func(dest *ebiten.Image) {
 		dest.DrawImage(img, op)
