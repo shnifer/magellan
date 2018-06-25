@@ -123,13 +123,18 @@ func StoreTexCache(cacheName string, tex Tex) {
 func SlidingTex(source Tex) (result Tex) {
 	result = source
 	w, h := source.image.Size()
-	newImage, _ := ebiten.NewImage(w+h, h, source.filter)
+	addW:=source.sw
+	newImage, _ := ebiten.NewImage(w+addW, h, source.filter)
 	op := &ebiten.DrawImageOptions{}
 	newImage.DrawImage(source.image, op)
-	rect := image.Rect(0, 0, source.sw, h)
+	rect := image.Rect(0, 0, addW, h)
 	op.SourceRect = &rect
-	op.GeoM.Translate(float64(w), 0)
+	op.GeoM.Translate(float64(w-1), 0)
 	newImage.DrawImage(source.image, op)
-	result.image = newImage
+	result.image,_ = ebiten.NewImageFromImage(newImage, source.filter)
 	return result
+}
+
+func ClearCache(){
+	texCache = make(map[string]Tex, len(texCache))
 }

@@ -29,12 +29,13 @@ func main(){
 		panic(err)
 	}
 
+	const scale = 2
 	bounds:=img.Bounds()
-	bounds.Max=bounds.Max.Div(2)
+	bounds.Max=bounds.Max.Div(scale)
 	res:=image.NewRGBA(bounds)
-	for x:=0; x<img.Bounds().Max.X/2; x++{
-		for y:=0; y<img.Bounds().Max.Y/2; y++{
-			src:=img.At(x*2,y*2)
+	for x:=0; x<img.Bounds().Max.X/scale; x++{
+		for y:=0; y<img.Bounds().Max.Y/scale; y++{
+			src:=img.At(x*scale,y*scale)
 			_,_,_,a:=src.RGBA()
 			if a>0 {
 	//			src=color.White
