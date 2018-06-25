@@ -36,8 +36,9 @@ func (galaxy *Galaxy) RecalcLvls() {
 		return l + 1
 	}
 
-	for _, point := range galaxy.Points {
+	for id, point := range galaxy.Points {
 		lvl := Lvl(point)
+		galaxy.Points[id].Level = lvl
 		if lvl > maxLvl {
 			maxLvl = lvl
 		}
@@ -72,6 +73,7 @@ func (galaxy *Galaxy) Update(sessionTime float64) {
 	}
 }
 
+//TODO: rework for multiple mines and houses
 //works with already calced and ordered Galaxy
 func (galaxy *Galaxy) AddBuilding(b Building) {
 	fullKey := b.FullKey
@@ -122,6 +124,7 @@ func (galaxy *Galaxy) AddBuilding(b Building) {
 	}
 }
 
+//TODO: rework for multiple mines and houses
 //works with already calced and ordered Galaxy
 func (galaxy *Galaxy) DelBuilding(b Building) {
 	switch b.Type {
@@ -181,6 +184,7 @@ func (GalaxyPoint) outerFromBuilding(b Building, parentID string, dist float64) 
 		Size:       BuildingSize,
 		Emissions:  []Emission{},
 		Signatures: []Signature{},
+		Level:      1,
 	}
 
 	if b.Message != "" {

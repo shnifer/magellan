@@ -45,6 +45,7 @@ func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int, count i
 	if count == 0 {
 		count = cols * rows
 	}
+
 	if count > cols*rows {
 		panic("TexFromImage: count>cols*rows")
 	}
@@ -67,6 +68,7 @@ func init() {
 	texCache = make(map[string]Tex)
 }
 
+//todo: do not always chache get
 func GetTex(filename string, smoothFilter bool, sw, sh int, count int,
 	loader func(filename string) (io.Reader, error)) (Tex, error) {
 
@@ -123,7 +125,7 @@ func StoreTexCache(cacheName string, tex Tex) {
 func SlidingTex(source Tex) (result Tex) {
 	result = source
 	w, h := source.image.Size()
-	addW:=source.sw
+	addW := source.sw
 	newImage, _ := ebiten.NewImage(w+addW, h, source.filter)
 	op := &ebiten.DrawImageOptions{}
 	newImage.DrawImage(source.image, op)
@@ -131,10 +133,10 @@ func SlidingTex(source Tex) (result Tex) {
 	op.SourceRect = &rect
 	op.GeoM.Translate(float64(w-1), 0)
 	newImage.DrawImage(source.image, op)
-	result.image,_ = ebiten.NewImageFromImage(newImage, source.filter)
+	result.image, _ = ebiten.NewImageFromImage(newImage, source.filter)
 	return result
 }
 
-func ClearCache(){
+func ClearCache() {
 	texCache = make(map[string]Tex, len(texCache))
 }

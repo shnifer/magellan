@@ -3,9 +3,9 @@ package commons
 import "encoding/json"
 
 type State struct {
-	StateID  string
-	ShipID   string
-	GalaxyID string
+	StateID  string `json:"st"`
+	ShipID   string `json:"sh"`
+	GalaxyID string `json:"gx"`
 }
 
 func (s State) Encode() string {

@@ -1,6 +1,6 @@
 package commons
 
-const sessionTimeElastic = 5
+const sessionTimeElastic = 1
 
 type SessionTime struct {
 	target   float64

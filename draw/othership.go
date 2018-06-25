@@ -7,15 +7,26 @@ import (
 	"image/color"
 )
 
+const (
+	shipSize = 1
+)
+
 type OtherShip struct {
-	sprite    *graph.Sprite
-	capText   *graph.Text
-	camParams graph.CamParams
-	rb        *commons.RBFollower
+	markSprite *graph.Sprite
+	sprite     *graph.Sprite
+	capText    *graph.Text
+	camParams  graph.CamParams
+	rb         *commons.RBFollower
 }
 
 func NewOtherShip(params graph.CamParams, caption string, elastic float64) *OtherShip {
 	sprite := NewAtlasSprite(commons.OtherShipAN, params)
+	sprite.SetSize(30, 30)
+
+	markParams := params
+	markParams.DenyScale = true
+	markParams.DenyAngle = true
+	markSprite := NewAtlasSprite(commons.MARKOtherShipAN, markParams)
 	sprite.SetSize(30, 30)
 
 	capText := graph.NewText(caption, Fonts[Face_list], color.White)
@@ -23,10 +34,11 @@ func NewOtherShip(params graph.CamParams, caption string, elastic float64) *Othe
 	rb := commons.NewRBFollower(elastic)
 
 	return &OtherShip{
-		sprite:    sprite,
-		capText:   capText,
-		camParams: params,
-		rb:        rb,
+		sprite:     sprite,
+		markSprite: markSprite,
+		capText:    capText,
+		camParams:  params,
+		rb:         rb,
 	}
 }
 
@@ -37,8 +49,9 @@ func (s *OtherShip) SetRB(rb commons.RBData) {
 func (s *OtherShip) Update(dt float64) {
 	s.rb.Update(dt)
 	ship := s.rb.RB()
-	s.sprite.SetPosAng(ship.Pos, ship.Ang)
 	pos := ship.Pos
+	s.sprite.SetPosAng(pos, ship.Ang)
+	s.markSprite.SetPos(pos)
 	if s.camParams.Cam != nil {
 		pos = s.camParams.Cam.Apply(pos)
 	}
@@ -48,7 +61,15 @@ func (s *OtherShip) Update(dt float64) {
 
 func (s *OtherShip) Req() *graph.DrawQueue {
 	R := graph.NewDrawQueue()
-	R.Add(s.sprite, graph.Z_ABOVE_OBJECT)
+
+	markAlpha, spriteAlpha := markAlpha(shipSize, s.camParams.Cam)
+	if markAlpha > 0 && s.markSprite != nil {
+		R.Add(s.markSprite, graph.Z_ABOVE_OBJECT)
+	}
+
+	if spriteAlpha > 0 && s.sprite != nil {
+		R.Add(s.sprite, graph.Z_ABOVE_OBJECT)
+	}
 	R.Add(s.capText, graph.Z_HUD)
 	return R
 }

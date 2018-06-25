@@ -12,6 +12,7 @@ import (
 	"golang.org/x/image/colornames"
 	"image/color"
 	"math"
+	"sort"
 )
 
 const trailPeriod = 0.25
@@ -186,8 +187,16 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	Q.Append(s.hud)
 	Q.Append(s.warpEngine)
 
-	for _, co := range s.objects {
-		Q.Append(co)
+	objIDs := make([]string, len(s.objects))
+	var i int
+	for id := range s.objects {
+		objIDs[i] = id
+		i++
+	}
+	sort.Strings(objIDs)
+
+	for _, id := range objIDs {
+		Q.Append(s.objects[id])
 	}
 	Q.Add(s.trail, graph.Z_UNDER_OBJECT)
 
@@ -247,7 +256,7 @@ func (s *cosmoScene) updateDebugControl(dt float64) {
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyP) {
 		AddBeacon(Data, Client, "just a test beacon")
-		ClientLogGame(Client, "ADD BEACKON KEY", "just a test beacon")
+		ClientLogGame(Client, "ADD BEACON KEY", "just a test beacon")
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {

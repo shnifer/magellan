@@ -9,13 +9,12 @@ import (
 
 const (
 	//GalaxyPoint.Type
-	//also includes outerBuilds (BUILDING_BLACKBOX, BUILDING_BEACKON)
-	GPT_STAR = "STAR"
-	GPT_WARP = "WARP"
-	GPS_HARDPLANET = "HARDPLANET"
-	GPS_GASPLANET = "GASPLANET"
-	GPS_ASTEROID = "ASTEROID"
-	GPS_SATELLITE = "SATELLITE"
+	//also includes outerBuilds (BUILDING_BLACKBOX, BUILDING_BEACON)
+	GPT_STAR       = "STAR"
+	GPT_WARP       = "WARP"
+	GPT_HARDPLANET = "HARDPLANET"
+	GPT_GASPLANET  = "GASPLANET"
+	GPT_ASTEROID   = "ASTEROID"
 )
 
 type Galaxy struct {
@@ -33,15 +32,17 @@ type GalaxyPoint struct {
 	ID       string `json:"id,omitempty"`
 	ParentID string `json:"pid,omitempty"`
 
+	//found on recalc
+	Level int
+
 	Pos v2.V2
 
 	Orbit  float64 `json:"orb,omitempty"`
 	Period float64 `json:"per,omitempty"`
 
-
-	Type string  `json:"t,omitempty"`
-	SpriteAN string `json:"sp,omitempty"`
-	Size float64 `json:"s,omitempty"`
+	Type     string  `json:"t,omitempty"`
+	SpriteAN string  `json:"sp,omitempty"`
+	Size     float64 `json:"s,omitempty"`
 
 	Mass   float64 `json:"m,omitempty"`
 	GDepth float64 `json:"gd,omitempty"`
@@ -56,11 +57,12 @@ type GalaxyPoint struct {
 	Signatures []Signature `json:"sig,omitempty"`
 	Color      color.RGBA  `json:"clr"`
 
-	HasMine     bool `json:"hm,omitempty"`
+	//updated on Encode or add|del building
+	HasMine     bool   `json:"hm,omitempty"`
 	MineOwner   string `json:"mo,omitempty"`
 	MineFullKey string `json:"mk,omitempty"`
 
-	HasFishHouse     bool `json:"fm,omitempty"`
+	HasFishHouse     bool   `json:"fm,omitempty"`
 	FishHouseOwner   string `json:"fo,omitempty"`
 	FishHouseFullKey string `json:"fk,omitempty"`
 }

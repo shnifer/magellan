@@ -2,7 +2,7 @@
     "ship_name": "late",
     "mass": 1000,
     "march_engine": {
-        "thrust_max": 5000,
+        "thrust_max": 10000,
         "thrust_acc": 300,
         "thrust_slow": 300,
         "reverse_max": 2500,
