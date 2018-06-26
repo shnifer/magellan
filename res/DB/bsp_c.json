@@ -32,7 +32,7 @@
         "range": 180000,
         "angle": 15,
         "scan_range": 250,
-        "scan_speed": 0.1
+        "scan_speed": 5
     },
     "sonar": {
         "range_max": 180000,

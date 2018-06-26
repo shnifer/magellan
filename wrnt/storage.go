@@ -34,7 +34,8 @@ func (s *storage) get(fromN int) []string {
 	defer s.mu.RUnlock()
 
 	if fromN < s.BaseN {
-		Log(LVL_PANIC, "storage.get fromN<BaseN", fromN, "<", s.BaseN)
+		Log(LVL_ERROR, "storage.get fromN<BaseN: ", fromN, "<", s.BaseN)
+		return []string{}
 	}
 	count := len(s.Items) - (fromN - s.BaseN)
 	if count < 0 {

@@ -54,6 +54,21 @@ func (galaxy *Galaxy) RecalcLvls() {
 			}
 		}
 	}
+	for id, v := range galaxy.Ordered {
+		if v.Mines == nil {
+			v.Mines = make(map[string]string)
+		}
+		if v.FishHouses == nil {
+			v.FishHouses = make(map[string]string)
+		}
+		if v.Emissions == nil {
+			v.Emissions = make([]Emission, 0)
+		}
+		if v.Signatures == nil {
+			v.Signatures = make([]Signature, 0)
+		}
+		galaxy.Ordered[id] = v
+	}
 }
 
 func (galaxy *Galaxy) Update(sessionTime float64) {
@@ -62,18 +77,24 @@ func (galaxy *Galaxy) Update(sessionTime float64) {
 	if galaxy == nil {
 		return
 	}
+
+	//bench tells that this way is faster
+	posMap := make(map[string]v2.V2)
 	//skip lvl 0 objects, they do not move
 	for _, obj := range galaxy.Ordered {
 		if obj.ParentID == "" {
 			continue
 		}
-		parent := galaxy.Points[obj.ParentID].Pos
+		parent, ok := posMap[obj.ParentID]
+		if !ok {
+			parent = galaxy.Points[obj.ParentID].Pos
+			posMap[obj.ParentID] = parent
+		}
 		angle := (360 / obj.Period) * sessionTime
 		obj.Pos = parent.AddMul(v2.InDir(angle), obj.Orbit)
 	}
 }
 
-//TODO: rework for multiple mines and houses
 //works with already calced and ordered Galaxy
 func (galaxy *Galaxy) AddBuilding(b Building) {
 	fullKey := b.FullKey
@@ -90,26 +111,22 @@ func (galaxy *Galaxy) AddBuilding(b Building) {
 			Log(LVL_ERROR, "trying to add mine on non existant planet with ID:", b.PlanetID)
 			return
 		}
-		if gp.HasMine {
+		if _, exist := gp.Mines[b.OwnerID]; exist {
 			Log(LVL_ERROR, "trying to add mine on planet ", b.PlanetID, " but already has mine")
 			return
 		}
-		gp.HasMine = true
-		gp.MineOwner = b.OwnerID
-		gp.MineFullKey = b.FullKey
+		gp.Mines[b.OwnerID] = fullKey
 	case BUILDING_FISHHOUSE:
 		gp, ok := galaxy.Points[b.PlanetID]
 		if !ok {
 			Log(LVL_ERROR, "trying to add fishhouse on non existant planet with ID:", b.PlanetID)
 			return
 		}
-		if gp.HasFishHouse {
-			Log(LVL_ERROR, "trying to add fishhouse on planet", b.PlanetID, " but already has mine")
+		if _, exist := gp.FishHouses[b.OwnerID]; exist {
+			Log(LVL_ERROR, "trying to add fishhouse on planet ", b.PlanetID, " but already has fishhouse")
 			return
 		}
-		gp.HasFishHouse = true
-		gp.FishHouseOwner = b.OwnerID
-		gp.FishHouseFullKey = b.FullKey
+		gp.FishHouses[b.OwnerID] = fullKey
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
 		parentID := ""
 		if len(galaxy.Ordered) > 0 {
@@ -124,7 +141,6 @@ func (galaxy *Galaxy) AddBuilding(b Building) {
 	}
 }
 
-//TODO: rework for multiple mines and houses
 //works with already calced and ordered Galaxy
 func (galaxy *Galaxy) DelBuilding(b Building) {
 	switch b.Type {
@@ -134,26 +150,22 @@ func (galaxy *Galaxy) DelBuilding(b Building) {
 			Log(LVL_ERROR, "trying to add del on non existant planet with ID:", b.PlanetID)
 			return
 		}
-		if !gp.HasMine {
+		if _, exist := gp.Mines[b.OwnerID]; !exist {
 			Log(LVL_ERROR, "trying to del mine on planet", b.PlanetID, "but do not has mine")
 			return
 		}
-		gp.HasMine = false
-		gp.MineOwner = ""
-		gp.MineFullKey = ""
+		delete(gp.Mines, b.OwnerID)
 	case BUILDING_FISHHOUSE:
 		gp, ok := galaxy.Points[b.PlanetID]
 		if !ok {
 			Log(LVL_ERROR, "trying to add fishhouse on non existant planet with ID:", b.PlanetID)
 			return
 		}
-		if !gp.HasFishHouse {
+		if _, exist := gp.FishHouses[b.OwnerID]; !exist {
 			Log(LVL_ERROR, "trying to del fishhouse on planet", b.PlanetID, "but do not has mine")
 			return
 		}
-		gp.HasFishHouse = false
-		gp.FishHouseOwner = ""
-		gp.FishHouseFullKey = ""
+		delete(gp.FishHouses, b.OwnerID)
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
 		fullKey := b.FullKey
 		pointer, exist := galaxy.Points[fullKey]

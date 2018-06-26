@@ -10,7 +10,6 @@ import (
 	"golang.org/x/image/colornames"
 	"math"
 	"math/rand"
-	"strconv"
 	"time"
 )
 
@@ -149,14 +148,23 @@ func (s *scanner) procScanned(obj *CosmoPoint) {
 	if gp.Type == commons.BUILDING_BEACON {
 		commons.RequestRemoveBuilding(Client, obj.ID)
 	}
-	corp := "corp" + strconv.Itoa(rand.Intn(3)+1)
-	if !gp.HasMine {
-		commons.AddMine(Data, Client, obj.ID, corp)
-	} else if !gp.HasFishHouse {
-		commons.AddFishHouse(Data, Client, obj.ID, corp)
+	corp := commons.CorpNames[rand.Intn(5)]
+	if rand.Intn(2) == 0 {
+		//proc random mine
+		mineFK, exist := gp.Mines[corp]
+		if exist {
+			commons.RequestRemoveBuilding(Client, mineFK)
+		} else {
+			commons.AddMine(Data, Client, obj.ID, corp)
+		}
 	} else {
-		commons.RequestRemoveBuilding(Client, gp.MineFullKey)
-		commons.RequestRemoveBuilding(Client, gp.FishHouseFullKey)
+		//proc random fishhouse
+		fishhouseFK, exist := gp.FishHouses[corp]
+		if exist {
+			commons.RequestRemoveBuilding(Client, fishhouseFK)
+		} else {
+			commons.AddFishHouse(Data, Client, obj.ID, corp)
+		}
 	}
 
 	return

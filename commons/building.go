@@ -16,6 +16,21 @@ const (
 	BUILDING_FISHHOUSE = "BUILDING_FISHHOUSE"
 )
 
+const (
+	//google-disney
+	OWNER_1 = "gd"
+	//pony-express
+	OWNER_2 = "pre"
+	//mars-stroy-trest
+	OWNER_3 = "mst"
+	//mitsibishi-autovaz
+	OWNER_4 = "mat"
+	//red-cross
+	OWNER_5 = "kkg"
+)
+
+var CorpNames = [...]string{OWNER_1, OWNER_2, OWNER_3, OWNER_4, OWNER_5}
+
 type Building struct {
 	FullKey string
 
@@ -29,7 +44,7 @@ type Building struct {
 	Period float64
 
 	Message string
-	//for mine
+	//for mines and fishhouses
 	OwnerID string
 }
 
@@ -79,6 +94,10 @@ func DecodeEvent(buf []byte) (t int, b Building, err error) {
 }
 
 func RequestNewBuilding(client *network.Client, b Building) {
+	if b.OwnerID != "" && b.OwnerID != OWNER_1 && b.OwnerID != OWNER_2 &&
+		b.OwnerID != OWNER_3 && b.OwnerID != OWNER_4 && b.OwnerID != OWNER_5 {
+		Log(LVL_ERROR, "RequestNewBuilding: strange new building OwnerID ", b.OwnerID)
+	}
 	buf := string(b.Encode())
 	client.SendRequest(CMD_ADDBUILDREQ + buf)
 }
@@ -89,12 +108,16 @@ func RequestRemoveBuilding(client *network.Client, fullKey string) {
 
 func ColorByOwner(owner string) color.Color {
 	switch owner {
-	case "corp1":
-		return colornames.Red
-	case "corp2":
-		return colornames.Green
-	case "corp3":
-		return colornames.Blue
+	case OWNER_1:
+		return colornames.Lightcyan
+	case OWNER_2:
+		return colornames.Lightgoldenrodyellow
+	case OWNER_3:
+		return colornames.Darkolivegreen
+	case OWNER_4:
+		return colornames.Steelblue
+	case OWNER_5:
+		return colornames.Firebrick
 	default:
 		Log(LVL_ERROR, "ColorByOwner unknown owner:", owner)
 		return colornames.White

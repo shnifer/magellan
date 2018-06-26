@@ -10,8 +10,6 @@ import (
 	"math/rand"
 )
 
-const glyphSize = 32
-
 var lowQ bool
 
 type CosmoPoint struct {
@@ -36,8 +34,10 @@ type CosmoPoint struct {
 	Size float64
 	Type string
 
-	Glyphs []*graph.Sprite
-	cam    *graph.Camera
+	//hardcoded 2 rows
+	glyphs glyphs
+
+	cam *graph.Camera
 }
 
 func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
@@ -117,6 +117,8 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		}
 	}
 
+	glyphs := newGlyphs(pd)
+
 	emiR := 0.0
 	for _, emi := range pd.Emissions {
 		if emi.MainRange > emiR {
@@ -132,14 +134,6 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		emissionRange.SetPos(pd.Pos)
 	}
 
-	Glyphs := make([]*graph.Sprite, 0)
-	if pd.HasMine {
-		Glyphs = append(Glyphs, newGlyph(BUILDING_MINE, pd.MineOwner))
-	}
-	if pd.HasFishHouse {
-		Glyphs = append(Glyphs, newGlyph(BUILDING_FISHHOUSE, pd.FishHouseOwner))
-	}
-
 	res := CosmoPoint{
 		level:          pd.Level,
 		MarkGlowSprite: markGlow,
@@ -153,7 +147,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		ID:             pd.ID,
 		Size:           pd.Size,
 		Type:           pd.Type,
-		Glyphs:         Glyphs,
+		glyphs:         glyphs,
 		cam:            params.Cam,
 	}
 	res.recalcSprite()
@@ -208,17 +202,11 @@ func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 		}
 	}
 
-	for i, sprite := range co.Glyphs {
-		pos := co.cam.Apply(co.Pos)
-		size := co.cam.Scale*co.Size/2 + glyphSize/2
-		if size < mark_size/2 {
-			size = mark_size / 2
-		}
-		pos.DoAddMul(v2.V2{X: -1, Y: -1}, size)
-		pos.DoAddMul(v2.V2{X: glyphSize, Y: 0}, float64(i))
-		sprite.SetPos(pos)
-		res.Add(sprite, graph.Z_ABOVE_OBJECT)
-	}
+	co.glyphs.setPos(co.cam.Apply(co.Pos))
+	co.glyphs.setSize(co.cam.Scale * co.Size)
+
+	res.Append(co.glyphs)
+
 	return res
 }
 
@@ -241,14 +229,6 @@ func (co *CosmoPoint) recalcSprite() {
 	if co.EmissionRange != nil {
 		co.EmissionRange.SetPos(co.Pos)
 	}
-}
-
-func newGlyph(t string, owner string) *graph.Sprite {
-	res := NewAtlasSprite("MAGIC_GLYPH_"+t, graph.NoCam)
-	res.SetSize(glyphSize, glyphSize)
-	clr := ColorByOwner(owner)
-	res.SetColor(clr)
-	return res
 }
 
 //must be set once before creating CosmoPoints

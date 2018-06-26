@@ -29,6 +29,7 @@ type Galaxy struct {
 }
 
 type GalaxyPoint struct {
+	//Id setted on load from file
 	ID       string `json:"id,omitempty"`
 	ParentID string `json:"pid,omitempty"`
 
@@ -57,14 +58,19 @@ type GalaxyPoint struct {
 	Signatures []Signature `json:"sig,omitempty"`
 	Color      color.RGBA  `json:"clr"`
 
-	//updated on Encode or add|del building
-	HasMine     bool   `json:"hm,omitempty"`
-	MineOwner   string `json:"mo,omitempty"`
-	MineFullKey string `json:"mk,omitempty"`
+	//updated on Decode or add|del building
+	//map[ownerName]fullkey
+	Mines      map[string]string `json:"mns,omitempty"`
+	FishHouses map[string]string `json:"fhs,omitempty"`
 
-	HasFishHouse     bool   `json:"fm,omitempty"`
-	FishHouseOwner   string `json:"fo,omitempty"`
-	FishHouseFullKey string `json:"fk,omitempty"`
+	/*	HasMine     bool   `json:"hm,omitempty"`
+		MineOwner   string `json:"mo,omitempty"`
+		MineFullKey string `json:"mk,omitempty"`
+
+		HasFishHouse     bool   `json:"fm,omitempty"`
+		FishHouseOwner   string `json:"fo,omitempty"`
+		FishHouseFullKey string `json:"fk,omitempty"`
+	*/
 }
 
 func (gp GalaxyPoint) MarshalJSON() ([]byte, error) {
