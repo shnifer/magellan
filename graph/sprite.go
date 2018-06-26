@@ -78,6 +78,7 @@ func fileLoader(filename string) (io.Reader, error) {
 	return bytes.NewBuffer(b), err
 }
 
+//doesn't do cache. for tests and models, better use AtlasTex
 func NewSpriteFromFile(filename string, smoothFilter bool, sw, sh int, count int, params CamParams) (*Sprite, error) {
 	tex, err := GetTex(filename, smoothFilter, sw, sh, count, fileLoader)
 	if err != nil {

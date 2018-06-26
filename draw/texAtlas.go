@@ -18,6 +18,15 @@ type TexAtlasRec struct {
 	Count    int
 	Smooth   bool
 }
+
+func (t TexAtlasRec) recKey() string {
+	if t.Smooth {
+		return "1~" + t.FileName
+	} else {
+		return "0~" + t.FileName
+	}
+}
+
 type TexAtlas map[string]TexAtlasRec
 
 const atlasFN = "atlas.json"
@@ -43,7 +52,7 @@ func atlasLoader(filename string) (io.Reader, error) {
 }
 
 //return tex and error
-func getAtlasTex(name string) (graph.Tex, error) {
+func getAtlasTexWithError(name string) (graph.Tex, error) {
 	rec, ok := atlas[name]
 	if !ok {
 		return graph.Tex{}, errors.New("Not found atlas")
@@ -57,9 +66,8 @@ func getAtlasTex(name string) (graph.Tex, error) {
 }
 
 //return tex. if can't find return default tex
-// panic on error
-func GetAtlasTex(name string) graph.Tex {
-	tex, err := getAtlasTex(name)
+func getAtlasTex(name string) graph.Tex {
+	tex, err := getAtlasTexWithError(name)
 	if err != nil {
 		Log(LVL_ERROR, "can't GetAtlasTex, name:", name)
 		tex, err = graph.GetTex(defaultTexFN, false, 0, 0, 0, atlasLoader)
@@ -70,14 +78,40 @@ func GetAtlasTex(name string) graph.Tex {
 	return tex
 }
 
-func GetSlidingAtlasTex(name string) graph.Tex {
-	cacheName := "sliding~" + name
-	if tex, exist := graph.CheckTexCache(cacheName); exist {
-		return tex
+//return tex. if can't find return default tex
+// panic on error
+func GetAtlasTex(name string) graph.Tex {
+	cacheKey := ""
+	if rec, ok := atlas[name]; ok {
+		cacheKey = "n~" + rec.recKey()
+		if tex, exist := graph.CheckTexCache(cacheKey); exist {
+			return tex
+		}
 	}
-	tex := GetAtlasTex(name)
+	tex := getAtlasTex(name)
+
+	if cacheKey != "" {
+		graph.StoreTexCache(cacheKey, tex)
+	}
+
+	return tex
+}
+
+func GetSlidingAtlasTex(name string) graph.Tex {
+	cacheKey := ""
+	if rec, ok := atlas[name]; ok {
+		cacheKey = "s~" + rec.recKey()
+		if tex, exist := graph.CheckTexCache(cacheKey); exist {
+			return tex
+		}
+	}
+	tex := getAtlasTex(name)
 	tex = graph.SlidingTex(tex)
-	graph.StoreTexCache(cacheName, tex)
+
+	if cacheKey != "" {
+		graph.StoreTexCache(cacheKey, tex)
+	}
+
 	return tex
 }
 
@@ -92,7 +126,7 @@ func NewAtlasSpriteHUD(atlasName string) *graph.Sprite {
 func NewAtlasFrame9HUD(atlasName string, w, h int, layer int) *graph.Frame9HUD {
 	var sprites [9]*graph.Sprite
 	for i := 0; i < 9; i++ {
-		tex, err := getAtlasTex(atlasName + strconv.Itoa(i))
+		tex, err := getAtlasTexWithError(atlasName + strconv.Itoa(i))
 		if err != nil {
 			continue
 		}
