@@ -58,7 +58,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 	markSprite = NewAtlasSprite(markNameAN, markParam)
 	markScale := MarkScaleLevel(pd.Level)
 	markSprite.SetScale(markScale, markScale)
-	markCS := graph.NewCycledSprite(markSprite, graph.Cycle_Loop, 20)
+	markCS := graph.NewCycledSprite(markSprite, graph.Cycle_Loop, 10)
 
 	var typeGlowScale float64
 	switch pd.Type {

@@ -150,7 +150,7 @@
 "asteroid-5-9":{"pid":"sun","Level":0,"orb":4108.42,"per":3028.32,"t":"ASTEROID","sp":"asteroid4","s":4.45,"m":811.11,"gd":33.33,"sd":"asteroid-5-9","clr":{"R":128,"G":128,"B":128,"A":255}},
 "callisto":{"pid":"jupiter","Level":0,"orb":1110,"per":564.59,"t":"HARDPLANET","s":6.6,"m":7750,"gd":100,"sd":"callisto","clr":{"R":128,"G":128,"B":128,"A":255}},
 "deimos":{"pid":"mars","Level":0,"orb":370,"per":9,"t":"ASTEROID","s":1.65,"m":3377.77,"gd":66.66,"sd":"deimos","clr":{"R":128,"G":128,"B":128,"A":255}},
-"earth":{"pid":"sun","Level":0,"orb":2405,"per":1095.9,"t":"HARDPLANET","sp":"earth","s":10.72,"m":34000,"gd":200,"sd":"earth","clr":{"R":128,"G":255,"B":255,"A":255}},
+"earth":{"pid":"sun","Level":0,"orb":2405,"per":1095.9,"t":"HARDPLANET","s":10.72,"m":34000,"gd":200,"sd":"earth","clr":{"R":128,"G":255,"B":255,"A":255}},
 "erida":{"pid":"sun","Level":0,"orb":10730,"per":9342,"t":"ASTEROID","s":8.25,"m":3311.11,"gd":66.66,"sd":"erida","clr":{"R":255,"G":255,"B":255,"A":255}},
 "europe":{"pid":"jupiter","Level":0,"orb":740,"per":201.3,"t":"HARDPLANET","s":6.6,"m":7900,"gd":100,"sd":"europe","clr":{"R":128,"G":128,"B":128,"A":255}},
 "ganimed":{"pid":"jupiter","Level":0,"orb":925,"per":321,"t":"HARDPLANET","s":6.6,"m":8050,"gd":100,"sd":"ganimed","clr":{"R":128,"G":128,"B":128,"A":255}},

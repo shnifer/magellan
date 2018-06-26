@@ -4,7 +4,7 @@
 {"ID":"mercury","Parent":"sun",	"Type": "HARDPLANET",	"Diameter":25,		"Distance":300, "MaxGravity":0.3,"GravityR10":400,	"OrbitPeriod":88.0,"Color":{"R":192,"G":192,"B":0},"Count":1,"StartAng":0},
 {"ID":"venus","Parent":"sun", "Type": "HARDPLANET",		"Diameter":50,		"Distance":450, "MaxGravity":0.4,"GravityR10":500,	"OrbitPeriod":224.7,"Color":{"R":128,"G":255,"B":128},"Count":1,"StartAng":90},
 
-{"ID":"earth","Parent":"sun", "Type": "HARDPLANET",		"Diameter":65,		"Distance": 650,"MaxGravity":0.5,"GravityR10":600,	"OrbitPeriod":365.3,"Color":{"R":128,"G":255,"B":255},"Count":1,"StartAng":270, "TexName":"earth"},
+{"ID":"earth","Parent":"sun", "Type": "HARDPLANET",		"Diameter":65,		"Distance": 650,"MaxGravity":0.5,"GravityR10":600,	"OrbitPeriod":365.3,"Color":{"R":128,"G":255,"B":255},"Count":1,"StartAng":270},
   {"ID":"moon",   "Parent":"earth",		"Type": "ASTEROID","Diameter":20,		"Distance":100, "MaxGravity":0.3,"GravityR10":200,		"OrbitPeriod":27.3,"Color":{"R":128,"G":128,"B":128},"Count":1,"StartAng":100},
   {"ID":"magellan","Parent":"earth","Type": "ASTEROID",	"Diameter":10,		"Distance":120, "MaxGravity":0,"GravityR10":0,		"OrbitPeriod":27.3,"Color":{"R":255,"G":255,"B":255},"Count":1,"StartAng":280},
 
