@@ -4,6 +4,8 @@ import (
 	"sync"
 )
 
+//Recv is receiver-side component
+//that Unpack messages into unique items
 type Recv struct {
 	mu    sync.Mutex
 	lastN int
@@ -15,6 +17,9 @@ func NewRecv() *Recv {
 	}
 }
 
+//Unpack return unique items from message
+//already received items are not returned
+//update lastN received item if needed
 func (r *Recv) Unpack(msg Message) []string {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -34,6 +39,8 @@ func (r *Recv) Unpack(msg Message) []string {
 	return msg.Items[firstInd:]
 }
 
+//LastRecv return last received item
+//that must be transported to send-part by user
 func (r *Recv) LastRecv() int {
 	r.mu.Lock()
 	defer r.mu.Unlock()

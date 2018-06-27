@@ -2,6 +2,7 @@ package wrnt
 
 import "sync"
 
+//todo:rework totally
 type SendMany struct {
 	mu      sync.RWMutex
 	storage *storage
