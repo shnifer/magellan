@@ -55,6 +55,30 @@ func TestSend_Pack_multiple_adds_with_partial_confirm(t *testing.T) {
 	testPackCall(t, s, []string{}, 107)
 }
 
+func TestSend_DropNotSent_must_not_init(t *testing.T) {
+	s := NewSend()
+	s.AddItems("a", "b")
+	s.DropNotSent()
+	_, err := s.Pack()
+	if err != ErrNotInited {
+		t.Error("DropNotSent must not init")
+	}
+	s.AddItems("c")
+	s.Confirm(100)
+	testPackCall(t, s, []string{"c"}, 101)
+}
+
+func TestSend_DropNotSent_on_inited(t *testing.T) {
+	s := NewSend()
+	s.Confirm(100)
+	s.AddItems("a", "b")
+	s.Confirm(101)
+	s.DropNotSent()
+	s.Confirm(101)
+	s.AddItems("c")
+	testPackCall(t, s, []string{"c"}, 103)
+}
+
 func testPackCall(t *testing.T, s *Send, wait []string, waitN int) {
 	got, err := s.Pack()
 	if err != nil {
