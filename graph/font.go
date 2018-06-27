@@ -3,6 +3,7 @@ package graph
 import (
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
+	"math"
 )
 
 type faceSign struct {
@@ -29,9 +30,10 @@ func newFace(b []byte, size float64) (font.Face, error) {
 }
 
 func GetFace(fileName string, size float64, loader func(filename string) ([]byte, error)) (font.Face, error) {
+	size = math.Floor(size*globalScale)
 	sign := faceSign{
 		filename: fileName,
-		size:     size * globalScale,
+		size:     size,
 	}
 	if face, ok := faceCache[sign]; ok {
 		return face, nil

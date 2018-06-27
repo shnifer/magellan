@@ -56,7 +56,9 @@ func log(lvl int, entry *logrus.Entry, args ...interface{}) {
 
 func Log(lvl int, args ...interface{}) {
 	if logger == nil {
-		native.Println(args...)
+		if lvl<=int(LoggerLevel) {
+			native.Println(args...)
+		}
 		return
 	}
 
