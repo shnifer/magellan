@@ -18,6 +18,8 @@ const (
 	localLogPath = "gamelog"
 )
 
+//todo: gamemaster control
+//todo: dump server state for crash cases
 func main() {
 	log.Start(time.Duration(DEFVAL.LogLogTimeoutMs)*time.Millisecond,
 		time.Duration(DEFVAL.LogRetryMinMs)*time.Millisecond,

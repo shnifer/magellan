@@ -45,7 +45,6 @@ func (s *storage) get(fromN int) []string {
 	defer s.mu.RUnlock()
 
 	if fromN < s.BaseN {
-		//todo:check this again
 		Log(LVL_ERROR, "storage.get fromN<BaseN: ", fromN, "<", s.BaseN)
 		return []string{}
 	}
