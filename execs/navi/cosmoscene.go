@@ -11,11 +11,20 @@ import (
 	"golang.org/x/image/colornames"
 )
 
+const (
+	shipSize = 1
+)
+
 type cosmoScene struct {
-	ship         *graph.Sprite
-	shipRB       *commons.RBFollower
+	ship     *graph.Sprite
+	shipMark *graph.Sprite
+	shipRB   *commons.RBFollower
+
 	sessionTime  *commons.SessionTime
 	lastPilotMsg int
+
+	lastServerID int
+	otherShips   map[string]*OtherShip
 
 	caption *graph.Text
 	cam     *graph.Camera
@@ -40,7 +49,9 @@ func newCosmoScene() *cosmoScene {
 	cam.Recalc()
 
 	ship := NewAtlasSprite(commons.ShipAN, cam.Phys())
-	ship.SetSize(50, 50)
+	ship.SetSize(shipSize, shipSize)
+
+	shipMark := NewAtlasSprite(commons.MARKShipAN, cam.FixS())
 
 	predictorSprite := NewAtlasSprite(commons.PredictorAN, cam.Deny())
 	predictorSprite.SetSize(20, 20)
@@ -55,10 +66,12 @@ func newCosmoScene() *cosmoScene {
 	return &cosmoScene{
 		caption:         caption,
 		ship:            ship,
+		shipMark:        shipMark,
 		cam:             cam,
 		objects:         make(map[string]*CosmoPoint),
 		predictorThrust: predictorThrust,
 		predictorZero:   predictorZero,
+		otherShips:      make(map[string]*OtherShip),
 	}
 }
 
@@ -68,7 +81,9 @@ func (s *cosmoScene) Init() {
 	stateData := Data.GetStateData()
 
 	s.objects = make(map[string]*CosmoPoint)
+	s.otherShips = make(map[string]*OtherShip)
 	s.naviMarkerT = 0
+	s.lastServerID = 0
 	s.scanner = newScanner(s.cam)
 	s.shipRB = commons.NewRBFollower(float64(DEFVAL.PingPeriod) / 1000)
 	s.sessionTime = commons.NewSessionTime(Data.PilotData.SessionTime)
@@ -90,11 +105,20 @@ func (s *cosmoScene) Update(dt float64) {
 	s.sessionTime.Update(dt)
 	Data.Galaxy.Update(s.sessionTime.Get())
 
+	if Data.ServerData.MsgID != s.lastServerID {
+		s.actualizeOtherShips()
+	}
+
 	s.shipRB.Update(dt)
 	ship := s.shipRB.RB()
 
 	s.cam.Pos = ship.Pos
 	s.cam.Recalc()
+
+	//update actual otherShips
+	for id := range s.otherShips {
+		s.otherShips[id].Update(dt)
+	}
 
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		mousex, mousey := ebiten.CursorPosition()
@@ -121,6 +145,8 @@ func (s *cosmoScene) Update(dt float64) {
 	}
 
 	s.ship.SetPosAng(ship.Pos, ship.Ang)
+	s.shipMark.SetPosAng(ship.Pos, ship.Ang)
+
 	s.scanner.update(ship.Pos, dt)
 }
 
@@ -135,15 +161,54 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Append(co)
 	}
 
+	for _, os := range s.otherShips {
+		Q.Append(os)
+	}
+
 	if s.showPredictor {
 		Q.Append(s.predictorThrust)
 		Q.Append(s.predictorZero)
 	}
 
-	//Q.Add(s.caption, graph.Z_STAT_HUD)
-	Q.Add(s.ship, graph.Z_HUD)
+	alphaMark, alphaSprite := MarkAlpha(shipSize/2.0, s.cam)
+	if alphaMark > 0 && s.shipMark != nil {
+		s.shipMark.SetAlpha(alphaMark)
+		Q.Add(s.shipMark, graph.Z_HUD)
+	}
+	if alphaSprite > 0 && s.ship != nil {
+		s.ship.SetAlpha(alphaSprite)
+		Q.Add(s.ship, graph.Z_HUD)
+	}
 
 	Q.Run(image)
+}
+
+func (s *cosmoScene) actualizeOtherShips() {
+	s.lastServerID = Data.ServerData.MsgID
+
+	//Create new otherShip and move all to new positions
+	for _, otherData := range Data.ServerData.OtherShips {
+		otherShip, ok := s.otherShips[otherData.Id]
+		if !ok {
+			otherShip = NewOtherShip(s.cam.FixS(), otherData.Name, float64(DEFVAL.OtherShipElastic)/1000)
+			s.otherShips[otherData.Id] = otherShip
+		}
+		otherShip.SetRB(otherData.Ship)
+	}
+
+	//check for lost otherShips to delete
+	for id := range s.otherShips {
+		found := false
+		for _, otherData := range Data.ServerData.OtherShips {
+			if otherData.Id == id {
+				found = true
+				break
+			}
+		}
+		if !found {
+			delete(s.otherShips, id)
+		}
+	}
 }
 
 func (s *cosmoScene) procMouseClick(scrPos v2.V2) {

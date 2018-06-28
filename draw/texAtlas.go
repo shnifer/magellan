@@ -97,6 +97,24 @@ func GetAtlasTex(name string) graph.Tex {
 	return tex
 }
 
+func GetAtlasRoundTex(name string) graph.Tex {
+	cacheKey := ""
+	if rec, ok := atlas[name]; ok {
+		cacheKey = "r~" + rec.recKey()
+		if tex, exist := graph.CheckTexCache(cacheKey); exist {
+			return tex
+		}
+	}
+	tex := getAtlasTex(name)
+	tex = graph.RoundTex(tex)
+
+	if cacheKey != "" {
+		graph.StoreTexCache(cacheKey, tex)
+	}
+
+	return tex
+}
+
 func GetSlidingAtlasTex(name string) graph.Tex {
 	cacheKey := ""
 	if rec, ok := atlas[name]; ok {
@@ -117,6 +135,10 @@ func GetSlidingAtlasTex(name string) graph.Tex {
 
 func NewAtlasSprite(atlasName string, params graph.CamParams) *graph.Sprite {
 	return graph.NewSprite(GetAtlasTex(atlasName), params)
+}
+
+func NewAtlasRoundSprite(atlasName string, params graph.CamParams) *graph.Sprite {
+	return graph.NewSprite(GetAtlasRoundTex(atlasName), params)
 }
 
 func NewAtlasSpriteHUD(atlasName string) *graph.Sprite {

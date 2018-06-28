@@ -7,8 +7,20 @@ import (
 )
 
 func (s *cosmoScene) updateShipControl(dt float64) {
+	s.procCruise()
 	s.procControlTurn(dt)
 	s.procControlForward(dt)
+}
+
+func (s *cosmoScene) procCruise() {
+	if !input.Get("cruiseonoff") {
+		return
+	}
+
+	s.cruiseOn = !s.cruiseOn
+	if s.cruiseOn {
+		s.cruiseInput = input.GetF("forward")
+	}
 }
 
 func (s *cosmoScene) procControlTurn(dt float64) {
@@ -28,16 +40,23 @@ func (s *cosmoScene) procControlTurn(dt float64) {
 }
 
 func (s *cosmoScene) procControlForward(dt float64) {
-	thrustInput := input.GetF("forward")
+	var thrustInput float64
+	if s.cruiseOn {
+		thrustInput = s.cruiseInput
+	} else {
+		thrustInput = input.GetF("forward")
+	}
+
 	massK := 1000 / Data.BSP.Mass
+	_ = massK
 	var min, max float64
 	switch {
 	case s.thrustLevel >= 0:
-		max = s.thrustLevel + Data.SP.March_engine.Thrust_acc*massK/100*dt
-		min = s.thrustLevel - Data.SP.March_engine.Thrust_slow*massK/100*dt
+		max = s.thrustLevel + Data.SP.March_engine.Thrust_acc/100*dt
+		min = s.thrustLevel - Data.SP.March_engine.Thrust_slow/100*dt
 	case s.thrustLevel < 0:
-		max = s.thrustLevel + Data.SP.March_engine.Reverse_slow*massK/100*dt
-		min = s.thrustLevel - Data.SP.March_engine.Reverse_acc*massK/100*dt
+		max = s.thrustLevel + Data.SP.March_engine.Reverse_slow/100*dt
+		min = s.thrustLevel - Data.SP.March_engine.Reverse_acc/100*dt
 	}
 	if Data.SP.March_engine.Reverse_max == 0 && min < 0 {
 		min = 0

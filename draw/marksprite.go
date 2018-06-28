@@ -7,7 +7,7 @@ const (
 	sprite_size = 40
 )
 
-func markAlpha(size float64, cam *graph.Camera) (alphaMark, alphaSprite float64) {
+func MarkAlpha(size float64, cam *graph.Camera) (alphaMark, alphaSprite float64) {
 	if cam != nil {
 		size *= cam.Scale
 	}

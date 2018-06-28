@@ -2,6 +2,7 @@ package graph
 
 import (
 	"github.com/hajimehoshi/ebiten"
+	"log"
 	"sort"
 )
 
@@ -84,6 +85,7 @@ func (dq *DrawQueue) Append(drawQueuer drawQueuer) {
 func (dq *DrawQueue) Run(dest *ebiten.Image) {
 	sort.Stable(dq.reqs)
 	for _, req := range dq.reqs {
+		log.Println(req.layer, req.group)
 		req.drawReq(dest)
 	}
 }

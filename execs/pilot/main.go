@@ -79,6 +79,7 @@ func main() {
 	}
 
 	graph.SetScreenSize(WinW, WinH)
+	draw.LowQualityCosmoPoint(DEFVAL.LowQ)
 
 	initClient()
 	input.LoadConf("input_" + roleName + ".json")

@@ -16,8 +16,11 @@ type tDefVals struct {
 	PingPeriod int
 	Room       string
 	Role       string
-	FullScreen bool
-	WinW, WinH int
+
+	FullScreen     bool
+	WinW, WinH     int
+	HalfResolution bool
+	LowQ           bool
 
 	DoProf bool
 
@@ -28,7 +31,10 @@ type tDefVals struct {
 	LogRetryMinMs int
 	LogRetryMaxMs int
 	LogIP         string
-	LogHostName string
+	LogHostName   string
+
+	//inms
+	OtherShipElastic int
 }
 
 var DEFVAL tDefVals
@@ -44,6 +50,7 @@ func setDefDef() {
 		LogTimeoutMs:       1000,
 		LogRetryMinMs:      10,
 		LogRetryMaxMs:      60000,
+		OtherShipElastic:   400,
 	}
 }
 

@@ -62,7 +62,7 @@ func (s *OtherShip) Update(dt float64) {
 func (s *OtherShip) Req() *graph.DrawQueue {
 	R := graph.NewDrawQueue()
 
-	markAlpha, spriteAlpha := markAlpha(shipSize, s.camParams.Cam)
+	markAlpha, spriteAlpha := MarkAlpha(shipSize, s.camParams.Cam)
 	if markAlpha > 0 && s.markSprite != nil {
 		R.Add(s.markSprite, graph.Z_ABOVE_OBJECT)
 	}

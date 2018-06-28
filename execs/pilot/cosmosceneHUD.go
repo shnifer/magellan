@@ -37,10 +37,14 @@ const (
 )
 
 func newCosmoSceneHUD(cam *graph.Camera) cosmoSceneHUD {
-	background := NewAtlasSpriteHUD(commons.DefaultBackgroundAN)
-	background.SetSize(float64(WinW), float64(WinH))
-	background.SetPivot(graph.TopLeft())
-	background.SetColor(colornames.Dimgrey)
+	var background *graph.Sprite
+
+	if !DEFVAL.LowQ {
+		background = NewAtlasSpriteHUD(commons.DefaultBackgroundAN)
+		background.SetSize(float64(WinW), float64(WinH))
+		background.SetPivot(graph.TopLeft())
+		background.SetColor(colornames.Dimgrey)
+	}
 
 	compass := NewAtlasSprite(commons.CompassAN, cam.FixS())
 	compassSize := float64(WinH) * compassSize
@@ -115,7 +119,9 @@ func (s *cosmoScene) UpdateHUD() {
 func (h cosmoSceneHUD) Req() *graph.DrawQueue {
 
 	Q := graph.NewDrawQueue()
-	Q.Add(h.background, graph.Z_STAT_BACKGROUND)
+	if !DEFVAL.LowQ {
+		Q.Add(h.background, graph.Z_STAT_BACKGROUND)
+	}
 	Q.Add(h.compass, graph.Z_HUD)
 
 	Q.Add(h.rulerV, graph.Z_HUD)

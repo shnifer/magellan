@@ -21,6 +21,7 @@ type tDefVals struct {
 	FullScreen     bool
 	WinW, WinH     int
 	HalfResolution bool
+	LowQ           bool
 
 	DebugControl bool
 	DoProf       bool
@@ -33,7 +34,7 @@ type tDefVals struct {
 	LogRetryMinMs int
 	LogRetryMaxMs int
 	LogIP         string
-	LogHostName string
+	LogHostName   string
 
 	//inms
 	OtherShipElastic int

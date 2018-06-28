@@ -17,6 +17,8 @@ const (
 var Scenes *scene.Manager
 
 func createScenes() {
+	defer LogFunc("createScenes")()
+
 	Scenes = scene.NewManager()
 
 	pauseScene := scene.NewPauseScene(Fonts[Face_cap], Client.PauseReason)

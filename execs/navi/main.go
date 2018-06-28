@@ -66,17 +66,20 @@ func main() {
 	if DEFVAL.FullScreen {
 		ebiten.SetFullscreen(true)
 		WinW, WinH = ebiten.MonitorSize()
+		if DEFVAL.HalfResolution {
+			WinW, WinH = WinW/2, WinH/2
+		}
 	} else {
 		WinW = DEFVAL.WinW
 		WinH = DEFVAL.WinH
 	}
 
 	graph.SetScreenSize(WinW, WinH)
-
-	Data = commons.NewData()
+	draw.LowQualityCosmoPoint(DEFVAL.LowQ)
 
 	initClient()
 	input.LoadConf("input_" + roleName + ".json")
+	Data = commons.NewData()
 
 	draw.InitFonts()
 	draw.InitTexAtlas()
@@ -85,9 +88,13 @@ func main() {
 	createScenes()
 
 	Client.Start()
+
 	ebiten.SetRunnableInBackground(true)
+
 	last = time.Now()
+
 	showFps = time.Tick(time.Second)
+
 	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "NAVIGATOR"); err != nil {
 		log.Log(log.LVL_FATAL, err)
 	}

@@ -123,6 +123,24 @@ func SlidingTex(source Tex) (result Tex) {
 	return result
 }
 
+//cache it manually
+func RoundTex(source Tex) (result Tex) {
+	result = source
+	w, h := source.sw, source.sh
+	mask := NewSprite(CircleTex(), NoCam)
+	mask.SetPivot(TopLeft())
+	mask.SetSize(float64(w), float64(h))
+
+	newImage, _ := ebiten.NewImage(w, h, source.filter)
+	newImage.DrawImage(source.image, &ebiten.DrawImageOptions{})
+
+	img, op := mask.ImageOp()
+	op.CompositeMode = ebiten.CompositeModeDestinationIn
+	newImage.DrawImage(img, op)
+	result.image, _ = ebiten.NewImageFromImage(newImage, source.filter)
+	return result
+}
+
 func ClearCache() {
 	texCache = make(map[string]Tex, len(texCache))
 }

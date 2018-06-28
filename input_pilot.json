@@ -45,5 +45,12 @@
         "MinAxis": 0,
         "JoyAxis": 3,
         "Val": -1
+    },
+    {
+        "InputName": "cruiseonoff",
+        "InputType": "JBJP",
+        "JoyID": 0,
+        "JoyButton": 1,
+        "Val": -1
     }
 ]

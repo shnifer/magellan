@@ -18,8 +18,12 @@ import (
 const trailPeriod = 0.25
 const trailLifeTime = 10
 
+const shipSize = 1
+
 type cosmoScene struct {
-	ship    *graph.Sprite
+	ship     *graph.Sprite
+	shipMark *graph.Sprite
+
 	caption *graph.Text
 	cam     *graph.Camera
 
@@ -31,6 +35,8 @@ type cosmoScene struct {
 	otherShips   map[string]*OtherShip
 
 	//control
+	cruiseOn    bool
+	cruiseInput float64
 	thrustLevel float64
 	maneurLevel float64
 
@@ -58,8 +64,11 @@ func newCosmoScene() *cosmoScene {
 	cam.Center = graph.ScrP(0.5, 0.5)
 	cam.Recalc()
 
-	ship := NewAtlasSprite(ShipAN, cam.FixS())
-	ship.SetSize(50, 50)
+	ship := NewAtlasSprite(ShipAN, cam.Phys())
+	ship.SetSize(shipSize, shipSize)
+
+	shipMark := NewAtlasSprite(MARKShipAN, cam.FixS())
+	//shipMark.SetSize(50,50)
 
 	marker := NewAtlasSprite(NaviMarkerAN, cam.Deny())
 	marker.SetPivot(graph.MidBottom())
@@ -79,6 +88,7 @@ func newCosmoScene() *cosmoScene {
 	res := cosmoScene{
 		caption:         caption,
 		ship:            ship,
+		shipMark:        shipMark,
 		cam:             cam,
 		naviMarker:      marker,
 		hud:             hud,
@@ -101,6 +111,7 @@ func (s *cosmoScene) Init() {
 	s.otherShips = make(map[string]*OtherShip)
 	s.warpEngine = newCosmoSceneWarpEngine()
 	s.thrustLevel = 0
+	s.cruiseOn = false
 	s.maneurLevel = 0
 	s.trailT = 0
 	s.lastServerID = 0
@@ -181,6 +192,7 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	s.camRecalc()
 	s.UpdateHUD()
 	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
+	s.shipMark.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 
 	Q := graph.NewDrawQueue()
 
@@ -205,7 +217,15 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Add(s.naviMarker, graph.Z_ABOVE_OBJECT)
 	}
 
-	Q.Add(s.ship, graph.Z_HUD)
+	alphaMark, alphaSprite := MarkAlpha(shipSize/2.0, s.cam)
+	if alphaMark > 0 && s.shipMark != nil {
+		s.shipMark.SetAlpha(alphaMark)
+		Q.Add(s.shipMark, graph.Z_HUD)
+	}
+	if alphaSprite > 0 && s.ship != nil {
+		s.ship.SetAlpha(alphaSprite)
+		Q.Add(s.ship, graph.Z_HUD)
+	}
 
 	//Q.Add(s.caption, graph.Z_STAT_HUD)
 

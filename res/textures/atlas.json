@@ -19,6 +19,7 @@
   "MAGIC_DEFAULT_WARP": {"FileName": "particle.png"},
   "MAGIC_MARK_GLOW": {"FileName": "MagIcon_BackLight_50.png"},
   "MAGIC_MARK_STAR": {"FileName": "MagIcon_Star.png"},
+  "MAGIC_MARK_ship": {"FileName": "MagIcon_Ship.png"},
   "MAGIC_MARK_BUILDING_BEACON": {"FileName": "MagIcon_BlackBox_Tiled.png","Sx": 100,"Sy": 100,"Count": 6},
   "MAGIC_MARK_BUILDING_BLACKBOX": {"FileName": "MagIcon_BlackBox_Tiled.png","Sx": 100,"Sy": 100,"Count": 6},
   "MAGIC_MARK_HARDPLANET": {"FileName": "MagIcon_Planet.png"},

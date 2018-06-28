@@ -89,7 +89,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 	zeroColor := color.RGBA{}
 	ang := rand.Float64() * 360
 	if lowQ {
-		simpleSprite = NewAtlasSprite(spriteAN, params)
+		simpleSprite = NewAtlasRoundSprite(spriteAN, params)
 		if pd.Color != zeroColor {
 			simpleSprite.SetColor(pd.Color)
 		}
@@ -174,7 +174,7 @@ func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 		res.Add(co.EmissionRange, graph.Z_UNDER_OBJECT)
 	}
 
-	markAlpha, spriteAlpha := markAlpha(co.Size*2/co.markLevelScale, co.cam)
+	markAlpha, spriteAlpha := MarkAlpha(co.Size*2/co.markLevelScale, co.cam)
 
 	if markAlpha > 0 && co.MarkSprite != nil {
 		co.MarkSprite.SetAlpha(markAlpha)
