@@ -28,6 +28,7 @@
   "MAGIC_MARK_GASPLANET": {"FileName": "MagIcon_Gas.png"},
   "MAGIC_MARK_ASTEROID": {"FileName": "MagIcon_Asteroid.png"},
   "MAGIC_MARK_WARP": {"FileName": "aim.png"},
+  "MAGIC_button": {"FileName": "button.png"},
   "MAGIC_compass": {"FileName": "HUD_Radar.png", "Smooth":true},
   "MAGIC_rulerh":{"FileName": "HUD_RUS2.png"},
   "MAGIC_rulerv":{"FileName": "HUD_RUD2.png"},

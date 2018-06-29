@@ -134,12 +134,11 @@ func (bp *ButtonsPanel) recalc(){
 		Y: butC*bp.opts.ButtonSize.Y + spaceC*bp.opts.BorderSpace + 2*bp.opts.BorderSpace,
 	}
 
-	pivotP:=v2.V2{
-		X: bp.opts.PivotV.X*bp.size.X,
-		Y: bp.opts.PivotV.Y*bp.size.Y,
-	}
+	pivotP:=v2.MulXY(bp.opts.PivotV, bp.size)
 
 	bp.position=bp.opts.PivotP.Sub(pivotP)
+
+	bp.position.DoAddMul(bp.opts.SlideV.MulXY(bp.size),bp.slideK-1)
 
 	butPos:= bp.position.AddMul(v2.V2{X:1, Y:1}, bp.opts.BorderSpace)
 	for i, button:=range bp.buttons{

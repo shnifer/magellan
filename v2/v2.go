@@ -92,6 +92,11 @@ func Mul(a V2, t float64) V2 {
 	return V2{a.X * t, a.Y * t}
 }
 
+//Mul returns vector a.x*b.x; a.y*b.y
+func MulXY(a V2, b V2) V2 {
+	return V2{a.X * b.X, a.Y * b.Y}
+}
+
 //Len return length of vector a
 func Len(a V2) float64 {
 	return math.Sqrt(a.X*a.X + a.Y*a.Y)
@@ -137,6 +142,10 @@ func (a V2) Sub(b V2) V2 {
 
 func (a V2) Mul(t float64) V2 {
 	return Mul(a, t)
+}
+
+func (a V2) MulXY(b V2) V2 {
+	return MulXY(a, b)
 }
 
 func (a V2) Len() float64 {

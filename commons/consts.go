@@ -54,6 +54,7 @@ const (
 	EngiBackgroundAN    = "MAGIC_engibackground"
 	CompassAN           = "MAGIC_compass"
 	Frame9AN            = "front9"
+	ButtonAN = "MAGIC_button"
 )
 
 var (

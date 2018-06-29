@@ -13,6 +13,7 @@ import (
 	"image/color"
 	"math"
 	"sort"
+	"log"
 )
 
 const trailPeriod = 0.25
@@ -54,6 +55,10 @@ type cosmoScene struct {
 	//update eachUpdate
 	gravityAcc    v2.V2
 	gravityReport []v2.V2
+
+	//todo: just sample
+	showPanel bool
+	leftPanel *ButtonsPanel
 }
 
 func newCosmoScene() *cosmoScene {
@@ -85,6 +90,33 @@ func newCosmoScene() *cosmoScene {
 
 	hud := newCosmoSceneHUD(cam)
 
+	panelOpts:=ButtonsPanelOpts{
+		PivotP:graph.ScrP(0,1),
+		PivotV:graph.BotLeft(),
+		BorderSpace:20,
+		ButtonSpace:10,
+		ButtonLayer:graph.Z_STAT_HUD+100,
+		ButtonSize:v2.V2{X:100,Y:30},
+		CaptionLayer:graph.Z_STAT_HUD+101,
+		SlideT:0.5,
+		SlideV:v2.V2{X:1, Y:0},
+	}
+	leftPanel:=NewButtonsPanel(panelOpts)
+	butTex:=GetAtlasTex(ButtonAN)
+	bo:=ButtonOpts{
+		Tex: butTex,
+		Face:Fonts[Face_mono],
+		Caption:"ButtonName",
+		CapClr:color.White,
+		Clr:color.White,
+		Tags:"b1",
+	}
+	leftPanel.AddButton(bo)
+	bo.Caption = "other Button"
+	bo.CapClr = color.Black
+	bo.Tags = "b2"
+	leftPanel.AddButton(bo)
+
 	res := cosmoScene{
 		caption:         caption,
 		ship:            ship,
@@ -97,6 +129,7 @@ func newCosmoScene() *cosmoScene {
 		showPredictor:   true,
 		predictorThrust: predictorThrust,
 		predictorZero:   predictorZero,
+		leftPanel: leftPanel,
 	}
 
 	res.trail = graph.NewFadingArray(GetAtlasTex(TrailAN), trailLifeTime/trailPeriod, cam.Deny())
@@ -176,9 +209,17 @@ func (s *cosmoScene) Update(dt float64) {
 		Data.PilotData.HeatProduction = 0
 	}
 	s.warpEngine.update(dt)
-	//moved to draw
-	//s.UpdateHUD()
-	//s.camRecalc()
+	if inpututil.IsKeyJustPressed(ebiten.Key3) {
+		s.showPanel = !s.showPanel
+		s.leftPanel.SetActive(s.showPanel)
+	}
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft){
+		if tag, ok:=s.leftPanel.ProcMouse(ebiten.CursorPosition());ok{
+			log.Println(tag)
+		}
+
+	}
+	s.leftPanel.Update(dt)
 }
 func (s *cosmoScene) camRecalc() {
 	s.cam.Pos = Data.PilotData.Ship.Pos
@@ -196,6 +237,7 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 
 	Q := graph.NewDrawQueue()
 
+	Q.Append(s.leftPanel)
 	Q.Append(s.hud)
 	Q.Append(s.warpEngine)
 
