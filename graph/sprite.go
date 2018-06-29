@@ -95,26 +95,42 @@ func (s *Sprite) recalcColorM() {
 }
 
 func (s *Sprite) SetColor(color color.Color) {
+	if s.color == color{
+		return
+	}
+
 	s.color = color
 	s.colorDirty = true
 }
 
 func (s *Sprite) SetAlpha(a float64) {
-	if s.alpha != a {
-		s.alpha = a
-		s.colorDirty = true
+	if s.alpha == a {
+		return
 	}
+
+	s.alpha = a
+	s.colorDirty = true
 }
 
 func (s *Sprite) SetScale(x, y float64) {
+	if s.sx==x && s.sy==y {
+		return
+	}
+
 	s.sx = x
 	s.sy = y
 	s.dirty = true
 }
 
 func (s *Sprite) SetSize(x, y float64) {
-	s.sx = x / float64(s.tex.sw)
-	s.sy = y / float64(s.tex.sh)
+	sx:=x / float64(s.tex.sw)
+	sy:=y / float64(s.tex.sh)
+	if s.sx==sx && s.sy==sy{
+		return
+	}
+
+	s.sx = sx
+	s.sy = sy
 	s.dirty = true
 }
 
@@ -142,16 +158,25 @@ func (s *Sprite) SetPivot(pivotPartial v2.V2) {
 }
 
 func (s *Sprite) SetPos(pos v2.V2) {
+	if s.pos==pos {
+		return
+	}
 	s.pos = pos
 	s.dirty = true
 }
 
 func (s *Sprite) SetAng(angleDeg float64) {
+	if s.angle==angleDeg * Deg2Rad{
+		return
+	}
 	s.angle = angleDeg * Deg2Rad
 	s.dirty = true
 }
 
 func (s *Sprite) SetPosAng(pos v2.V2, angle float64) {
+	if s.pos == pos && s.angle==angle * Deg2Rad{
+		return
+	}
 	s.pos = pos
 	s.angle = angle * Deg2Rad
 	s.dirty = true

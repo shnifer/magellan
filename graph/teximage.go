@@ -39,6 +39,7 @@ func TexFromImage(image *ebiten.Image, filter ebiten.Filter, sw, sh int, count i
 			rows:   1,
 			count:  1,
 			filter: filter,
+			name:   name,
 		}
 	}
 	cols, rows := w/sw, h/sh

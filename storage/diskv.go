@@ -79,6 +79,7 @@ func (d *disk) append(key, val string) error {
 	return nil
 }
 
+//todo: update on manual file-copy
 //get list of all keys in storage and subscribe for new
 func (d *disk) subscribe() (fullKeys map[string]struct{}, subscribe chan string) {
 	d.Lock()
