@@ -22,7 +22,7 @@ func mainLoop(window *ebiten.Image) error {
 
 	if !ebiten.IsRunningSlowly() {
 		//drawing long time
-		time.Sleep(time.Second / 20)
+		//time.Sleep(time.Second / 20)
 		m++
 	}
 
