@@ -15,15 +15,16 @@ var last time.Time
 var sprite *graph.Sprite
 var img *ebiten.Image
 
+const littleT = 0.0001
 const maxT = 0.01
 const minT = 0.000001
 
 func calcShip(n int,dt float64) {
-	lt:=0.0
 	ship:=ships[n]
 	for dt>0 {
-		ln := ship.Pos.Len()
-		len2:= ln*ln
+		len2:= ship.Pos.LenSqr()
+		grav := Gravity(1, len2, 0)
+		/*
 		grav := Gravity(1, len2, 0)
 		gravDev:=Gravity(1, (ln+0.00001)*(ln+0.00001), 0) - grav
 		gravDev/=-0.00001
@@ -38,16 +39,16 @@ func calcShip(n int,dt float64) {
 		} else if lt<minT {
 			lt=minT
 		}
-
+		*/
+		lt:=littleT
 		if dt<lt{
 			lt = dt
 		}
 		dt-=lt
 
-		log.Println("grav:",grav,"gravDev",gravDev,"maveMax:",moveMax,"timemax:",timeMax*1000,"lt:",lt*1000)
-
-		ship.Vel.DoAddMul(ship.Pos.Normed(), -grav*lt)
-		ship = ship.Extrapolate(lt)
+		accel:=ship.Pos.Normed().Mul(-grav)
+		ship.Pos.DoAddMul(ship.Vel.AddMul(accel,lt), lt)
+		ship.Vel.DoAddMul(accel, lt)
 	}
 	ships[n] = ship
 }
@@ -103,5 +104,6 @@ func main(){
 
 	img,_=ebiten.NewImage(900,900,ebiten.FilterDefault)
 
+	log.Println("start")
 	ebiten.Run(run, 900,900,1,"Gravity test")
 }
