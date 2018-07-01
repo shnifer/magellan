@@ -15,15 +15,13 @@ var last time.Time
 var sprite *graph.Sprite
 var img *ebiten.Image
 
-const littleT = 0.0001
+const littleT = 0.00001
 const maxT = 0.01
 const minT = 0.000001
 
 func calcShip(n int,dt float64) {
 	ship:=ships[n]
 	for dt>0 {
-		len2:= ship.Pos.LenSqr()
-		grav := Gravity(1, len2, 0)
 		/*
 		grav := Gravity(1, len2, 0)
 		gravDev:=Gravity(1, (ln+0.00001)*(ln+0.00001), 0) - grav
@@ -40,15 +38,19 @@ func calcShip(n int,dt float64) {
 			lt=minT
 		}
 		*/
+
+		len2:= ship.Pos.LenSqr()
+		grav := Gravity(1, len2, 0)
 		lt:=littleT
 		if dt<lt{
-			lt = dt
+			break
 		}
 		dt-=lt
 
 		accel:=ship.Pos.Normed().Mul(-grav)
-		ship.Pos.DoAddMul(ship.Vel.AddMul(accel,lt), lt)
-		ship.Vel.DoAddMul(accel, lt)
+
+		ship.Vel = ship.Vel.AddMul(accel, lt)
+		ship.Pos = ship.Pos.AddMul(ship.Vel, lt)
 	}
 	ships[n] = ship
 }
@@ -58,7 +60,7 @@ func run(window *ebiten.Image) error{
 	dt:=t.Sub(last).Seconds()
 	last = t
 
-	for n:=0;n<1;n++{
+	for n:=0;n<3;n++{
 		calcShip(n, dt)
 	}
 
@@ -86,13 +88,13 @@ func main(){
 	ships[2].Pos=start
 
 	ships[0].Vel=v2.V2{X:0, Y:0.3}
-	ships[1].Vel=v2.V2{X:0, Y:0.5}
-	ships[2].Vel=v2.V2{X:0, Y:0.7}
+	ships[1].Vel=v2.V2{X:0.2, Y:0.5}
+	ships[2].Vel=v2.V2{X:-0.2, Y:1.5}
 
 	last=time.Now()
 	cam:=graph.NewCamera()
 	cam.Center = v2.V2{450,450}
-	cam.Scale = 1000
+	cam.Scale = 1200
 	cam.Recalc()
 
 	var err error
