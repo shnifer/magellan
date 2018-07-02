@@ -11,6 +11,7 @@
     "LowQ": false,
     "GravityConst": 1,
     "WarpGravityConst": 1000,
+    "DT":0.001,
     "LogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 10000,

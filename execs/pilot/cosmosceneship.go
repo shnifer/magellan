@@ -73,11 +73,13 @@ func (s *cosmoScene) procControlForward(dt float64) {
 	accelV := v2.InDir(Data.PilotData.Ship.Ang).Mul(accel)
 
 	Data.PilotData.ThrustVector = accelV
-	Data.PilotData.Ship.Vel.DoAddMul(accelV, dt)
+	//to general gravity calc
+	//Data.PilotData.Ship.Vel.DoAddMul(accelV, dt)
 }
 
 func (s *cosmoScene) procShipGravity(dt float64) {
-	Data.PilotData.Ship.Vel.DoAddMul(s.gravityAcc, dt)
+	////to general gravity calc
+	//Data.PilotData.Ship.Vel.DoAddMul(s.gravityAcc, dt)
 }
 
 func (s *cosmoScene) procEmissions(dt float64) {

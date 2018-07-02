@@ -26,6 +26,9 @@ type Galaxy struct {
 	//recalculated on Decode
 	Ordered []*GalaxyPoint `json:"-"`
 	maxLvl  int
+
+	//used by update
+	fixedTimeRest float64
 }
 
 type GalaxyPoint struct {

@@ -66,6 +66,7 @@ func (tp *TrackPredictor) Req() *graph.DrawQueue {
 
 	ship := tp.data.PilotData.Ship
 	var gravAcc v2.V2
+	//todo: use new updategalaxyship
 	for n := 0; n <= trackLen/dt; n++ {
 		if (n % recalcGravEach) == 0 {
 			gravAcc = SumGravityAcc(ship.Pos, tp.data.Galaxy)

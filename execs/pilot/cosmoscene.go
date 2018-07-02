@@ -11,9 +11,9 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 	"image/color"
+	"log"
 	"math"
 	"sort"
-	"log"
 )
 
 const trailPeriod = 0.25
@@ -90,26 +90,26 @@ func newCosmoScene() *cosmoScene {
 
 	hud := newCosmoSceneHUD(cam)
 
-	panelOpts:=ButtonsPanelOpts{
-		PivotP:graph.ScrP(0,1),
-		PivotV:graph.BotLeft(),
-		BorderSpace:20,
-		ButtonSpace:10,
-		ButtonLayer:graph.Z_STAT_HUD+100,
-		ButtonSize:v2.V2{X:100,Y:30},
-		CaptionLayer:graph.Z_STAT_HUD+101,
-		SlideT:0.5,
-		SlideV:v2.V2{X:1, Y:0},
+	panelOpts := ButtonsPanelOpts{
+		PivotP:       graph.ScrP(0, 1),
+		PivotV:       graph.BotLeft(),
+		BorderSpace:  20,
+		ButtonSpace:  10,
+		ButtonLayer:  graph.Z_STAT_HUD + 100,
+		ButtonSize:   v2.V2{X: 100, Y: 30},
+		CaptionLayer: graph.Z_STAT_HUD + 101,
+		SlideT:       0.5,
+		SlideV:       v2.V2{X: 1, Y: 0},
 	}
-	leftPanel:=NewButtonsPanel(panelOpts)
-	butTex:=GetAtlasTex(ButtonAN)
-	bo:=ButtonOpts{
-		Tex: butTex,
-		Face:Fonts[Face_mono],
-		Caption:"ButtonName",
-		CapClr:color.White,
-		Clr:color.White,
-		Tags:"b1",
+	leftPanel := NewButtonsPanel(panelOpts)
+	butTex := GetAtlasTex(ButtonAN)
+	bo := ButtonOpts{
+		Tex:     butTex,
+		Face:    Fonts[Face_mono],
+		Caption: "ButtonName",
+		CapClr:  color.White,
+		Clr:     color.White,
+		Tags:    "b1",
 	}
 	leftPanel.AddButton(bo)
 	bo.Caption = "other Button"
@@ -129,7 +129,7 @@ func newCosmoScene() *cosmoScene {
 		showPredictor:   true,
 		predictorThrust: predictorThrust,
 		predictorZero:   predictorZero,
-		leftPanel: leftPanel,
+		leftPanel:       leftPanel,
 	}
 
 	res.trail = graph.NewFadingArray(GetAtlasTex(TrailAN), trailLifeTime/trailPeriod, cam.Deny())
@@ -177,15 +177,12 @@ func (s *cosmoScene) Update(dt float64) {
 	}
 
 	//update galaxy now to calc right gravity
-	Data.PilotData.SessionTime += dt
-	sessionTime := Data.PilotData.SessionTime
-	Data.Galaxy.Update(sessionTime)
-
-	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
-
-	s.gravityAcc, s.gravityReport = SumGravityAccWithReport(Data.PilotData.Ship.Pos, Data.Galaxy,
-		0.02)
-	s.warpEngine.gravityAcc = s.gravityAcc
+	//Data.PilotData.SessionTime += dt
+	//sessionTime := Data.PilotData.SessionTime
+	//Data.Galaxy.Update(sessionTime)
+	//s.procShipGravity(dt)
+	//Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
+	UpdateGalaxyAndShip(Data, dt, DEFVAL.DT)
 
 	for id, co := range s.objects {
 		if gp, ok := Data.Galaxy.Points[id]; ok {
@@ -193,9 +190,14 @@ func (s *cosmoScene) Update(dt float64) {
 		}
 		co.Update(dt)
 	}
+
 	s.updateShipControl(dt)
-	s.procShipGravity(dt)
 	s.procEmissions(dt)
+
+	//for display draw calls only
+	s.gravityAcc, s.gravityReport = SumGravityAccWithReport(Data.PilotData.Ship.Pos, Data.Galaxy,
+		0.02)
+	s.warpEngine.gravityAcc = s.gravityAcc
 
 	if DEFVAL.DebugControl {
 		s.updateDebugControl(dt)
@@ -213,12 +215,13 @@ func (s *cosmoScene) Update(dt float64) {
 		s.showPanel = !s.showPanel
 		s.leftPanel.SetActive(s.showPanel)
 	}
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft){
-		if tag, ok:=s.leftPanel.ProcMouse(ebiten.CursorPosition());ok{
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		if tag, ok := s.leftPanel.ProcMouse(ebiten.CursorPosition()); ok {
 			log.Println(tag)
 		}
 
 	}
+
 	s.leftPanel.Update(dt)
 }
 func (s *cosmoScene) camRecalc() {
