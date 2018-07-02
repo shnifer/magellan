@@ -8,12 +8,18 @@ import (
 	"github.com/Shnifer/magellan/graph"
 	"golang.org/x/image/colornames"
 	"log"
+	"image/color"
 )
 
+var lastP [3]v2.V2
+var colors [3]color.Color
 var ships [3]RBData
 var last time.Time
 var sprite *graph.Sprite
 var img *ebiten.Image
+var cam *graph.Camera
+var startT time.Time
+var crossed bool
 
 const littleT = 0.00001
 const maxT = 0.01
@@ -40,7 +46,7 @@ func calcShip(n int,dt float64) {
 		*/
 
 		len2:= ship.Pos.LenSqr()
-		grav := Gravity(1, len2, 0)
+		grav := Gravity(1, len2, 0.0)
 		lt:=littleT
 		if dt<lt{
 			break
@@ -64,16 +70,22 @@ func run(window *ebiten.Image) error{
 		calcShip(n, dt)
 	}
 
-	sprite.SetPos(ships[0].Pos)
-	sprite.SetColor(colornames.Red)
-	sprite.Draw(img)
-	sprite.SetPos(ships[1].Pos)
-	sprite.SetColor(colornames.Green)
-	sprite.Draw(img)
-	sprite.SetPos(ships[2].Pos)
-	sprite.SetColor(colornames.Blue)
-	sprite.Draw(img)
+	for n:=0;n<3;n++{
+		graph.Line(cam,lastP[n],ships[n].Pos,colors[n]).Draw(img)
+		sprite.SetPos(ships[n].Pos)
+		lastP[n] = ships[n].Pos
+		sprite.SetColor(colors[n])
+		sprite.Draw(img)
+	}
+
 	window.DrawImage(img,&ebiten.DrawImageOptions{})
+
+	if !crossed && ships[0].Pos.Y<0{
+		crossed = true
+	}
+	if crossed && ships[0].Pos.Y>0{
+	//	log.Println(time.Now().Sub(startT).Seconds()*1000)
+	}
 
 	return nil
 }
@@ -81,21 +93,26 @@ func run(window *ebiten.Image) error{
 func main(){
 	SetGravityConsts(1,1)
 
-	start:=v2.V2{X:0.3, Y:0}
+	start:=v2.V2{X:1, Y:0}
 
-	ships[0].Pos=start
-	ships[1].Pos=start
-	ships[2].Pos=start
+	for n:=0;n<3;n++ {
+		ships[n].Pos = start
+		lastP[n] = start
+	}
 
 	ships[0].Vel=v2.V2{X:0, Y:0.3}
-	ships[1].Vel=v2.V2{X:0.2, Y:0.5}
-	ships[2].Vel=v2.V2{X:-0.2, Y:1.5}
+	ships[1].Vel=v2.V2{X:0.5, Y:0.5}
+	ships[2].Vel=v2.V2{X:-0.3, Y:1}
 
 	last=time.Now()
-	cam:=graph.NewCamera()
-	cam.Center = v2.V2{450,450}
-	cam.Scale = 1200
+	cam=graph.NewCamera()
+	cam.Center = v2.V2{500,500}
+	cam.Scale = 400
 	cam.Recalc()
+
+	colors[0] =colornames.Red
+	colors[1] =colornames.Green
+	colors[2] =colornames.Blue
 
 	var err error
 	sprite,err=graph.NewSpriteFromFile("res/textures/particle.png",true,0,0,1,cam.Deny())
@@ -104,8 +121,13 @@ func main(){
 	}
 	sprite.SetSize(10,10)
 
-	img,_=ebiten.NewImage(900,900,ebiten.FilterDefault)
+	img,_=ebiten.NewImage(1000,1000,ebiten.FilterDefault)
+
+	circle:=graph.NewSprite(graph.CircleTex(), cam.Phys())
+	circle.SetSize(0.03,0.03)
+	circle.Draw(img)
 
 	log.Println("start")
-	ebiten.Run(run, 900,900,1,"Gravity test")
+	startT=time.Now()
+	ebiten.Run(run, 1000,1000,1,"Gravity test")
 }
