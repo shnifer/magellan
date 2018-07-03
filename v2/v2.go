@@ -41,7 +41,8 @@ func RandomInCircle(R float64) V2 {
 //for world coords primary, use for screen coords with caution (because of Y axis)
 func InDir(angle float64) V2 {
 	a := angle * Deg2Rad
-	return V2{-math.Sin(a), math.Cos(a)}
+	s, c := math.Sincos(a)
+	return V2{X: -s, Y: c}
 }
 
 //Operations
@@ -56,8 +57,7 @@ func AddMul(a, b V2, t float64) V2 {
 //Rotate returns a new vector equal to V rotated by angle degrees
 func Rotate(V V2, angle float64) V2 {
 	a := angle * Deg2Rad
-	sin := math.Sin(a)
-	cos := math.Cos(a)
+	sin,cos := math.Sincos(a)
 	return V2{
 		X: V.X*cos - V.Y*sin,
 		Y: V.Y*cos + V.X*sin,

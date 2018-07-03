@@ -78,16 +78,6 @@ func newCosmoScene() *cosmoScene {
 	marker := NewAtlasSprite(NaviMarkerAN, cam.Deny())
 	marker.SetPivot(graph.MidBottom())
 
-	predictorSprite := NewAtlasSprite(PredictorAN, cam.Deny())
-	predictorSprite.SetSize(20, 20)
-	predictorThrust := NewTrackPredictor(cam, predictorSprite, &Data, Track_CurrentThrust, colornames.Palevioletred, graph.Z_ABOVE_OBJECT+1)
-
-	predictor2Sprite := NewAtlasSprite(PredictorAN, cam.Deny())
-	predictor2Sprite.SetSize(15, 15)
-	predictor2Sprite.SetColor(colornames.Darkgray)
-
-	predictorZero := NewTrackPredictor(cam, predictor2Sprite, &Data, Track_ZeroThrust, colornames.Cadetblue, graph.Z_ABOVE_OBJECT)
-
 	hud := newCosmoSceneHUD(cam)
 
 	panelOpts := ButtonsPanelOpts{
@@ -118,18 +108,16 @@ func newCosmoScene() *cosmoScene {
 	leftPanel.AddButton(bo)
 
 	res := cosmoScene{
-		caption:         caption,
-		ship:            ship,
-		shipMark:        shipMark,
-		cam:             cam,
-		naviMarker:      marker,
-		hud:             hud,
-		objects:         make(map[string]*CosmoPoint),
-		otherShips:      make(map[string]*OtherShip),
-		showPredictor:   true,
-		predictorThrust: predictorThrust,
-		predictorZero:   predictorZero,
-		leftPanel:       leftPanel,
+		caption:       caption,
+		ship:          ship,
+		shipMark:      shipMark,
+		cam:           cam,
+		naviMarker:    marker,
+		hud:           hud,
+		objects:       make(map[string]*CosmoPoint),
+		otherShips:    make(map[string]*OtherShip),
+		showPredictor: true,
+		leftPanel:     leftPanel,
 	}
 
 	res.trail = graph.NewFadingArray(GetAtlasTex(TrailAN), trailLifeTime/trailPeriod, cam.Deny())
@@ -160,6 +148,28 @@ func (s *cosmoScene) Init() {
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
 		s.objects[pd.ID] = cosmoPoint
 	}
+
+	predictorSprite := NewAtlasSprite(PredictorAN, s.cam.Deny())
+	predictorSprite.SetSize(20, 20)
+	opts := TrackPredictorOpts{
+		Cam:      s.cam,
+		Sprite:   predictorSprite,
+		Galaxy:   Data.Galaxy,
+		Clr:      colornames.Palevioletred,
+		Layer:    graph.Z_ABOVE_OBJECT + 1,
+		NumInSec: 10,
+		UpdT:     0.1,
+		TrackLen: 30,
+	}
+	s.predictorThrust = NewTrackPredictor(opts)
+
+	predictor2Sprite := NewAtlasSprite(PredictorAN, s.cam.Deny())
+	predictor2Sprite.SetSize(15, 15)
+	predictor2Sprite.SetColor(colornames.Darkgray)
+	opts.Sprite = predictor2Sprite
+	opts.Clr = colornames.Cadetblue
+	s.predictorZero = NewTrackPredictor(opts)
+
 	graph.ClearCache()
 }
 
@@ -221,7 +231,8 @@ func (s *cosmoScene) Update(dt float64) {
 		}
 
 	}
-
+	s.predictorThrust.SetAccelSessionTimeShipPos(Data.PilotData.ThrustVector, Data.PilotData.SessionTime, Data.PilotData.Ship)
+	s.predictorZero.SetAccelSessionTimeShipPos(v2.ZV, Data.PilotData.SessionTime, Data.PilotData.Ship)
 	s.leftPanel.Update(dt)
 }
 func (s *cosmoScene) camRecalc() {

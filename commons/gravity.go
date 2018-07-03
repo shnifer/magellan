@@ -10,8 +10,6 @@ func SetGravityConsts(G, W float64) {
 	warpGravityConst = W
 }
 
-
-//todo: mb optimise for more physics
 //gravity acceleration (g) from planet with given mass at given range
 func Gravity(mass, lenSqr, zDist float64) float64 {
 	d2 := lenSqr + zDist*zDist

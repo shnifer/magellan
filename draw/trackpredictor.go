@@ -5,81 +5,110 @@ import (
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
 	"image/color"
+	"sync"
 	"time"
 )
 
-type TrackPredictor struct {
-	cam    *graph.Camera
-	sprite *graph.Sprite
-	data   *TData
-	mode   int
-	clr    color.Color
-	layer  int
+type TrackPredictorOpts struct {
+	Cam    *graph.Camera
+	Sprite *graph.Sprite
+	Clr    color.Color
+	Layer  int
+	Galaxy *Galaxy
 
-	q *graph.DrawQueue
+	//in S
+	UpdT     float64
+	NumInSec int
+	TrackLen int
+}
+
+type TrackPredictor struct {
+	opts TrackPredictorOpts
+
+	mu sync.Mutex
+
+	//reset by update
+	sessionTime float64
+	accel       v2.V2
+	ship        RBData
+
+	//created once, recalced pos before goroutine run
+	gravGalaxy gravGalaxyT
+
+	isRunning bool
+	points    []v2.V2
+	calcTime  time.Time
 
 	lastT time.Time
 }
 
-const (
-	Track_CurrentThrust int = iota
-	Track_ZeroThrust
-)
-
-func NewTrackPredictor(cam *graph.Camera, sprite *graph.Sprite, data *TData, mode int, clr color.Color, layer int) *TrackPredictor {
+func NewTrackPredictor(opts TrackPredictorOpts) *TrackPredictor {
 	return &TrackPredictor{
-		sprite: sprite,
-		data:   data,
-		cam:    cam,
-		clr:    clr,
-		layer:  layer,
-		mode:   mode,
+		opts:       opts,
+		gravGalaxy: newGravGalaxy(opts.Galaxy),
+		points:     make([]v2.V2, 0),
 	}
 }
 
 func (tp *TrackPredictor) Req() *graph.DrawQueue {
-	//flytime step
-	const dt = 1.0 / 10
-	const recalcGravEach = 3
-	//graph mark eack Nth
-	const markEach = 1 / dt
-	//len of prediction in seconds
-	const trackLen = 8
-
 	// real time in s to redraw TrackPredictior
-	const updT = 1.0 / 10
+	tp.mu.Lock()
+	defer tp.mu.Unlock()
 
-	if tp.q != nil && time.Since(tp.lastT).Seconds() < updT {
-		return tp.q
+	if time.Since(tp.lastT).Seconds() > tp.opts.UpdT && !tp.isRunning {
+		tp.lastT = time.Now()
+		tp.isRunning = true
+		tp.gravGalaxy.loadPos(tp.opts.Galaxy)
+		go tp.recalcPoints()
 	}
-	tp.lastT = time.Now()
+	return tp.drawPoints()
+}
 
-	tp.q = graph.NewDrawQueue()
+//run under mutex
+func (tp *TrackPredictor) drawPoints() *graph.DrawQueue {
+	//in ms, must be a round part of minute
+	const markEach = 1
 
-	var accel v2.V2
-	switch tp.mode {
-	case Track_CurrentThrust:
-		accel = tp.data.PilotData.ThrustVector
-	case Track_ZeroThrust:
-		accel = v2.ZV
+	Q := graph.NewDrawQueue()
+	if tp.points == nil {
+		return Q
 	}
 
-	ship := tp.data.PilotData.Ship
-	var gravAcc v2.V2
-	//todo: use new updategalaxyship
-	for n := 0; n <= trackLen/dt; n++ {
-		if (n % recalcGravEach) == 0 {
-			gravAcc = SumGravityAcc(ship.Pos, tp.data.Galaxy)
+	cutTime := -time.Since(tp.calcTime).Seconds()
+
+	//ms within last minute 0 -- 59999
+	t := tp.calcTime
+	timeOffset := float64(t.Second()) + float64(t.Nanosecond())/1000000000
+	for timeOffset >= markEach {
+		timeOffset -= markEach
+	}
+	//in ms
+	dt := 1 / float64(tp.opts.NumInSec)
+
+	var prev v2.V2
+	for i, p := range tp.points {
+		if i > 0 && cutTime > 0 {
+			Q.Add(graph.Line(tp.opts.Cam, prev, p, tp.opts.Clr), tp.opts.Layer)
+			if timeOffset >= markEach {
+				timeOffset -= markEach
+				k := timeOffset / dt
+				markP := p.Mul(1-k).AddMul(prev, k)
+				tp.opts.Sprite.SetPos(markP)
+				Q.Add(tp.opts.Sprite, tp.opts.Layer+1)
+			}
 		}
-		ship.Vel.DoAddMul(v2.Add(gravAcc, accel), dt)
-		prevPos := ship.Pos
-		ship = ship.Extrapolate(dt)
-		tp.q.Add(graph.Line(tp.cam, prevPos, ship.Pos, tp.clr), tp.layer)
-		if (n%markEach) == 0 && n != 0 {
-			tp.sprite.SetPos(ship.Pos)
-			tp.q.Add(tp.sprite, tp.layer+1)
-		}
+		prev = p
+		timeOffset += dt
+		cutTime += dt
 	}
 
-	return tp.q
+	return Q
+}
+
+func (tp *TrackPredictor) SetAccelSessionTimeShipPos(accel v2.V2, sessionTime float64, ship RBData) {
+	tp.mu.Lock()
+	tp.accel = accel
+	tp.sessionTime = sessionTime
+	tp.ship = ship
+	tp.mu.Unlock()
 }

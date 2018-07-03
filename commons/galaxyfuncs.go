@@ -71,6 +71,7 @@ func (galaxy *Galaxy) RecalcLvls() {
 	}
 }
 
+//must be used once per frame, to recalc all positions
 func (galaxy *Galaxy) Update(sessionTime float64) {
 	defer LogFunc("galaxy.Update")()
 
