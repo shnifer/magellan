@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime"
 	"runtime/pprof"
+	"runtime/trace"
 )
 
 func StartProfile(prefix string) {
@@ -22,6 +23,11 @@ func StartProfile(prefix string) {
 
 	runtime.SetMutexProfileFraction(1)
 	runtime.SetBlockProfileRate(1)
+	tf, err := os.Create(prefix + "trace.out")
+	if err != nil {
+		log.Panicln("can't create trace profile", prefix, err)
+	}
+	trace.Start(tf)
 }
 
 func heap(fn string) {
@@ -58,4 +64,5 @@ func StopProfile(prefix string) {
 	pprof.StopCPUProfile()
 
 	heap(prefix + "mem.prof")
+	trace.Stop()
 }

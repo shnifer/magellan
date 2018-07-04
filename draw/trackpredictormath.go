@@ -3,6 +3,7 @@ package draw
 import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/v2"
+	"runtime"
 	"time"
 )
 
@@ -39,6 +40,9 @@ func (tp *TrackPredictor) recalcPoints() {
 		ship.Vel.DoAddMul(v2.Add(grav, accel), dt)
 		ship.Pos.DoAddMul(ship.Vel, dt)
 		points[i] = ship.Pos
+		if i%10 == 0 {
+			runtime.Gosched()
+		}
 	}
 
 	tp.mu.Lock()

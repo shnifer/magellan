@@ -104,6 +104,7 @@ func (p *cosmoPanels) recalcTop() {
 		Caption: fmt.Sprintf("BEACON [%v]", p.leftB),
 		Tags:    "button_beacon",
 	}
+	p.top.ClearButtons()
 	p.top.AddButton(bo)
 	p.top.SetActive(p.leftB > 0)
 }
