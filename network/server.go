@@ -170,7 +170,6 @@ func stateHandler(srv *Server) http.Handler {
 		}
 		room.mu.Unlock()
 
-		//todo: FIX , Navi do not recv generated common
 		CommonData, err := srv.opts.RoomServ.GetRoomCommon(roomName)
 		if err != nil {
 			sendErr(w, "can't get fresh Common data to send with state data!")

@@ -83,7 +83,8 @@ func (s *cosmoScene) Init() {
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
 		s.objects[id] = cosmoPoint
 	}
-	s.cosmoPanels.recalcLeft()
+
+	graph.ClearCache()
 }
 
 func (s *cosmoScene) Update(dt float64) {

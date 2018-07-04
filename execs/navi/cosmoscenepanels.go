@@ -10,7 +10,8 @@ import (
 )
 
 type cosmoPanels struct {
-	left, right *ButtonsPanel
+	leftB, leftM, leftL int
+	left, right         *ButtonsPanel
 }
 
 func newCosmoPanels() *cosmoPanels {
@@ -49,6 +50,16 @@ func newCosmoPanels() *cosmoPanels {
 }
 
 func (p *cosmoPanels) recalcLeft() {
+
+	if p.leftB == Data.NaviData.BeaconCount &&
+		p.leftL == len(Data.NaviData.Landing) &&
+		p.leftM == len(Data.NaviData.Mines) {
+		return
+	}
+	p.leftM = len(Data.NaviData.Mines)
+	p.leftL = len(Data.NaviData.Landing)
+	p.leftB = Data.NaviData.BeaconCount
+
 	tex := GetAtlasTex(commons.ButtonAN)
 	bo := ButtonOpts{
 		Tex:    tex,
@@ -58,23 +69,25 @@ func (p *cosmoPanels) recalcLeft() {
 	}
 	p.left.ClearButtons()
 	if Data.NaviData.BeaconCount > 0 {
-		bo.Caption = fmt.Sprintf("МАЯК [%v]", Data.NaviData.BeaconCount)
+		bo.Caption = fmt.Sprintf("BEACON [%v]", p.leftB)
 		bo.Tags = "button_beacon"
 		p.left.AddButton(bo)
 	}
 	if len(Data.NaviData.Mines) > 0 {
-		bo.Caption = fmt.Sprintf("ШАХТА [%v]", Data.NaviData.BeaconCount)
+		bo.Caption = fmt.Sprintf("MINE [%v]", p.leftM)
 		bo.Tags = "button_mine"
 		p.left.AddButton(bo)
 	}
 	if len(Data.NaviData.Landing) > 0 {
-		bo.Caption = "ВЫСАДКА"
+		bo.Caption = "LANDING"
 		bo.Tags = "button_landing"
 		p.left.AddButton(bo)
 	}
 }
 
 func (p *cosmoPanels) update(dt float64) {
+	p.recalcLeft()
+
 	p.left.Update(dt)
 	p.right.Update(dt)
 }
