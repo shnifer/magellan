@@ -1,6 +1,10 @@
 {
     "ship_name": "late",
     "mass": 1000,
+    "corp_name": "gd",
+    "mines": ["gd","pre"],
+    "landing": ["saturn"],
+    "beacon_count":1,
     "march_engine": {
         "thrust_max": 10000,
         "thrust_acc": 300,

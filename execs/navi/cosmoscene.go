@@ -5,7 +5,6 @@ import (
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	. "github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
@@ -33,7 +32,8 @@ type cosmoScene struct {
 
 	scanner *scanner
 
-	predictors predictors
+	predictors  predictors
+	cosmoPanels *cosmoPanels
 
 	naviMarkerT float64
 }
@@ -51,13 +51,16 @@ func newCosmoScene() *cosmoScene {
 
 	shipMark := NewAtlasSprite(commons.MARKShipAN, cam.FixS())
 
+	cosmoPanels := newCosmoPanels()
+
 	return &cosmoScene{
-		caption:    caption,
-		ship:       ship,
-		shipMark:   shipMark,
-		cam:        cam,
-		objects:    make(map[string]*CosmoPoint),
-		otherShips: make(map[string]*OtherShip),
+		caption:     caption,
+		ship:        ship,
+		shipMark:    shipMark,
+		cam:         cam,
+		cosmoPanels: cosmoPanels,
+		objects:     make(map[string]*CosmoPoint),
+		otherShips:  make(map[string]*OtherShip),
 	}
 }
 
@@ -80,6 +83,7 @@ func (s *cosmoScene) Init() {
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
 		s.objects[id] = cosmoPoint
 	}
+	s.cosmoPanels.recalcLeft()
 }
 
 func (s *cosmoScene) Update(dt float64) {
@@ -110,7 +114,7 @@ func (s *cosmoScene) Update(dt float64) {
 
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		mousex, mousey := ebiten.CursorPosition()
-		s.procMouseClick(v2.V2{X: float64(mousex), Y: float64(mousey)})
+		s.procMouseClick(mousex, mousey)
 	}
 	s.naviMarkerT -= dt
 	if s.naviMarkerT < 0 {
@@ -137,6 +141,7 @@ func (s *cosmoScene) Update(dt float64) {
 
 	s.scanner.update(ship.Pos, dt)
 	s.predictors.setParams()
+	s.cosmoPanels.update(dt)
 }
 
 func (s *cosmoScene) Draw(image *ebiten.Image) {
@@ -165,6 +170,8 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		s.ship.SetAlpha(alphaSprite)
 		Q.Add(s.ship, graph.Z_HUD)
 	}
+
+	Q.Append(s.cosmoPanels)
 
 	Q.Run(image)
 }
@@ -195,19 +202,6 @@ func (s *cosmoScene) actualizeOtherShips() {
 			delete(s.otherShips, id)
 		}
 	}
-}
-
-func (s *cosmoScene) procMouseClick(scrPos v2.V2) {
-	worldPos := s.cam.UnApply(scrPos)
-	for id, obj := range Data.Galaxy.Points {
-		if worldPos.Sub(obj.Pos).LenSqr() < (obj.Size * obj.Size) {
-			s.scanner.clicked(s.objects[id])
-			return
-		}
-	}
-	Data.NaviData.ActiveMarker = true
-	Data.NaviData.MarkerPos = worldPos
-	s.naviMarkerT = DEFVAL.NaviMarketDuration
 }
 
 func (*cosmoScene) Destroy() {
