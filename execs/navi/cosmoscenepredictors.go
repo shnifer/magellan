@@ -25,8 +25,9 @@ func (p *predictors) init(cam *graph.Camera) {
 		Galaxy:   Data.Galaxy,
 		Clr:      colornames.Palevioletred,
 		Layer:    graph.Z_ABOVE_OBJECT + 1,
-		NumInSec: 5,
-		UpdT:     0.15,
+		UpdT:     0.2,
+		NumInSec: 10,
+		GravEach: 2,
 		TrackLen: 60,
 	}
 

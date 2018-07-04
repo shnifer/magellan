@@ -5,6 +5,7 @@ import (
 	"github.com/Shnifer/magellan/v2"
 	"runtime"
 	"time"
+	"sync"
 )
 
 type gravP struct {
@@ -18,7 +19,13 @@ type gravP struct {
 }
 type gravGalaxyT []gravP
 
+//global mutex for 1 worker for prediction calculation
+var recalcPointsMu sync.Mutex
+
 func (tp *TrackPredictor) recalcPoints() {
+	recalcPointsMu.Lock()
+	defer recalcPointsMu.Unlock()
+
 	tp.mu.Lock()
 	accel := tp.accel
 	ss := tp.sessionTime
@@ -35,7 +42,9 @@ func (tp *TrackPredictor) recalcPoints() {
 
 	for i := 1; i < count; i++ {
 		ss += dt
-		tp.gravGalaxy.update(ss)
+		if i%tp.opts.GravEach==0{
+			tp.gravGalaxy.update(ss)
+		}
 		grav = tp.gravGalaxy.sumGrav(ship.Pos)
 		ship.Vel.DoAddMul(v2.Add(grav, accel), dt)
 		ship.Pos.DoAddMul(ship.Vel, dt)

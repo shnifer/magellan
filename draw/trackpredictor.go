@@ -19,6 +19,7 @@ type TrackPredictorOpts struct {
 	//in S
 	UpdT     float64
 	NumInSec int
+	GravEach int
 	TrackLen int
 }
 
@@ -43,6 +44,15 @@ type TrackPredictor struct {
 }
 
 func NewTrackPredictor(opts TrackPredictorOpts) *TrackPredictor {
+	if opts.GravEach==0{
+		opts.GravEach = 1
+	}
+	if opts.UpdT == 0{
+		opts.UpdT = 1
+	}
+	if opts.NumInSec ==0{
+		opts.NumInSec=1
+	}
 	return &TrackPredictor{
 		opts:       opts,
 		gravGalaxy: newGravGalaxy(opts.Galaxy),
