@@ -6,7 +6,6 @@ import (
 	"github.com/Shnifer/magellan/graph"
 	. "github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 )
 
@@ -73,7 +72,7 @@ func (s *cosmoScene) Init() {
 	s.otherShips = make(map[string]*OtherShip)
 	s.naviMarkerT = 0
 	s.lastServerID = 0
-	s.scanner = newScanner(s.cam)
+	s.scanner = newScanner(s.cam, s.scanState)
 	s.shipRB = commons.NewRBFollower(float64(DEFVAL.PingPeriod) / 1000)
 	s.sessionTime = commons.NewSessionTime(Data.PilotData.SessionTime)
 
@@ -113,10 +112,6 @@ func (s *cosmoScene) Update(dt float64) {
 		s.otherShips[id].Update(dt)
 	}
 
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		mousex, mousey := ebiten.CursorPosition()
-		s.procMouseClick(mousex, mousey)
-	}
 	s.naviMarkerT -= dt
 	if s.naviMarkerT < 0 {
 		s.naviMarkerT = 0
@@ -140,9 +135,8 @@ func (s *cosmoScene) Update(dt float64) {
 	s.ship.SetPosAng(ship.Pos, ship.Ang)
 	s.shipMark.SetPosAng(ship.Pos, ship.Ang)
 
-	s.scanner.update(ship.Pos, dt)
 	s.predictors.setParams()
-	s.cosmoPanels.update(dt)
+	s.updateControl(dt)
 }
 
 func (s *cosmoScene) Draw(image *ebiten.Image) {

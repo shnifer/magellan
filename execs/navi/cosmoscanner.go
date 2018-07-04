@@ -4,16 +4,24 @@ import (
 	"github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
-	"github.com/Shnifer/magellan/graph/qr"
 	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
 	"golang.org/x/image/colornames"
 	"math"
 	"math/rand"
-	"time"
+)
+
+const (
+	scanZero = iota
+	scanSelect
+	scanProgress
+	ScanDone
 )
 
 type scanner struct {
+	state int
+	work  string
+
 	scanT float64
 	obj   *CosmoPoint
 
@@ -26,10 +34,10 @@ type scanner struct {
 	scanRange  *graph.Sprite
 	scanSector *graph.Sector
 
-	scannedImg *graph.Sprite
+	onState func(state int)
 }
 
-func newScanner(cam *graph.Camera) *scanner {
+func newScanner(cam *graph.Camera, onState func(int)) *scanner {
 	defer LogFunc("newScanner")()
 
 	const countN = 12
@@ -49,12 +57,8 @@ func newScanner(cam *graph.Camera) *scanner {
 		countN:      countN,
 		scanRange:   scanRange,
 		scanSector:  scanSector,
+		onState:     onState,
 	}
-}
-
-func (s *scanner) reset() {
-	s.scanT = 0
-	s.obj = nil
 }
 
 func (s *scanner) clicked(obj *CosmoPoint) {
@@ -64,15 +68,14 @@ func (s *scanner) clicked(obj *CosmoPoint) {
 	if s.obj == obj {
 		return
 	}
-	s.reset()
-	s.obj = obj
+	s.stateSelect(obj)
 }
 
 func (s *scanner) update(ship v2.V2, dt float64) {
 	s.scanRange.SetPos(ship)
 	s.maxRange2 = Data.SP.Radar.Scan_range * Data.SP.Radar.Scan_range
 
-	if s.obj == nil {
+	if s.state == scanZero {
 		return
 	}
 
@@ -89,18 +92,26 @@ func (s *scanner) update(ship v2.V2, dt float64) {
 	s.scanSector.SetCenterRadius(ship, dist)
 	s.scanSector.SetAngles(ang-angW, ang+angW)
 
-	if Data.PilotData.Ship.Pos.Sub(s.obj.Pos).LenSqr() > s.maxRange2 {
-		s.reset()
+	if ship.Sub(s.obj.Pos).LenSqr() > s.maxRange2 {
+		s.stateZero()
 		return
 	}
-	s.scanT += dt
-	if s.totalT > 0 {
-		if s.scanT > s.totalT {
-			s.procScanned(s.obj)
-			s.reset()
+
+	if s.state == scanProgress {
+		if s.totalT > 0 {
+			s.scanT += dt
+			if s.scanT > s.totalT {
+				s.stateDone()
+			}
+		} else {
+			s.stateZero()
 		}
-	} else {
-		s.reset()
+	}
+}
+
+func (s *scanner) Start(work string) {
+	if s.state == scanSelect {
+		s.stateProgress(work)
 	}
 }
 
@@ -111,28 +122,27 @@ func (s *scanner) Req() *graph.DrawQueue {
 	s.scanRange.SetSize(Range, Range)
 	Q.Add(s.scanRange, graph.Z_UNDER_OBJECT)
 
-	if s.scannedImg != nil {
-		Q.Add(s.scannedImg, graph.Z_STAT_HUD)
-	}
-
-	if s.obj == nil {
+	if s.state == scanZero {
 		return Q
 	}
 
 	Q.Add(s.scanSector, graph.Z_UNDER_OBJECT)
 
-	//Draw circle counter
-	num := int(0.5 + s.scanT/s.totalT*float64(s.countN))
-	obj := s.obj.Pos
-	rng := s.obj.Size * 1.1
-	if rng < 30 {
-		rng = 30
+	if s.state != scanSelect {
+		//Draw circle counter
+		num := int(0.5 + s.scanT/s.totalT*float64(s.countN))
+		obj := s.obj.Pos
+		rng := s.obj.Size * 1.1
+		if rng < 30 {
+			rng = 30
+		}
+		for i := 0; i < num; i++ {
+			pos := obj.AddMul(v2.InDir(-360/float64(s.countN)*float64(i)), rng)
+			s.countSprite.SetPos(pos)
+			Q.Add(s.countSprite, graph.Z_UNDER_OBJECT)
+		}
 	}
-	for i := 0; i < num; i++ {
-		pos := obj.AddMul(v2.InDir(-360/float64(s.countN)*float64(i)), rng)
-		s.countSprite.SetPos(pos)
-		Q.Add(s.countSprite, graph.Z_UNDER_OBJECT)
-	}
+
 	return Q
 }
 
@@ -168,11 +178,38 @@ func (s *scanner) procScanned(obj *CosmoPoint) {
 	}
 
 	return
+}
 
-	//do we need this at all??
-	s.scannedImg = qr.NewQRSpriteHUD(gp.ScanData, 256)
-	s.scannedImg.SetPivot(graph.TopLeft())
-	s.scannedImg.SetPos(graph.ScrP(0, 0))
-	//todo: do this normal! drops sometime
-	time.AfterFunc(time.Second*3, func() { s.scannedImg.TexImageDispose(); s.scannedImg = nil })
+func (s *scanner) procOnState() {
+	if s.onState != nil {
+		s.onState(s.state)
+	}
+}
+
+func (s *scanner) stateZero() {
+	s.state = scanZero
+	s.work = ""
+	s.scanT = 0
+	s.obj = nil
+	s.procOnState()
+}
+
+func (s *scanner) stateSelect(obj *CosmoPoint) {
+	s.state = scanSelect
+	s.work = ""
+	s.scanT = 0
+	s.obj = obj
+	s.procOnState()
+}
+
+func (s *scanner) stateProgress(work string) {
+	s.work = work
+	s.scanT = 0
+	s.state = scanProgress
+	s.procOnState()
+}
+
+func (s *scanner) stateDone() {
+	s.state = ScanDone
+	s.procOnState()
 }

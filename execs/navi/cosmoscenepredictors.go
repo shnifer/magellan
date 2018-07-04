@@ -25,9 +25,9 @@ func (p *predictors) init(cam *graph.Camera) {
 		Galaxy:   Data.Galaxy,
 		Clr:      colornames.Palevioletred,
 		Layer:    graph.Z_ABOVE_OBJECT + 1,
-		NumInSec: 10,
-		UpdT:     0.1,
-		TrackLen: 30,
+		NumInSec: 5,
+		UpdT:     0.15,
+		TrackLen: 60,
 	}
 
 	p.predictorThrust = NewTrackPredictor(opts)
