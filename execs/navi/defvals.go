@@ -25,6 +25,7 @@ type tDefVals struct {
 	DoProf bool
 
 	NaviMarketDuration float64
+	GravityConst       float64
 
 	//in ms
 	LogTimeoutMs  int
@@ -47,6 +48,7 @@ func setDefDef() {
 		WinW:               1024,
 		WinH:               768,
 		NaviMarketDuration: 5.0,
+		GravityConst:       100,
 		LogTimeoutMs:       1000,
 		LogRetryMinMs:      10,
 		LogRetryMaxMs:      60000,

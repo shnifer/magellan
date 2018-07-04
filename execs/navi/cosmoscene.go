@@ -33,9 +33,7 @@ type cosmoScene struct {
 
 	scanner *scanner
 
-	showPredictor   bool
-	predictorZero   *TrackPredictor
-	predictorThrust *TrackPredictor
+	predictors predictors
 
 	naviMarkerT float64
 }
@@ -53,25 +51,13 @@ func newCosmoScene() *cosmoScene {
 
 	shipMark := NewAtlasSprite(commons.MARKShipAN, cam.FixS())
 
-	predictorSprite := NewAtlasSprite(commons.PredictorAN, cam.Deny())
-	predictorSprite.SetSize(20, 20)
-	predictorThrust := NewTrackPredictor(cam, predictorSprite, &Data, Track_CurrentThrust, colornames.Palevioletred, graph.Z_ABOVE_OBJECT+1)
-
-	predictor2Sprite := NewAtlasSprite(commons.PredictorAN, cam.Deny())
-	predictor2Sprite.SetSize(15, 15)
-	predictor2Sprite.SetColor(colornames.Darkgray)
-
-	predictorZero := NewTrackPredictor(cam, predictor2Sprite, &Data, Track_ZeroThrust, colornames.Cadetblue, graph.Z_ABOVE_OBJECT)
-
 	return &cosmoScene{
-		caption:         caption,
-		ship:            ship,
-		shipMark:        shipMark,
-		cam:             cam,
-		objects:         make(map[string]*CosmoPoint),
-		predictorThrust: predictorThrust,
-		predictorZero:   predictorZero,
-		otherShips:      make(map[string]*OtherShip),
+		caption:    caption,
+		ship:       ship,
+		shipMark:   shipMark,
+		cam:        cam,
+		objects:    make(map[string]*CosmoPoint),
+		otherShips: make(map[string]*OtherShip),
 	}
 }
 
@@ -87,6 +73,8 @@ func (s *cosmoScene) Init() {
 	s.scanner = newScanner(s.cam)
 	s.shipRB = commons.NewRBFollower(float64(DEFVAL.PingPeriod) / 1000)
 	s.sessionTime = commons.NewSessionTime(Data.PilotData.SessionTime)
+
+	s.predictors.init(s.cam)
 
 	for id, pd := range stateData.Galaxy.Points {
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
@@ -148,6 +136,7 @@ func (s *cosmoScene) Update(dt float64) {
 	s.shipMark.SetPosAng(ship.Pos, ship.Ang)
 
 	s.scanner.update(ship.Pos, dt)
+	s.predictors.setParams()
 }
 
 func (s *cosmoScene) Draw(image *ebiten.Image) {
@@ -165,10 +154,7 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Append(os)
 	}
 
-	if s.showPredictor {
-		Q.Append(s.predictorThrust)
-		Q.Append(s.predictorZero)
-	}
+	Q.Append(s.predictors)
 
 	alphaMark, alphaSprite := MarkAlpha(shipSize/2.0, s.cam)
 	if alphaMark > 0 && s.shipMark != nil {

@@ -47,12 +47,9 @@ type cosmoScene struct {
 
 	warpEngine *cosmoSceneWarpEngine
 	hud        cosmoSceneHUD
+	predictors predictors
 
-	showPredictor   bool
-	predictorZero   *TrackPredictor
-	predictorThrust *TrackPredictor
-
-	//update eachUpdate
+	//setParams eachUpdate
 	gravityAcc    v2.V2
 	gravityReport []v2.V2
 
@@ -108,16 +105,15 @@ func newCosmoScene() *cosmoScene {
 	leftPanel.AddButton(bo)
 
 	res := cosmoScene{
-		caption:       caption,
-		ship:          ship,
-		shipMark:      shipMark,
-		cam:           cam,
-		naviMarker:    marker,
-		hud:           hud,
-		objects:       make(map[string]*CosmoPoint),
-		otherShips:    make(map[string]*OtherShip),
-		showPredictor: true,
-		leftPanel:     leftPanel,
+		caption:    caption,
+		ship:       ship,
+		shipMark:   shipMark,
+		cam:        cam,
+		naviMarker: marker,
+		hud:        hud,
+		objects:    make(map[string]*CosmoPoint),
+		otherShips: make(map[string]*OtherShip),
+		leftPanel:  leftPanel,
 	}
 
 	res.trail = graph.NewFadingArray(GetAtlasTex(TrailAN), trailLifeTime/trailPeriod, cam.Deny())
@@ -149,26 +145,7 @@ func (s *cosmoScene) Init() {
 		s.objects[pd.ID] = cosmoPoint
 	}
 
-	predictorSprite := NewAtlasSprite(PredictorAN, s.cam.Deny())
-	predictorSprite.SetSize(20, 20)
-	opts := TrackPredictorOpts{
-		Cam:      s.cam,
-		Sprite:   predictorSprite,
-		Galaxy:   Data.Galaxy,
-		Clr:      colornames.Palevioletred,
-		Layer:    graph.Z_ABOVE_OBJECT + 1,
-		NumInSec: 10,
-		UpdT:     0.1,
-		TrackLen: 30,
-	}
-	s.predictorThrust = NewTrackPredictor(opts)
-
-	predictor2Sprite := NewAtlasSprite(PredictorAN, s.cam.Deny())
-	predictor2Sprite.SetSize(15, 15)
-	predictor2Sprite.SetColor(colornames.Darkgray)
-	opts.Sprite = predictor2Sprite
-	opts.Clr = colornames.Cadetblue
-	s.predictorZero = NewTrackPredictor(opts)
+	s.predictors.init(s.cam)
 
 	graph.ClearCache()
 }
@@ -181,12 +158,12 @@ func (s *cosmoScene) Update(dt float64) {
 		s.actualizeOtherShips()
 	}
 
-	//update actual otherShips
+	//setParams actual otherShips
 	for id := range s.otherShips {
 		s.otherShips[id].Update(dt)
 	}
 
-	//update galaxy now to calc right gravity
+	//setParams galaxy now to calc right gravity
 	//Data.PilotData.SessionTime += dt
 	//sessionTime := Data.PilotData.SessionTime
 	//Data.Galaxy.Update(sessionTime)
@@ -231,8 +208,7 @@ func (s *cosmoScene) Update(dt float64) {
 		}
 
 	}
-	s.predictorThrust.SetAccelSessionTimeShipPos(Data.PilotData.ThrustVector, Data.PilotData.SessionTime, Data.PilotData.Ship)
-	s.predictorZero.SetAccelSessionTimeShipPos(v2.ZV, Data.PilotData.SessionTime, Data.PilotData.Ship)
+	s.predictors.setParams()
 	s.leftPanel.Update(dt)
 }
 func (s *cosmoScene) camRecalc() {
@@ -289,10 +265,7 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Append(os)
 	}
 
-	if s.showPredictor {
-		Q.Append(s.predictorThrust)
-		Q.Append(s.predictorZero)
-	}
+	Q.Append(s.predictors)
 
 	s.drawScale(Q)
 	s.drawGravity(Q)
@@ -327,7 +300,7 @@ func (s *cosmoScene) updateDebugControl(dt float64) {
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.Key1) {
-		s.showPredictor = !s.showPredictor
+		s.predictors.show = !s.predictors.show
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyP) {

@@ -23,16 +23,24 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 
 	switch newState.StateID {
 	case STATE_cosmo:
+		//start of fly
 		if prevState.StateID == STATE_login {
 			common.PilotData.Ship.Pos =
 				stateData.Galaxy.Points[DEFVAL.SolarStartLocationName].Pos
+			common.NaviData.Mines = make([]string, len(stateData.BSP.Mines))
+			copy(common.NaviData.Mines, stateData.BSP.Mines)
+			common.NaviData.Landing = make([]string, len(stateData.BSP.Landing))
+			copy(common.NaviData.Landing, stateData.BSP.Landing)
+			common.NaviData.BeaconCount = stateData.BSP.BeaconCount
 		}
 
+		//from warp to cosmo
 		if prevState.StateID == STATE_warp {
 			common.PilotData.Ship.Pos =
 				v2.InDir(180 + common.PilotData.Ship.Ang).Mul(stateData.Galaxy.SpawnDistance)
 		}
 	case STATE_warp:
+		//from cosmo to warp
 		common = toWarpCommonData(common, stateData, newState, prevState)
 	}
 

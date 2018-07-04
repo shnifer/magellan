@@ -15,9 +15,20 @@ type StateData struct {
 
 //Rework CalcDegrade on change
 type BSP struct {
-	ShipName string `json:"ship_name"` //human name
+	ShipName   string  `json:"ship_name"` //human name
+	FlightCorp string  `json:"corp_name"`
+	Mass       float64 `json:"mass"`
 
-	Mass float64 `json:"mass"`
+	BeaconCount int `json:"beacon_count"`
+	//[]corpName, i.e. ["gd","gd","pre"]
+	//[]planetName, i.e. ["CV8-85","RD4-42-13"]
+	Mines   []string `json:"mines"`
+	Landing []string `json:"landing"`
+
+	MineMass    float64
+	LandingMass float64
+	BeaconMass  float64
+
 	//0...100
 	March_engine struct {
 		Thrust_max   float64 `json:"thrust_max"`

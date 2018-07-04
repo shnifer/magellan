@@ -7,34 +7,38 @@ import (
 )
 
 type CommonData struct {
-	PilotData  *PilotData
-	NaviData   *NaviData
-	EngiData   *EngiData
-	ServerData *ServerData
+	PilotData  *PilotData  `json:"pd"`
+	NaviData   *NaviData   `json:"nd"`
+	EngiData   *EngiData   `json:"ed"`
+	ServerData *ServerData `json:"sd"`
 }
 
 type PilotData struct {
-	Ship           RBData
-	SessionTime    float64
-	ThrustVector   v2.V2
-	HeatProduction float64
+	Ship           RBData  `json:"sh"`
+	SessionTime    float64 `json:"ss"`
+	ThrustVector   v2.V2   `json:"tv"`
+	HeatProduction float64 `json:"hp"`
 
 	//do not reload same Msg, cz of ship.Pos extrapolate and SessionTime+=dt
-	MsgID int
+	MsgID int `json:"id"`
 }
 
 type NaviData struct {
+	//drop items
+	BeaconCount int `json:"bc"`
+	//[]corpName, i.e. ["gd","gd","pre"]
+	//[]planetName, i.e. ["CV8-85","RD4-42-13"]
+	Mines   []string `json:"mn"`
+	Landing []string `json:"ld"`
+
 	//cosmo
-	ActiveMarker bool
-	MarkerPos    v2.V2
+	ActiveMarker bool  `json:"ma"`
+	MarkerPos    v2.V2 `json:"mp"`
 
 	//warp
-	SonarDir   float64
-	SonarRange float64
-	SonarWide  float64
-}
-type CargoData struct {
-	TurboBoost bool
+	SonarDir   float64 `json:"sd"`
+	SonarRange float64 `json:"sr"`
+	SonarWide  float64 `json:"sw"`
 }
 
 type EngiData struct {
@@ -170,12 +174,13 @@ func (cd CommonData) WithoutRole(roleName string) CommonData {
 func (CommonData) Empty() CommonData {
 	return CommonData{
 		PilotData:  &PilotData{},
-		NaviData:   &NaviData{},
+		NaviData:   &NaviData{Mines: []string{}, Landing: []string{}},
 		EngiData:   &EngiData{},
 		ServerData: &ServerData{OtherShips: []OtherShipData{}},
 	}
 }
 
+//deep copy
 func (cd CommonData) Copy() (res CommonData) {
 	res = cd
 	if cd.PilotData != nil {
@@ -184,6 +189,12 @@ func (cd CommonData) Copy() (res CommonData) {
 	}
 	if cd.NaviData != nil {
 		val := *cd.NaviData
+		mines := make([]string, len(cd.NaviData.Mines))
+		landings := make([]string, len(cd.NaviData.Landing))
+		copy(mines, cd.NaviData.Mines)
+		copy(landings, cd.NaviData.Landing)
+		val.Mines = mines
+		val.Landing = landings
 		res.NaviData = &val
 	}
 	if cd.EngiData != nil {
@@ -192,6 +203,9 @@ func (cd CommonData) Copy() (res CommonData) {
 	}
 	if cd.ServerData != nil {
 		val := *cd.ServerData
+		otherShips := make([]OtherShipData, len(cd.ServerData.OtherShips))
+		copy(otherShips, cd.ServerData.OtherShips)
+		val.OtherShips = otherShips
 		res.ServerData = &val
 	}
 	return res

@@ -85,6 +85,8 @@ func main() {
 	draw.InitTexAtlas()
 	commons.InitSignatureAtlas()
 
+	commons.SetGravityConsts(DEFVAL.GravityConst, 0)
+
 	createScenes()
 
 	Client.Start()
