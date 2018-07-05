@@ -36,8 +36,8 @@
     "radar": {
         "range": 180000,
         "angle": 15,
-        "scan_range": 250,
-        "scan_speed": 0.2
+        "scan_range": 750,
+        "scan_speed": 0.5
     },
     "sonar": {
         "range_max": 180000,
