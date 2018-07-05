@@ -74,7 +74,7 @@ func (g *glyphs) setPos(pos v2.V2) {
 
 func (g *glyphs) setSize(size float64) {
 	g.size = size/2 + glyphSize/2
-	if g.size < mark_size/2 {
-		g.size = mark_size / 2
+	if g.size < Mark_size/2 {
+		g.size = Mark_size / 2
 	}
 }

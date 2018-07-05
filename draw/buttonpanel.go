@@ -6,11 +6,13 @@ import (
 	"image/color"
 	"golang.org/x/image/font"
 	"image"
+	"strings"
 )
 
 type ButtonOpts struct{
 	Tex graph.Tex
 	Clr color.Color
+	HighlightClr color.Color
 
 	Caption string
 	Face font.Face
@@ -39,6 +41,8 @@ type button struct{
 	sprite *graph.Sprite
 	caption *graph.Text
 	tags string
+	clr color.Color
+	highlightClr color.Color
 }
 
 type ButtonsPanel struct{
@@ -54,8 +58,12 @@ type ButtonsPanel struct{
 	active bool
 	//ready -- it is slided and now you may click it
 	ready bool
-
+	//we need to recalc positions or color
 	dirty bool
+
+	//can't click
+	disabled bool
+	highlightTagPrefix string
 
 	buttons []button
 }
@@ -146,12 +154,20 @@ func (bp *ButtonsPanel) recalc(){
 			butPos.DoAddMul(v2.V2{X:0, Y:1}, bp.opts.ButtonSpace+bp.opts.ButtonSize.Y)
 		}
 
-		if bp.ready {
-			button.sprite.SetAlpha(1)
+		if !bp.ready {
+			button.sprite.SetAlpha(0.4)
+		} else if bp.disabled {
+			button.sprite.SetAlpha(0.7)
 		} else {
-			button.sprite.SetAlpha(0.5)
+			button.sprite.SetAlpha(1)
 		}
-
+		clr:=button.clr
+		if bp.highlightTagPrefix!="" && button.highlightClr!=nil{
+			if strings.HasPrefix(button.tags, bp.highlightTagPrefix) {
+				clr=button.highlightClr
+			}
+		}
+		button.sprite.SetColor(clr)
 		button.sprite.SetPos(butPos)
 		button.caption.SetPosPivot(butPos.AddMul(bp.opts.ButtonSize,0.5), graph.Center())
 	}
@@ -175,13 +191,37 @@ func (bp *ButtonsPanel) AddButton(opts ButtonOpts){
 		sprite: sprite,
 		caption: caption,
 		tags: opts.Tags,
+		clr: opts.Clr,
+		highlightClr: opts.HighlightClr,
 	})
 
 	bp.dirty = true
 }
 
+func (bp *ButtonsPanel) Disable(){
+	if !bp.disabled {
+		bp.disabled = true
+		bp.dirty = true
+	}
+}
+
+func (bp *ButtonsPanel) Enable(){
+	if bp.disabled {
+		bp.disabled = false
+		bp.dirty = true
+	}
+}
+
+func (bp *ButtonsPanel) Highlight(tagPrefix string) {
+	if tagPrefix!=bp.highlightTagPrefix {
+		bp.highlightTagPrefix = tagPrefix
+		bp.dirty = true
+	}
+}
+
+
 func (bp *ButtonsPanel) ProcMouse(x,y int) (tags string, ok bool){
-	if !bp.active {
+	if !bp.active || bp.disabled{
 		return "", false
 	}
 

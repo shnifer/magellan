@@ -123,6 +123,24 @@ func ColorByOwner(owner string) color.Color {
 		return colornames.White
 	}
 }
+func CompanyNameByOwner(owner string) string {
+	switch owner {
+	case OWNER_1:
+		return "Google Disney"
+	case OWNER_2:
+		return "Pony Roscosmos Express"
+	case OWNER_3:
+		return "MarsStroyTrest"
+	case OWNER_4:
+		return "Mitsubishi AutoVAZ Technology"
+	case OWNER_5:
+		return "Red Cross Genetics"
+	default:
+		Log(LVL_ERROR, "CompanyNameByOwner unknown owner:", owner)
+		return "#COMPANYNAME"
+	}
+}
+
 
 func AddBeacon(Data TData, Client *network.Client, msg string) {
 	sessionTime := Data.PilotData.SessionTime

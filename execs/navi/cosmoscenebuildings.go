@@ -1,5 +1,7 @@
 package main
 
+//COPYPASTE IN PILOT
+
 import (
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
@@ -16,14 +18,14 @@ func (s *cosmoScene) addBuilding(b Building) {
 			Log(LVL_ERROR, "cosmoscene addBuilding: can't find added mine or fishhouse on planet", b.PlanetID)
 			return
 		}
-		s.objects[b.PlanetID] = NewCosmoPoint(pd, s.cam.Phys())
+		*s.objects[b.PlanetID] = *NewCosmoPoint(pd, s.cam.Phys())
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
 		pd, ok := Data.Galaxy.Points[b.FullKey]
 		if !ok {
 			Log(LVL_ERROR, "cosmoscene addBuilding: can't find added", b.Type, "with fullkey", b.FullKey)
 			return
 		}
-		s.objects[b.FullKey] = NewCosmoPoint(pd, s.cam.Phys())
+		*s.objects[b.FullKey] = *NewCosmoPoint(pd, s.cam.Phys())
 	default:
 		Log(LVL_ERROR, "cosmoscene addBuilding, unknown building type", b.Type)
 	}
@@ -37,7 +39,7 @@ func (s *cosmoScene) delBuilding(b Building) {
 			Log(LVL_ERROR, "cosmoscene delBuilding: can't find added mine on planet", b.PlanetID)
 			return
 		}
-		s.objects[b.PlanetID] = NewCosmoPoint(pd, s.cam.Phys())
+		*s.objects[b.PlanetID] = *NewCosmoPoint(pd, s.cam.Phys())
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
 		if _, ok := s.objects[b.FullKey]; !ok {
 			Log(LVL_ERROR, "cosmoscene delBuilding: can't del", b.Type, "with fullkey", b.FullKey)

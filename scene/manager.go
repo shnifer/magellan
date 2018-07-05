@@ -44,7 +44,9 @@ func NewManager() *Manager {
 //manager goroutine cycle
 func actionRun(m *Manager) {
 	for f := range m.actionQ {
+		m.mu.Lock()
 		f()
+		m.mu.Unlock()
 	}
 }
 
@@ -145,9 +147,6 @@ func (m *Manager) WaitDone() {
 
 //manager goroutine cycle
 func (m *Manager) install(name string, Scene scene, inited bool) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
 	if prev, ok := m.scenes[name]; ok {
 		prev.Destroy()
 	}
@@ -158,9 +157,6 @@ func (m *Manager) install(name string, Scene scene, inited bool) {
 
 //manager goroutine cycle
 func (m *Manager) delete(name string) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
 	if prev, ok := m.scenes[name]; ok {
 		prev.Destroy()
 		delete(m.scenes, name)
@@ -173,9 +169,6 @@ func (m *Manager) delete(name string) {
 
 //manager goroutine cycle
 func (m *Manager) activate(name string, needReInit bool) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
 	if _, ok := m.scenes[name]; !ok {
 		panic("can't activate scene " + name)
 	}
@@ -203,9 +196,7 @@ func (m *Manager) init(name string) {
 
 //manager goroutine cycle
 func (m *Manager) onCommand(command string) {
-	m.mu.Lock()
 	scene, ok := m.scenes[m.current]
-	m.mu.Unlock()
 
 	if ok {
 		scene.OnCommand(command)
@@ -214,14 +205,10 @@ func (m *Manager) onCommand(command string) {
 
 //manager goroutine cycle
 func (m *Manager) setAsPauseScene(pauseSceneName string) {
-	m.mu.Lock()
 	m.pauseSceneName = pauseSceneName
-	m.mu.Unlock()
 }
 
 //manager goroutine cycle
 func (m *Manager) setPaused(paused bool) {
-	m.mu.Lock()
 	m.paused = paused
-	m.mu.Unlock()
 }

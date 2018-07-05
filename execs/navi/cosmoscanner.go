@@ -110,9 +110,14 @@ func (s *scanner) update(ship v2.V2, dt float64) {
 }
 
 func (s *scanner) Start(work string) {
-	if s.state == scanSelect {
-		s.stateProgress(work)
+	if s.state == scanZero || s.obj==nil{
+		return
 	}
+	if s.state == scanProgress && s.work == work {
+		return
+	}
+
+	s.stateProgress(work)
 }
 
 func (s *scanner) Req() *graph.DrawQueue {

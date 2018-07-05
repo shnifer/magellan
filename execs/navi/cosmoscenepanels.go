@@ -7,6 +7,7 @@ import (
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
 	"image/color"
+	"golang.org/x/image/colornames"
 )
 
 type cosmoPanels struct {
@@ -79,6 +80,11 @@ func (p *cosmoPanels) recalcLeft() {
 		Clr:    color.White,
 	}
 	if len(Data.NaviData.Mines) > 0 {
+		bo.Caption = "SCAN"
+		bo.Tags = "button_scan"
+		p.left.AddButton(bo)
+	}
+	if len(Data.NaviData.Mines) > 0 {
 		bo.Caption = fmt.Sprintf("MINE [%v]", p.leftM)
 		bo.Tags = "button_mine"
 		p.left.AddButton(bo)
@@ -89,6 +95,57 @@ func (p *cosmoPanels) recalcLeft() {
 		p.left.AddButton(bo)
 	}
 }
+
+func (p *cosmoPanels) rightMines(){
+	p.right.ClearButtons()
+	tex := GetAtlasTex(commons.ButtonAN)
+
+	mines:=make(map[string]int)
+	for _,corp:=range Data.NaviData.Mines{
+		mines[corp]++
+	}
+	for _,corp:=range commons.CorpNames{
+		if mines[corp]==0{
+			continue
+		}
+		bo := ButtonOpts{
+			Tex:    tex,
+			Face:   Fonts[Face_mono],
+			CapClr: color.White,
+			Clr:    commons.ColorByOwner(corp),
+			Caption: commons.CompanyNameByOwner(corp),
+			Tags: minecorptagprefix+corp,
+		}
+		p.right.AddButton(bo)
+	}
+}
+
+func (p *cosmoPanels) rightLanding(){
+	p.right.ClearButtons()
+	tex := GetAtlasTex(commons.ButtonAN)
+
+	bo := ButtonOpts{
+		Tex:    tex,
+		Face:   Fonts[Face_mono],
+		CapClr: color.White,
+		Clr:    color.White,
+		Caption: "DO ORBIT",
+		Tags: "button_orbit",
+	}
+	p.right.AddButton(bo)
+
+	bo = ButtonOpts{
+		Tex:    tex,
+		Face:   Fonts[Face_mono],
+		CapClr: color.White,
+		Clr:    color.White,
+		Caption: "LEAVE ORBIT",
+		Tags: "button_leaveorbit",
+	}
+	p.right.AddButton(bo)
+
+}
+
 func (p *cosmoPanels) recalcTop() {
 	if p.leftB == Data.NaviData.BeaconCount {
 		return
@@ -103,6 +160,7 @@ func (p *cosmoPanels) recalcTop() {
 		Clr:     color.White,
 		Caption: fmt.Sprintf("BEACON [%v]", p.leftB),
 		Tags:    "button_beacon",
+		HighlightClr: colornames.Green,
 	}
 	p.top.ClearButtons()
 	p.top.AddButton(bo)

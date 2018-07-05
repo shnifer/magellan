@@ -3,7 +3,7 @@ package draw
 import "github.com/Shnifer/magellan/graph"
 
 const (
-	mark_size   = 25
+	Mark_size   = 25
 	sprite_size = 40
 )
 
@@ -11,14 +11,14 @@ func MarkAlpha(size float64, cam *graph.Camera) (alphaMark, alphaSprite float64)
 	if cam != nil {
 		size *= cam.Scale
 	}
-	if size <= mark_size {
+	if size <= Mark_size {
 		alphaMark = 1
 		alphaSprite = 0
 	} else if size >= sprite_size {
 		alphaMark = 0
 		alphaSprite = 1
 	} else {
-		k := (size - mark_size) / (sprite_size - mark_size)
+		k := (size - Mark_size) / (sprite_size - Mark_size)
 		alphaMark = 1 - k
 		alphaSprite = k
 	}
