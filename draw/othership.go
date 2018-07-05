@@ -7,10 +7,6 @@ import (
 	"image/color"
 )
 
-const (
-	shipSize = 1
-)
-
 type OtherShip struct {
 	markSprite *graph.Sprite
 	sprite     *graph.Sprite
@@ -62,7 +58,7 @@ func (s *OtherShip) Update(dt float64) {
 func (s *OtherShip) Req() *graph.DrawQueue {
 	R := graph.NewDrawQueue()
 
-	markAlpha, spriteAlpha := MarkAlpha(shipSize, s.camParams.Cam)
+	markAlpha, spriteAlpha := MarkAlpha(commons.ShipSize, s.camParams.Cam)
 	if markAlpha > 0 && s.markSprite != nil {
 		R.Add(s.markSprite, graph.Z_ABOVE_OBJECT)
 	}

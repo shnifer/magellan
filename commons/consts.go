@@ -2,6 +2,8 @@ package commons
 
 import "time"
 
+const ShipSize = 10
+
 const (
 	ROLE_Pilot  = "Pilot"
 	ROLE_Engi   = "Engi"

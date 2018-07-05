@@ -18,8 +18,6 @@ import (
 const trailPeriod = 0.25
 const trailLifeTime = 10
 
-const shipSize = 1
-
 type cosmoScene struct {
 	ship     *graph.Sprite
 	shipMark *graph.Sprite
@@ -65,13 +63,14 @@ func newCosmoScene() *cosmoScene {
 	cam.Recalc()
 
 	ship := NewAtlasSprite(ShipAN, cam.Phys())
-	ship.SetSize(shipSize, shipSize)
+	ship.SetSize(ShipSize, ShipSize)
 
 	shipMark := NewAtlasSprite(MARKShipAN, cam.FixS())
 	//shipMark.SetSize(50,50)
 
 	marker := NewAtlasSprite(NaviMarkerAN, cam.Deny())
 	marker.SetPivot(graph.MidBottom())
+	marker.SetSize(40,40)
 
 	hud := newCosmoSceneHUD(cam)
 
@@ -225,7 +224,7 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Add(s.naviMarker, graph.Z_ABOVE_OBJECT)
 	}
 
-	alphaMark, alphaSprite := MarkAlpha(shipSize/2.0, s.cam)
+	alphaMark, alphaSprite := MarkAlpha(ShipSize/2.0, s.cam)
 	if alphaMark > 0 && s.shipMark != nil {
 		s.shipMark.SetAlpha(alphaMark)
 		Q.Add(s.shipMark, graph.Z_HUD)

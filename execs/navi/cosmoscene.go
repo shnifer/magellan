@@ -12,8 +12,6 @@ import (
 )
 
 const (
-	shipSize = 1
-
 	inputMain = 0
 	inputText = 1
 )
@@ -45,11 +43,23 @@ type cosmoScene struct {
 
 	announce *AnnounceText
 
+	background *graph.Sprite
+	f9 *graph.Frame9HUD
+
 	inputFocus int
 	textInput  *TextInput
 }
 
 func newCosmoScene() *cosmoScene {
+	var background *graph.Sprite
+
+	if !DEFVAL.LowQ {
+		background = NewAtlasSpriteHUD(commons.DefaultBackgroundAN)
+		background.SetSize(float64(WinW), float64(WinH))
+		background.SetPivot(graph.TopLeft())
+		background.SetColor(colornames.Dimgrey)
+	}
+
 	caption := graph.NewText("Navi scene", Fonts[Face_cap], colornames.Aliceblue)
 	caption.SetPosPivot(graph.ScrP(0.1, 0.1), graph.TopLeft())
 
@@ -58,7 +68,7 @@ func newCosmoScene() *cosmoScene {
 	cam.Recalc()
 
 	ship := NewAtlasSprite(commons.ShipAN, cam.Phys())
-	ship.SetSize(shipSize, shipSize)
+	ship.SetSize(commons.ShipSize, commons.ShipSize)
 
 	shipMark := NewAtlasSprite(commons.MARKShipAN, cam.FixS())
 
@@ -72,6 +82,8 @@ func newCosmoScene() *cosmoScene {
 	size := graph.ScrP(0.6, 0.1)
 	textPanel.SetSize(size.X, size.Y)
 
+	f9:=NewAtlasFrame9HUD(commons.Frame9AN, WinW, WinH, graph.Z_HUD-1)
+
 	scene := &cosmoScene{
 		caption:     caption,
 		ship:        ship,
@@ -81,6 +93,9 @@ func newCosmoScene() *cosmoScene {
 		objects:     make(map[string]*CosmoPoint),
 		otherShips:  make(map[string]*OtherShip),
 		announce:    at,
+		background:  background,
+		f9: 	f9,
+
 	}
 	scene.textInput = NewTextInput(textPanel, Fonts[Face_cap], colornames.White, graph.Z_HUD+1, scene.onBeaconTextInput)
 
@@ -174,6 +189,11 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 
 	Q := graph.NewDrawQueue()
 
+	if s.background!=nil{
+		Q.Add(s.background,graph.Z_STAT_BACKGROUND)
+		Q.Append(s.f9)
+	}
+
 	Q.Append(s.scanner)
 
 	for _, co := range s.objects {
@@ -186,7 +206,7 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 
 	Q.Append(s.predictors)
 
-	alphaMark, alphaSprite := MarkAlpha(shipSize/2.0, s.cam)
+	alphaMark, alphaSprite := MarkAlpha(commons.ShipSize/2.0, s.cam)
 	if alphaMark > 0 && s.shipMark != nil {
 		s.shipMark.SetAlpha(alphaMark)
 		Q.Add(s.shipMark, graph.Z_HUD)
