@@ -79,11 +79,10 @@ func (p *cosmoPanels) recalcLeft() {
 		CapClr: color.White,
 		Clr:    color.White,
 	}
-	if len(Data.NaviData.Mines) > 0 {
-		bo.Caption = "SCAN"
-		bo.Tags = "button_scan"
-		p.left.AddButton(bo)
-	}
+	bo.Caption = "SCAN"
+	bo.Tags = "button_scan"
+	p.left.AddButton(bo)
+
 	if len(Data.NaviData.Mines) > 0 {
 		bo.Caption = fmt.Sprintf("MINE [%v]", p.leftM)
 		bo.Tags = "button_mine"

@@ -252,12 +252,12 @@ func (s *cosmoScene) updateInputMain() {
 		s.isCamToShip = false
 		s.cam.Recalc()
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyA) {
+	if ebiten.IsKeyPressed(ebiten.KeyS) {
 		s.cam.Pos.DoAddMul(v2.V2{X: 0, Y: -1}, moveScale)
 		s.isCamToShip = false
 		s.cam.Recalc()
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyS) {
+	if ebiten.IsKeyPressed(ebiten.KeyA) {
 		s.cam.Pos.DoAddMul(v2.V2{X: -1, Y: 0}, moveScale)
 		s.isCamToShip = false
 		s.cam.Recalc()
