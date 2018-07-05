@@ -32,6 +32,8 @@ type NaviData struct {
 	Landing []string `json:"ld"`
 
 	//cosmo
+	IsScanning    bool
+	ScanObjectID string
 	IsOrbiting    bool
 	OrbitObjectID string
 	ActiveMarker  bool  `json:"ma"`

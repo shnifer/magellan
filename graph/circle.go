@@ -2,7 +2,7 @@ package graph
 
 import "github.com/hajimehoshi/ebiten"
 
-const defaultTexRadius = 127
+const defaultTexRadius = 512
 
 var defaultCircle Tex
 
@@ -16,7 +16,7 @@ func CircleTex() Tex {
 
 func circleTex(radius int) Tex {
 	d := radius*2 + 1
-	img, _ := ebiten.NewImage(d, d, ebiten.FilterDefault)
+	img, _ := ebiten.NewImage(d, d, ebiten.FilterLinear)
 
 	p := make([]byte, d*d*4)
 	dw := d * 4
@@ -36,5 +36,5 @@ func circleTex(radius int) Tex {
 
 	img.ReplacePixels(p)
 
-	return TexFromImage(img, ebiten.FilterDefault, 0, 0, 0, "~circle")
+	return TexFromImage(img, ebiten.FilterLinear, 0, 0, 0, "~circle")
 }

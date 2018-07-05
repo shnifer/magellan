@@ -16,6 +16,7 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 	common.PilotData.ThrustVector = v2.ZV
 	common.NaviData.SonarDir = common.PilotData.Ship.Ang
 	common.NaviData.IsOrbiting = false
+	common.NaviData.IsScanning = false
 	common.ServerData.OtherShips = nil
 
 	sessionTime := time.Now().Sub(StartDateTime).Seconds()

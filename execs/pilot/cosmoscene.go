@@ -51,6 +51,9 @@ type cosmoScene struct {
 	//setParams eachUpdate
 	gravityAcc    v2.V2
 	gravityReport []v2.V2
+
+	//show from Navi
+	scanRange  *graph.Sprite
 }
 
 func newCosmoScene() *cosmoScene {
@@ -72,6 +75,10 @@ func newCosmoScene() *cosmoScene {
 
 	hud := newCosmoSceneHUD(cam)
 
+	scanRange := graph.NewSprite(graph.CircleTex(), cam.Phys())
+	scanRange.SetAlpha(0.5)
+	scanRange.SetColor(colornames.Indigo)
+
 	res := cosmoScene{
 		caption:    caption,
 		ship:       ship,
@@ -81,6 +88,7 @@ func newCosmoScene() *cosmoScene {
 		hud:        hud,
 		objects:    make(map[string]*CosmoPoint),
 		otherShips: make(map[string]*OtherShip),
+		scanRange: scanRange,
 	}
 
 	res.trail = graph.NewFadingArray(GetAtlasTex(TrailAN), trailLifeTime/trailPeriod, cam.Deny())
@@ -235,6 +243,15 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 
 	if !Data.NaviData.IsOrbiting {
 		Q.Append(s.predictors)
+	}
+
+	if Data.NaviData.IsScanning{
+		Range := Data.SP.Radar.Scan_range * 2
+		if p,ok:=Data.Galaxy.Points[Data.NaviData.ScanObjectID];ok {
+			s.scanRange.SetPos(p.Pos)
+			s.scanRange.SetSize(Range, Range)
+			Q.Add(s.scanRange, graph.Z_UNDER_OBJECT)
+		}
 	}
 
 	s.drawScale(Q)
