@@ -64,9 +64,7 @@ func (ti *TextInput) Update(dt float64) {
 	}
 }
 
-func (ti *TextInput) Req() *graph.DrawQueue {
-	R := graph.NewDrawQueue()
-	R.Add(ti.sprite, ti.layer)
-	R.Add(ti.gText, ti.layer+1)
-	return R
+func (ti *TextInput) Req(Q *graph.DrawQueue) {
+	Q.Add(ti.sprite, ti.layer)
+	Q.Add(ti.gText, ti.layer+1)
 }

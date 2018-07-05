@@ -33,6 +33,8 @@ type warpScene struct {
 	thrustControlHUD *graph.Sprite
 	turnLevelHUD     *graph.Sprite
 	turnControlHUD   *graph.Sprite
+
+	q *graph.DrawQueue
 }
 
 func newWarpScene() *warpScene {
@@ -55,6 +57,7 @@ func newWarpScene() *warpScene {
 		cam:         cam,
 		objects:     make(map[string]*CosmoPoint),
 		sonarSector: sonarSector,
+		q:           graph.NewDrawQueue(),
 	}
 
 	res.trail = graph.NewFadingArray(GetAtlasTex(TrailAN), trailLifeTime/trailPeriod,
@@ -166,7 +169,8 @@ func (s *warpScene) camRecalc() {
 func (s *warpScene) Draw(image *ebiten.Image) {
 	defer LogFunc("warpScene.Draw")()
 
-	Q := graph.NewDrawQueue()
+	Q := s.q
+	Q.Clear()
 
 	Q.Add(s.sonarSector, graph.Z_UNDER_OBJECT)
 

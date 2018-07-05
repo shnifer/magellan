@@ -1,11 +1,11 @@
 package main
 
 import (
-	"testing"
-	."github.com/Shnifer/magellan/commons"
-	"io/ioutil"
 	"encoding/json"
+	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/v2"
+	"io/ioutil"
+	"testing"
 )
 
 var galaxy *Galaxy
@@ -15,7 +15,7 @@ func BenchmarkUpdate1(b *testing.B) {
 	var st float64
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		st+=0.1
+		st += 0.1
 		Update1(st)
 	}
 }
@@ -25,7 +25,7 @@ func BenchmarkUpdate2(b *testing.B) {
 	var st float64
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		st+=0.1
+		st += 0.1
 		Update2(st)
 	}
 }
@@ -37,7 +37,7 @@ func BenchmarkUpdate3(b *testing.B) {
 	Data.PilotData = &PilotData{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		Update3(Data,0.016,0.001)
+		Update3(Data, 0.016, 0.001)
 	}
 }
 
@@ -59,7 +59,7 @@ func Update2(st float64) {
 		if obj.ParentID == "" {
 			continue
 		}
-		parent,ok:=posMap[obj.ParentID]
+		parent, ok := posMap[obj.ParentID]
 		if !ok {
 			parent = galaxy.Points[obj.ParentID].Pos
 			posMap[obj.ParentID] = parent
@@ -81,23 +81,23 @@ func Update3(data TData, sumT float64, dt float64) {
 	var thrust v2.V2
 	var grav v2.V2
 
-	moveList:=make(map[string]struct{})
-	var l2,g float64
-	for _,obj:=range galaxy.Ordered{
-		if obj.Mass==0{
+	moveList := make(map[string]struct{})
+	var l2, g float64
+	for _, obj := range galaxy.Ordered {
+		if obj.Mass == 0 {
 			continue
 		}
-		l2=ship.Pos.Sub(obj.Pos).LenSqr()
-		g=obj.Mass/l2
-		if g>0.001{
-			moveList[obj.ID]= struct{}{}
+		l2 = ship.Pos.Sub(obj.Pos).LenSqr()
+		g = obj.Mass / l2
+		if g > 0.001 {
+			moveList[obj.ID] = struct{}{}
 		}
 	}
 
 	sumT += fixedTimeRest
 	for sumT >= dt {
 		sessionTime += dt
-		UpdateGal(galaxy,sessionTime,moveList)
+		UpdateGal(galaxy, sessionTime, moveList)
 		sumT -= dt
 
 		grav = SumGravityAcc(ship.Pos, galaxy)
@@ -122,7 +122,7 @@ func UpdateGal(galaxy *Galaxy, sessionTime float64, moveList map[string]struct{}
 
 	//skip lvl 0 objects, they do not move
 	for id := range moveList {
-		obj:=galaxy.Points[id]
+		obj := galaxy.Points[id]
 		if obj.ParentID == "" {
 			continue
 		}
@@ -143,7 +143,7 @@ func BenchmarkUpdate4(b *testing.B) {
 	gravGalaxy = calcGravGalaxy(galaxy)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		Update4(Data,0.016,0.001)
+		Update4(Data, 0.016, 0.001)
 	}
 }
 
@@ -156,12 +156,12 @@ func Update4(data TData, sumT float64, dt float64) {
 
 	var grav v2.V2
 
-	loadGravGalaxy(gravGalaxy,galaxy)
+	loadGravGalaxy(gravGalaxy, galaxy)
 
 	sumT += fixedTimeRest
 	for sumT >= dt {
 		sessionTime += dt
-		UpdateGravGal(gravGalaxy,sessionTime)
+		UpdateGravGal(gravGalaxy, sessionTime)
 		sumT -= dt
 
 		grav = sumGrav(ship.Pos, gravGalaxy)
@@ -175,14 +175,14 @@ func Update4(data TData, sumT float64, dt float64) {
 	data.PilotData.SessionTime = sessionTime
 }
 
-type gravP = struct{
+type gravP = struct {
 	id        string
 	parentInd int
 	pos       v2.V2
-	orbit float64
-	period float64
-	mass float64
-	gDepth float64
+	orbit     float64
+	period    float64
+	mass      float64
+	gDepth    float64
 }
 type gravGalaxyT = []gravP
 
@@ -194,7 +194,7 @@ func UpdateGravGal(galaxy gravGalaxyT, sessionTime float64) {
 	var parent v2.V2
 
 	//skip lvl 0 objects, they do not move
-	for i,gravP := range galaxy {
+	for i, gravP := range galaxy {
 		if gravP.parentInd == -1 {
 			continue
 		}
@@ -206,37 +206,37 @@ func UpdateGravGal(galaxy gravGalaxyT, sessionTime float64) {
 	}
 }
 
-func calcGravGalaxy(galaxy *Galaxy) gravGalaxyT{
-	res:=make(gravGalaxyT,0,len(galaxy.Ordered))
+func calcGravGalaxy(galaxy *Galaxy) gravGalaxyT {
+	res := make(gravGalaxyT, 0, len(galaxy.Ordered))
 
-	ord:=make(map[string]int)
-	for _, obj:=range galaxy.Ordered{
-		if obj.Mass==0{
+	ord := make(map[string]int)
+	for _, obj := range galaxy.Ordered {
+		if obj.Mass == 0 {
 			continue
 		}
-		p:=gravP{
-			id: obj.ID,
-			pos: obj.Pos,
-			orbit: obj.Orbit,
+		p := gravP{
+			id:     obj.ID,
+			pos:    obj.Pos,
+			orbit:  obj.Orbit,
 			period: obj.Period,
-			mass: obj.Mass,
+			mass:   obj.Mass,
 			gDepth: obj.GDepth,
 		}
-		if obj.ParentID=="" {
+		if obj.ParentID == "" {
 			p.parentInd = -1
 		} else {
 			p.parentInd = ord[obj.ParentID]
 		}
 		res = append(res, p)
-		ord[obj.ID]=len(res)-1
+		ord[obj.ID] = len(res) - 1
 	}
 
 	return res
 }
 
 func loadGravGalaxy(gg gravGalaxyT, galaxy *Galaxy) {
-	for i,p:=range gg{
-		gg[i].pos=galaxy.Points[p.id].Pos
+	for i, p := range gg {
+		gg[i].pos = galaxy.Points[p.id].Pos
 	}
 }
 
@@ -252,13 +252,13 @@ func sumGrav(pos v2.V2, gg gravGalaxyT) (sumF v2.V2) {
 	return sumF
 }
 
-func loadgalaxy(){
-	buf,err:=ioutil.ReadFile("testgalaxy.json")
-	if err!=nil{
+func loadgalaxy() {
+	buf, err := ioutil.ReadFile("testgalaxy.json")
+	if err != nil {
 		panic(err)
 	}
-	err=json.Unmarshal(buf,&galaxy)
-	if err!=nil{
+	err = json.Unmarshal(buf, &galaxy)
+	if err != nil {
 		panic(err)
 	}
 

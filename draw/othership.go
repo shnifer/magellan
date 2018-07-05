@@ -55,17 +55,14 @@ func (s *OtherShip) Update(dt float64) {
 	s.capText.SetPosPivot(pos, graph.Center())
 }
 
-func (s *OtherShip) Req() *graph.DrawQueue {
-	R := graph.NewDrawQueue()
-
+func (s *OtherShip) Req(Q *graph.DrawQueue) {
 	markAlpha, spriteAlpha := MarkAlpha(commons.ShipSize, s.camParams.Cam)
 	if markAlpha > 0 && s.markSprite != nil {
-		R.Add(s.markSprite, graph.Z_ABOVE_OBJECT)
+		Q.Add(s.markSprite, graph.Z_ABOVE_OBJECT)
 	}
 
 	if spriteAlpha > 0 && s.sprite != nil {
-		R.Add(s.sprite, graph.Z_ABOVE_OBJECT)
+		Q.Add(s.sprite, graph.Z_ABOVE_OBJECT)
 	}
-	R.Add(s.capText, graph.Z_HUD)
-	return R
+	Q.Add(s.capText, graph.Z_HUD)
 }

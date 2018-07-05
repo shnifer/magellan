@@ -48,11 +48,9 @@ func (p predictors) setParams() {
 	p.predictorZero.SetAccelSessionTimeShipPos(v2.ZV, Data.PilotData.SessionTime, Data.PilotData.Ship)
 }
 
-func (p predictors) Req() *graph.DrawQueue {
-	R := graph.NewDrawQueue()
+func (p predictors) Req(Q *graph.DrawQueue) {
 	if p.show {
-		R.Append(p.predictorZero)
-		R.Append(p.predictorThrust)
+		Q.Append(p.predictorZero)
+		Q.Append(p.predictorThrust)
 	}
-	return R
 }

@@ -51,7 +51,9 @@ type cosmoScene struct {
 	gravityReport []v2.V2
 
 	//show from Navi
-	scanRange  *graph.Sprite
+	scanRange *graph.Sprite
+
+	q *graph.DrawQueue
 }
 
 func newCosmoScene() *cosmoScene {
@@ -70,7 +72,7 @@ func newCosmoScene() *cosmoScene {
 
 	marker := NewAtlasSprite(NaviMarkerAN, cam.Deny())
 	marker.SetPivot(graph.MidBottom())
-	marker.SetSize(40,40)
+	marker.SetSize(40, 40)
 
 	hud := newCosmoSceneHUD(cam)
 
@@ -87,7 +89,8 @@ func newCosmoScene() *cosmoScene {
 		hud:        hud,
 		objects:    make(map[string]*CosmoPoint),
 		otherShips: make(map[string]*OtherShip),
-		scanRange: scanRange,
+		scanRange:  scanRange,
+		q:          graph.NewDrawQueue(),
 	}
 
 	res.trail = graph.NewFadingArray(GetAtlasTex(TrailAN), trailLifeTime/trailPeriod, cam.Deny())
@@ -146,9 +149,9 @@ func (s *cosmoScene) Update(dt float64) {
 	if !Data.NaviData.IsOrbiting {
 		UpdateGalaxyAndShip(Data, dt, DEFVAL.DT)
 	} else {
-		Data.PilotData.SessionTime+=dt
+		Data.PilotData.SessionTime += dt
 		Data.Galaxy.Update(Data.PilotData.SessionTime)
-		obj:=Data.Galaxy.Points[Data.NaviData.OrbitObjectID]
+		obj := Data.Galaxy.Points[Data.NaviData.OrbitObjectID]
 		Data.PilotData.Ship.Pos = obj.Pos
 		Data.PilotData.Ship.Vel = v2.ZV
 		Data.PilotData.Ship.AngVel = 0
@@ -201,7 +204,8 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 	s.shipMark.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
 
-	Q := graph.NewDrawQueue()
+	Q := s.q
+	Q.Clear()
 
 	Q.Append(s.hud)
 	Q.Append(s.warpEngine)
@@ -244,9 +248,9 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Append(s.predictors)
 	}
 
-	if Data.NaviData.IsScanning{
+	if Data.NaviData.IsScanning {
 		Range := Data.SP.Radar.Scan_range * 2
-		if p,ok:=Data.Galaxy.Points[Data.NaviData.ScanObjectID];ok {
+		if p, ok := Data.Galaxy.Points[Data.NaviData.ScanObjectID]; ok {
 			s.scanRange.SetPos(p.Pos)
 			s.scanRange.SetSize(Range, Range)
 			Q.Add(s.scanRange, graph.Z_UNDER_OBJECT)

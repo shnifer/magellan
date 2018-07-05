@@ -22,6 +22,8 @@ type warpScene struct {
 	sonar *graph.Sector
 
 	face font.Face
+
+	q *graph.DrawQueue
 }
 
 func newWarpScene() *warpScene {
@@ -45,6 +47,7 @@ func newWarpScene() *warpScene {
 		cam:     cam,
 		face:    Fonts[Face_stats],
 		sonar:   sonarSector,
+		q:       graph.NewDrawQueue(),
 	}
 }
 
@@ -84,7 +87,8 @@ func (s *warpScene) Update(dt float64) {
 func (s *warpScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
-	Q := graph.NewDrawQueue()
+	Q := s.q
+	Q.Clear()
 
 	Q.Add(s.sonar, graph.Z_UNDER_OBJECT)
 

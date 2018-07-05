@@ -20,7 +20,7 @@ const (
 
 const (
 	ShowMasterKey = "ShowMaster"
-	GameEventKey = "GameEvent"
+	GameEventKey  = "GameEvent"
 )
 
 type iStorage interface {
@@ -56,7 +56,7 @@ func log(lvl int, entry *logrus.Entry, args ...interface{}) {
 
 func Log(lvl int, args ...interface{}) {
 	if logger == nil {
-		if lvl<=int(LoggerLevel) {
+		if lvl <= int(LoggerLevel) {
 			native.Println(args...)
 		}
 		return
@@ -136,14 +136,14 @@ func GetLogStateFieldsStr() string {
 }
 
 func SaveToStorage(eventKey string, args string, stateFields string) {
-	forbidden := []string{"\\","/",":","*","?","\"","<",">","|","+"}
+	forbidden := []string{"\\", "/", ":", "*", "?", "\"", "<", ">", "|", "+"}
 
 	area := eventKey
 	nID := logStorage.NextID()
 	tStr := time.Now().Format(time.Stamp)
 	tStr = strings.Replace(tStr, ":", ".", -1)
-	safeArgs :=args
-	for _,sym:=range forbidden{
+	safeArgs := args
+	for _, sym := range forbidden {
 		safeArgs = strings.Replace(safeArgs, sym, ".", -1)
 	}
 

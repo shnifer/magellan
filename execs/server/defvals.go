@@ -32,7 +32,7 @@ type tDefVals struct {
 	LogRetryMinMs   int
 	LogRetryMaxMs   int
 	LogIP           string
-	LogHostName string
+	LogHostName     string
 
 	//storage exchanger
 	GameExchPort     string

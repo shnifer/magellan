@@ -10,12 +10,12 @@ import (
 	"strings"
 )
 
-func changeCP(s *cosmoScene, id string, point *CosmoPoint){
-	if point==nil{
+func changeCP(s *cosmoScene, id string, point *CosmoPoint) {
+	if point == nil {
 		Log(LVL_ERROR, "scene change CosmoPoint with nil value")
 		return
 	}
-	if _, ok:=s.objects[id]; ok{
+	if _, ok := s.objects[id]; ok {
 		*s.objects[id] = *point
 	} else {
 		s.objects[id] = point
@@ -69,8 +69,8 @@ func (s *cosmoScene) delBuilding(b Building) {
 func (s *cosmoScene) OnCommand(command string) {
 	switch {
 	case strings.HasPrefix(command, CMD_BUILDINGEVENT):
-		if Data.Galaxy==nil{
-			Log(LVL_ERROR,"Oncommand CMD_BUILDINGEVENT on nil Data.Galaxy")
+		if Data.Galaxy == nil {
+			Log(LVL_ERROR, "Oncommand CMD_BUILDINGEVENT on nil Data.Galaxy")
 			return
 		}
 		buf := []byte(strings.TrimPrefix(command, CMD_BUILDINGEVENT))

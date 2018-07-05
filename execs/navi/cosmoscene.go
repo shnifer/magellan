@@ -44,10 +44,12 @@ type cosmoScene struct {
 	announce *AnnounceText
 
 	background *graph.Sprite
-	f9 *graph.Frame9HUD
+	f9         *graph.Frame9HUD
 
 	inputFocus int
 	textInput  *TextInput
+
+	q *graph.DrawQueue
 }
 
 func newCosmoScene() *cosmoScene {
@@ -82,7 +84,7 @@ func newCosmoScene() *cosmoScene {
 	size := graph.ScrP(0.6, 0.1)
 	textPanel.SetSize(size.X, size.Y)
 
-	f9:=NewAtlasFrame9HUD(commons.Frame9AN, WinW, WinH, graph.Z_HUD-1)
+	f9 := NewAtlasFrame9HUD(commons.Frame9AN, WinW, WinH, graph.Z_HUD-1)
 
 	scene := &cosmoScene{
 		caption:     caption,
@@ -94,8 +96,8 @@ func newCosmoScene() *cosmoScene {
 		otherShips:  make(map[string]*OtherShip),
 		announce:    at,
 		background:  background,
-		f9: 	f9,
-
+		f9:          f9,
+		q:           graph.NewDrawQueue(),
 	}
 	scene.textInput = NewTextInput(textPanel, Fonts[Face_cap], colornames.White, graph.Z_HUD+1, scene.onBeaconTextInput)
 
@@ -187,10 +189,11 @@ func (s *cosmoScene) Update(dt float64) {
 func (s *cosmoScene) Draw(image *ebiten.Image) {
 	defer LogFunc("cosmoScene.Draw")()
 
-	Q := graph.NewDrawQueue()
+	Q := s.q
+	Q.Clear()
 
-	if s.background!=nil{
-		Q.Add(s.background,graph.Z_STAT_BACKGROUND)
+	if s.background != nil {
+		Q.Add(s.background, graph.Z_STAT_BACKGROUND)
 		Q.Append(s.f9)
 	}
 

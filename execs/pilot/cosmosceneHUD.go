@@ -116,9 +116,8 @@ func (s *cosmoScene) UpdateHUD() {
 	s.hud.compass.SetPos(Data.PilotData.Ship.Pos)
 }
 
-func (h cosmoSceneHUD) Req() *graph.DrawQueue {
+func (h cosmoSceneHUD) Req(Q *graph.DrawQueue) {
 
-	Q := graph.NewDrawQueue()
 	if !DEFVAL.LowQ {
 		Q.Add(h.background, graph.Z_STAT_BACKGROUND)
 	}
@@ -132,6 +131,4 @@ func (h cosmoSceneHUD) Req() *graph.DrawQueue {
 	Q.Add(h.turnControl, graph.Z_HUD+1)
 
 	Q.Append(h.f9)
-
-	return Q
 }

@@ -168,10 +168,9 @@ func (co *CosmoPoint) Update(dt float64) {
 	co.recalcSprite()
 }
 
-func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
-	res = graph.NewDrawQueue()
+func (co *CosmoPoint) Req(Q *graph.DrawQueue) {
 	if co.EmissionRange != nil {
-		res.Add(co.EmissionRange, graph.Z_UNDER_OBJECT)
+		Q.Add(co.EmissionRange, graph.Z_UNDER_OBJECT)
 	}
 
 	markAlpha, spriteAlpha := MarkAlpha(co.Size*2/co.markLevelScale, co.cam)
@@ -180,24 +179,24 @@ func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 		co.MarkSprite.SetAlpha(markAlpha)
 		co.MarkGlowSprite.SetAlpha(markAlpha)
 
-		res.Add(co.MarkSprite, graph.Z_GAME_OBJECT-co.level)
-		res.Add(co.MarkGlowSprite, graph.Z_GAME_OBJECT-10)
+		Q.Add(co.MarkSprite, graph.Z_GAME_OBJECT-co.level)
+		Q.Add(co.MarkGlowSprite, graph.Z_GAME_OBJECT-10)
 	}
 
 	if spriteAlpha > 0 {
 		if lowQ {
 			if co.SimpleSprite != nil {
 				co.SimpleSprite.SetAlpha(spriteAlpha)
-				res.Add(co.SimpleSprite, graph.Z_GAME_OBJECT)
+				Q.Add(co.SimpleSprite, graph.Z_GAME_OBJECT)
 			}
 		} else {
 			if co.SlidingSphere != nil {
 				co.SlidingSphere.SetAlpha(spriteAlpha)
-				res.Add(co.SlidingSphere, graph.Z_GAME_OBJECT)
+				Q.Add(co.SlidingSphere, graph.Z_GAME_OBJECT)
 			}
 			if co.CycledSprite != nil {
 				co.CycledSprite.SetAlpha(spriteAlpha)
-				res.Add(co.CycledSprite, graph.Z_GAME_OBJECT)
+				Q.Add(co.CycledSprite, graph.Z_GAME_OBJECT)
 			}
 		}
 	}
@@ -205,9 +204,7 @@ func (co *CosmoPoint) Req() (res *graph.DrawQueue) {
 	co.glyphs.setPos(co.cam.Apply(co.Pos))
 	co.glyphs.setSize(co.cam.Scale * co.Size)
 
-	res.Append(co.glyphs)
-
-	return res
+	Q.Append(co.glyphs)
 }
 
 func (co *CosmoPoint) recalcSprite() {

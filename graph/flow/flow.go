@@ -7,7 +7,7 @@ import (
 
 type updDrawPointer interface {
 	update(dt float64)
-	drawPoint(p Point) *graph.DrawQueue
+	drawPoint(p Point, Q *graph.DrawQueue)
 }
 
 type Point struct {
@@ -18,8 +18,8 @@ type Point struct {
 	attr     map[string]float64
 }
 
-func (p Point) Req() *graph.DrawQueue {
-	return p.updDraw.drawPoint(p)
+func (p Point) Req(Q *graph.DrawQueue) {
+	p.updDraw.drawPoint(p, Q)
 }
 
 type AttrF = func(p Point) float64
@@ -118,12 +118,10 @@ func (f *Flow) Update(dt float64) {
 	}
 }
 
-func (f *Flow) Req() *graph.DrawQueue {
-	res := graph.NewDrawQueue()
+func (f *Flow) Req(Q *graph.DrawQueue) {
 	for _, p := range f.points {
-		res.Append(p)
+		Q.Append(p)
 	}
-	return res
 }
 
 func (f *Flow) newPoint() {

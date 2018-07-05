@@ -49,14 +49,13 @@ func toWarp() {
 	Client.RequestNewState(state.Encode(), false)
 }
 
-func (h *cosmoSceneWarpEngine) Req() *graph.DrawQueue {
+func (h *cosmoSceneWarpEngine) Req(Q *graph.DrawQueue) {
 	basePoint := graph.ScrP(0.8, 0.2)
 
-	R := graph.NewDrawQueue()
 	courseMsg := fmt.Sprintf("Course: %.1f", 360-Data.PilotData.Ship.Vel.Dir())
 	courseText := graph.NewText(courseMsg, draw.Fonts[draw.Face_mono], color.White)
 	courseText.SetPosPivot(basePoint, graph.TopLeft())
-	R.Add(courseText, graph.Z_STAT_HUD+2)
+	Q.Add(courseText, graph.Z_STAT_HUD+2)
 
 	_, h_int := courseText.GetSize()
 	interV := v2.V2{X: 0, Y: float64(h_int) * 1.4}
@@ -64,7 +63,7 @@ func (h *cosmoSceneWarpEngine) Req() *graph.DrawQueue {
 	velMsg := fmt.Sprintf("Velocity: %f", Data.PilotData.Ship.Vel.Len())
 	velText := graph.NewText(velMsg, draw.Fonts[draw.Face_mono], color.White)
 	velText.SetPosPivot(basePoint.AddMul(interV, 1), graph.TopLeft())
-	R.Add(velText, graph.Z_STAT_HUD+2)
+	Q.Add(velText, graph.Z_STAT_HUD+2)
 
 	gravAcc := h.gravityAcc.Len() * 100
 	gravityMsg := fmt.Sprintf("Gravity: %.1f%%", gravAcc)
@@ -82,7 +81,7 @@ func (h *cosmoSceneWarpEngine) Req() *graph.DrawQueue {
 
 	gravText := graph.NewText(gravityMsg, draw.Fonts[draw.Face_mono], gravityColor)
 	gravText.SetPosPivot(basePoint.AddMul(interV, 2), graph.TopLeft())
-	R.Add(gravText, graph.Z_STAT_HUD+2)
+	Q.Add(gravText, graph.Z_STAT_HUD+2)
 
 	warpMsg := ""
 	var warpColor color.Color
@@ -98,7 +97,5 @@ func (h *cosmoSceneWarpEngine) Req() *graph.DrawQueue {
 	}
 	warpText := graph.NewText(warpMsg, draw.Fonts[draw.Face_mono], warpColor)
 	warpText.SetPosPivot(basePoint.AddMul(interV, 3), graph.TopLeft())
-	R.Add(warpText, graph.Z_STAT_HUD+2)
-
-	return R
+	Q.Add(warpText, graph.Z_STAT_HUD+2)
 }

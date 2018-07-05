@@ -33,7 +33,7 @@ type NaviData struct {
 
 	//cosmo
 	IsScanning    bool
-	ScanObjectID string
+	ScanObjectID  string
 	IsOrbiting    bool
 	OrbitObjectID string
 	ActiveMarker  bool  `json:"ma"`

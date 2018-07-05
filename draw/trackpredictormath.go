@@ -4,8 +4,8 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/v2"
 	"runtime"
-	"time"
 	"sync"
+	"time"
 )
 
 type gravP struct {
@@ -42,7 +42,7 @@ func (tp *TrackPredictor) recalcPoints() {
 
 	for i := 1; i < count; i++ {
 		ss += dt
-		if i%tp.opts.GravEach==0{
+		if i%tp.opts.GravEach == 0 {
 			tp.gravGalaxy.update(ss)
 		}
 		grav = tp.gravGalaxy.sumGrav(ship.Pos)

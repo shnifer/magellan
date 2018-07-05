@@ -49,23 +49,20 @@ func newGlyph(t string, owner string) *graph.Sprite {
 	return res
 }
 
-func (g glyphs) Req() *graph.DrawQueue {
-	res := graph.NewDrawQueue()
+func (g glyphs) Req(Q *graph.DrawQueue) {
 	var pos v2.V2
 	basePos := g.pos.AddMul(v2.V2{X: -1, Y: -1}, g.size)
 	for i, sprite := range g.Glyphs0 {
 		pos = basePos.AddMul(v2.V2{X: glyphSize, Y: 0}, float64(i))
 		sprite.SetPos(pos)
-		res.Add(sprite, graph.Z_ABOVE_OBJECT)
+		Q.Add(sprite, graph.Z_ABOVE_OBJECT)
 	}
 	basePos.DoAddMul(v2.V2{X: 0, Y: glyphSize}, 1)
 	for i, sprite := range g.Glyphs1 {
 		pos = basePos.AddMul(v2.V2{X: glyphSize, Y: 0}, float64(i))
 		sprite.SetPos(pos)
-		res.Add(sprite, graph.Z_ABOVE_OBJECT)
+		Q.Add(sprite, graph.Z_ABOVE_OBJECT)
 	}
-
-	return res
 }
 
 func (g *glyphs) setPos(pos v2.V2) {

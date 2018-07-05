@@ -6,8 +6,8 @@ import (
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
-	"image/color"
 	"golang.org/x/image/colornames"
+	"image/color"
 )
 
 type cosmoPanels struct {
@@ -95,51 +95,51 @@ func (p *cosmoPanels) recalcLeft() {
 	}
 }
 
-func (p *cosmoPanels) rightMines(){
+func (p *cosmoPanels) rightMines() {
 	p.right.ClearButtons()
 	tex := GetAtlasTex(commons.ButtonAN)
 
-	mines:=make(map[string]int)
-	for _,corp:=range Data.NaviData.Mines{
+	mines := make(map[string]int)
+	for _, corp := range Data.NaviData.Mines {
 		mines[corp]++
 	}
-	for _,corp:=range commons.CorpNames{
-		if mines[corp]==0{
+	for _, corp := range commons.CorpNames {
+		if mines[corp] == 0 {
 			continue
 		}
 		bo := ButtonOpts{
-			Tex:    tex,
-			Face:   Fonts[Face_mono],
-			CapClr: color.White,
-			Clr:    commons.ColorByOwner(corp),
+			Tex:     tex,
+			Face:    Fonts[Face_mono],
+			CapClr:  color.White,
+			Clr:     commons.ColorByOwner(corp),
 			Caption: commons.CompanyNameByOwner(corp),
-			Tags: minecorptagprefix+corp,
+			Tags:    minecorptagprefix + corp,
 		}
 		p.right.AddButton(bo)
 	}
 }
 
-func (p *cosmoPanels) rightLanding(){
+func (p *cosmoPanels) rightLanding() {
 	p.right.ClearButtons()
 	tex := GetAtlasTex(commons.ButtonAN)
 
 	bo := ButtonOpts{
-		Tex:    tex,
-		Face:   Fonts[Face_mono],
-		CapClr: color.White,
-		Clr:    color.White,
+		Tex:     tex,
+		Face:    Fonts[Face_mono],
+		CapClr:  color.White,
+		Clr:     color.White,
 		Caption: "DO ORBIT",
-		Tags: "button_orbit",
+		Tags:    "button_orbit",
 	}
 	p.right.AddButton(bo)
 
 	bo = ButtonOpts{
-		Tex:    tex,
-		Face:   Fonts[Face_mono],
-		CapClr: color.White,
-		Clr:    color.White,
+		Tex:     tex,
+		Face:    Fonts[Face_mono],
+		CapClr:  color.White,
+		Clr:     color.White,
 		Caption: "LEAVE ORBIT",
-		Tags: "button_leaveorbit",
+		Tags:    "button_leaveorbit",
 	}
 	p.right.AddButton(bo)
 
@@ -153,12 +153,12 @@ func (p *cosmoPanels) recalcTop() {
 
 	tex := GetAtlasTex(commons.ButtonAN)
 	bo := ButtonOpts{
-		Tex:     tex,
-		Face:    Fonts[Face_mono],
-		CapClr:  color.White,
-		Clr:     color.White,
-		Caption: fmt.Sprintf("BEACON [%v]", p.leftB),
-		Tags:    "button_beacon",
+		Tex:          tex,
+		Face:         Fonts[Face_mono],
+		CapClr:       color.White,
+		Clr:          color.White,
+		Caption:      fmt.Sprintf("BEACON [%v]", p.leftB),
+		Tags:         "button_beacon",
 		HighlightClr: colornames.Green,
 	}
 	p.top.ClearButtons()
@@ -182,10 +182,8 @@ func (p *cosmoPanels) activeRight(active bool) {
 	p.right.SetActive(active)
 }
 
-func (p *cosmoPanels) Req() *graph.DrawQueue {
-	Q := graph.NewDrawQueue()
+func (p *cosmoPanels) Req(Q *graph.DrawQueue) {
 	Q.Append(p.left)
 	Q.Append(p.right)
 	Q.Append(p.top)
-	return Q
 }

@@ -13,7 +13,7 @@ import (
 
 type fileData struct {
 	ID, Parent  string
-	Type string
+	Type        string
 	Diameter    float64
 	Distance    float64
 	MaxGravity  float64
@@ -32,12 +32,13 @@ type fileData struct {
 
 type TParams struct {
 	K_OrbitPeriod float64
-	K_Radius float64
-	K_Mass float64
-	A_Mass float64
-	K_ZDepth float64
-	K_Size float64
+	K_Radius      float64
+	K_Mass        float64
+	A_Mass        float64
+	K_ZDepth      float64
+	K_Size        float64
 }
+
 const DEFType = "planet"
 
 var Params TParams
@@ -47,8 +48,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err=json.Unmarshal(buf, &Params)
-	if err!=nil{
+	err = json.Unmarshal(buf, &Params)
+	if err != nil {
 		panic(err)
 	}
 
@@ -95,7 +96,7 @@ func main() {
 		}
 	}
 
-	outData.SpawnDistance = maxOrbit * 1.1 *Params.K_Radius
+	outData.SpawnDistance = maxOrbit * 1.1 * Params.K_Radius
 
 	buf, err = json.Marshal(outData)
 	if err != nil {
@@ -123,9 +124,9 @@ func createGP(v fileData) (*commons.GalaxyPoint, string) {
 		return float64(int(x*sgn)) / sgn
 	}
 
-	zd:=v.GravityR10/3 * Params.K_ZDepth
-	maxGrav:=1-(1-v.MaxGravity)*Params.A_Mass
-	mass:=maxGrav*zd*zd
+	zd := v.GravityR10 / 3 * Params.K_ZDepth
+	maxGrav := 1 - (1-v.MaxGravity)*Params.A_Mass
+	mass := maxGrav * zd * zd
 
 	gp := commons.GalaxyPoint{
 		ParentID:  v.Parent,

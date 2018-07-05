@@ -44,7 +44,7 @@ func Start(timeout, minRetry, maxRetry time.Duration, logTCP string, hostname st
 	//var myTransport http.RoundTripper = MyTransport{transport: http.DefaultTransport}
 	httpClient := &http.Client{
 		Timeout: timeout,
-	//	Transport: myTransport,
+		//	Transport: myTransport,
 	}
 
 	if logTCP != "" {

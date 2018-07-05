@@ -118,13 +118,13 @@ func (s *cosmoScene) scanState(scanState int) {
 		s.cosmoPanels.activeLeft(false)
 		s.cosmoPanels.activeRight(false)
 		s.cosmoPanels.left.Enable()
-		Data.NaviData.IsScanning=false
+		Data.NaviData.IsScanning = false
 	case scanSelect:
 		s.cosmoPanels.left.Highlight("")
 		s.cosmoPanels.activeLeft(true)
 		s.cosmoPanels.activeRight(false)
 		s.cosmoPanels.left.Enable()
-		Data.NaviData.IsScanning=true
+		Data.NaviData.IsScanning = true
 		Data.NaviData.ScanObjectID = s.scanner.obj.ID
 	case scanProgress:
 		s.cosmoPanels.left.Highlight(s.scanner.work)

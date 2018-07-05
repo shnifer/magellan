@@ -110,7 +110,7 @@ func (s *scanner) update(ship v2.V2, dt float64) {
 }
 
 func (s *scanner) Start(work string) {
-	if s.state == scanZero || s.obj==nil{
+	if s.state == scanZero || s.obj == nil {
 		return
 	}
 	if s.state == scanProgress && s.work == work {
@@ -120,9 +120,7 @@ func (s *scanner) Start(work string) {
 	s.stateProgress(work)
 }
 
-func (s *scanner) Req() *graph.DrawQueue {
-	Q := graph.NewDrawQueue()
-
+func (s *scanner) Req(Q *graph.DrawQueue) {
 	Range := Data.SP.Radar.Scan_range * 2
 	s.scanRange.SetSize(Range, Range)
 	Q.Add(s.scanRange, graph.Z_UNDER_OBJECT)
@@ -147,8 +145,6 @@ func (s *scanner) Req() *graph.DrawQueue {
 			Q.Add(s.countSprite, graph.Z_UNDER_OBJECT)
 		}
 	}
-
-	return Q
 }
 
 func (s *scanner) procScanned(obj *CosmoPoint) {

@@ -54,9 +54,9 @@ func roomHandler(srv *Server) http.Handler {
 			Data: string(buf),
 		}
 
-		err=room.send.Confirm(roleName, req.ClientConfirmN)
-		if err!=nil{
-			sendErr(w,err.Error())
+		err = room.send.Confirm(roleName, req.ClientConfirmN)
+		if err != nil {
+			sendErr(w, err.Error())
 		}
 
 		message, err := room.send.Pack(roleName)

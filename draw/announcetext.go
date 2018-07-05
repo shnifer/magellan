@@ -61,10 +61,8 @@ func (at *AnnounceText) Update(dt float64) {
 	}
 }
 
-func (at *AnnounceText) Req() *graph.DrawQueue {
-	R := graph.NewDrawQueue()
+func (at *AnnounceText) Req(Q *graph.DrawQueue) {
 	if at.text != nil {
-		R.Add(at.text, at.layer)
+		Q.Add(at.text, at.layer)
 	}
-	return R
 }

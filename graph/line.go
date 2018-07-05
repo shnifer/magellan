@@ -15,6 +15,7 @@ func init() {
 	defLine = defaultLineTex()
 }
 
+//TODO: optimize! Do not create each time or trackpredictor will die
 func Line(cam *Camera, from, to v2.V2, clr color.Color) *Sprite {
 	return LineScr(cam.Apply(from), cam.Apply(to), clr)
 }

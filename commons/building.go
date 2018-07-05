@@ -141,7 +141,6 @@ func CompanyNameByOwner(owner string) string {
 	}
 }
 
-
 func AddBeacon(Data TData, Client *network.Client, msg string) {
 	sessionTime := Data.PilotData.SessionTime
 	angle := Data.PilotData.Ship.Pos.Dir() / 360

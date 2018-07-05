@@ -44,10 +44,6 @@ type drawer interface {
 	DrawF() (f DrawF, group string)
 }
 
-type drawQueuer interface {
-	Req() *DrawQueue
-}
-
 type reqs []DrawReq
 
 func (r reqs) Len() int      { return len(r) }
@@ -57,6 +53,10 @@ func (r reqs) Less(x, y int) bool {
 		return r[x].layer < r[y].layer
 	}
 	return r[x].group < r[y].group
+}
+
+type drawQueuer interface {
+	Req(Q *DrawQueue)
 }
 
 type DrawQueue struct {
@@ -70,6 +70,11 @@ func NewDrawQueue() *DrawQueue {
 	}
 }
 
+func (dq *DrawQueue) Clear() {
+	dq.reqs = dq.reqs[:0]
+}
+
+//todo: do this fast and straight
 //For simple objects(like Sprite amd other graph primitives) that do not know it's layer
 func (dq *DrawQueue) Add(drawer drawer, layer int) {
 	f, group := drawer.DrawF()
@@ -78,7 +83,7 @@ func (dq *DrawQueue) Add(drawer drawer, layer int) {
 
 //For game objects that create a set of requests with layers and groups
 func (dq *DrawQueue) Append(drawQueuer drawQueuer) {
-	dq.reqs = append(dq.reqs, drawQueuer.Req().reqs...)
+	drawQueuer.Req(dq)
 }
 
 func (dq *DrawQueue) Run(dest *ebiten.Image) {

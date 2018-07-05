@@ -105,14 +105,12 @@ func (f9 *Frame9HUD) recalc() {
 	}
 }
 
-func (f9 *Frame9HUD) Req() *DrawQueue {
-	Q := NewDrawQueue()
+func (f9 *Frame9HUD) Req(Q *DrawQueue) {
 	for i := 0; i < 9; i++ {
 		if f9.sprite[i] != nil {
 			Q.Add(f9.sprite[i], f9.layer)
 		}
 	}
-	return Q
 }
 
 /*

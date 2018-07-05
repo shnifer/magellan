@@ -9,6 +9,8 @@ import (
 type SonarHUD struct {
 	*SignaturePack
 
+	inQ *graph.DrawQueue
+
 	params graph.CamParams
 	pos    v2.V2
 	size   float64
@@ -42,12 +44,15 @@ func NewSonarHUD(pos v2.V2, size float64, params graph.CamParams, layer int) *So
 		cut:           cut,
 		img:           img,
 		layer:         layer,
+		inQ:           graph.NewDrawQueue(),
 	}
 }
 
-func (s *SonarHUD) Req() *graph.DrawQueue {
+func (s *SonarHUD) Req(Q *graph.DrawQueue) {
 	s.img.Clear()
-	s.SignaturePack.Req().Run(s.img)
+	s.inQ.Clear()
+	s.inQ.Append(s.SignaturePack)
+	s.inQ.Run(s.img)
 	im, op := s.cut.ImageOp()
 	op.CompositeMode = ebiten.CompositeModeDestinationIn
 	s.img.DrawImage(im, op)
@@ -55,7 +60,5 @@ func (s *SonarHUD) Req() *graph.DrawQueue {
 	sprite := graph.NewSprite(tex, s.params)
 	sprite.SetPos(s.pos)
 	sprite.SetSize(s.size, s.size)
-	R := graph.NewDrawQueue()
-	R.Add(sprite, s.layer)
-	return R
+	Q.Add(sprite, s.layer)
 }

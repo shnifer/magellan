@@ -1,21 +1,21 @@
 package main
 
 import (
-	"testing"
 	"github.com/Shnifer/magellan/v2"
 	"math"
+	"testing"
 )
 
 func BenchmarkInDir(b *testing.B) {
 	var ang float64
 	var sum v2.V2
 	b.StartTimer()
-	for i:=0;i<b.N;i++{
+	for i := 0; i < b.N; i++ {
 		sum = InDir1(ang)
-		ang+=0.1
+		ang += 0.1
 	}
 	b.StopTimer()
-	_=sum
+	_ = sum
 }
 
 func InDir1(angle float64) v2.V2 {
@@ -25,6 +25,6 @@ func InDir1(angle float64) v2.V2 {
 
 func InDir2(angle float64) v2.V2 {
 	a := angle * v2.Deg2Rad
-	s,c  := math.Sincos(a)
+	s, c := math.Sincos(a)
 	return v2.V2{-s, c}
 }

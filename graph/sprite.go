@@ -95,7 +95,7 @@ func (s *Sprite) recalcColorM() {
 }
 
 func (s *Sprite) SetColor(color color.Color) {
-	if s.color == color{
+	if s.color == color {
 		return
 	}
 
@@ -113,7 +113,7 @@ func (s *Sprite) SetAlpha(a float64) {
 }
 
 func (s *Sprite) SetScale(x, y float64) {
-	if s.sx==x && s.sy==y {
+	if s.sx == x && s.sy == y {
 		return
 	}
 
@@ -123,9 +123,9 @@ func (s *Sprite) SetScale(x, y float64) {
 }
 
 func (s *Sprite) SetSize(x, y float64) {
-	sx:=x / float64(s.tex.sw)
-	sy:=y / float64(s.tex.sh)
-	if s.sx==sx && s.sy==sy{
+	sx := x / float64(s.tex.sw)
+	sy := y / float64(s.tex.sh)
+	if s.sx == sx && s.sy == sy {
 		return
 	}
 
@@ -158,7 +158,7 @@ func (s *Sprite) SetPivot(pivotPartial v2.V2) {
 }
 
 func (s *Sprite) SetPos(pos v2.V2) {
-	if s.pos==pos {
+	if s.pos == pos {
 		return
 	}
 	s.pos = pos
@@ -166,7 +166,7 @@ func (s *Sprite) SetPos(pos v2.V2) {
 }
 
 func (s *Sprite) SetAng(angleDeg float64) {
-	if s.angle==angleDeg * Deg2Rad{
+	if s.angle == angleDeg*Deg2Rad {
 		return
 	}
 	s.angle = angleDeg * Deg2Rad
@@ -174,7 +174,7 @@ func (s *Sprite) SetAng(angleDeg float64) {
 }
 
 func (s *Sprite) SetPosAng(pos v2.V2, angle float64) {
-	if s.pos == pos && s.angle==angle * Deg2Rad{
+	if s.pos == pos && s.angle == angle*Deg2Rad {
 		return
 	}
 	s.pos = pos
@@ -286,7 +286,7 @@ func (s *Sprite) NextSprite() {
 }
 
 //for noCam use in fact
-func (s *Sprite) GetRect() image.Rectangle{
+func (s *Sprite) GetRect() image.Rectangle {
 	log.Println("+++")
 	log.Println(s.pos)
 	log.Println(s.pivot)

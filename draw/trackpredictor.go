@@ -44,14 +44,14 @@ type TrackPredictor struct {
 }
 
 func NewTrackPredictor(opts TrackPredictorOpts) *TrackPredictor {
-	if opts.GravEach==0{
+	if opts.GravEach == 0 {
 		opts.GravEach = 1
 	}
-	if opts.UpdT == 0{
+	if opts.UpdT == 0 {
 		opts.UpdT = 1
 	}
-	if opts.NumInSec ==0{
-		opts.NumInSec=1
+	if opts.NumInSec == 0 {
+		opts.NumInSec = 1
 	}
 	return &TrackPredictor{
 		opts:       opts,
@@ -60,7 +60,7 @@ func NewTrackPredictor(opts TrackPredictorOpts) *TrackPredictor {
 	}
 }
 
-func (tp *TrackPredictor) Req() *graph.DrawQueue {
+func (tp *TrackPredictor) Req(Q *graph.DrawQueue) {
 	// real time in s to redraw TrackPredictior
 	tp.mu.Lock()
 	defer tp.mu.Unlock()
@@ -71,17 +71,16 @@ func (tp *TrackPredictor) Req() *graph.DrawQueue {
 		tp.gravGalaxy.loadPos(tp.opts.Galaxy)
 		go tp.recalcPoints()
 	}
-	return tp.drawPoints()
+	tp.drawPoints(Q)
 }
 
 //run under mutex
-func (tp *TrackPredictor) drawPoints() *graph.DrawQueue {
+func (tp *TrackPredictor) drawPoints(Q *graph.DrawQueue) {
 	//in ms, must be a round part of minute
 	const markEach = 1
 
-	Q := graph.NewDrawQueue()
 	if tp.points == nil {
-		return Q
+		return
 	}
 
 	cutTime := -time.Since(tp.calcTime).Seconds()
@@ -111,8 +110,6 @@ func (tp *TrackPredictor) drawPoints() *graph.DrawQueue {
 		timeOffset += dt
 		cutTime += dt
 	}
-
-	return Q
 }
 
 func (tp *TrackPredictor) SetAccelSessionTimeShipPos(accel v2.V2, sessionTime float64, ship RBData) {

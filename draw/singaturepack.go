@@ -73,14 +73,10 @@ func (sp *SignaturePack) Update(dt float64) {
 	}
 }
 
-func (sp *SignaturePack) Req() *graph.DrawQueue {
-	Q := graph.NewDrawQueue()
-
+func (sp *SignaturePack) Req(Q *graph.DrawQueue) {
 	for _, f := range sp.flows {
 		Q.Append(f)
 	}
-
-	return Q
 }
 
 func createSignatureFlow(signature Signature, camParams graph.CamParams, layer int) *flow.Flow {
