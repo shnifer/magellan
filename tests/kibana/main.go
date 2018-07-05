@@ -8,7 +8,7 @@ import (
 
 func main() {
 	log := logrus.New()
-	client, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL("http://magellan2018.aerem.in:9200"))
+	client, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL("https://elasticsearch.magellan2018.aerem.in"))
 	if err != nil {
 		log.Panic(err)
 	}
