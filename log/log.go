@@ -136,12 +136,20 @@ func GetLogStateFieldsStr() string {
 }
 
 func SaveToStorage(eventKey string, args string, stateFields string) {
+	forbidden := []string{"\\","/",":","*","?","\"","<",">","|","+"}
+
 	area := eventKey
 	nID := logStorage.NextID()
 	tStr := time.Now().Format(time.Stamp)
 	tStr = strings.Replace(tStr, ":", ".", -1)
-	key := fmt.Sprintf("%v at %v (%v)", args, tStr, nID)
-	err := logStorage.Add(area, key, stateFields)
+	safeArgs :=args
+	for _,sym:=range forbidden{
+		safeArgs = strings.Replace(safeArgs, sym, ".", -1)
+	}
+
+	key := fmt.Sprintf("%v at %v (%v)", safeArgs, tStr, nID)
+
+	err := logStorage.Add(area, key, stateFields+"\n"+args)
 	if err != nil {
 		Log(LVL_ERROR, "save to storage error", err)
 	}

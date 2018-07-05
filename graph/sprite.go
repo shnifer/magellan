@@ -285,6 +285,18 @@ func (s *Sprite) NextSprite() {
 	s.SetSpriteN(s.spriteN + 1)
 }
 
+//for noCam use in fact
+func (s *Sprite) GetRect() image.Rectangle{
+	log.Println("+++")
+	log.Println(s.pos)
+	log.Println(s.pivot)
+	return image.Rect(
+		int(s.pos.X-s.pivot.X*s.sx),
+		int(s.pos.Y-s.pivot.Y*s.sy),
+		int(s.pos.X+(float64(s.tex.sw)-s.pivot.X)*s.sx),
+		int(s.pos.Y+(float64(s.tex.sh)-s.pivot.Y)*s.sy))
+}
+
 func (s *Sprite) TexImageDispose() {
 	s.tex.image.Dispose()
 }

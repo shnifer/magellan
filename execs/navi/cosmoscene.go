@@ -7,11 +7,15 @@ import (
 	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 )
 
 const (
 	shipSize = 1
+
+	inputMain = 0
+	inputText = 1
 )
 
 type cosmoScene struct {
@@ -28,6 +32,8 @@ type cosmoScene struct {
 	caption *graph.Text
 	cam     *graph.Camera
 
+	isCamToShip bool
+
 	objects map[string]*CosmoPoint
 
 	scanner *scanner
@@ -38,6 +44,9 @@ type cosmoScene struct {
 	naviMarkerT float64
 
 	announce *AnnounceText
+
+	inputFocus int
+	textInput  *TextInput
 }
 
 func newCosmoScene() *cosmoScene {
@@ -57,8 +66,13 @@ func newCosmoScene() *cosmoScene {
 
 	at := NewAnnounceText(graph.ScrP(0.5, 0.3), graph.Center(),
 		Fonts[Face_cap], graph.Z_STAT_HUD)
+	textPanel := NewAtlasSprite(commons.TextPanelAN, graph.NoCam)
+	textPanel.SetPos(graph.ScrP(0.5, 0))
+	textPanel.SetPivot(graph.TopMiddle())
+	size := graph.ScrP(0.6, 0.1)
+	textPanel.SetSize(size.X, size.Y)
 
-	return &cosmoScene{
+	scene := &cosmoScene{
 		caption:     caption,
 		ship:        ship,
 		shipMark:    shipMark,
@@ -68,6 +82,9 @@ func newCosmoScene() *cosmoScene {
 		otherShips:  make(map[string]*OtherShip),
 		announce:    at,
 	}
+	scene.textInput = NewTextInput(textPanel, Fonts[Face_cap], colornames.White, graph.Z_HUD+1, scene.onBeaconTextInput)
+
+	return scene
 }
 
 func (s *cosmoScene) Init() {
@@ -79,6 +96,7 @@ func (s *cosmoScene) Init() {
 	s.otherShips = make(map[string]*OtherShip)
 	s.naviMarkerT = 0
 	s.lastServerID = 0
+	s.isCamToShip = true
 	s.scanner = newScanner(s.cam, s.scanState)
 	s.shipRB = commons.NewRBFollower(float64(DEFVAL.PingPeriod) / 1000)
 	s.sessionTime = commons.NewSessionTime(Data.PilotData.SessionTime)
@@ -116,9 +134,6 @@ func (s *cosmoScene) Update(dt float64) {
 		ship.AngVel = 0
 	}
 
-	s.cam.Pos = ship.Pos
-	s.cam.Recalc()
-
 	//update actual otherShips
 	for id := range s.otherShips {
 		s.otherShips[id].Update(dt)
@@ -137,11 +152,8 @@ func (s *cosmoScene) Update(dt float64) {
 		co.Update(dt)
 	}
 
-	if ebiten.IsKeyPressed(ebiten.KeyQ) {
-		s.cam.Scale *= 1 + dt
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyE) {
-		s.cam.Scale /= 1 + dt
+	if s.inputFocus == inputMain {
+		s.updateInputMain()
 	}
 
 	s.ship.SetPosAng(ship.Pos, ship.Ang)
@@ -150,6 +162,11 @@ func (s *cosmoScene) Update(dt float64) {
 	s.predictors.setParams()
 	s.updateControl(dt)
 	s.announce.Update(dt)
+
+	if s.isCamToShip {
+		s.cam.Pos = ship.Pos
+		s.cam.Recalc()
+	}
 }
 
 func (s *cosmoScene) Draw(image *ebiten.Image) {
@@ -177,6 +194,10 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	if alphaSprite > 0 && s.ship != nil {
 		s.ship.SetAlpha(alphaSprite)
 		Q.Add(s.ship, graph.Z_HUD)
+	}
+
+	if s.inputFocus == inputText {
+		Q.Append(s.textInput)
 	}
 
 	Q.Append(s.cosmoPanels)
@@ -214,4 +235,22 @@ func (s *cosmoScene) actualizeOtherShips() {
 }
 
 func (*cosmoScene) Destroy() {
+}
+
+func (s *cosmoScene) updateInputMain() {
+	moveScale := 10 / s.cam.Scale
+	if ebiten.IsKeyPressed(ebiten.KeyQ) {
+		s.cam.Scale *= 1 + dt
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyE) {
+		s.cam.Scale /= 1 + dt
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyW) {
+		s.cam.Pos.DoAddMul(v2.V2{X: 0, Y: 1}, moveScale)
+		s.isCamToShip = false
+		s.cam.Recalc()
+	}
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		s.isCamToShip = true
+	}
 }

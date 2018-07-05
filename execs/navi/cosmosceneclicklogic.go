@@ -17,9 +17,14 @@ const (
 )
 
 func (s *cosmoScene) updateControl(dt float64) {
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		mousex, mousey := ebiten.CursorPosition()
-		s.procMouseClick(mousex, mousey)
+	if s.inputFocus == inputText {
+		s.textInput.Update(dt)
+	}
+	if s.inputFocus == inputMain {
+		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+			mousex, mousey := ebiten.CursorPosition()
+			s.procMouseClick(mousex, mousey)
+		}
 	}
 
 	s.scanner.update(s.shipRB.RB().Pos, dt)
@@ -67,10 +72,7 @@ func (s *cosmoScene) procButtonClick(tag string) {
 	case "button_scan":
 		s.scanner.Start(tag)
 	case "button_beacon":
-		//todo:enter text
-		AddBeacon(Data, Client, "just a test beacon")
-		ClientLogGame(Client, "ADD BEACON KEY", "just a test beacon")
-		Data.NaviData.BeaconCount--
+		s.startBeaconTextInput()
 	case "button_orbit":
 		if !Data.NaviData.IsOrbiting {
 			Data.NaviData.IsOrbiting = true
@@ -232,4 +234,19 @@ func (s *cosmoScene) checkMine() (msg string, ok bool) {
 		msg += "\nтакже неизвестные minerals"
 	}
 	return msg, true
+}
+
+func (s *cosmoScene) onBeaconTextInput(text string, done bool) {
+	s.inputFocus = inputMain
+	if !done {
+		return
+	}
+	//place beacon
+	AddBeacon(Data, Client, text)
+	ClientLogGame(Client, "beacon", text)
+	Data.NaviData.BeaconCount--
+}
+
+func (s *cosmoScene) startBeaconTextInput() {
+	s.inputFocus = inputText
 }
