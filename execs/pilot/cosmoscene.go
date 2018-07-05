@@ -136,7 +136,16 @@ func (s *cosmoScene) Update(dt float64) {
 	//Data.Galaxy.Update(sessionTime)
 	//s.procShipGravity(dt)
 	//Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
-	UpdateGalaxyAndShip(Data, dt, DEFVAL.DT)
+	if !Data.NaviData.IsOrbiting {
+		UpdateGalaxyAndShip(Data, dt, DEFVAL.DT)
+	} else {
+		Data.PilotData.SessionTime+=dt
+		Data.Galaxy.Update(Data.PilotData.SessionTime)
+		obj:=Data.Galaxy.Points[Data.NaviData.OrbitObjectID]
+		Data.PilotData.Ship.Pos = obj.Pos
+		Data.PilotData.Ship.Vel = v2.ZV
+		Data.PilotData.Ship.AngVel = 0
+	}
 
 	for id, co := range s.objects {
 		if gp, ok := Data.Galaxy.Points[id]; ok {
@@ -145,8 +154,12 @@ func (s *cosmoScene) Update(dt float64) {
 		co.Update(dt)
 	}
 
-	s.updateShipControl(dt)
-	s.procEmissions(dt)
+	//we ignore ship control while orbiting
+	//same with emissions
+	if !Data.NaviData.IsOrbiting {
+		s.updateShipControl(dt)
+		s.procEmissions(dt)
+	}
 
 	//for display draw calls only
 	s.gravityAcc, s.gravityReport = SumGravityAccWithReport(Data.PilotData.Ship.Pos, Data.Galaxy,
@@ -220,7 +233,9 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		Q.Append(os)
 	}
 
-	Q.Append(s.predictors)
+	if !Data.NaviData.IsOrbiting {
+		Q.Append(s.predictors)
+	}
 
 	s.drawScale(Q)
 	s.drawGravity(Q)

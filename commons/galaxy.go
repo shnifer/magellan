@@ -58,6 +58,7 @@ type GalaxyPoint struct {
 
 	ScanData string `json:"sd,omitempty"`
 
+	Minerals   []string    `json:"mi,omitempty"`
 	Emissions  []Emission  `json:"emm,omitempty"`
 	Signatures []Signature `json:"sig,omitempty"`
 	Color      color.RGBA  `json:"clr"`

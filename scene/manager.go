@@ -110,9 +110,9 @@ func (m *Manager) Activate(name string, needReInit bool) {
 
 //Main or Network loop
 func (m *Manager) Init(name string) {
-	m.actionQ <- func() {
-		m.init(name)
-	}
+	//we do this with non-current scene
+	//so we do it NOW
+	m.init(name)
 }
 
 //Main or Network loop

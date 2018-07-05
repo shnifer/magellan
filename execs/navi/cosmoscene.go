@@ -5,6 +5,7 @@ import (
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	. "github.com/Shnifer/magellan/log"
+	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"golang.org/x/image/colornames"
 )
@@ -35,6 +36,8 @@ type cosmoScene struct {
 	cosmoPanels *cosmoPanels
 
 	naviMarkerT float64
+
+	announce *AnnounceText
 }
 
 func newCosmoScene() *cosmoScene {
@@ -52,6 +55,9 @@ func newCosmoScene() *cosmoScene {
 
 	cosmoPanels := newCosmoPanels()
 
+	at := NewAnnounceText(graph.ScrP(0.5, 0.3), graph.Center(),
+		Fonts[Face_cap], graph.Z_STAT_HUD)
+
 	return &cosmoScene{
 		caption:     caption,
 		ship:        ship,
@@ -60,6 +66,7 @@ func newCosmoScene() *cosmoScene {
 		cosmoPanels: cosmoPanels,
 		objects:     make(map[string]*CosmoPoint),
 		otherShips:  make(map[string]*OtherShip),
+		announce:    at,
 	}
 }
 
@@ -103,6 +110,11 @@ func (s *cosmoScene) Update(dt float64) {
 
 	s.shipRB.Update(dt)
 	ship := s.shipRB.RB()
+	if Data.NaviData.IsOrbiting {
+		ship.Pos = Data.Galaxy.Points[Data.NaviData.OrbitObjectID].Pos
+		ship.Vel = v2.ZV
+		ship.AngVel = 0
+	}
 
 	s.cam.Pos = ship.Pos
 	s.cam.Recalc()
@@ -137,6 +149,7 @@ func (s *cosmoScene) Update(dt float64) {
 
 	s.predictors.setParams()
 	s.updateControl(dt)
+	s.announce.Update(dt)
 }
 
 func (s *cosmoScene) Draw(image *ebiten.Image) {
@@ -167,6 +180,7 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	}
 
 	Q.Append(s.cosmoPanels)
+	Q.Append(s.announce)
 
 	Q.Run(image)
 }

@@ -23,7 +23,7 @@ func fontLoader(filename string) ([]byte, error) {
 func InitFonts() {
 	Fonts = make(map[string]font.Face)
 
-	face, err := graph.GetFace("phantom.ttf", 20, fontLoader)
+	face, err := graph.GetFace("UbuntuMono-R.ttf", 20, fontLoader)
 	if err != nil {
 		Log(LVL_ERROR, err)
 	}
@@ -41,7 +41,7 @@ func InitFonts() {
 	}
 	Fonts[Face_list] = face
 
-	face, err = graph.GetFace("anonymous.ttf", 12, fontLoader)
+	face, err = graph.GetFace("UbuntuMono-R.ttf", 12, fontLoader)
 	if err != nil {
 		Log(LVL_ERROR, err)
 	}

@@ -2,8 +2,9 @@
     "ship_name": "late",
     "mass": 1000,
     "corp_name": "gd",
+    "known_minerals": ["M1","M2"],
     "mines": ["gd","pre"],
-    "landing": ["saturn"],
+    "landing": ["earth"],
     "beacon_count":1,
     "march_engine": {
         "thrust_max": 10000,

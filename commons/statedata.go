@@ -19,6 +19,9 @@ type BSP struct {
 	FlightCorp string  `json:"corp_name"`
 	Mass       float64 `json:"mass"`
 
+	KnownMinerals []string `json:"known_minerals"`
+
+	//start drop items, current is stored in NaviData
 	BeaconCount int `json:"beacon_count"`
 	//[]corpName, i.e. ["gd","gd","pre"]
 	//[]planetName, i.e. ["CV8-85","RD4-42-13"]
