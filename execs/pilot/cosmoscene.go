@@ -352,9 +352,9 @@ func (s *cosmoScene) drawScale(Q *graph.DrawQueue) {
 
 	tick := v2.V2{X: 0, Y: 5}
 
-	Q.Add(graph.LineScr(from, to, colornames.White), graph.Z_STAT_HUD+10)
-	Q.Add(graph.LineScr(from.Sub(tick), from.Add(tick), colornames.White), graph.Z_STAT_HUD+10)
-	Q.Add(graph.LineScr(to.Sub(tick), to.Add(tick), colornames.White), graph.Z_STAT_HUD+10)
+	graph.LineScr(Q, from, to, colornames.White, graph.Z_STAT_HUD+10)
+	graph.LineScr(Q, from.Sub(tick), from.Add(tick), colornames.White, graph.Z_STAT_HUD+10)
+	graph.LineScr(Q, to.Sub(tick), to.Add(tick), colornames.White, graph.Z_STAT_HUD+10)
 
 	msg := fmt.Sprintf("%v", val)
 	scaleText := graph.NewText(msg, Fonts[Face_mono], colornames.White)
@@ -368,7 +368,7 @@ func (s *cosmoScene) drawScale(Q *graph.DrawQueue) {
 		return s.cam.Center.AddMul(v2.InDir(float64(360/32)*float64(i)), circleRadPx)
 	}
 	for i := 0; i <= 32; i++ {
-		Q.Add(graph.LineScr(p(i), p(i+1), colornames.Oldlace), graph.Z_STAT_HUD+10)
+		graph.LineScr(Q, p(i), p(i+1), colornames.Oldlace, graph.Z_STAT_HUD+10)
 	}
 
 	msg = fmt.Sprintf("circle radius: %f", physRad)
@@ -382,8 +382,7 @@ func (s *cosmoScene) drawGravity(Q *graph.DrawQueue) {
 	ship := Data.PilotData.Ship.Pos
 	thrust := Data.PilotData.ThrustVector
 	drawv := func(v v2.V2, clr color.Color) {
-		line := graph.Line(s.cam, ship, ship.AddMul(v, scale), clr)
-		Q.Add(line, graph.Z_STAT_HUD+10)
+		graph.Line(Q, s.cam, ship, ship.AddMul(v, scale), clr, graph.Z_STAT_HUD+10)
 	}
 	for _, v := range s.gravityReport {
 		drawv(v, colornames.Deepskyblue)

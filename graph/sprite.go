@@ -274,6 +274,10 @@ func (s *Sprite) SpritesCount() int {
 
 func (s *Sprite) SetSpriteN(n int) {
 	n = n % s.tex.count
+	if s.spriteN == n {
+		return
+	}
+
 	s.spriteN = n
 	nx := n % s.tex.cols
 	ny := n / s.tex.cols

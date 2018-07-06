@@ -126,7 +126,7 @@ func (s *scanner) Req(Q *graph.DrawQueue) {
 	Q.Add(s.scanRange, graph.Z_UNDER_OBJECT)
 
 	if s.state == scanZero {
-		return Q
+		return
 	}
 
 	Q.Add(s.scanSector, graph.Z_UNDER_OBJECT)

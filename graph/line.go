@@ -9,34 +9,60 @@ import (
 const defaultLineLen = 10
 const defaultLineWid = 1
 
-var defLine Tex
+var lineSprite *Sprite
 
 func init() {
-	defLine = defaultLineTex()
+	defLine := defaultLineTex()
+	lineSprite = NewSpriteHUD(defLine)
+
 }
 
 //TODO: optimize! Do not create each time or trackpredictor will die
-func Line(cam *Camera, from, to v2.V2, clr color.Color) *Sprite {
-	return LineScr(cam.Apply(from), cam.Apply(to), clr)
+func Line(Q *DrawQueue, cam *Camera, from, to v2.V2, clr color.Color, layer int) {
+	LineScr(Q, cam.Apply(from), cam.Apply(to), clr, layer)
 }
 
-func LineHUD(cam *Camera, from v2.V2, v V2, clr color.Color) *Sprite {
+func LineHUD(Q *DrawQueue, cam *Camera, from v2.V2, v V2, clr color.Color, layer int) {
 	pos := cam.Apply(from)
-	return LineScr(pos, pos.Add(v), clr)
+	LineScr(Q, pos, pos.Add(v), clr, layer)
 }
 
-func LineScr(from, to v2.V2, clr color.Color) *Sprite {
+func LineScr(Q *DrawQueue, from, to v2.V2, clr color.Color, layer int) {
+
+	if clipped(from, to) {
+		return
+	}
 	v := to.Sub(from)
 	l := v.Len()
 	a := v.Dir() + 180
 
-	res := NewSpriteHUD(defLine)
-	res.SetColor(clr)
-	res.SetPivot(BotLeft())
-	res.SetPos(from)
-	res.SetScale(1, l/defaultLineLen)
-	res.SetAng(a)
-	return res
+	lineSprite.SetColor(clr)
+	lineSprite.SetPivot(BotLeft())
+	lineSprite.SetPos(from)
+	lineSprite.SetScale(1, l/defaultLineLen)
+	lineSprite.SetAng(a)
+
+	Q.Add(lineSprite, layer)
+}
+
+func clipped(from, to v2.V2) bool {
+	if (int(from.X) == int(to.X)) &&
+		(int(from.Y) == int(to.Y)) {
+		//do not draw 1 pixel lines
+		//MB bad for some cases but we are fine
+		return true
+	}
+	if from.X >= 0 && from.X <= winW && from.Y >= 0 && from.Y <= winH {
+		return false
+	}
+	if to.X >= 0 && to.X <= winW && to.Y >= 0 && to.Y <= winH {
+		return false
+	}
+	if (from.X < 0 && to.X < 0) || (from.X > winW && to.X > winW) ||
+		(from.Y < 0 && to.Y < 0) || (from.Y > winH && to.Y > winH) {
+		return true
+	}
+	return false
 }
 
 func defaultLineTex() Tex {

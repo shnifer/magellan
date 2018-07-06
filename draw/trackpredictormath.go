@@ -25,7 +25,6 @@ var recalcPointsMu sync.Mutex
 func (tp *TrackPredictor) recalcPoints() {
 	recalcPointsMu.Lock()
 	defer recalcPointsMu.Unlock()
-
 	tp.mu.Lock()
 	accel := tp.accel
 	ss := tp.sessionTime
@@ -42,6 +41,9 @@ func (tp *TrackPredictor) recalcPoints() {
 
 	for i := 1; i < count; i++ {
 		ss += dt
+		//todo:chache gravGalaxy state?
+		//640 recs of 72 bytes = 33kb for a shot
+		//20Mb for 60 sec 10 fps
 		if i%tp.opts.GravEach == 0 {
 			tp.gravGalaxy.update(ss)
 		}

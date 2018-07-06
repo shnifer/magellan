@@ -97,7 +97,7 @@ func (tp *TrackPredictor) drawPoints(Q *graph.DrawQueue) {
 	var prev v2.V2
 	for i, p := range tp.points {
 		if i > 0 && cutTime > 0 {
-			Q.Add(graph.Line(tp.opts.Cam, prev, p, tp.opts.Clr), tp.opts.Layer)
+			graph.Line(Q, tp.opts.Cam, prev, p, tp.opts.Clr, tp.opts.Layer)
 			if timeOffset >= markEach {
 				timeOffset -= markEach
 				k := timeOffset / dt
