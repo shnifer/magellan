@@ -121,6 +121,9 @@ func (s *cosmoScene) Init() {
 	s.predictors.init(s.cam)
 
 	for id, pd := range stateData.Galaxy.Points {
+		if pd.IsVirtual {
+			continue
+		}
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
 		s.objects[id] = cosmoPoint
 	}
@@ -137,7 +140,8 @@ func (s *cosmoScene) Update(dt float64) {
 		s.lastPilotMsg = Data.PilotData.MsgID
 	}
 	s.sessionTime.Update(dt)
-	Data.Galaxy.Update(s.sessionTime.Get())
+	sessionTime := s.sessionTime.Get()
+	Data.Galaxy.Update(sessionTime)
 
 	if Data.ServerData.MsgID != s.lastServerID {
 		s.actualizeOtherShips()
@@ -176,7 +180,7 @@ func (s *cosmoScene) Update(dt float64) {
 	s.ship.SetPosAng(ship.Pos, ship.Ang)
 	s.shipMark.SetPosAng(ship.Pos, ship.Ang)
 
-	s.predictors.setParams()
+	s.predictors.setParams(sessionTime, ship)
 	s.updateControl(dt)
 	s.announce.Update(dt)
 

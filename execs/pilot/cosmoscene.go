@@ -118,6 +118,9 @@ func (s *cosmoScene) Init() {
 	}
 
 	for _, pd := range stateData.Galaxy.Ordered {
+		if pd.IsVirtual{
+			continue
+		}
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
 		s.objects[pd.ID] = cosmoPoint
 	}

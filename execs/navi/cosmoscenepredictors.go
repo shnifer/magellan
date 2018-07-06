@@ -17,14 +17,16 @@ type predictors struct {
 }
 
 func (p *predictors) init(cam *graph.Camera) {
+	gps := NewGravityPredictorSource(Data.Galaxy, 0.1, 600)
+
 	predictorSprite := NewAtlasSprite(PredictorAN, cam.Deny())
 	predictorSprite.SetSize(20, 20)
 	opts := TrackPredictorOpts{
 		Cam:      cam,
 		Sprite:   predictorSprite,
-		Galaxy:   Data.Galaxy,
 		Clr:      colornames.Palevioletred,
 		Layer:    graph.Z_ABOVE_OBJECT + 1,
+		GPS:      gps,
 		UpdT:     0.2,
 		NumInSec: 10,
 		GravEach: 2,
@@ -43,9 +45,9 @@ func (p *predictors) init(cam *graph.Camera) {
 	p.show = true
 }
 
-func (p predictors) setParams() {
-	p.predictorThrust.SetAccelSessionTimeShipPos(Data.PilotData.ThrustVector, Data.PilotData.SessionTime, Data.PilotData.Ship)
-	p.predictorZero.SetAccelSessionTimeShipPos(v2.ZV, Data.PilotData.SessionTime, Data.PilotData.Ship)
+func (p predictors) setParams(ss float64, ship RBData) {
+	p.predictorThrust.SetAccelSessionTimeShipPos(Data.PilotData.ThrustVector, ss, ship)
+	p.predictorZero.SetAccelSessionTimeShipPos(v2.ZV, ss, ship)
 }
 
 func (p predictors) Req(Q *graph.DrawQueue) {

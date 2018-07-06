@@ -14,7 +14,8 @@ type TrackPredictorOpts struct {
 	Sprite *graph.Sprite
 	Clr    color.Color
 	Layer  int
-	Galaxy *Galaxy
+
+	GPS *GravityPredictorSource
 
 	//in S
 	UpdT     float64
@@ -34,7 +35,7 @@ type TrackPredictor struct {
 	ship        RBData
 
 	//created once, recalced pos before goroutine run
-	gravGalaxy gravGalaxyT
+	gps *GravityPredictorSource
 
 	isRunning bool
 	points    []v2.V2
@@ -54,9 +55,9 @@ func NewTrackPredictor(opts TrackPredictorOpts) *TrackPredictor {
 		opts.NumInSec = 1
 	}
 	return &TrackPredictor{
-		opts:       opts,
-		gravGalaxy: newGravGalaxy(opts.Galaxy),
-		points:     make([]v2.V2, 0),
+		opts:   opts,
+		gps:    opts.GPS,
+		points: make([]v2.V2, 0),
 	}
 }
 
@@ -68,7 +69,7 @@ func (tp *TrackPredictor) Req(Q *graph.DrawQueue) {
 	if time.Since(tp.lastT).Seconds() > tp.opts.UpdT && !tp.isRunning {
 		tp.lastT = time.Now()
 		tp.isRunning = true
-		tp.gravGalaxy.loadPos(tp.opts.Galaxy)
+		//tp.gravGalaxy.loadPos(tp.opts.Galaxy)
 		go tp.recalcPoints()
 	}
 	tp.drawPoints(Q)

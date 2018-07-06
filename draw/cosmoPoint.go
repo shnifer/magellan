@@ -42,6 +42,11 @@ type CosmoPoint struct {
 
 func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 
+	if pd.IsVirtual {
+		Log(LVL_ERROR, "NewCosmoPoint called for virtual galaxyPoint")
+		return nil
+	}
+
 	markParam := params
 	markParam.DenyScale = true
 	markParam.DenyAngle = true
@@ -56,7 +61,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 	}
 
 	markSprite = NewAtlasSprite(markNameAN, markParam)
-	markScale := MarkScaleLevel(pd.Level)
+	markScale := MarkScaleLevel(pd.GLevel)
 	markSprite.SetScale(markScale, markScale)
 	markCS := graph.NewCycledSprite(markSprite, graph.Cycle_Loop, 10)
 
@@ -135,7 +140,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 	}
 
 	res := CosmoPoint{
-		level:          pd.Level,
+		level:          pd.GLevel,
 		MarkGlowSprite: markGlow,
 		MarkSprite:     markCS,
 		markLevelScale: markScale,

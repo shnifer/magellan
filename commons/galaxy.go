@@ -34,11 +34,15 @@ type Galaxy struct {
 //todo: virtual points
 type GalaxyPoint struct {
 	//Id setted on load from file
-	ID       string `json:"id,omitempty"`
-	ParentID string `json:"pid,omitempty"`
+	ID        string `json:"id,omitempty"`
+	ParentID  string `json:"pid,omitempty"`
+	IsVirtual bool   `json:"iv,omitempty"`
 
 	//found on recalc
+	//phys order level
 	Level int
+	//graph order level, ignore
+	GLevel int
 
 	Pos v2.V2
 

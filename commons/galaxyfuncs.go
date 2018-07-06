@@ -16,7 +16,9 @@ func (galaxy *Galaxy) RecalcLvls() {
 	}
 
 	maxLvl := 0
+	//map[id]level
 	lvls := make(map[string]int)
+	glvls := make(map[string]int)
 
 	var Lvl func(*GalaxyPoint) int
 	Lvl = func(p *GalaxyPoint) int {
@@ -35,10 +37,39 @@ func (galaxy *Galaxy) RecalcLvls() {
 		lvls[p.ID] = l + 1
 		return l + 1
 	}
+	var GLvl func(*GalaxyPoint) int
+	var L int
+	GLvl = func(p *GalaxyPoint) int {
+		parent := p.ParentID
+		if parent == "" {
+			glvls[p.ID] = 0
+			return 0
+		}
+		l, ok := glvls[parent]
+		if ok {
+			L = l + 1
+			if galaxy.Points[parent].IsVirtual {
+				L = l
+			}
+			glvls[p.ID] = L
+			return L
+		}
 
+		l = GLvl(galaxy.Points[parent])
+		L = l + 1
+		if galaxy.Points[parent].IsVirtual {
+			L = l
+		}
+		glvls[p.ID] = L
+		return L
+	}
+
+	var lvl, glvl int
 	for id, point := range galaxy.Points {
-		lvl := Lvl(point)
+		lvl = Lvl(point)
+		glvl = GLvl(point)
 		galaxy.Points[id].Level = lvl
+		galaxy.Points[id].GLevel = glvl
 		if lvl > maxLvl {
 			maxLvl = lvl
 		}
