@@ -12,7 +12,7 @@
     "LogLogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 10000,
-    "LogIP": "https://elasticsearch.magellan2018.aerem.in",
+    "LogIP": "https://elasticsearch.alice.magellan2018.ru",
     "LogHostName": "room1noteAsus123",
     "GameExchPort": "8011",
     "GameExchAddrs": ["192.168.0.1:8011"],
