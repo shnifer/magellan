@@ -145,12 +145,12 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 	var captionText *graph.Text
 	switch pd.Type {
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
-		caption=pd.ScanData
+		caption = pd.ScanData
 	default:
-		caption=""
+		caption = ""
 	}
-	if caption!=""{
-		captionText = graph.NewText(caption, Fonts[Face_mono],colornames.Red)
+	if caption != "" {
+		captionText = graph.NewText(caption, Fonts[Face_mono], colornames.Red)
 	}
 
 	res := CosmoPoint{
@@ -167,7 +167,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		Size:           pd.Size,
 		Type:           pd.Type,
 		glyphs:         glyphs,
-		caption: captionText,
+		caption:        captionText,
 		cam:            params.Cam,
 	}
 	res.recalcSprite()
@@ -221,10 +221,10 @@ func (co *CosmoPoint) Req(Q *graph.DrawQueue) {
 		}
 	}
 
-	if co.caption!=nil{
-		base:=co.cam.Apply(co.Pos)
-		off:=v2.V2{X: 0, Y:30}.Mul(graph.GS())
-		co.caption.SetPosPivot(base.Add(off),graph.Center())
+	if co.caption != nil {
+		base := co.cam.Apply(co.Pos)
+		off := v2.V2{X: 0, Y: 30}.Mul(graph.GS())
+		co.caption.SetPosPivot(base.Add(off), graph.Center())
 		Q.Add(co.caption, graph.Z_ABOVE_OBJECT)
 	}
 

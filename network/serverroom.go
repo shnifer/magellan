@@ -89,10 +89,10 @@ func serverReceiveCommands(srv *Server, req CommonReq, room *servRoomState, room
 	//we do NOT recv commands if room is not coherent
 	//so we do not count them as received
 	var commands []string
-	if rcv, ok :=room.recvs[roleName];ok {
-		 commands = rcv.Unpack(req.Message)
+	if rcv, ok := room.recvs[roleName]; ok {
+		commands = rcv.Unpack(req.Message)
 	} else {
-		Log(LVL_ERROR, "serverReceiveCommands unknown roleName ",roleName)
+		Log(LVL_ERROR, "serverReceiveCommands unknown roleName ", roleName)
 		return
 	}
 

@@ -85,8 +85,8 @@ func newCosmoScene() *cosmoScene {
 	size := graph.ScrP(0.6, 0.1)
 	textPanel.SetSize(size.X, size.Y)
 
-	naviMarker:=NewWayPoint(cam, colornames.Green, true)
-	shipMarker:=NewWayPoint(cam, colornames.Yellow, false)
+	naviMarker := NewWayPoint(cam, colornames.Green, true)
+	shipMarker := NewWayPoint(cam, colornames.Yellow, false)
 	shipMarker.SetActive(true)
 
 	f9 := NewAtlasFrame9HUD(commons.Frame9AN, WinW, WinH, graph.Z_HUD-1)
@@ -96,8 +96,8 @@ func newCosmoScene() *cosmoScene {
 		ship:        ship,
 		shipMark:    shipMark,
 		cam:         cam,
-		naviMarker: naviMarker,
-		shipMarker: shipMarker,
+		naviMarker:  naviMarker,
+		shipMarker:  shipMarker,
 		cosmoPanels: cosmoPanels,
 		objects:     make(map[string]*CosmoPoint),
 		otherShips:  make(map[string]*OtherShip),
@@ -275,20 +275,20 @@ func (*cosmoScene) Destroy() {
 
 func (s *cosmoScene) updateInputMain() {
 	moveScale := 10 / s.cam.Scale
-	_,wy:=ebiten.MouseWheel()
-	if wy>0{
+	_, wy := ebiten.MouseWheel()
+	if wy > 0 {
 		s.cam.Scale *= 1.41
 		s.cam.Recalc()
-	} else if wy<0{
+	} else if wy < 0 {
 		s.cam.Scale /= 1.41
 		s.cam.Recalc()
 	}
 
-	if ebiten.IsKeyPressed(ebiten.KeyQ){
+	if ebiten.IsKeyPressed(ebiten.KeyQ) {
 		s.cam.Scale *= 1 + dt
 		s.cam.Recalc()
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyE){
+	if ebiten.IsKeyPressed(ebiten.KeyE) {
 		s.cam.Scale /= 1 + dt
 		s.cam.Recalc()
 	}
@@ -297,17 +297,17 @@ func (s *cosmoScene) updateInputMain() {
 		s.isCamToShip = false
 		s.cam.Recalc()
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyS)|| ebiten.IsKeyPressed(ebiten.KeyDown){
+	if ebiten.IsKeyPressed(ebiten.KeyS) || ebiten.IsKeyPressed(ebiten.KeyDown) {
 		s.cam.Pos.DoAddMul(v2.V2{X: 0, Y: -1}, moveScale)
 		s.isCamToShip = false
 		s.cam.Recalc()
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyA) || ebiten.IsKeyPressed(ebiten.KeyLeft){
+	if ebiten.IsKeyPressed(ebiten.KeyA) || ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		s.cam.Pos.DoAddMul(v2.V2{X: -1, Y: 0}, moveScale)
 		s.isCamToShip = false
 		s.cam.Recalc()
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyD)|| ebiten.IsKeyPressed(ebiten.KeyRight) {
+	if ebiten.IsKeyPressed(ebiten.KeyD) || ebiten.IsKeyPressed(ebiten.KeyRight) {
 		s.cam.Pos.DoAddMul(v2.V2{X: 1, Y: 0}, moveScale)
 		s.isCamToShip = false
 		s.cam.Recalc()

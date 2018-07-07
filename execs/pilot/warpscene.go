@@ -93,7 +93,7 @@ func (s *warpScene) Init() {
 	stateData := Data.GetStateData()
 
 	for id, pd := range stateData.Galaxy.Points {
-		if pd.IsVirtual{
+		if pd.IsVirtual {
 			continue
 		}
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())

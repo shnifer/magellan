@@ -56,8 +56,8 @@ func (s *cosmoScene) procMouseClick(x, y int) {
 		d := worldPos.Sub(obj.Pos).Len()
 		if d < obj.Size ||
 			d < draw.Mark_size/s.cam.Scale*graph.GS() {
-			really:=s.scanner.clicked(s.objects[id])
-			if really{
+			really := s.scanner.clicked(s.objects[id])
+			if really {
 				return
 			}
 		}

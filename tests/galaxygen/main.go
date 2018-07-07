@@ -97,12 +97,12 @@ func main() {
 	}
 
 	stars = deleteClose(stars)
-	res, err:=json.Marshal(stars)
-	if err!=nil{
+	res, err := json.Marshal(stars)
+	if err != nil {
 		panic(err)
 	}
-	file, err:=os.Create("starpos.json")
-	if err!=nil{
+	file, err := os.Create("starpos.json")
+	if err != nil {
 		panic(err)
 	}
 	defer file.Close()

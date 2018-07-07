@@ -17,14 +17,14 @@ type predictors struct {
 }
 
 func (p *predictors) init(cam *graph.Camera) {
-	gps:=NewGravityPredictorSource(Data.Galaxy,0.1,300)
+	gps := NewGravityPredictorSource(Data.Galaxy, 0.1, 300)
 
 	predictorSprite := NewAtlasSprite(PredictorAN, cam.Deny())
 	predictorSprite.SetSize(20, 20)
 	opts := TrackPredictorOpts{
 		Cam:      cam,
 		Sprite:   predictorSprite,
-		GPS:gps,
+		GPS:      gps,
 		Clr:      colornames.Palevioletred,
 		Layer:    graph.Z_ABOVE_OBJECT + 1,
 		UpdT:     0.1,
