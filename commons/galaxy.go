@@ -71,6 +71,11 @@ type GalaxyPoint struct {
 	Mines      map[string]string `json:"mns,omitempty"`
 	FishHouses map[string]string `json:"fhs,omitempty"`
 
+	//for warp points
+	//map[fullKey]message
+	Beacons    map[string]string
+	BlackBoxes map[string]string
+
 	/*	HasMine     bool   `json:"hm,omitempty"`
 		MineOwner   string `json:"mo,omitempty"`
 		MineFullKey string `json:"mk,omitempty"`

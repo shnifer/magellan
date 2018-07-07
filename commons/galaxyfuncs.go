@@ -174,6 +174,43 @@ func (galaxy *Galaxy) AddBuilding(b Building) {
 }
 
 //works with already calced and ordered Galaxy
+func (galaxy *Galaxy) AddWarpBuilding(b Building) {
+	fullKey := b.FullKey
+	if _, exist := galaxy.Points[fullKey]; exist {
+		//already exist
+		Log(LVL_WARN, "trying to add building with already exist Fullkey:", fullKey)
+		return
+	}
+
+	switch b.Type {
+	case BUILDING_BEACON:
+		gp, ok := galaxy.Points[b.PlanetID]
+		if !ok {
+			Log(LVL_ERROR, "trying to add beacon on non existant star with ID:", b.PlanetID)
+			return
+		}
+		if _, exist := gp.Beacons[fullKey]; exist {
+			Log(LVL_ERROR, "trying to add beacon on star ", b.PlanetID, " but already has this beacon")
+			return
+		}
+		gp.Beacons[fullKey] = b.Message
+	case BUILDING_BLACKBOX:
+		gp, ok := galaxy.Points[b.PlanetID]
+		if !ok {
+			Log(LVL_ERROR, "trying to add blackbox on non existant star with ID:", b.PlanetID)
+			return
+		}
+		if _, exist := gp.BlackBoxes[fullKey]; exist {
+			Log(LVL_ERROR, "trying to add blackbox on star ", b.PlanetID, " but already has this blackbox")
+			return
+		}
+		gp.BlackBoxes[fullKey] = b.Message
+	default:
+		Log(LVL_ERROR, "warpscene addBuilding, unknown building type", b.Type)
+	}
+}
+
+//works with already calced and ordered Galaxy
 func (galaxy *Galaxy) DelBuilding(b Building) {
 	switch b.Type {
 	case BUILDING_MINE:
@@ -214,6 +251,37 @@ func (galaxy *Galaxy) DelBuilding(b Building) {
 		delete(galaxy.Points, fullKey)
 	default:
 		Log(LVL_ERROR, "galaxy delBuilding, unknown building type", b.Type)
+	}
+}
+
+//works with already calced and ordered Galaxy
+func (galaxy *Galaxy) DelWarpBuilding(b Building) {
+	fullKey := b.FullKey
+	switch b.Type {
+	case BUILDING_BEACON:
+		gp, ok := galaxy.Points[b.PlanetID]
+		if !ok {
+			Log(LVL_ERROR, "trying to del beacon on non existant planet with ID:", b.PlanetID)
+			return
+		}
+		if _, exist := gp.Beacons[fullKey]; !exist {
+			Log(LVL_ERROR, "trying to del beacon on planet", b.PlanetID, "but do not has mine")
+			return
+		}
+		delete(gp.Beacons, fullKey)
+	case BUILDING_BLACKBOX:
+		gp, ok := galaxy.Points[b.PlanetID]
+		if !ok {
+			Log(LVL_ERROR, "trying to del blackbox on non existant planet with ID:", b.PlanetID)
+			return
+		}
+		if _, exist := gp.BlackBoxes[fullKey]; !exist {
+			Log(LVL_ERROR, "trying to del blackbox on planet", b.PlanetID, "but do not has mine")
+			return
+		}
+		delete(gp.BlackBoxes, fullKey)
+	default:
+		Log(LVL_ERROR, "warp delBuilding, unknown building type", b.Type)
 	}
 }
 

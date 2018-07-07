@@ -70,7 +70,7 @@ func newCosmoScene() *cosmoScene {
 	shipMark := NewAtlasSprite(MARKShipAN, cam.FixS())
 	//shipMark.SetSize(50,50)
 
-	marker := NewWayPoint(cam, colornames.Green,true)
+	marker := NewWayPoint(cam, colornames.Green, true)
 
 	hud := newCosmoSceneHUD(cam)
 
@@ -116,7 +116,7 @@ func (s *cosmoScene) Init() {
 	}
 
 	for _, pd := range stateData.Galaxy.Ordered {
-		if pd.IsVirtual{
+		if pd.IsVirtual {
 			continue
 		}
 		cosmoPoint := NewCosmoPoint(pd, s.cam.Phys())
@@ -226,7 +226,7 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 
 	s.naviMarker.SetActive(Data.NaviData.ActiveMarker)
 	if Data.NaviData.ActiveMarker {
-		s.naviMarker.SetShipPoint(Data.PilotData.Ship.Pos,Data.NaviData.MarkerPos)
+		s.naviMarker.SetShipPoint(Data.PilotData.Ship.Pos, Data.NaviData.MarkerPos)
 		Q.Append(s.naviMarker)
 	}
 
@@ -298,6 +298,10 @@ func (s *cosmoScene) updateDebugControl(dt float64) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyP) {
 		AddBeacon(Data, Client, "just a test beacon")
 		ClientLogGame(Client, "ADD BEACON KEY", "just a test beacon")
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
+		toWarp()
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {

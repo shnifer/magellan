@@ -97,6 +97,17 @@ func main() {
 	}
 
 	stars = deleteClose(stars)
+	res, err:=json.Marshal(stars)
+	if err!=nil{
+		panic(err)
+	}
+	file, err:=os.Create("starpos.json")
+	if err!=nil{
+		panic(err)
+	}
+	defer file.Close()
+
+	file.Write(res)
 
 	kx := float64(back.Bounds().Max.X / density.Bounds().Max.X)
 	ky := float64(back.Bounds().Max.Y / density.Bounds().Max.Y)

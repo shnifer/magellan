@@ -119,7 +119,11 @@ func (StateData) Decode(buf []byte) (sd StateData, err error) {
 	}
 	sd.Galaxy.RecalcLvls()
 	for _, b := range sd.Buildings {
-		sd.Galaxy.AddBuilding(b)
+		if b.GalaxyID != WARP_Galaxy_ID {
+			sd.Galaxy.AddBuilding(b)
+		} else {
+			sd.Galaxy.AddWarpBuilding(b)
+		}
 	}
 	return sd, nil
 }
