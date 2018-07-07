@@ -33,6 +33,8 @@
   "MAGIC_compass": {"FileName": "HUD_Radar.png", "Smooth":true},
   "MAGIC_rulerh":{"FileName": "HUD_RUS2.png"},
   "MAGIC_rulerv":{"FileName": "HUD_RUD2.png"},
+  "MAGIC_waypoint": {"FileName": "marker.png"},
+  "MAGIC_wayarrow": {"FileName": "HUD_Arrow.png"},
   "star": {"FileName": "terr1.png", "Smooth":true, "Sx": 180, "Sy": 180},
   "sun": {"FileName": "sun.png", "Smooth":true},
   "earth": {"FileName": "earth.png", "Smooth":true},

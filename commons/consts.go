@@ -58,6 +58,8 @@ const (
 	Frame9AN            = "front9"
 	ButtonAN            = "MAGIC_button"
 	TextPanelAN         = "MAGIC_textpanel"
+	WayPointAN          = "MAGIC_waypoint"
+	WayArrowAN          = "MAGIC_wayarrow"
 )
 
 var (

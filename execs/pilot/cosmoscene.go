@@ -25,7 +25,7 @@ type cosmoScene struct {
 	caption *graph.Text
 	cam     *graph.Camera
 
-	naviMarker *graph.Sprite
+	naviMarker *WayPoint
 
 	objects map[string]*CosmoPoint
 
@@ -70,9 +70,7 @@ func newCosmoScene() *cosmoScene {
 	shipMark := NewAtlasSprite(MARKShipAN, cam.FixS())
 	//shipMark.SetSize(50,50)
 
-	marker := NewAtlasSprite(NaviMarkerAN, cam.Deny())
-	marker.SetPivot(graph.MidBottom())
-	marker.SetSize(40, 40)
+	marker := NewWayPoint(cam, colornames.Green,true)
 
 	hud := newCosmoSceneHUD(cam)
 
@@ -226,9 +224,10 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	}
 	Q.Add(s.trail, graph.Z_UNDER_OBJECT)
 
+	s.naviMarker.SetActive(Data.NaviData.ActiveMarker)
 	if Data.NaviData.ActiveMarker {
-		s.naviMarker.SetPos(Data.NaviData.MarkerPos)
-		Q.Add(s.naviMarker, graph.Z_ABOVE_OBJECT)
+		s.naviMarker.SetShipPoint(Data.PilotData.Ship.Pos,Data.NaviData.MarkerPos)
+		Q.Append(s.naviMarker)
 	}
 
 	alphaMark, alphaSprite := MarkAlpha(ShipSize/2.0, s.cam)

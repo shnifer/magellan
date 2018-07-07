@@ -61,14 +61,15 @@ func newScanner(cam *graph.Camera, onState func(int)) *scanner {
 	}
 }
 
-func (s *scanner) clicked(obj *CosmoPoint) {
+func (s *scanner) clicked(obj *CosmoPoint) bool{
 	if Data.PilotData.Ship.Pos.Sub(obj.Pos).LenSqr() > s.maxRange2 {
-		return
+		return false
 	}
 	if s.obj == obj {
-		return
+		return false
 	}
 	s.stateSelect(obj)
+	return true
 }
 
 func (s *scanner) update(ship v2.V2, dt float64) {

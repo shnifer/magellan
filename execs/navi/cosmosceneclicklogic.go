@@ -25,6 +25,9 @@ func (s *cosmoScene) updateControl(dt float64) {
 			mousex, mousey := ebiten.CursorPosition()
 			s.procMouseClick(mousex, mousey)
 		}
+		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight) {
+			Data.NaviData.ActiveMarker = false
+		}
 	}
 
 	s.scanner.update(s.shipRB.RB().Pos, dt)
@@ -53,14 +56,15 @@ func (s *cosmoScene) procMouseClick(x, y int) {
 		d := worldPos.Sub(obj.Pos).Len()
 		if d < obj.Size ||
 			d < draw.Mark_size/s.cam.Scale*graph.GS() {
-			s.scanner.clicked(s.objects[id])
-			return
+			really:=s.scanner.clicked(s.objects[id])
+			if really{
+				return
+			}
 		}
 	}
 	//NAVI MARKER
 	Data.NaviData.ActiveMarker = true
 	Data.NaviData.MarkerPos = worldPos
-	s.naviMarkerT = DEFVAL.NaviMarketDuration
 }
 
 func (s *cosmoScene) procButtonClick(tag string) {

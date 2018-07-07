@@ -39,7 +39,8 @@ type cosmoScene struct {
 	predictors  predictors
 	cosmoPanels *cosmoPanels
 
-	naviMarkerT float64
+	naviMarker *WayPoint
+	shipMarker *WayPoint
 
 	announce *AnnounceText
 
@@ -84,6 +85,10 @@ func newCosmoScene() *cosmoScene {
 	size := graph.ScrP(0.6, 0.1)
 	textPanel.SetSize(size.X, size.Y)
 
+	naviMarker:=NewWayPoint(cam, colornames.Green, true)
+	shipMarker:=NewWayPoint(cam, colornames.Yellow, false)
+	shipMarker.SetActive(true)
+
 	f9 := NewAtlasFrame9HUD(commons.Frame9AN, WinW, WinH, graph.Z_HUD-1)
 
 	scene := &cosmoScene{
@@ -91,6 +96,8 @@ func newCosmoScene() *cosmoScene {
 		ship:        ship,
 		shipMark:    shipMark,
 		cam:         cam,
+		naviMarker: naviMarker,
+		shipMarker: shipMarker,
 		cosmoPanels: cosmoPanels,
 		objects:     make(map[string]*CosmoPoint),
 		otherShips:  make(map[string]*OtherShip),
@@ -111,7 +118,6 @@ func (s *cosmoScene) Init() {
 
 	s.objects = make(map[string]*CosmoPoint)
 	s.otherShips = make(map[string]*OtherShip)
-	s.naviMarkerT = 0
 	s.lastServerID = 0
 	s.isCamToShip = true
 	s.scanner = newScanner(s.cam, s.scanState)
@@ -160,12 +166,6 @@ func (s *cosmoScene) Update(dt float64) {
 		s.otherShips[id].Update(dt)
 	}
 
-	s.naviMarkerT -= dt
-	if s.naviMarkerT < 0 {
-		s.naviMarkerT = 0
-		Data.NaviData.ActiveMarker = false
-	}
-
 	for id, co := range s.objects {
 		if gp, ok := Data.Galaxy.Points[id]; ok {
 			s.objects[id].Pos = gp.Pos
@@ -183,6 +183,9 @@ func (s *cosmoScene) Update(dt float64) {
 	s.predictors.setParams(sessionTime, ship)
 	s.updateControl(dt)
 	s.announce.Update(dt)
+
+	s.naviMarker.SetShipPoint(s.cam.Pos, Data.NaviData.MarkerPos)
+	s.shipMarker.SetShipPoint(s.cam.Pos, ship.Pos)
 
 	if s.isCamToShip {
 		s.cam.Pos = ship.Pos
@@ -212,6 +215,12 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	}
 
 	Q.Append(s.predictors)
+
+	s.naviMarker.SetActive(Data.NaviData.ActiveMarker)
+	if Data.NaviData.ActiveMarker {
+		Q.Append(s.naviMarker)
+	}
+	Q.Append(s.shipMarker)
 
 	alphaMark, alphaSprite := MarkAlpha(commons.ShipSize/2.0, s.cam)
 	if alphaMark > 0 && s.shipMark != nil {
@@ -266,6 +275,7 @@ func (*cosmoScene) Destroy() {
 
 func (s *cosmoScene) updateInputMain() {
 	moveScale := 10 / s.cam.Scale
+	ebiten.MouseWheel()
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
 		s.cam.Scale *= 1 + dt
 		s.cam.Recalc()
@@ -274,22 +284,22 @@ func (s *cosmoScene) updateInputMain() {
 		s.cam.Scale /= 1 + dt
 		s.cam.Recalc()
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyW) {
+	if ebiten.IsKeyPressed(ebiten.KeyW) || ebiten.IsKeyPressed(ebiten.KeyUp) {
 		s.cam.Pos.DoAddMul(v2.V2{X: 0, Y: 1}, moveScale)
 		s.isCamToShip = false
 		s.cam.Recalc()
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyS) {
+	if ebiten.IsKeyPressed(ebiten.KeyS)|| ebiten.IsKeyPressed(ebiten.KeyDown){
 		s.cam.Pos.DoAddMul(v2.V2{X: 0, Y: -1}, moveScale)
 		s.isCamToShip = false
 		s.cam.Recalc()
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyA) {
+	if ebiten.IsKeyPressed(ebiten.KeyA) || ebiten.IsKeyPressed(ebiten.KeyLeft){
 		s.cam.Pos.DoAddMul(v2.V2{X: -1, Y: 0}, moveScale)
 		s.isCamToShip = false
 		s.cam.Recalc()
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyD) {
+	if ebiten.IsKeyPressed(ebiten.KeyD)|| ebiten.IsKeyPressed(ebiten.KeyRight) {
 		s.cam.Pos.DoAddMul(v2.V2{X: 1, Y: 0}, moveScale)
 		s.isCamToShip = false
 		s.cam.Recalc()
