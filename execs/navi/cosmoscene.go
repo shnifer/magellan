@@ -275,12 +275,20 @@ func (*cosmoScene) Destroy() {
 
 func (s *cosmoScene) updateInputMain() {
 	moveScale := 10 / s.cam.Scale
-	ebiten.MouseWheel()
-	if ebiten.IsKeyPressed(ebiten.KeyQ) {
+	_,wy:=ebiten.MouseWheel()
+	if wy>0{
+		s.cam.Scale *= 1.41
+		s.cam.Recalc()
+	} else if wy<0{
+		s.cam.Scale /= 1.41
+		s.cam.Recalc()
+	}
+
+	if ebiten.IsKeyPressed(ebiten.KeyQ){
 		s.cam.Scale *= 1 + dt
 		s.cam.Recalc()
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyE) {
+	if ebiten.IsKeyPressed(ebiten.KeyE){
 		s.cam.Scale /= 1 + dt
 		s.cam.Recalc()
 	}
