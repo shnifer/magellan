@@ -33,9 +33,6 @@ func (tp *TrackPredictor) recalcPoints() {
 
 	for i := 1; i < count; i++ {
 		ss += dt
-		//todo:chache gravGalaxy state?
-		//640 recs of 72 bytes = 33kb for a shot
-		//20Mb for 60 sec 10 fps
 		if i%tp.opts.GravEach == 0 {
 			gravGalaxy = tp.gps.get(ss)
 		}

@@ -17,7 +17,6 @@ func init() {
 
 }
 
-//TODO: optimize! Do not create each time or trackpredictor will die
 func Line(Q *DrawQueue, cam *Camera, from, to v2.V2, clr color.Color, layer int) {
 	LineScr(Q, cam.Apply(from), cam.Apply(to), clr, layer)
 }

@@ -31,7 +31,6 @@ type Galaxy struct {
 	fixedTimeRest float64
 }
 
-//todo: virtual points
 type GalaxyPoint struct {
 	//Id setted on load from file
 	ID        string `json:"id,omitempty"`
