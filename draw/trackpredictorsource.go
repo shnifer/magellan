@@ -60,7 +60,7 @@ func (gps *GravityPredictorSource) get(ss float64) gravImage {
 	}
 
 	//we have this time cached
-	reqInd := int(0.5+(ss - gps.startT) / gps.dt)
+	reqInd := int(math.Round((ss - gps.startT) / gps.dt))
 	if reqInd < len(gps.cache) {
 		return gps.cache[reqInd]
 	}
