@@ -28,7 +28,7 @@ func (s *warpScene) procControlForward(dt float64) {
 
 func (s *warpScene) procControlTurn(dt float64) {
 	turnInput := input.GetF("turn")
-	Data.PilotData.Ship.AngVel = turnInput * Data.SP.Warp_engine.Turn_speed * s.thrustLevel
+	Data.PilotData.Ship.AngVel = turnInput * Data.SP.Warp_engine.Turn_speed * s.thrustLevel *60
 }
 
 func (s *warpScene) procShipGravity(dt float64) {
@@ -40,5 +40,5 @@ func (s *warpScene) procShipGravity(dt float64) {
 		F := WarpGravity(obj.Mass, len2, vel, obj.Size/2)
 		sumV.DoAddMul(v.Normed(), F)
 	}
-	Data.PilotData.Ship.Vel.DoAddMul(sumV, dt)
+	//Data.PilotData.Ship.Vel.DoAddMul(sumV, dt)
 }

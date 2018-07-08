@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const scale = 100
+const scale = 1
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
