@@ -124,7 +124,20 @@ func (s *warpScene) Update(dt float64) {
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
-		s.toCosmo()
+		//spawn to closest
+		minDist := -1.0
+		systemID := ""
+		for _, v := range Data.Galaxy.Points {
+			dist := Data.PilotData.Ship.Pos.Sub(v.Pos).LenSqr()
+			if minDist < 0 || dist < minDist {
+				systemID = v.ID
+				minDist = dist
+			}
+		}
+
+		if systemID != "" {
+			s.toCosmo(systemID)
+		}
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
@@ -195,28 +208,11 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 	Q.Run(image)
 }
 
-func (s *warpScene) toCosmo() {
+func (s *warpScene) toCosmo(systemID string) {
 	state := Data.State
 	state.StateID = STATE_cosmo
-
-	//spawn to closest
-	minDist := -1.0
-	systemID := ""
-	for _, v := range Data.Galaxy.Points {
-		dist := Data.PilotData.Ship.Pos.Sub(v.Pos).LenSqr()
-		if minDist < 0 || dist < minDist {
-			systemID = v.ID
-			minDist = dist
-		}
-	}
-
-	if systemID != "" {
-		state.GalaxyID = systemID
-		Client.RequestNewState(state.Encode(), false)
-	}
-}
-
-func (s *warpScene) OnCommand(command string) {
+	state.GalaxyID = systemID
+	Client.RequestNewState(state.Encode(), false)
 }
 
 func (*warpScene) Destroy() {

@@ -39,9 +39,9 @@ type GalaxyPoint struct {
 
 	//found on recalc
 	//phys order level
-	Level int
+	Level int `json:"lv,omitempty"`
 	//graph order level, ignore
-	GLevel int
+	GLevel int `json:"gl,omitempty"`
 
 	Pos v2.V2
 
@@ -57,7 +57,10 @@ type GalaxyPoint struct {
 
 	//for warp points
 	WarpSpawnDistance float64 `json:"wsd,omitempty"`
-	WarpInDistance    float64 `json:"did,omitempty"`
+	WarpYellowOutDist float64 `json:"wyo,omitempty"`
+	WarpGreenOutDist float64 `json:"wgo,omitempty"`
+	WarpGreenInDist float64 `json:"wgi,omitempty"`
+	WarpRedOutDist float64 `json:"wro,omitempty"`
 
 	ScanData string `json:"sd,omitempty"`
 
@@ -73,8 +76,8 @@ type GalaxyPoint struct {
 
 	//for warp points
 	//map[fullKey]message
-	Beacons    map[string]string
-	BlackBoxes map[string]string
+	Beacons    map[string]string `json:"bcs,omitempty"`
+	BlackBoxes map[string]string `json:"bbs,omitempty"`
 
 	/*	HasMine     bool   `json:"hm,omitempty"`
 		MineOwner   string `json:"mo,omitempty"`

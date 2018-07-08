@@ -10,15 +10,15 @@ import (
 	"strings"
 )
 
-func changeCP(s *cosmoScene, id string, point *CosmoPoint) {
+func changeCP(objs map[string]*CosmoPoint, id string, point *CosmoPoint) {
 	if point == nil {
 		Log(LVL_ERROR, "scene change CosmoPoint with nil value")
 		return
 	}
-	if _, ok := s.objects[id]; ok {
-		*s.objects[id] = *point
+	if _, ok := objs[id]; ok {
+		*objs[id] = *point
 	} else {
-		s.objects[id] = point
+		objs[id] = point
 	}
 }
 
@@ -31,7 +31,7 @@ func (s *cosmoScene) addBuilding(b Building) {
 			return
 		}
 		//update data, saving pointer. We scan CosmoPoint, we don't need new
-		changeCP(s, b.PlanetID, NewCosmoPoint(pd, s.cam.Phys()))
+		changeCP(s.objects, b.PlanetID, NewCosmoPoint(pd, s.cam.Phys()))
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
 		pd, ok := Data.Galaxy.Points[b.FullKey]
 		if !ok {
@@ -39,7 +39,7 @@ func (s *cosmoScene) addBuilding(b Building) {
 			return
 		}
 		//register new object
-		changeCP(s, b.FullKey, NewCosmoPoint(pd, s.cam.Phys()))
+		changeCP(s.objects, b.FullKey, NewCosmoPoint(pd, s.cam.Phys()))
 	default:
 		Log(LVL_ERROR, "cosmoscene addBuilding, unknown building type", b.Type)
 	}
@@ -54,7 +54,7 @@ func (s *cosmoScene) delBuilding(b Building) {
 			return
 		}
 		//update data, saving pointer. We scan CosmoPoint, we don't need new
-		changeCP(s, b.PlanetID, NewCosmoPoint(pd, s.cam.Phys()))
+		changeCP(s.objects, b.PlanetID, NewCosmoPoint(pd, s.cam.Phys()))
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
 		if _, ok := s.objects[b.FullKey]; !ok {
 			Log(LVL_ERROR, "cosmoscene delBuilding: can't del", b.Type, "with fullkey", b.FullKey)

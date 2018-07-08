@@ -39,8 +39,11 @@ func main() {
 			Type:              commons.GPT_WARP,
 			Size:              1,
 			Mass:              okr(1 + rand.Float64()),
-			WarpSpawnDistance: 15,
-			WarpInDistance:    10,
+			WarpSpawnDistance: 5,
+			WarpRedOutDist:    1,
+			WarpGreenInDist:   2,
+			WarpGreenOutDist:  3,
+			WarpYellowOutDist: 4,
 			Color:             colornames.White,
 		}
 		id := genID()

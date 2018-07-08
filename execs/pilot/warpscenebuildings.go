@@ -1,6 +1,6 @@
 package main
 
-//COPYPASTE IN PILOT
+//COPYPASTE IN NAVI
 
 import (
 	. "github.com/Shnifer/magellan/commons"
@@ -10,19 +10,7 @@ import (
 	"strings"
 )
 
-func changeCP(objs map[string]*CosmoPoint, id string, point *CosmoPoint) {
-	if point == nil {
-		Log(LVL_ERROR, "scene change CosmoPoint with nil value")
-		return
-	}
-	if _, ok := objs[id]; ok {
-		*objs[id] = *point
-	} else {
-		objs[id] = point
-	}
-}
-
-func (s *cosmoScene) addBuilding(b Building) {
+func (s *warpScene) addBuilding(b Building) {
 	switch b.Type {
 	case BUILDING_MINE, BUILDING_FISHHOUSE:
 		pd, ok := Data.Galaxy.Points[b.PlanetID]
@@ -45,7 +33,7 @@ func (s *cosmoScene) addBuilding(b Building) {
 	}
 }
 
-func (s *cosmoScene) delBuilding(b Building) {
+func (s *warpScene) delBuilding(b Building) {
 	switch b.Type {
 	case BUILDING_MINE, BUILDING_FISHHOUSE:
 		pd, ok := Data.Galaxy.Points[b.PlanetID]
@@ -66,9 +54,13 @@ func (s *cosmoScene) delBuilding(b Building) {
 	}
 }
 
-func (s *cosmoScene) OnCommand(command string) {
+func (s *warpScene) OnCommand(command string) {
 	switch {
 	case strings.HasPrefix(command, CMD_BUILDINGEVENT):
+		if Data.Galaxy == nil {
+			Log(LVL_ERROR, "Oncommand CMD_BUILDINGEVENT on nil Data.Galaxy")
+			return
+		}
 		buf := []byte(strings.TrimPrefix(command, CMD_BUILDINGEVENT))
 		way, b, err := DecodeEvent(buf)
 		if err != nil {
