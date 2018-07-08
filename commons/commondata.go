@@ -17,6 +17,7 @@ type PilotData struct {
 	Ship           RBData  `json:"sh"`
 	SessionTime    float64 `json:"ss"`
 	ThrustVector   v2.V2   `json:"tv"`
+	Distortion     float64 `json:"wd"`
 	HeatProduction float64 `json:"hp"`
 
 	//do not reload same Msg, cz of ship.Pos extrapolate and SessionTime+=dt
