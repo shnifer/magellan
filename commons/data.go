@@ -113,3 +113,56 @@ func (d *TData) Encode() {
 func (d *TData) Decode() {
 	panic("Don't do it! use methods of embeded structs")
 }
+
+func (d *TData) CalcCurMass() float64 {
+	if d.BSP == nil {
+		Log(LVL_ERROR, "CalcCurMass() with nil BSP")
+		return 0
+	}
+	if d.NaviData == nil {
+		Log(LVL_ERROR, "CalcCurMass() with nil NaviData")
+		return 0
+	}
+	mass := d.BSP.Ship.NodesMass
+
+	mass += float64(d.NaviData.BeaconCount) * d.BSP.Beacons.Mass
+
+	usedMineInd := make(map[int]struct{})
+	for _, owner := range d.NaviData.Mines {
+		f := false
+		for i, v := range d.BSP.Mines {
+			if v.Owner != owner {
+				continue
+			}
+			if _, exist := usedMineInd[i]; exist {
+				continue
+			}
+			f = true
+			usedMineInd[i] = struct{}{}
+			mass += v.Mass
+		}
+		if !f {
+			Log(LVL_ERROR, "CalcCurMass can't found mine mass")
+		}
+	}
+	usedModuleInd := make(map[int]struct{})
+	for _, owner := range d.NaviData.Landing {
+		f := false
+		for i, v := range d.BSP.Modules {
+			if v.Owner != owner {
+				continue
+			}
+			if _, exist := usedModuleInd[i]; exist {
+				continue
+			}
+			f = true
+			usedModuleInd[i] = struct{}{}
+			mass += v.Mass
+		}
+		if !f {
+			Log(LVL_ERROR, "CalcCurMass can't found mine mass")
+		}
+	}
+
+	return mass
+}

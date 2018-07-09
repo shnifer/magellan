@@ -36,7 +36,7 @@ func loadShipState(shipID string) *BSP {
 	}
 	err = json.Unmarshal(buf, &res)
 	if err != nil {
-		Log(LVL_ERROR, "can't unmarshal file for ship", shipID)
+		Log(LVL_ERROR, "can't unmarshal file for ship", shipID, err)
 		return nil
 	}
 	return &res

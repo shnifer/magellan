@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
@@ -10,6 +11,8 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
+	"image/color"
+	"math"
 )
 
 type warpScene struct {
@@ -33,6 +36,10 @@ type warpScene struct {
 	thrustControlHUD *graph.Sprite
 	turnLevelHUD     *graph.Sprite
 	turnControlHUD   *graph.Sprite
+
+	//setParams eachUpdate
+	gravityAcc    v2.V2
+	gravityReport []v2.V2
 
 	q *graph.DrawQueue
 }
@@ -103,14 +110,13 @@ func (s *warpScene) Init() {
 
 func (s *warpScene) Update(dt float64) {
 	defer LogFunc("warpScene.Update")()
-	Data.PilotData.SessionTime += dt
+
+	UpdateWarpAndShip(Data, dt, DEFVAL.DT)
 
 	for _, co := range s.objects {
 		co.Update(dt)
 	}
-
 	s.updateShipControl(dt)
-	s.procShipGravity(dt)
 
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		Data.PilotData.Ship.Vel = v2.V2{}
@@ -167,6 +173,10 @@ func (s *warpScene) Update(dt float64) {
 	}
 	s.trail.Update(dt)
 
+	//for display draw calls only
+	s.gravityAcc, s.gravityReport = SumGravityAccWithReport(Data.PilotData.Ship.Pos, Data.Galaxy,
+		0.02)
+
 	s.sonarSector.SetCenter(Data.PilotData.Ship.Pos)
 	s.sonarSector.SetRadius(Data.NaviData.SonarRange)
 	s.sonarSector.SetAngles(
@@ -205,6 +215,9 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 
 	Q.Add(s.caption, graph.Z_STAT_HUD)
 
+	s.drawScale(Q)
+	s.drawGravity(Q)
+
 	Q.Run(image)
 }
 
@@ -216,4 +229,59 @@ func (s *warpScene) toCosmo(systemID string) {
 }
 
 func (*warpScene) Destroy() {
+}
+
+func (s *warpScene) drawScale(Q *graph.DrawQueue) {
+	//Scale factor hud
+	camScale := s.cam.Scale * graph.GS()
+	maxLen := float64(WinW) * 0.8
+	order := math.Floor(math.Log10(maxLen / camScale))
+	val := math.Pow10(int(order))
+	l := camScale * val
+
+	from := graph.ScrP(0.1, 0.9)
+	to := from.AddMul(v2.V2{X: 1, Y: 0}, l)
+	mid := from.AddMul(v2.V2{X: 1, Y: 0}, l/2)
+	mid.Y += 10
+
+	tick := v2.V2{X: 0, Y: 5}
+
+	graph.LineScr(Q, from, to, colornames.White, graph.Z_STAT_HUD+10)
+	graph.LineScr(Q, from.Sub(tick), from.Add(tick), colornames.White, graph.Z_STAT_HUD+10)
+	graph.LineScr(Q, to.Sub(tick), to.Add(tick), colornames.White, graph.Z_STAT_HUD+10)
+
+	msg := fmt.Sprintf("%v", val)
+	scaleText := graph.NewText(msg, Fonts[Face_mono], colornames.White)
+	scaleText.SetPosPivot(mid, graph.TopMiddle())
+	Q.Add(scaleText, graph.Z_STAT_HUD+10)
+
+	circleRadPx := float64(WinH) * 0.3
+	physRad := circleRadPx / s.cam.Scale / graph.GS()
+
+	p := func(i int) v2.V2 {
+		return s.cam.Center.AddMul(v2.InDir(float64(360/32)*float64(i)), circleRadPx)
+	}
+	for i := 0; i <= 32; i++ {
+		graph.LineScr(Q, p(i), p(i+1), colornames.Oldlace, graph.Z_STAT_HUD+10)
+	}
+
+	msg = fmt.Sprintf("circle radius: %f", physRad)
+	physRadText := graph.NewText(msg, Fonts[Face_mono], colornames.Oldlace)
+	physRadText.SetPosPivot(graph.ScrP(0.5, 0.4), graph.TopMiddle())
+	Q.Add(physRadText, graph.Z_STAT_HUD+10)
+}
+
+func (s *warpScene) drawGravity(Q *graph.DrawQueue) {
+	scale := float64(WinH) * 0.3 / (s.cam.Scale * graph.GS())
+	ship := Data.PilotData.Ship.Pos
+	thrust := Data.PilotData.ThrustVector
+	drawv := func(v v2.V2, clr color.Color) {
+		graph.Line(Q, s.cam, ship, ship.AddMul(v, scale), clr, graph.Z_STAT_HUD+10)
+	}
+	for _, v := range s.gravityReport {
+		drawv(v, colornames.Deepskyblue)
+	}
+	drawv(s.gravityAcc, colornames.Lightblue)
+	drawv(Data.PilotData.ThrustVector, colornames.Darkolivegreen)
+	drawv(thrust.Add(s.gravityAcc), colornames.White)
 }

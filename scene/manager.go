@@ -82,7 +82,6 @@ func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
 	scene.Update(dt)
 
 	if doDraw {
-
 		scene.Draw(image)
 	}
 }

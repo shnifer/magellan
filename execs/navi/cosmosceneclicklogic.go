@@ -217,15 +217,14 @@ func (s *cosmoScene) checkMine() (msg string, ok bool) {
 	for _, has := range gp.Minerals {
 		know = false
 		for _, known := range Data.BSP.KnownMinerals {
-			if has == known {
+			if has == known.ID {
 				know = true
+				hasknown = append(hasknown, known.UserName)
 				break
 			}
 		}
-		if know {
-			hasknown = append(hasknown, has)
-		} else {
-			hasunknown = false
+		if !know {
+			hasunknown = true
 		}
 	}
 

@@ -92,6 +92,12 @@ func (galaxy *Galaxy) RecalcLvls() {
 		if v.FishHouses == nil {
 			v.FishHouses = make(map[string]string)
 		}
+		if v.Beacons == nil {
+			v.Beacons = make(map[string]string)
+		}
+		if v.BlackBoxes == nil {
+			v.BlackBoxes = make(map[string]string)
+		}
 		if v.Emissions == nil {
 			v.Emissions = make([]Emission, 0)
 		}

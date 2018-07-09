@@ -111,10 +111,6 @@ func (s *cosmoScene) Init() {
 
 	stateData := Data.GetStateData()
 
-	if stateData.BSP.Mass == 0 {
-		Log(LVL_PANIC, "Zero mass for ship!")
-	}
-
 	for _, pd := range stateData.Galaxy.Ordered {
 		if pd.IsVirtual {
 			continue
@@ -251,7 +247,7 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	}
 
 	if Data.NaviData.IsScanning {
-		Range := Data.SP.Radar.Scan_range * 2
+		Range := Data.SP.Scanner.ScanRange * 2
 		if p, ok := Data.Galaxy.Points[Data.NaviData.ScanObjectID]; ok {
 			s.scanRange.SetPos(p.Pos)
 			s.scanRange.SetSize(Range, Range)

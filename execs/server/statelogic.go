@@ -30,10 +30,14 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 			common.PilotData.Ship.Pos =
 				stateData.Galaxy.Points[DEFVAL.SolarStartLocationName].Pos
 			common.NaviData.Mines = make([]string, len(stateData.BSP.Mines))
-			copy(common.NaviData.Mines, stateData.BSP.Mines)
-			common.NaviData.Landing = make([]string, len(stateData.BSP.Landing))
-			copy(common.NaviData.Landing, stateData.BSP.Landing)
-			common.NaviData.BeaconCount = stateData.BSP.BeaconCount
+			for i,v:=range stateData.BSP.Mines{
+				common.NaviData.Mines[i] = v.Owner
+			}
+			common.NaviData.Landing = make([]string, len(stateData.BSP.Modules))
+			for i,v:=range stateData.BSP.Modules{
+				common.NaviData.Landing[i] = v.Owner
+			}
+			common.NaviData.BeaconCount = stateData.BSP.Beacons.Count
 		}
 
 		//from warp to cosmo
@@ -190,7 +194,7 @@ func doUpdateOtherShips(rs *roomServer) {
 			}
 			otherShip = OtherShipData{
 				Id:   rs.curState[otherRoom].ShipID,
-				Name: sd.BSP.ShipName,
+				Name: sd.BSP.Ship.Name,
 				Ship: ocd.PilotData.Ship,
 			}
 			CD.ServerData.OtherShips = append(CD.ServerData.OtherShips, otherShip)

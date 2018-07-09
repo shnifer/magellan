@@ -56,43 +56,7 @@ type EngiData struct {
 
 //Rework CalcDegrade on change
 type BSPDegrade struct {
-	Thrust,
-	Thrust_rev,
-	Thrust_acc,
-	Thrust_rev_acc,
-	Thrust_slow,
-	Thrust_rev_slow,
-	Thrust_heat_prod float64
-
-	Distort_level,
-	Warp_enter_consumption,
-	Distort_level_acc,
-	Distort_level_slow,
-	Distort_consumption,
-	Distort_turn,
-	Distort_turn_consumption float64
-
-	Turn_max,
-	Strafe_max,
-	Turn_acc,
-	Strafe_acc,
-	Turn_slow,
-	Strafe_slow,
-	Maneur_heat_capacity,
-	Maneur_heat_prod,
-	Maneur_heat_sink float64
-
-	Radar_range,
-	Radar_angle,
-	Scan_range,
-	Scan_speed float64
-
-	Sonar_range_max,
-	Sonar_angle_min,
-	Sonar_angle_max,
-	Sonar_angle_change,
-	Sonar_range_change,
-	Sonar_rotate_speed float64
+	BSPParams
 }
 
 type OtherShipData struct {

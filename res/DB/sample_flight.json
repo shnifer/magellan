@@ -86,8 +86,7 @@
         ],
         "modules": [
             {
-                "planet_id": "earth",
-                "company": "gd",
+                "planet_id": 23751,
                 "weight": 1200
             }
         ]

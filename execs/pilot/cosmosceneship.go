@@ -25,7 +25,7 @@ func (s *cosmoScene) procCruise() {
 
 func (s *cosmoScene) procControlTurn(dt float64) {
 	turnInput := input.GetF("turn")
-	massK := 1000 / Data.BSP.Mass
+	massK := 1000 / Data.CalcCurMass()
 	var min, max float64
 	switch {
 	case s.maneurLevel >= 0:
@@ -47,7 +47,7 @@ func (s *cosmoScene) procControlForward(dt float64) {
 		thrustInput = input.GetF("forward")
 	}
 
-	massK := 1000 / Data.BSP.Mass
+	massK := 1000 / Data.CalcCurMass()
 	_ = massK
 	var min, max float64
 	switch {
@@ -66,9 +66,9 @@ func (s *cosmoScene) procControlForward(dt float64) {
 	var accel float64
 	switch {
 	case s.thrustLevel >= 0:
-		accel = s.thrustLevel * Data.SP.March_engine.Thrust_max / Data.BSP.Mass
+		accel = s.thrustLevel * Data.SP.March_engine.Thrust_max / Data.CalcCurMass()
 	case s.thrustLevel < 0:
-		accel = s.thrustLevel * Data.SP.March_engine.Reverse_max / Data.BSP.Mass
+		accel = s.thrustLevel * Data.SP.March_engine.Reverse_max / Data.CalcCurMass()
 	}
 	accelV := v2.InDir(Data.PilotData.Ship.Ang).Mul(accel)
 

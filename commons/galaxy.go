@@ -58,13 +58,13 @@ type GalaxyPoint struct {
 	//for warp points
 	WarpSpawnDistance float64 `json:"wsd,omitempty"`
 	WarpYellowOutDist float64 `json:"wyo,omitempty"`
-	WarpGreenOutDist float64 `json:"wgo,omitempty"`
-	WarpGreenInDist float64 `json:"wgi,omitempty"`
-	WarpRedOutDist float64 `json:"wro,omitempty"`
+	WarpGreenOutDist  float64 `json:"wgo,omitempty"`
+	WarpGreenInDist   float64 `json:"wgi,omitempty"`
+	WarpRedOutDist    float64 `json:"wro,omitempty"`
 
 	ScanData string `json:"sd,omitempty"`
 
-	Minerals   []string    `json:"mi,omitempty"`
+	Minerals   []int       `json:"mi,omitempty"`
 	Emissions  []Emission  `json:"emm,omitempty"`
 	Signatures []Signature `json:"sig,omitempty"`
 	Color      color.RGBA  `json:"clr"`
