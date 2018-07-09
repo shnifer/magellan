@@ -3,7 +3,7 @@
     "Timeout":100,
     "PingPeriod": 100,
     "Room": "room101",
-    "FullScreen": false,
+    "FullScreen": true,
     "WinW": 1000,
     "WinH": 1000,
     "DebugControl":true,

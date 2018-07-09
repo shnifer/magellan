@@ -2,55 +2,15 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten"
+	"time"
 	"image/color"
 	"log"
 	"os"
 	"runtime/trace"
-	"time"
 )
 
-const shortWorkMs = 12
+const shortWorkMs = 5
 const longWorkMs = 22
-
-var start time.Time
-var last time.Time
-var tick <-chan time.Time
-var n, m int
-
-func mainLoop(window *ebiten.Image) error {
-	now := time.Now()
-	waited := now.Sub(last).Seconds() * 1000
-	started := now.Sub(start).Seconds() * 1000
-	last = now
-
-	//update short time
-	time.Sleep(time.Millisecond)
-
-	if !ebiten.IsRunningSlowly() {
-		//drawing long time
-		//time.Sleep(time.Second / 20)
-		m++
-	}
-
-	now = time.Now()
-	ended := now.Sub(start).Seconds() * 1000
-	worked := now.Sub(last).Seconds() * 1000
-	last = now
-	n++
-	log.Printf("waited %10.3f / started at %10.3f / worked for %10.3f / ended at %10.3f / slow:%v", waited, started, worked, ended, ebiten.IsRunningSlowly())
-	if waited+worked < 0 {
-		add := 10 - waited - worked
-		time.Sleep(time.Duration(add) * time.Millisecond)
-	}
-	select {
-	case <-tick:
-		log.Printf("drawed %v/%v", m, n)
-		n = 0
-		m = 0
-	default:
-	}
-	return nil
-}
 
 func startSome() {
 }
@@ -66,9 +26,8 @@ func endALot() {
 
 func doSomeWork(win *ebiten.Image) {
 	go startSome()
-	t := time.After(shortWorkMs * time.Millisecond)
+/*	t := time.After(shortWorkMs * time.Millisecond)
 	var s int
-
 loop:
 	for {
 		select {
@@ -79,17 +38,16 @@ loop:
 		}
 
 	}
-	win.Fill(color.Black)
+*/  time.Sleep(shortWorkMs * time.Millisecond)
 	go endSome()
 }
 
 func doALotofWork(win *ebiten.Image) {
 	go startALot()
+	/*for {
 	t := time.After(longWorkMs * time.Millisecond)
 	var s int
-
 loop:
-	for {
 		select {
 		case <-t:
 			break loop
@@ -97,12 +55,13 @@ loop:
 			s = (s + 1) % 100
 		}
 
-	}
+	}*/
+	time.Sleep(longWorkMs * time.Millisecond)
 	win.Fill(color.White)
 	go endALot()
 }
 
-func mainLoop2(win *ebiten.Image) error {
+func mainLoop(win *ebiten.Image) error {
 	slow := ebiten.IsRunningSlowly()
 	ch <- slow
 	if slow {
@@ -115,7 +74,7 @@ func mainLoop2(win *ebiten.Image) error {
 
 var ch chan bool
 
-func monitor() {
+func fpsMonitor() {
 	t := 0
 	f := 0
 	tick := time.Tick(time.Second)
@@ -128,7 +87,7 @@ func monitor() {
 				f++
 			}
 		case <-tick:
-			log.Printf("%v / %v", f, t+f)
+			log.Printf("Draw/Total: %v / %v", f, t+f)
 			t = 0
 			f = 0
 		}
@@ -143,11 +102,16 @@ func main() {
 	defer f.Close()
 	trace.Start(f)
 	defer trace.Stop()
+
+/*	font,err:=truetype.Parse(fonts.ArcadeN_ttf)
+	if err !=nil{
+		panic(err)
+	}
+	face = truetype.NewFace(font, &truetype.Options{Size:20})
+*/
 	ch = make(chan bool, 1)
-	go monitor()
-	start = time.Now()
-	last = start
-	tick = time.Tick(time.Second)
-	ebiten.SetRunnableInBackground(true)
-	ebiten.Run(mainLoop2, 200, 200, 1, "Dt test")
+	go fpsMonitor()
+	ebiten.SetRunnableInBackground(false)
+	ebiten.SetFullscreen(true)
+	ebiten.Run(mainLoop, 200, 200, 1, "Dt test")
 }

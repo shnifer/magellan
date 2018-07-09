@@ -24,7 +24,7 @@ type TData struct {
 func NewData() TData {
 	return TData{
 		CommonData: CommonData{}.Empty(),
-		actionQ:    make(chan func(), 8),
+		actionQ:    make(chan func(), 128),
 		SP:         &BSP{},
 	}
 }
@@ -160,7 +160,7 @@ func (d *TData) CalcCurMass() float64 {
 			mass += v.Mass
 		}
 		if !f {
-			Log(LVL_ERROR, "CalcCurMass can't found mine mass")
+			Log(LVL_ERROR, "CalcCurMass can't found landing module mass")
 		}
 	}
 

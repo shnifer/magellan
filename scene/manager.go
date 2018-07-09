@@ -59,10 +59,6 @@ func (m *Manager) UpdateAndDraw(dt float64, image *ebiten.Image, doDraw bool) {
 		m.current, m.paused, m.inited[m.current])
 	defer LogFunc(logStr)()
 
-	if doDraw {
-		image.Clear()
-	}
-
 	if m.current == "" {
 		return
 	}
