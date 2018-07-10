@@ -254,7 +254,7 @@ func (s *Sprite) Draw(dest *ebiten.Image) {
 //MUST support multiple draw with different parameters
 func (s *Sprite) DrawF() (DrawF, string) {
 	if s.SkipDrawCheck() {
-		return DrawFZero, ""
+		return nil, ""
 	}
 	//so we calc draw ops on s.DrawF() call not DrawF resolve
 	img, op := s.ImageOp()
@@ -291,9 +291,6 @@ func (s *Sprite) NextSprite() {
 
 //for noCam use in fact
 func (s *Sprite) GetRect() image.Rectangle {
-	log.Println("+++")
-	log.Println(s.pos)
-	log.Println(s.pivot)
 	return image.Rect(
 		int(s.pos.X-s.pivot.X*s.sx),
 		int(s.pos.Y-s.pivot.Y*s.sy),

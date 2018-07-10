@@ -36,6 +36,7 @@ type cosmoScene struct {
 	//control
 	cruiseOn    bool
 	cruiseInput float64
+	maneurDetail bool
 	thrustLevel float64
 	maneurLevel float64
 
@@ -116,6 +117,7 @@ func (s *cosmoScene) Init() {
 	s.thrustLevel = 0
 	s.cruiseOn = false
 	s.maneurLevel = 0
+	s.maneurDetail = false
 	s.trailT = 0
 	s.lastServerID = 0
 	s.trail.Clear()

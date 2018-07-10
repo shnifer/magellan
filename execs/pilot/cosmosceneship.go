@@ -13,18 +13,22 @@ func (s *cosmoScene) updateShipControl(dt float64) {
 }
 
 func (s *cosmoScene) procCruise() {
-	if !input.Get("cruiseonoff") {
-		return
+	if input.Get("cruiseonoff") {
+		s.cruiseOn = !s.cruiseOn
+		if s.cruiseOn {
+			s.cruiseInput = input.GetF("forward")
+		}
 	}
-
-	s.cruiseOn = !s.cruiseOn
-	if s.cruiseOn {
-		s.cruiseInput = input.GetF("forward")
+	if input.Get("maneurdetailonoff") {
+		s.maneurDetail = !s.maneurDetail
 	}
 }
 
 func (s *cosmoScene) procControlTurn(dt float64) {
 	turnInput := input.GetF("turn")
+	if s.maneurDetail{
+		turnInput/=5
+	}
 	massK := 1000 / Data.CalcCurMass()
 	var min, max float64
 	switch {

@@ -52,5 +52,12 @@
         "JoyID": 0,
         "JoyButton": 1,
         "Val": -1
+    },
+    {
+        "InputName": "maneurdetailonoff",
+        "InputType": "JBJP",
+        "JoyID": 0,
+        "JoyButton": 2,
+        "Val": -1
     }
 ]

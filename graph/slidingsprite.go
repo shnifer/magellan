@@ -48,7 +48,7 @@ func (s *SlidingSprite) Draw(dest *ebiten.Image) {
 //MUST support multiple draw with different parameters
 func (s *SlidingSprite) DrawF() (DrawF, string) {
 	if s.sprite.SkipDrawCheck() {
-		return DrawFZero, ""
+		return nil, ""
 	}
 	//so we calc draw ops on s.DrawF() call not DrawF resolve
 	img, op := s.ImageOp()

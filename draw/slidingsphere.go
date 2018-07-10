@@ -46,7 +46,7 @@ func NewAtlasSlidingSphere(atlasName string, params graph.CamParams, periodS flo
 
 func (ss *SlidingSphere) DrawF() (graph.DrawF, string) {
 	if ss.Sprite.SkipDrawCheck() {
-		return graph.DrawFZero, ""
+		return nil, ""
 	}
 
 	f := func(dest *ebiten.Image) {

@@ -24,8 +24,6 @@ const (
 
 type DrawF = func(image *ebiten.Image)
 
-var DrawFZero = func(image *ebiten.Image) {}
-
 type DrawReq struct {
 	drawReq DrawF
 	layer   int
@@ -74,10 +72,12 @@ func (dq *DrawQueue) Clear() {
 	dq.reqs = dq.reqs[:0]
 }
 
-//todo: do this fast and straight
 //For simple objects(like Sprite amd other graph primitives) that do not know it's layer
 func (dq *DrawQueue) Add(drawer drawer, layer int) {
 	f, group := drawer.DrawF()
+	if f == nil {
+		return
+	}
 	dq.reqs = append(dq.reqs, NewReq(layer, group, f))
 }
 
