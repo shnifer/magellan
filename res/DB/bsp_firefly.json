@@ -26,9 +26,9 @@
             "heat_prod": 80
         },
         "warp_engine": {
-            "distort": 1000,
-            "distort_acc": 2,
-            "distort_slow": 10,
+            "distort": 1,
+            "distort_acc": 20,
+            "distort_slow": 80,
             "warp_enter_consumption": 1000,
             "consumption": 1000,
             "turn_consumption": 1000,

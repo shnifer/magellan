@@ -1,8 +1,8 @@
 package main
 
 import (
-	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/input"
+	"github.com/Shnifer/magellan/commons"
 )
 
 func (s *warpScene) updateShipControl(dt float64) {
@@ -11,22 +11,21 @@ func (s *warpScene) updateShipControl(dt float64) {
 }
 
 func (s *warpScene) procControlForward(dt float64) {
-	thrustInput := input.GetF("forward")
+	w := input.WarpLevel("warpspeed")
 
-	switch {
-	case thrustInput >= 0:
-		s.thrustLevel = s.thrustLevel + Data.SP.Warp_engine.Distort_acc/100*thrustInput*dt
-	case thrustInput < 0:
-		s.thrustLevel = s.thrustLevel + Data.SP.Warp_engine.Distort_slow/100*thrustInput*dt
+	s.thrustLevel = commons.Clamp(w,
+		s.thrustLevel - Data.SP.Warp_engine.Distort_slow/100*dt,
+		s.thrustLevel + Data.SP.Warp_engine.Distort_acc/100*dt)
+
+	if w==0{
+		Data.PilotData.Distortion = 0
+	} else {
+		Data.PilotData.Distortion = DEFVAL.MinDistortion+
+			s.thrustLevel * Data.SP.Warp_engine.Distort_max
 	}
-
-	s.thrustLevel = Clamp(s.thrustLevel, 0, 1)
-
-	Data.PilotData.Distortion = s.thrustLevel * Data.SP.Warp_engine.Distort_max
 }
 
 func (s *warpScene) procControlTurn(dt float64) {
 	turnInput := input.GetF("turn")
-
 	s.maneurLevel = turnInput
 }

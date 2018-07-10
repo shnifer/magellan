@@ -29,6 +29,7 @@ type tDefVals struct {
 	GravityConst     float64
 	WarpGravityConst float64
 	DT               float64
+	MinDistortion float64
 
 	//in ms
 	LogTimeoutMs  int

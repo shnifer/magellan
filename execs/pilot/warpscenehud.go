@@ -83,8 +83,8 @@ func (s *warpScene) updateHUD() {
 	}
 	s.hud.trail.Update(dt)
 
-	s.hud.thrustLevelHUD.SetPos(graph.ScrP(0.15, 0.5-0.4*s.thrustLevel))
-	s.hud.thrustControlHUD.SetPos(graph.ScrP(0.1, 0.5-0.4*input.GetF("forward")))
+	s.hud.thrustLevelHUD.SetPos(graph.ScrP(0.15, 0.9-0.8*s.thrustLevel))
+	s.hud.thrustControlHUD.SetPos(graph.ScrP(0.1, 0.9-0.8*input.WarpLevel("warpspeed")))
 
 	s.hud.turnLevelHUD.SetPos(graph.ScrP(0.5-0.4*s.maneurLevel, 0.15))
 	s.hud.turnControlHUD.SetPos(graph.ScrP(0.5-0.4*input.GetF("turn"), 0.1))
