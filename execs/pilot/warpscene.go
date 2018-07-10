@@ -13,6 +13,7 @@ import (
 	"golang.org/x/image/colornames"
 	"image/color"
 	"math"
+	"sort"
 )
 
 type warpScene struct {
@@ -21,6 +22,7 @@ type warpScene struct {
 	cam     *graph.Camera
 
 	objects map[string]*CosmoPoint
+	objIDs  []string
 
 	//trail
 	trailT float64
@@ -40,6 +42,7 @@ type warpScene struct {
 	//setParams eachUpdate
 	gravityAcc    v2.V2
 	gravityReport []v2.V2
+	distCircle *graph.CircleLine
 
 	q *graph.DrawQueue
 }
@@ -58,11 +61,20 @@ func newWarpScene() *warpScene {
 	sonarSector := graph.NewSector(cam.Phys())
 	sonarSector.SetColor(colornames.Forestgreen)
 
+	clo := graph.CircleLineOpts{
+		Layer:  graph.Z_STAT_HUD + 10,
+		Clr:    colornames.Oldlace,
+		PCount: 32,
+	}
+	distCircle := graph.NewCircleLine(cam.Center, float64(WinH)*0.3, clo)
+
 	res := warpScene{
 		caption:     caption,
 		ship:        ship,
 		cam:         cam,
 		objects:     make(map[string]*CosmoPoint),
+		objIDs:      make([]string, 0),
+		distCircle: distCircle,
 		sonarSector: sonarSector,
 		q:           graph.NewDrawQueue(),
 	}
@@ -200,8 +212,18 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 
 	Q.Add(s.sonarSector, graph.Z_UNDER_OBJECT)
 
-	for _, co := range s.objects {
-		Q.Append(co)
+	if len(s.objIDs) != len(s.objects) {
+		s.objIDs = make([]string, len(s.objects))
+		var i int
+		for id := range s.objects {
+			s.objIDs[i] = id
+			i++
+		}
+		sort.Strings(s.objIDs)
+	}
+
+	for _, id := range s.objIDs {
+		Q.Append(s.objects[id])
 	}
 
 	Q.Add(s.trail, graph.Z_UNDER_OBJECT)
@@ -258,12 +280,7 @@ func (s *warpScene) drawScale(Q *graph.DrawQueue) {
 	circleRadPx := float64(WinH) * 0.3
 	physRad := circleRadPx / s.cam.Scale / graph.GS()
 
-	p := func(i int) v2.V2 {
-		return s.cam.Center.AddMul(v2.InDir(float64(360/32)*float64(i)), circleRadPx)
-	}
-	for i := 0; i <= 32; i++ {
-		graph.LineScr(Q, p(i), p(i+1), colornames.Oldlace, graph.Z_STAT_HUD+10)
-	}
+	Q.Append(s.distCircle)
 
 	msg = fmt.Sprintf("circle radius: %f", physRad)
 	physRadText := graph.NewText(msg, Fonts[Face_mono], colornames.Oldlace)

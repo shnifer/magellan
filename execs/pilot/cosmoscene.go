@@ -28,6 +28,7 @@ type cosmoScene struct {
 	naviMarker *WayPoint
 
 	objects map[string]*CosmoPoint
+	objIDs  []string
 
 	lastServerID int
 	otherShips   map[string]*OtherShip
@@ -94,6 +95,7 @@ func newCosmoScene() *cosmoScene {
 		naviMarker: marker,
 		hud:        hud,
 		objects:    make(map[string]*CosmoPoint),
+		objIDs:     make([]string, 0),
 		otherShips: make(map[string]*OtherShip),
 		scanRange:  scanRange,
 		distCircle: distCircle,
@@ -216,15 +218,17 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	Q.Append(s.hud)
 	Q.Append(s.warpEngine)
 
-	objIDs := make([]string, len(s.objects))
-	var i int
-	for id := range s.objects {
-		objIDs[i] = id
-		i++
+	if len(s.objIDs) != len(s.objects) {
+		s.objIDs = make([]string, len(s.objects))
+		var i int
+		for id := range s.objects {
+			s.objIDs[i] = id
+			i++
+		}
+		sort.Strings(s.objIDs)
 	}
-	sort.Strings(objIDs)
 
-	for _, id := range objIDs {
+	for _, id := range s.objIDs {
 		Q.Append(s.objects[id])
 	}
 	Q.Add(s.trail, graph.Z_UNDER_OBJECT)

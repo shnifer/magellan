@@ -27,7 +27,8 @@ type CosmoPoint struct {
 	SlidingSphere *SlidingSphere
 	CycledSprite  *graph.CycledSprite
 
-	EmissionRange *graph.Sprite
+	//warpRanges
+	WarpCircles []*graph.CircleLine
 
 	ID   string
 	Pos  v2.V2
@@ -133,14 +134,6 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 			emiR = emi.MainRange
 		}
 	}
-	var emissionRange *graph.Sprite
-	if emiR > 0 {
-		emissionRange = graph.NewSprite(graph.CircleTex(), params)
-		emissionRange.SetSize(emiR*2, emiR*2)
-		emissionRange.SetColor(colornames.Orchid)
-		emissionRange.SetAlpha(0.3)
-		emissionRange.SetPos(pd.Pos)
-	}
 
 	var caption string
 	var captionText *graph.Text
@@ -162,7 +155,6 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		SimpleSprite:   simpleSprite,
 		SlidingSphere:  slidingSphere,
 		CycledSprite:   cycledSprite,
-		EmissionRange:  emissionRange,
 		Pos:            pd.Pos,
 		ID:             pd.ID,
 		Size:           pd.Size,
@@ -171,7 +163,33 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		caption:        captionText,
 		cam:            params.Cam,
 	}
-	res.recalcSprite()
+	if pd.Type == GPT_WARP {
+		rads := make([]float64, 4)
+		rads[0] = pd.WarpRedOutDist
+		rads[1] = pd.WarpGreenInDist
+		rads[2] = pd.WarpGreenOutDist
+		rads[3] = pd.WarpYellowOutDist
+
+		circles := make([]*graph.CircleLine, 4)
+		opts := graph.CircleLineOpts{
+			PCount: 64,
+			Layer:  graph.Z_UNDER_OBJECT,
+			Params: params,
+		}
+		for i := 0; i < len(circles); i++ {
+			switch i {
+			case 0:
+				opts.Clr = colornames.Red
+			case 1, 2:
+				opts.Clr = colornames.Green
+			case 3:
+				opts.Clr = colornames.Yellow
+			}
+			circles[i] = graph.NewCircleLine(v2.ZV, rads[i], opts)
+		}
+		res.WarpCircles = circles
+	}
+
 	return &res
 }
 
@@ -186,13 +204,11 @@ func (co *CosmoPoint) Update(dt float64) {
 		co.CycledSprite.Update(dt)
 	}
 
-	co.recalcSprite()
 }
 
 func (co *CosmoPoint) Req(Q *graph.DrawQueue) {
-	if co.EmissionRange != nil {
-		Q.Add(co.EmissionRange, graph.Z_UNDER_OBJECT)
-	}
+
+	co.recalcSprite()
 
 	markAlpha, spriteAlpha := MarkAlpha(co.Size*2/co.markLevelScale, co.cam)
 
@@ -229,6 +245,12 @@ func (co *CosmoPoint) Req(Q *graph.DrawQueue) {
 		Q.Add(co.caption, graph.Z_ABOVE_OBJECT)
 	}
 
+	if co.WarpCircles != nil {
+		for _, wcl := range co.WarpCircles {
+			Q.Append(wcl)
+		}
+	}
+
 	co.glyphs.setPos(co.cam.Apply(co.Pos))
 	co.glyphs.setSize(co.cam.Scale * co.Size)
 
@@ -251,8 +273,10 @@ func (co *CosmoPoint) recalcSprite() {
 	if co.MarkGlowSprite != nil {
 		co.MarkGlowSprite.SetPos(co.Pos)
 	}
-	if co.EmissionRange != nil {
-		co.EmissionRange.SetPos(co.Pos)
+	if co.WarpCircles != nil {
+		for _, c := range co.WarpCircles {
+			c.SetPos(co.Pos)
+		}
 	}
 }
 

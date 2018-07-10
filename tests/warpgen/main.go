@@ -39,6 +39,7 @@ func main() {
 			Type:              commons.GPT_WARP,
 			Size:              1,
 			Mass:              okr(1 + rand.Float64()),
+			GDepth: 0.1,
 			WarpSpawnDistance: 5,
 			WarpRedOutDist:    1,
 			WarpGreenInDist:   2,

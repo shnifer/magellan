@@ -71,6 +71,9 @@ func (cl *CircleLine) Req(Q *DrawQueue) {
 	if !cl.opts.Params.DenyScale && cam != nil {
 		r *= cam.Scale * GS()
 	}
+	if r<1{
+		return
+	}
 	from := cl.p(base, r, 0)
 	var to v2.V2
 	for i := 0; i < cl.opts.PCount; i++ {

@@ -27,7 +27,7 @@
   "MAGIC_MARK_themagellan": {"FileName": "MagIcon_Magellan.png"},
   "MAGIC_MARK_GASPLANET": {"FileName": "MagIcon_Gas.png"},
   "MAGIC_MARK_ASTEROID": {"FileName": "MagIcon_Asteroid.png"},
-  "MAGIC_MARK_WARP": {"FileName": "aim.png"},
+  "MAGIC_MARK_WARP": {"FileName": "particle.png"},
   "MAGIC_button": {"FileName": "button.png"},
   "MAGIC_textpanel":{"FileName": "button.png"},
   "MAGIC_compass": {"FileName": "HUD_Radar.png", "Smooth":true},

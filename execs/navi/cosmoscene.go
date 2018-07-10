@@ -9,6 +9,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
+	"sort"
 )
 
 const (
@@ -33,6 +34,7 @@ type cosmoScene struct {
 	isCamToShip bool
 
 	objects map[string]*CosmoPoint
+	objIDs  []string
 
 	scanner *scanner
 
@@ -100,6 +102,7 @@ func newCosmoScene() *cosmoScene {
 		shipMarker:  shipMarker,
 		cosmoPanels: cosmoPanels,
 		objects:     make(map[string]*CosmoPoint),
+		objIDs:      make([]string, 0),
 		otherShips:  make(map[string]*OtherShip),
 		announce:    at,
 		background:  background,
@@ -206,8 +209,18 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 
 	Q.Append(s.scanner)
 
-	for _, co := range s.objects {
-		Q.Append(co)
+	if len(s.objIDs) != len(s.objects) {
+		s.objIDs = make([]string, len(s.objects))
+		var i int
+		for id := range s.objects {
+			s.objIDs[i] = id
+			i++
+		}
+		sort.Strings(s.objIDs)
+	}
+
+	for _, id := range s.objIDs {
+		Q.Append(s.objects[id])
 	}
 
 	for _, os := range s.otherShips {
