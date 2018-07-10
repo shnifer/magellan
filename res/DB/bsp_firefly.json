@@ -8,7 +8,7 @@
     },
     "params": {
         "march_engine": {
-            "thrust": 1000,
+            "thrust": 10000,
             "thrust_rev": 0,
             "accel": 20,
             "accel_rev": 0,
@@ -17,7 +17,7 @@
             "heat_prod": 80
         },
         "shunter": {
-            "turn": 60,
+            "turn": 600,
             "strafe": 0,
             "turn_acc": 90,
             "strafe_acc": 0,
