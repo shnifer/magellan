@@ -7,7 +7,6 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/font"
 	"image/color"
-	"log"
 )
 
 type TextInput struct {
@@ -50,10 +49,6 @@ func (ti *TextInput) Update(dt float64) {
 	r := ti.sprite.GetRect()
 	h := r.Max.Y - r.Min.Y
 	p := v2.V2{X: float64(r.Min.X), Y: float64(r.Min.Y)}.AddMul(v2.V2{X: 1, Y: 1}, float64(h/2))
-	log.Println(r)
-	log.Println(h)
-	log.Println(p)
-	log.Println("==")
 	ti.gText = graph.NewText(ti.text, ti.face, ti.clr)
 	ti.gText.SetPosPivot(p, graph.MidLeft())
 	if enter {

@@ -1,21 +1,21 @@
 package main
 
 import (
-	"github.com/peterbourgon/diskv"
 	"github.com/Shnifer/magellan/storage"
+	"github.com/peterbourgon/diskv"
 )
 
 const storagePath = "xstore"
 
-var disk *storage.Storage
+var flightDisk *storage.Storage
 
-func initStorage(){
+func initFlightStorage() {
 	diskOpts := diskv.Options{
 		BasePath:     storagePath,
 		CacheSizeMax: 1024 * 1024,
 	}
-	disk := storage.New(DEFVAL.NodeName, diskOpts)
+	flightDisk = storage.New(DEFVAL.NodeName, diskOpts)
 	if DEFVAL.GameExchPort != "" && DEFVAL.GameExchPeriodMs > 0 {
-		storage.RunExchanger(disk, DEFVAL.GameExchPort, DEFVAL.GameExchAddrs, DEFVAL.GameExchPeriodMs)
+		storage.RunExchanger(flightDisk, DEFVAL.GameExchPort, DEFVAL.GameExchAddrs, DEFVAL.GameExchPeriodMs)
 	}
 }

@@ -135,18 +135,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		}
 	}
 
-	var caption string
 	var captionText *graph.Text
-	switch pd.Type {
-	case BUILDING_BEACON, BUILDING_BLACKBOX:
-		caption = pd.ScanData
-	default:
-		caption = ""
-	}
-	if caption != "" {
-		captionText = graph.NewText(caption, Fonts[Face_mono], colornames.Red)
-	}
-
 	res := CosmoPoint{
 		level:          pd.GLevel,
 		MarkGlowSprite: markGlow,
@@ -163,6 +152,12 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		caption:        captionText,
 		cam:            params.Cam,
 	}
+	switch pd.Type {
+	case BUILDING_BEACON, BUILDING_BLACKBOX:
+		res.SetCaption(pd.ScanData, colornames.Red)
+	default:
+	}
+
 	if pd.Type == GPT_WARP {
 		rads := make([]float64, 4)
 		rads[0] = pd.WarpRedOutDist
@@ -245,7 +240,7 @@ func (co *CosmoPoint) Req(Q *graph.DrawQueue) {
 		Q.Add(co.caption, graph.Z_ABOVE_OBJECT)
 	}
 
-	if co.WarpCircles != nil {
+	if markAlpha == 0 && co.WarpCircles != nil {
 		for _, wcl := range co.WarpCircles {
 			Q.Append(wcl)
 		}
@@ -283,4 +278,8 @@ func (co *CosmoPoint) recalcSprite() {
 //must be set once before creating CosmoPoints
 func LowQualityCosmoPoint(v bool) {
 	lowQ = v
+}
+
+func (s *CosmoPoint) SetCaption(caption string, clr color.Color) {
+	s.caption = graph.NewText(caption, Fonts[Face_cap], clr)
 }

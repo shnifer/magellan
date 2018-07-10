@@ -1,20 +1,20 @@
 package main
 
 import (
-	"time"
-	"github.com/Shnifer/magellan/commons"
-	"github.com/hajimehoshi/ebiten"
-	"github.com/Shnifer/magellan/graph"
-	"github.com/Shnifer/magellan/draw"
 	"fmt"
-	"image/color"
-	"github.com/Shnifer/magellan/v2"
+	"github.com/Shnifer/magellan/commons"
+	"github.com/Shnifer/magellan/draw"
+	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/log"
+	"github.com/Shnifer/magellan/v2"
+	"github.com/hajimehoshi/ebiten"
+	"image/color"
+	"time"
 )
 
 var (
-WinW int
-WinH int
+	WinW int
+	WinH int
 )
 
 var last time.Time
@@ -33,14 +33,13 @@ func mainLoop(window *ebiten.Image) error {
 	sessionTime = time.Now().Sub(commons.StartDateTime).Seconds()
 
 	select {
-	case newGalaxy:=<-changeGalaxy:
-		loadNewGalaxy(newGalaxy)
-		Scene.init()
+	case newGalaxy := <-changeGalaxy:
+		changeState(newGalaxy)
 	default:
 	}
 
 	Scene.update(dt)
-	if !ebiten.IsRunningSlowly(){
+	if !ebiten.IsRunningSlowly() {
 		Scene.draw(window)
 		if fpsText != nil {
 			fpsText.Draw(window)
@@ -85,7 +84,8 @@ func main() {
 		WinH = DEFVAL.WinH
 	}
 
-	initStorage()
+	initFlightStorage()
+	initNamesStorage()
 
 	graph.SetScreenSize(WinW, WinH)
 	draw.LowQualityCosmoPoint(DEFVAL.LowQ)
@@ -95,8 +95,8 @@ func main() {
 
 	ebiten.SetRunnableInBackground(true)
 
-	changeGalaxy = make(chan string,1)
-	changeGalaxy<-commons.WARP_Galaxy_ID
+	changeGalaxy = make(chan string, 1)
+	changeGalaxy <- commons.WARP_Galaxy_ID
 
 	last = time.Now()
 	showFps = time.Tick(time.Second)
@@ -105,4 +105,11 @@ func main() {
 	if err := ebiten.Run(mainLoop, WinW, WinH, 1, "MISSION CONTROL CENTER"); err != nil {
 		log.Log(log.LVL_FATAL, err)
 	}
+}
+
+func changeState(newGalaxy string) {
+	loadNewGalaxy(newGalaxy)
+	GalaxyName = newGalaxy
+	getNames(newGalaxy)
+	Scene.init()
 }

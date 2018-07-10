@@ -18,12 +18,14 @@ type glyphs struct {
 	size float64
 }
 
+//todo: beacon and blackbox glyphs?
+//todo: warp mines for control
 func newGlyphs(pd *GalaxyPoint) glyphs {
 	glyphs0 := make([]*graph.Sprite, 0)
 	glyphs1 := make([]*graph.Sprite, 0)
 
 	for owner := range pd.Mines {
-		if len(glyphs0)<maxGlyphsInRow {
+		if len(glyphs0) < maxGlyphsInRow {
 			glyphs0 = append(glyphs0, newGlyph(BUILDING_MINE, owner))
 		} else {
 			glyphs1 = append(glyphs0, newGlyph(BUILDING_MINE, owner))
@@ -32,15 +34,15 @@ func newGlyphs(pd *GalaxyPoint) glyphs {
 
 	//we removed fishhouses
 	/*
-	for owner := range pd.FishHouses {
-		ng := newGlyph(BUILDING_FISHHOUSE, owner)
-		if num <= maxGlyphsInRow {
-			glyphs0 = append(glyphs0, ng)
-		} else {
-			glyphs1 = append(glyphs1, ng)
-		}
+		for owner := range pd.FishHouses {
+			ng := newGlyph(BUILDING_FISHHOUSE, owner)
+			if num <= maxGlyphsInRow {
+				glyphs0 = append(glyphs0, ng)
+			} else {
+				glyphs1 = append(glyphs1, ng)
+			}
 
-	}
+		}
 	*/
 	return glyphs{
 		Glyphs0: glyphs0,
