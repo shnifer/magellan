@@ -96,6 +96,7 @@ func main() {
 	commons.InitSignatureAtlas()
 
 	commons.SetGravityConsts(DEFVAL.GravityConst, DEFVAL.WarpGravityConst)
+	commons.SetVelDistWarpK(DEFVAL.VelDistWarpK)
 
 	createScenes()
 

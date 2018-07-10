@@ -1,14 +1,9 @@
 package commons
 
 import (
+	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
-	."github.com/Shnifer/magellan/log"
 )
-
-//Vel = Distortion*VelDistK
-const VelDistK = 0.5
-//Acc = gravAcc*Distortion^3*AccDistK
-const AccDistK = 0.1
 
 func UpdateWarpAndShip(data TData, sumT float64, dt float64) {
 	if data.Galaxy == nil {
@@ -20,12 +15,23 @@ func UpdateWarpAndShip(data TData, sumT float64, dt float64) {
 		return
 	}
 
-	galaxy := data.Galaxy
-	ship := data.PilotData.Ship
 	sessionTime := data.PilotData.SessionTime
 	distortion := data.PilotData.Distortion
-	gravK := distortion * distortion * distortion * AccDistK
-	vel := VelDistK * distortion
+
+	//fast return, in fact we have to go out from warp
+	if distortion == 0 {
+		sessionTime += dt
+		//final update for all and every object, slow but once
+		data.Galaxy.Update(sessionTime)
+		data.Galaxy.fixedTimeRest = 0
+		data.PilotData.SessionTime = sessionTime
+		return
+	}
+
+	galaxy := data.Galaxy
+	ship := data.PilotData.Ship
+	gravK := distortion * distortion * distortion
+	vel := velDistWarpK * distortion
 
 	var grav v2.V2
 
@@ -35,7 +41,7 @@ func UpdateWarpAndShip(data TData, sumT float64, dt float64) {
 		sumT -= dt
 
 		grav = SumWarpGravityAcc(ship.Pos, galaxy).Mul(gravK)
-		ship.Vel.DoAddMul(grav,dt)
+		ship.Vel.DoAddMul(grav, dt)
 		ship.Vel = ship.Vel.Normed().Mul(vel)
 		ship.Pos.DoAddMul(ship.Vel, dt)
 	}
@@ -48,4 +54,3 @@ func UpdateWarpAndShip(data TData, sumT float64, dt float64) {
 	data.Galaxy.fixedTimeRest = sumT
 	data.PilotData.SessionTime = sessionTime
 }
-

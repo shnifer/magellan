@@ -14,11 +14,16 @@ type CommonData struct {
 }
 
 type PilotData struct {
-	Ship           RBData  `json:"sh"`
-	SessionTime    float64 `json:"ss"`
-	ThrustVector   v2.V2   `json:"tv"`
-	Distortion     float64 `json:"wd"`
-	HeatProduction float64 `json:"hp"`
+	Ship        RBData  `json:"sh", omitempty`
+	SessionTime float64 `json:"ss", omitempty`
+	//for cosmo
+	ThrustVector v2.V2 `json:"tv", omitempty`
+	//for warp
+	Distortion float64 `json:"wd", omitempty`
+	Dir        float64 `json:"dr", omitempty`
+
+	//for engu
+	HeatProduction float64 `json:"hp", omitempty`
 
 	//do not reload same Msg, cz of ship.Pos extrapolate and SessionTime+=dt
 	MsgID int `json:"id"`
@@ -33,12 +38,12 @@ type NaviData struct {
 	Landing []string `json:"ld"`
 
 	//cosmo
-	IsScanning    bool
-	ScanObjectID  string
-	IsOrbiting    bool
-	OrbitObjectID string
-	ActiveMarker  bool  `json:"ma"`
-	MarkerPos     v2.V2 `json:"mp"`
+	IsScanning    bool   `json:"is"`
+	ScanObjectID  string `json:"so"`
+	IsOrbiting    bool   `json:"io"`
+	OrbitObjectID string `json:"oo"`
+	ActiveMarker  bool   `json:"ma"`
+	MarkerPos     v2.V2  `json:"mp"`
 
 	//warp
 	SonarDir   float64 `json:"sd"`
