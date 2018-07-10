@@ -25,7 +25,6 @@ func endALot() {
 }
 
 func doSomeWork(win *ebiten.Image) {
-	go startSome()
 /*	t := time.After(shortWorkMs * time.Millisecond)
 	var s int
 loop:

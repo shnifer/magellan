@@ -51,7 +51,8 @@ type cosmoScene struct {
 	gravityReport []v2.V2
 
 	//show from Navi
-	scanRange *graph.Sprite
+	scanRange  *graph.Sprite
+	distCircle *graph.CircleLine
 
 	q *graph.DrawQueue
 }
@@ -78,6 +79,13 @@ func newCosmoScene() *cosmoScene {
 	scanRange.SetAlpha(0.5)
 	scanRange.SetColor(colornames.Indigo)
 
+	clo := graph.CircleLineOpts{
+		Layer:  graph.Z_STAT_HUD + 10,
+		Clr:    colornames.Oldlace,
+		PCount: 32,
+	}
+	distCircle := graph.NewCircleLine(cam.Center, float64(WinH)*0.3, clo)
+
 	res := cosmoScene{
 		caption:    caption,
 		ship:       ship,
@@ -88,6 +96,7 @@ func newCosmoScene() *cosmoScene {
 		objects:    make(map[string]*CosmoPoint),
 		otherShips: make(map[string]*OtherShip),
 		scanRange:  scanRange,
+		distCircle: distCircle,
 		q:          graph.NewDrawQueue(),
 	}
 
@@ -366,12 +375,7 @@ func (s *cosmoScene) drawScale(Q *graph.DrawQueue) {
 	circleRadPx := float64(WinH) * 0.3
 	physRad := circleRadPx / s.cam.Scale / graph.GS()
 
-	p := func(i int) v2.V2 {
-		return s.cam.Center.AddMul(v2.InDir(float64(360/32)*float64(i)), circleRadPx)
-	}
-	for i := 0; i <= 32; i++ {
-		graph.LineScr(Q, p(i), p(i+1), colornames.Oldlace, graph.Z_STAT_HUD+10)
-	}
+	Q.Append(s.distCircle)
 
 	msg = fmt.Sprintf("circle radius: %f", physRad)
 	physRadText := graph.NewText(msg, Fonts[Face_mono], colornames.Oldlace)
