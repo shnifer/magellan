@@ -7,7 +7,7 @@ import (
 )
 
 const glyphSize = 32
-const maxGlyphsInRow = 5
+const maxGlyphsInRow = 3
 
 type glyphs struct {
 	//hardcoded 2 rows
@@ -22,10 +22,16 @@ func newGlyphs(pd *GalaxyPoint) glyphs {
 	glyphs0 := make([]*graph.Sprite, 0)
 	glyphs1 := make([]*graph.Sprite, 0)
 
-	num := len(pd.Mines) + len(pd.FishHouses)
 	for owner := range pd.Mines {
-		glyphs0 = append(glyphs0, newGlyph(BUILDING_MINE, owner))
+		if len(glyphs0)<maxGlyphsInRow {
+			glyphs0 = append(glyphs0, newGlyph(BUILDING_MINE, owner))
+		} else {
+			glyphs1 = append(glyphs0, newGlyph(BUILDING_MINE, owner))
+		}
 	}
+
+	//we removed fishhouses
+	/*
 	for owner := range pd.FishHouses {
 		ng := newGlyph(BUILDING_FISHHOUSE, owner)
 		if num <= maxGlyphsInRow {
@@ -35,6 +41,7 @@ func newGlyphs(pd *GalaxyPoint) glyphs {
 		}
 
 	}
+	*/
 	return glyphs{
 		Glyphs0: glyphs0,
 		Glyphs1: glyphs1,

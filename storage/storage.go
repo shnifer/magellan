@@ -33,6 +33,7 @@ type Storage struct {
 
 func New(nodeName string, diskOpts diskv.Options) *Storage {
 	LogFunc("storage.New")
+
 	disk := newDisk(diskOpts)
 	_, keySub := disk.subscribe()
 

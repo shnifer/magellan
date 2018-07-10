@@ -97,6 +97,10 @@ func main() {
 	}
 
 	stars = deleteClose(stars)
+	for i, s := range stars {
+		stars[i] = s.Sub(density.Bounds().Max.Div(2))
+	}
+
 	res, err := json.Marshal(stars)
 	if err != nil {
 		panic(err)

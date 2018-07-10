@@ -1,0 +1,18 @@
+{
+    "FullScreen": false,
+    "WinW": 1024,
+    "WinH": 768,
+    "HalfResolution": false,
+    "LowQ": false,
+    "DebugControl": false,
+    "DoProf": false,
+    "LogTimeoutMs": 1000,
+    "LogRetryMinMs": 10,
+    "LogRetryMaxMs": 60000,
+    "LogIP": "",
+    "LogHostName": "MissionControlHost",
+    "NodeName": "MissionControl",
+    "GameExchPort": "",
+    "GameExchAddrs": null,
+    "GameExchPeriodMs": 0
+}
