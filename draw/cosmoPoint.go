@@ -36,6 +36,7 @@ type CosmoPoint struct {
 	Type string
 
 	caption *graph.Text
+	captionText string
 
 	//hardcoded 2 rows
 	glyphs glyphs
@@ -282,4 +283,9 @@ func LowQualityCosmoPoint(v bool) {
 
 func (s *CosmoPoint) SetCaption(caption string, clr color.Color) {
 	s.caption = graph.NewText(caption, Fonts[Face_cap], clr)
+	s.captionText = caption
+}
+
+func (s *CosmoPoint) GetCaption() string{
+	return s.captionText
 }

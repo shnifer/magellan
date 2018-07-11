@@ -255,4 +255,5 @@ func (s *cosmoScene) onBeaconTextInput(text string, done bool) {
 
 func (s *cosmoScene) startBeaconTextInput() {
 	s.inputFocus = inputText
+	s.textInput.SetText("")
 }

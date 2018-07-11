@@ -4,12 +4,14 @@ import (
 	"github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
+	. "github.com/Shnifer/magellan/log"
+	"github.com/Shnifer/magellan/storage"
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
-	"log"
 	"sort"
+	"strconv"
 )
 
 const (
@@ -17,10 +19,17 @@ const (
 	focus_enterName
 )
 
+var (
+	captionColor = colornames.Yellow
+)
+
 type scene struct {
 	cam       *graph.Camera
 	objects   map[string]*CosmoPoint
 	objectsID []string
+
+	//map[id]fullKey
+	objectNamesFK map[string]string
 
 	q *graph.DrawQueue
 
@@ -41,10 +50,11 @@ func newScene() *scene {
 	cam.Recalc()
 
 	res := &scene{
-		cam:       cam,
-		objects:   make(map[string]*CosmoPoint),
-		objectsID: make([]string, 0),
-		q:         graph.NewDrawQueue(),
+		cam:           cam,
+		objects:       make(map[string]*CosmoPoint),
+		objectsID:     make([]string, 0),
+		objectNamesFK: make(map[string]string),
+		q:             graph.NewDrawQueue(),
 	}
 
 	textPanel := NewAtlasSprite(commons.TextPanelAN, graph.NoCam)
@@ -54,19 +64,27 @@ func newScene() *scene {
 	textPanel.SetSize(size.X, size.Y)
 
 	res.nameInput = NewTextInput(textPanel, Fonts[Face_cap], colornames.White, graph.Z_HUD+1, res.onNameTextInput)
-
 	return res
 }
 
 func (s *scene) init() {
 	s.objects = make(map[string]*CosmoPoint, len(CurGalaxy.Ordered))
 	s.objectsID = make([]string, 0, len(CurGalaxy.Ordered))
+	s.objectNamesFK = make(map[string]string)
 	for _, gp := range CurGalaxy.Ordered {
 		if gp.IsVirtual {
 			continue
 		}
 		s.objects[gp.ID] = NewCosmoPoint(gp, s.cam.Phys())
 		s.objectsID = append(s.objectsID, gp.ID)
+	}
+	for objKey, data := range namesData {
+		rec, err := nameRec{}.decode(data)
+		if err != nil {
+			Log(LVL_ERROR, "can't decode objKey ", objKey, " data ", data, " ", err)
+			continue
+		}
+		s.EventAddName(rec, objKey.FullKey())
 	}
 	sort.Strings(s.objectsID)
 }
@@ -147,20 +165,53 @@ func (s *scene) objectClicked() (pressed bool, id string) {
 }
 
 func (s *scene) procObjectClick(id string) {
-	log.Println("clicked ", id)
 	s.focus = focus_enterName
 	s.selectedID = id
+	caption := s.objects[id].GetCaption()
+	s.nameInput.SetText(caption)
 }
 
 func (s *scene) onNameTextInput(text string, done bool) {
 	s.focus = focus_main
 	if done {
-		s.nameObject(GalaxyName, s.selectedID, text)
+		s.requestNewName(GalaxyName, s.selectedID, text)
 	}
 	s.selectedID = ""
 }
 
-func (s *scene) nameObject(galaxyName, objectID, newName string) {
-	s.objects[s.selectedID].SetCaption(newName, colornames.White)
-	nameDisk.Add(galaxyName, objectID, newName)
+func (s *scene) requestNewName(galaxyName, objectID, newName string) {
+	s.objects[objectID].SetCaption(newName, captionColor)
+	if fk, ok := s.objectNamesFK[objectID]; ok {
+		objKey, err := storage.ReadKey(fk)
+		if err != nil {
+			Log(LVL_ERROR, "scene.objectNamesFK strange fullKey", fk, "error", err)
+		} else {
+			nameDisk.Remove(objKey)
+		}
+	}
+	key := objectID + " " + strconv.Itoa(nameDisk.NextID())
+	rec := nameRec{
+		planetID: objectID,
+		name:     newName,
+	}
+	nameDisk.Add(galaxyName, key, rec.encode())
+}
+
+func (s *scene) EventAddName(rec nameRec, fk string) {
+	s.objectNamesFK[rec.planetID] = fk
+	obj, ok := s.objects[rec.planetID]
+	if !ok {
+		Log(LVL_ERROR, "received name for non-exist planet ", rec.planetID)
+		return
+	}
+	obj.SetCaption(rec.name, captionColor)
+}
+
+func (s *scene) EventDelName(fk string) {
+	for id, key := range s.objectNamesFK {
+		if fk == key {
+			s.objects[id].SetCaption("", captionColor)
+			s.objectNamesFK[id] = ""
+		}
+	}
 }

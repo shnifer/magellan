@@ -27,14 +27,8 @@ var dt float64
 var fpsText *graph.Text
 var showFps <-chan time.Time
 
-func startLoopF() {}
-func endLoopF() {}
-
 func mainLoop(window *ebiten.Image) error {
-	go startLoopF()
-
 	input.Update()
-
 	//Pilot data must not be overwriten by other clients each tick, cz of Ship.Pos.Extrapolate
 	if Data.CommonData.PilotData != nil {
 		Data.CommonData.PilotData.MsgID++
@@ -58,7 +52,6 @@ func mainLoop(window *ebiten.Image) error {
 	dt = t.Sub(last).Seconds()
 	last = t
 
-	go endLoopF()
 	return nil
 }
 

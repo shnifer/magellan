@@ -2,11 +2,11 @@ package draw
 
 import (
 	"github.com/Shnifer/magellan/graph"
-	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/font"
 	"image/color"
+	"github.com/Shnifer/magellan/v2"
 )
 
 type TextInput struct {
@@ -46,11 +46,7 @@ func (ti *TextInput) Update(dt float64) {
 		runes = runes[0 : len(runes)-1]
 		ti.text = string(runes)
 	}
-	r := ti.sprite.GetRect()
-	h := r.Max.Y - r.Min.Y
-	p := v2.V2{X: float64(r.Min.X), Y: float64(r.Min.Y)}.AddMul(v2.V2{X: 1, Y: 1}, float64(h/2))
-	ti.gText = graph.NewText(ti.text, ti.face, ti.clr)
-	ti.gText.SetPosPivot(p, graph.MidLeft())
+	ti.recalcGText()
 	if enter {
 		ti.onDone(ti.text, true)
 	}
@@ -62,4 +58,21 @@ func (ti *TextInput) Update(dt float64) {
 func (ti *TextInput) Req(Q *graph.DrawQueue) {
 	Q.Add(ti.sprite, ti.layer)
 	Q.Add(ti.gText, ti.layer+1)
+}
+
+func (ti *TextInput) recalcGText(){
+	r := ti.sprite.GetRect()
+	h := r.Max.Y - r.Min.Y
+	p := v2.V2{X: float64(r.Min.X), Y: float64(r.Min.Y)}.AddMul(v2.V2{X: 1, Y: 1}, float64(h/2))
+	ti.gText = graph.NewText(ti.text, ti.face, ti.clr)
+	ti.gText.SetPosPivot(p, graph.MidLeft())
+}
+
+func (ti *TextInput) GetText() string{
+	return ti.text
+}
+
+func (ti *TextInput) SetText(text string){
+	ti.text = text
+	ti.recalcGText()
 }

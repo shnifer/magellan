@@ -32,6 +32,8 @@ var sessionTime float64
 func mainLoop(window *ebiten.Image) error {
 	sessionTime = time.Now().Sub(commons.StartDateTime).Seconds()
 
+	updateNamesAndNotes()
+
 	select {
 	case newGalaxy := <-changeGalaxy:
 		changeState(newGalaxy)
