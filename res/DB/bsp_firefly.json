@@ -32,7 +32,7 @@
             "warp_enter_consumption": 1000,
             "consumption": 1000,
             "turn_consumption": 1000,
-            "turn_speed": 1000
+            "turn_speed": 45
         },
         "scaner": {
             "drop_range": 10,

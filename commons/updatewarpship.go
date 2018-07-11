@@ -46,6 +46,7 @@ func UpdateWarpAndShip(data TData, sumT float64, dt float64) {
 		ship.Vel.DoAddMul(grav, dt)
 		ship.Vel = ship.Vel.Normed().Mul(vel)
 		ship.Pos.DoAddMul(ship.Vel, dt)
+		ship.Vel = ship.Vel.Rotate(data.PilotData.Ship.AngVel * dt)
 	}
 	ship.Ang = ship.Vel.Dir()
 

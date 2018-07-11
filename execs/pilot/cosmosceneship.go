@@ -26,8 +26,8 @@ func (s *cosmoScene) procCruise() {
 
 func (s *cosmoScene) procControlTurn(dt float64) {
 	turnInput := input.GetF("turn")
-	if s.maneurDetail{
-		turnInput/=5
+	if s.maneurDetail {
+		turnInput /= 5
 	}
 	massK := 1000 / Data.CalcCurMass()
 	var min, max float64
@@ -79,11 +79,6 @@ func (s *cosmoScene) procControlForward(dt float64) {
 	Data.PilotData.ThrustVector = accelV
 	//to general gravity calc
 	//Data.PilotData.Ship.Vel.DoAddMul(accelV, dt)
-}
-
-func (s *cosmoScene) procShipGravity(dt float64) {
-	////to general gravity calc
-	//Data.PilotData.Ship.Vel.DoAddMul(s.gravityAcc, dt)
 }
 
 func (s *cosmoScene) procEmissions(dt float64) {

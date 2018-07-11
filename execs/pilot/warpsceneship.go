@@ -29,4 +29,5 @@ func (s *warpScene) procControlForward(dt float64) {
 func (s *warpScene) procControlTurn(dt float64) {
 	turnInput := input.GetF("turn")
 	s.maneurLevel = turnInput
+	Data.PilotData.Ship.AngVel = turnInput * Data.SP.Warp_engine.Turn_speed
 }
