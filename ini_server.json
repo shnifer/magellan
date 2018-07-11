@@ -9,6 +9,7 @@
     ],
     "DoProf": false,
     "SolarStartLocationName": "magellan",
+    "MinDistortion":0.3,
     "LogLogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 10000,

@@ -11,7 +11,7 @@
     "LowQ": false,
     "GravityConst": 1,
     "WarpGravityConst": 1,
-    "VelDistWarpK": 0.1,
+    "VelDistWarpK": 1,
     "DT":0.001,
     "MinDistortion":0.3,
     "LogTimeoutMs": 1000,

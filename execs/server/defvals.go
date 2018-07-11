@@ -26,6 +26,7 @@ type tDefVals struct {
 
 	StartWarpSpeed         float64
 	SolarStartLocationName string
+	MinDistortion          float64
 
 	//in ms
 	LogLogTimeoutMs int

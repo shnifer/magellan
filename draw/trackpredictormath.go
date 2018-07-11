@@ -5,7 +5,6 @@ import (
 	"github.com/Shnifer/magellan/v2"
 	"runtime"
 	"sync"
-	"time"
 )
 
 //global mutex for 1 worker for prediction calculation and cache
@@ -19,7 +18,7 @@ func (tp *TrackPredictor) recalcPoints() {
 	accel := tp.accel
 	ss := tp.sessionTime
 	ship := tp.ship
-	tp.calcTime = time.Now()
+	calcTime := tp.startCalcTime
 	tp.mu.Unlock()
 
 	count := int(tp.opts.TrackLen*tp.opts.NumInSec) + 1
@@ -48,6 +47,7 @@ func (tp *TrackPredictor) recalcPoints() {
 	tp.mu.Lock()
 	tp.points = points
 	tp.isRunning = false
+	tp.calcTime = calcTime
 	tp.mu.Unlock()
 }
 

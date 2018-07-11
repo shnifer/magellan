@@ -9,6 +9,9 @@ import (
 	"github.com/Shnifer/magellan/v2"
 )
 
+const showUnderscore = 0.2
+const totalUnderscore = 0.5
+
 type TextInput struct {
 	sprite *graph.Sprite
 	gText  *graph.Text
@@ -18,6 +21,8 @@ type TextInput struct {
 	layer  int
 	//enter onDone(text, true), esc onDone(text, false)
 	onDone func(string, bool)
+
+	underT float64
 }
 
 func NewTextInput(sprite *graph.Sprite, face font.Face, clr color.Color, layer int, onDone func(string, bool)) *TextInput {
@@ -37,7 +42,13 @@ func (ti *TextInput) Update(dt float64) {
 		inpututil.IsKeyJustPressed(ebiten.KeyKPEnter)
 
 	esc := inpututil.IsKeyJustPressed(ebiten.KeyEscape)
-	if len(input) == 0 && ti.gText != nil && !back && !enter && !esc {
+	cs:=ti.underT<showUnderscore
+	ti.underT +=dt
+	for ti.underT>totalUnderscore{
+		ti.underT-=totalUnderscore
+	}
+	ns:=ti.underT<showUnderscore
+	if len(input) == 0 && ti.gText != nil && !back && !enter && !esc && ns==cs{
 		return
 	}
 	ti.text += string(input)
@@ -64,7 +75,11 @@ func (ti *TextInput) recalcGText(){
 	r := ti.sprite.GetRect()
 	h := r.Max.Y - r.Min.Y
 	p := v2.V2{X: float64(r.Min.X), Y: float64(r.Min.Y)}.AddMul(v2.V2{X: 1, Y: 1}, float64(h/2))
-	ti.gText = graph.NewText(ti.text, ti.face, ti.clr)
+	us:=""
+	if ti.underT<showUnderscore{
+		us="."
+	}
+	ti.gText = graph.NewText(ti.text+us, ti.face, ti.clr)
 	ti.gText.SetPosPivot(p, graph.MidLeft())
 }
 

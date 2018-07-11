@@ -30,11 +30,11 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 			common.PilotData.Ship.Pos =
 				stateData.Galaxy.Points[DEFVAL.SolarStartLocationName].Pos
 			common.NaviData.Mines = make([]string, len(stateData.BSP.Mines))
-			for i,v:=range stateData.BSP.Mines{
+			for i, v := range stateData.BSP.Mines {
 				common.NaviData.Mines[i] = v.Owner
 			}
 			common.NaviData.Landing = make([]string, len(stateData.BSP.Modules))
-			for i,v:=range stateData.BSP.Modules{
+			for i, v := range stateData.BSP.Modules {
 				common.NaviData.Landing[i] = v.Owner
 			}
 			common.NaviData.BeaconCount = stateData.BSP.Beacons.Count
@@ -81,6 +81,8 @@ func toWarpCommonData(common CommonData, stateData StateData, newState, prevStat
 	}
 
 	common.PilotData.Ship = ship
+	common.PilotData.Distortion = DEFVAL.MinDistortion
+	common.PilotData.Dir = ang
 	common.NaviData.SonarDir = ship.Ang
 
 	return common

@@ -17,6 +17,7 @@ func UpdateWarpAndShip(data TData, sumT float64, dt float64) {
 
 	sessionTime := data.PilotData.SessionTime
 	distortion := data.PilotData.Distortion
+	dir := data.PilotData.Dir
 
 	//fast return, in fact we have to go out from warp
 	if distortion == 0 {
@@ -31,10 +32,11 @@ func UpdateWarpAndShip(data TData, sumT float64, dt float64) {
 	galaxy := data.Galaxy
 	ship := data.PilotData.Ship
 	gravK := distortion * distortion * distortion
-	vel := velDistWarpK * distortion
+	vel := VelDistWarpK * distortion
 
 	var grav v2.V2
-
+	ship.Vel = v2.InDir(dir).Mul(vel)
+	//warp update COPYPASTE warpPredictor
 	sumT += galaxy.fixedTimeRest
 	for sumT >= dt {
 		sessionTime += dt
@@ -51,6 +53,7 @@ func UpdateWarpAndShip(data TData, sumT float64, dt float64) {
 	data.Galaxy.Update(sessionTime)
 
 	data.PilotData.Ship = ship
+	data.PilotData.Dir = ship.Vel.Dir()
 	data.Galaxy.fixedTimeRest = sumT
 	data.PilotData.SessionTime = sessionTime
 }

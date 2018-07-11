@@ -30,9 +30,10 @@ type TrackPredictor struct {
 	mu sync.Mutex
 
 	//reset by update
-	sessionTime float64
-	accel       v2.V2
-	ship        RBData
+	startCalcTime time.Time
+	sessionTime   float64
+	accel         v2.V2
+	ship          RBData
 
 	//created once, recalced pos before goroutine run
 	gps *GravityPredictorSource
@@ -80,7 +81,7 @@ func (tp *TrackPredictor) drawPoints(Q *graph.DrawQueue) {
 	//in ms, must be a round part of minute
 	const markEach = 1
 
-	if tp.points == nil {
+	if tp.points == nil || len(tp.points)==0 || (tp.calcTime==time.Time{}){
 		return
 	}
 
@@ -117,6 +118,7 @@ func (tp *TrackPredictor) SetAccelSessionTimeShipPos(accel v2.V2, sessionTime fl
 	tp.mu.Lock()
 	tp.accel = accel
 	tp.sessionTime = sessionTime
+	tp.startCalcTime = time.Now()
 	tp.ship = ship
 	tp.mu.Unlock()
 }

@@ -30,6 +30,8 @@ type warpScene struct {
 	gravityAcc    v2.V2
 	gravityReport []v2.V2
 
+	predictor *WarpPredictor
+
 	hud warpSceneHUD
 	q   *graph.DrawQueue
 }
@@ -68,6 +70,21 @@ func (s *warpScene) Init() {
 
 	stateData := Data.GetStateData()
 
+	predictorSprite := NewAtlasSprite(PredictorAN, s.cam.Deny())
+	predictorSprite.SetSize(20, 20)
+	opts := WarpPredictorOpts{
+		Cam:      s.cam,
+		Sprite:   predictorSprite,
+		Clr:      colornames.Palevioletred,
+		Layer:    graph.Z_ABOVE_OBJECT + 1,
+		Galaxy:   stateData.Galaxy,
+		UpdT:     0.1,
+		NumInSec: 10,
+		TrackLen: 120,
+	}
+
+	s.predictor = NewWarpPredictor(opts)
+
 	for id, pd := range stateData.Galaxy.Points {
 		if pd.IsVirtual {
 			continue
@@ -90,12 +107,8 @@ func (s *warpScene) Update(dt float64) {
 	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		Data.PilotData.Ship.Vel = v2.V2{}
 		Data.PilotData.Ship.AngVel = 0
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
-		Data.PilotData.Ship.Vel = v2.V2{}
-		Data.PilotData.Ship.AngVel = 0
-		Data.PilotData.Ship.Pos = v2.V2{X: 100, Y: 100}
+		Data.PilotData.Distortion = DEFVAL.MinDistortion
+		Data.PilotData.Dir = 0
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
@@ -124,8 +137,6 @@ func (s *warpScene) Update(dt float64) {
 
 	s.updateHUD()
 
-	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
-
 	//for display draw calls only
 	s.gravityAcc, s.gravityReport = SumGravityAccWithReport(Data.PilotData.Ship.Pos, Data.Galaxy,
 		0.02)
@@ -137,6 +148,8 @@ func (s *warpScene) Update(dt float64) {
 		Data.NaviData.SonarDir+Data.NaviData.SonarWide/2)
 
 	s.ship.SetPosAng(Data.PilotData.Ship.Pos, Data.PilotData.Ship.Ang)
+	s.predictor.SetPosDistDir(
+		Data.PilotData.Ship.Pos, Data.PilotData.Distortion, Data.PilotData.Dir)
 	s.camRecalc()
 }
 func (s *warpScene) camRecalc() {
@@ -169,6 +182,7 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 
 	Q.Add(s.ship, graph.Z_GAME_OBJECT)
 
+	Q.Append(s.predictor)
 	Q.Append(s.hud)
 
 	Q.Run(image)

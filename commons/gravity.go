@@ -5,7 +5,7 @@ import "github.com/Shnifer/magellan/v2"
 var gravityConst float64
 var warpGravityConst float64
 
-var velDistWarpK float64
+var VelDistWarpK float64
 
 func SetGravityConsts(G, W float64) {
 	gravityConst = G
@@ -13,7 +13,7 @@ func SetGravityConsts(G, W float64) {
 }
 
 func SetVelDistWarpK(k float64) {
-	velDistWarpK = k
+	VelDistWarpK = k
 }
 
 //gravity acceleration (g) from planet with given mass at given range
