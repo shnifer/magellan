@@ -97,6 +97,7 @@ func main() {
 	}
 
 	stars = deleteClose(stars)
+
 	for i, s := range stars {
 		stars[i] = s.Sub(density.Bounds().Max.Div(2))
 	}
