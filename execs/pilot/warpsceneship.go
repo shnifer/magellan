@@ -13,13 +13,13 @@ func (s *warpScene) updateShipControl(dt float64) {
 func (s *warpScene) procControlForward(dt float64) {
 	w := input.WarpLevel("warpspeed")
 
-	if w == 0 {
+	s.thrustLevel = commons.Clamp(w,
+		s.thrustLevel-Data.SP.Warp_engine.Distort_slow/100*dt,
+		s.thrustLevel+Data.SP.Warp_engine.Distort_acc/100*dt)
+
+	if s.thrustLevel == 0{
 		Data.PilotData.Distortion = 0
 	} else {
-		s.thrustLevel = commons.Clamp(w,
-			s.thrustLevel-Data.SP.Warp_engine.Distort_slow/100*dt,
-			s.thrustLevel+Data.SP.Warp_engine.Distort_acc/100*dt)
-
 		Data.PilotData.Distortion = DEFVAL.MinDistortion +
 			s.thrustLevel*Data.SP.Warp_engine.Distort_max
 	}
