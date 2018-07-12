@@ -197,6 +197,7 @@ func (s *cosmoScene) Update(dt float64) {
 	} else {
 		Data.PilotData.HeatProduction = 0
 	}
+	s.distCircle.Update(dt)
 	s.warpEngine.update(dt)
 	s.predictors.setParams()
 }
