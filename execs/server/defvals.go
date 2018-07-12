@@ -21,6 +21,7 @@ type tDefVals struct {
 	SubscribeUpdatePeriod  int
 	LastSeenTimeout        int
 	OtherShipsUpdatePeriod int
+	DiskRefreshPeriod      int
 
 	DoProf bool
 
@@ -60,6 +61,7 @@ func setDefDef() {
 		LogLogTimeoutMs:        1000,
 		LogRetryMinMs:          10,
 		LogRetryMaxMs:          60000,
+		DiskRefreshPeriod: 30,
 	}
 }
 

@@ -29,6 +29,8 @@ type tDefVals struct {
 
 	//node
 	NodeName    string
+	DiskRefreshPeriod int
+
 	//storage exchanger
 	GameExchPort     string
 	GameExchAddrs    []string
@@ -44,6 +46,7 @@ func setDefDef() {
 		LogTimeoutMs:     1000,
 		LogRetryMinMs:    10,
 		LogRetryMaxMs:    60000,
+		DiskRefreshPeriod: 30,
 		NodeName: "MissionControl",
 		LogHostName: "DummyLogHost",
 	}

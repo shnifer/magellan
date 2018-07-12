@@ -31,10 +31,10 @@ type Storage struct {
 	subs map[chan Event]string
 }
 
-func New(nodeName string, diskOpts diskv.Options) *Storage {
+func New(nodeName string, diskOpts diskv.Options, refreshFilesPeriod int) *Storage {
 	LogFunc("storage.New")
 
-	disk := newDisk(diskOpts)
+	disk := newDisk(diskOpts, refreshFilesPeriod)
 	_, keySub := disk.subscribe()
 
 	s := &Storage{

@@ -35,7 +35,7 @@ func main() {
 		BasePath:     localLogPath,
 		CacheSizeMax: 1024,
 	}
-	logDisk := storage.New(DEFVAL.NodeName, logDiskOpts)
+	logDisk := storage.New(DEFVAL.NodeName, logDiskOpts,0)
 
 	if DEFVAL.LogExchPort != "" && DEFVAL.LogExchPeriodMs > 0 {
 		storage.RunExchanger(logDisk, DEFVAL.LogExchPort, DEFVAL.LogExchAddrs, DEFVAL.LogExchPeriodMs)
@@ -46,7 +46,7 @@ func main() {
 		BasePath:     storagePath,
 		CacheSizeMax: 1024 * 1024,
 	}
-	disk := storage.New(DEFVAL.NodeName, diskOpts)
+	disk := storage.New(DEFVAL.NodeName, diskOpts, DEFVAL.DiskRefreshPeriod)
 	if DEFVAL.GameExchPort != "" && DEFVAL.GameExchPeriodMs > 0 {
 		storage.RunExchanger(disk, DEFVAL.GameExchPort, DEFVAL.GameExchAddrs, DEFVAL.GameExchPeriodMs)
 	}
