@@ -1,6 +1,7 @@
 package network
 
 import (
+	"fmt"
 	"github.com/Shnifer/magellan/wrnt"
 	"net/http"
 	"time"
@@ -75,3 +76,8 @@ const (
 	COMMAND_CLIENTREQUEST = "C"
 	COMMAND_REQUESTSTATE  = "S"
 )
+
+func (s RoomState) String() string {
+	fmts := `{"IsFull": %v, "IsCoherent": %v, "RdyServData": %v, Wanted: %v}`
+	return fmt.Sprintf(fmts, s.IsFull, s.IsCoherent, s.RdyServData, s.Wanted)
+}

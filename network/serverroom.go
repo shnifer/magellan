@@ -9,6 +9,9 @@ import (
 
 func roomHandler(srv *Server) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
+
+		srv.metric.add(metricCommon, metricRPS, 1)
+
 		roomName, roleName := roomRole(r)
 
 		reqBuf, err := ioutil.ReadAll(r.Body)
@@ -16,6 +19,8 @@ func roomHandler(srv *Server) http.Handler {
 			sendErr(w, "CANT readAll r.body")
 			return
 		}
+
+		srv.metric.add(metricCommon, metricReqBPS, len(reqBuf))
 
 		var req CommonReq
 		err = json.Unmarshal(reqBuf, &req)
@@ -68,6 +73,8 @@ func roomHandler(srv *Server) http.Handler {
 		if err != nil {
 			sendErr(w, "can't marshal CommonResp"+err.Error())
 		}
+
+		srv.metric.add(metricCommon, metricRespBPS, len(respBody))
 
 		//do not write response if get failed
 		w.Write(respBody)

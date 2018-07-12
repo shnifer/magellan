@@ -7,7 +7,7 @@
     "NeededRoles": [
         "Pilot"
     ],
-    "DoProf": false,
+    "DoProf": true,
     "SolarStartLocationName": "magellan",
     "MinDistortion":0.3,
     "LogLogTimeoutMs": 1000,

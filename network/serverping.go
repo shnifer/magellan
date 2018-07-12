@@ -3,18 +3,16 @@ package network
 import (
 	"encoding/json"
 	. "github.com/Shnifer/magellan/log"
-	"math/rand"
 	"net/http"
 	"time"
 )
 
 func pingHandler(srv *Server) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
-		if rand.Intn(2) == 0 {
-			//return
-		}
 		srv.mu.RLock()
 		defer srv.mu.RUnlock()
+
+		srv.metric.add(metricPing, metricRPS, 1)
 
 		clientState := r.Header.Get(stateAttr)
 		roomName, roleName := roomRole(r)
@@ -61,6 +59,8 @@ func pingHandler(srv *Server) http.Handler {
 		if err != nil {
 			panic(err)
 		}
+
+		srv.metric.add(metricPing, metricRespBPS, len(b))
 
 		w.Write(b)
 	}

@@ -7,6 +7,7 @@
 package network
 
 import (
+	"bytes"
 	"encoding/gob"
 	"fmt"
 	. "github.com/Shnifer/magellan/log"
@@ -83,6 +84,8 @@ type Server struct {
 	//Write blocks only to add new room
 	mu         sync.RWMutex
 	roomsState map[string]*servRoomState
+
+	metric *serverMetric
 }
 
 //NewServer creates a server listening
@@ -103,6 +106,7 @@ func NewServer(opts ServerOpts) *Server {
 		opts:       opts,
 		roomsState: make(map[string]*servRoomState),
 	}
+	srv.metric = newServerMetric(srv)
 
 	mux.Handle(testPattern, testHandler(srv))
 	mux.Handle(pingPattern, pingHandler(srv))
@@ -157,6 +161,8 @@ func stateHandler(srv *Server) http.Handler {
 	f := func(w http.ResponseWriter, r *http.Request) {
 		defer LogFunc("network.stateHandler f")()
 
+		srv.metric.add(metricState, metricRPS, 1)
+
 		roomName, _ := roomRole(r)
 		srv.mu.RLock()
 		defer srv.mu.RUnlock()
@@ -178,11 +184,16 @@ func stateHandler(srv *Server) http.Handler {
 			StateData:   srv.opts.RoomServ.GetStateData(roomName),
 			StartCommon: CommonData,
 		}
-		enc := gob.NewEncoder(w)
+		buf := &bytes.Buffer{}
+		enc := gob.NewEncoder(buf)
 		err = enc.Encode(SendData)
 		if err != nil {
 			Log(LVL_ERROR, "error: gob.encode.SendData: ", err)
 		}
+
+		srv.metric.add(metricState, metricRespBPS, buf.Len())
+
+		buf.WriteTo(w)
 	}
 	return http.HandlerFunc(f)
 }
@@ -244,7 +255,7 @@ func serverRoomUpdater(serv *Server) {
 func testHandler(srv *Server) http.Handler {
 	_ = srv
 	f := func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Magellan server responding")
+		fmt.Fprintln(w, srv.Metric())
 	}
 
 	return http.HandlerFunc(f)
