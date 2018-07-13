@@ -3,7 +3,6 @@ package graph
 import (
 	"github.com/Shnifer/magellan/v2"
 	"image/color"
-	"math"
 )
 
 type CircleLineOpts struct {
@@ -18,8 +17,6 @@ type CircleLine struct {
 	center v2.V2
 	radius float64
 	points []v2.V2
-
-	t float64
 }
 
 var clPoints map[int][]v2.V2
@@ -61,14 +58,7 @@ func (cl *CircleLine) SetRadius(r float64) {
 }
 
 func (cl *CircleLine) p(base v2.V2, r float64, i int) v2.V2 {
-	wave1:=0.3*math.Sin(cl.t+float64(i)/float64(cl.opts.PCount)*2*math.Pi)
-	wave2:=0.2*math.Sin(cl.t*0.7-float64(i)/float64(cl.opts.PCount)*4*math.Pi)
-	r = r+r*(wave1+wave2)
 	return base.AddMul(cl.points[i], r)
-}
-
-func (cl *CircleLine) Update(dt float64){
-	cl.t+=dt
 }
 
 func (cl *CircleLine) Req(Q *DrawQueue) {
@@ -81,7 +71,7 @@ func (cl *CircleLine) Req(Q *DrawQueue) {
 	if !cl.opts.Params.DenyScale && cam != nil {
 		r *= cam.Scale * GS()
 	}
-	if r<1{
+	if r < 1 {
 		return
 	}
 	from := cl.p(base, r, 0)

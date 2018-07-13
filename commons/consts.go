@@ -60,6 +60,9 @@ const (
 	TextPanelAN         = "MAGIC_textpanel"
 	WayPointAN          = "MAGIC_waypoint"
 	WayArrowAN          = "MAGIC_wayarrow"
+	WarpInnerAN         = "MAGIC_warpinner"
+	WarpOuterAN         = "MAGIC_warpouter"
+	WarpGreenAN         = "MAGIC_warpgreen"
 )
 
 var (

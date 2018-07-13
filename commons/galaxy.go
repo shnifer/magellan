@@ -61,6 +61,10 @@ type GalaxyPoint struct {
 	WarpGreenOutDist  float64 `json:"wgo,omitempty"`
 	WarpGreenInDist   float64 `json:"wgi,omitempty"`
 	WarpRedOutDist    float64 `json:"wro,omitempty"`
+	//for warp points
+	InnerColor color.RGBA `json:"wic,omitempty"`
+	OuterColor color.RGBA `json:"woc,omitempty"`
+	GreenColor color.RGBA `json:"wgc,omitempty"`
 
 	ScanData string `json:"sd,omitempty"`
 

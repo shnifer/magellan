@@ -34,11 +34,11 @@ type cosmoScene struct {
 	otherShips   map[string]*OtherShip
 
 	//control
-	cruiseOn    bool
-	cruiseInput float64
+	cruiseOn     bool
+	cruiseInput  float64
 	maneurDetail bool
-	thrustLevel float64
-	maneurLevel float64
+	thrustLevel  float64
+	maneurLevel  float64
 
 	//trail
 	trailT float64
@@ -197,7 +197,6 @@ func (s *cosmoScene) Update(dt float64) {
 	} else {
 		Data.PilotData.HeatProduction = 0
 	}
-	s.distCircle.Update(dt)
 	s.warpEngine.update(dt)
 	s.predictors.setParams()
 }

@@ -28,14 +28,17 @@ type CosmoPoint struct {
 	CycledSprite  *graph.CycledSprite
 
 	//warpRanges
-	WarpCircles []*graph.CircleLine
+	WarpInner *graph.Sprite
+	WarpOuter *graph.Sprite
+	WarpGreen *graph.WavedCircle
+	WarpSize  float64
 
 	ID   string
 	Pos  v2.V2
 	Size float64
 	Type string
 
-	caption *graph.Text
+	caption     *graph.Text
 	captionText string
 
 	//hardcoded 2 rows
@@ -73,7 +76,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 	var typeGlowScale float64
 	switch pd.Type {
 	case GPT_ASTEROID:
-		typeGlowScale = 0.1
+		typeGlowScale = 0.3
 	case GPT_STAR:
 		typeGlowScale = 2
 	default:
@@ -160,119 +163,141 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 	}
 
 	if pd.Type == GPT_WARP {
-		rads := make([]float64, 4)
-		rads[0] = pd.WarpRedOutDist
-		rads[1] = pd.WarpGreenInDist
-		rads[2] = pd.WarpGreenOutDist
-		rads[3] = pd.WarpYellowOutDist
+		res.WarpSize = pd.WarpRedOutDist
 
-		circles := make([]*graph.CircleLine, 4)
-		opts := graph.CircleLineOpts{
-			PCount: 64,
-			Layer:  graph.Z_UNDER_OBJECT,
+		res.WarpInner = NewAtlasSprite(WarpInnerAN, params)
+		res.WarpInner.SetSize(pd.WarpRedOutDist*2, pd.WarpRedOutDist*2)
+		res.WarpInner.SetPos(pd.Pos)
+		res.WarpInner.SetColor(pd.InnerColor)
+		res.WarpOuter = NewAtlasSprite(WarpOuterAN, params)
+		res.WarpOuter.SetSize(pd.WarpYellowOutDist*2, pd.WarpYellowOutDist*2)
+		res.WarpOuter.SetPos(pd.Pos)
+		res.WarpOuter.SetColor(pd.OuterColor)
+
+		sprite := NewAtlasSprite(WarpGreenAN, params)
+		sprite.SetColor(pd.GreenColor)
+
+		opts := graph.WavedCircleOpts{
+			Sprite: sprite,
+			PCount: 32,
+			Layer:  graph.Z_UNDER_OBJECT + 50,
 			Params: params,
 		}
-		for i := 0; i < len(circles); i++ {
-			switch i {
-			case 0:
-				opts.Clr = colornames.Red
-			case 1, 2:
-				opts.Clr = colornames.Green
-			case 3:
-				opts.Clr = colornames.Yellow
-			}
-			circles[i] = graph.NewCircleLine(v2.ZV, rads[i], opts)
-		}
-		res.WarpCircles = circles
+		res.WarpGreen = graph.NewWavedCircle(
+			pd.Pos, pd.WarpGreenInDist, pd.WarpGreenOutDist, opts)
 	}
 
 	return &res
 }
 
-func (co *CosmoPoint) Update(dt float64) {
-	if co.MarkSprite != nil {
-		co.MarkSprite.Update(dt)
+func (cp *CosmoPoint) Update(dt float64) {
+	if cp.MarkSprite != nil {
+		cp.MarkSprite.Update(dt)
 	}
-	if co.SlidingSphere != nil {
-		co.SlidingSphere.Update(dt)
+	if cp.SlidingSphere != nil {
+		cp.SlidingSphere.Update(dt)
 	}
-	if co.CycledSprite != nil {
-		co.CycledSprite.Update(dt)
+	if cp.CycledSprite != nil {
+		cp.CycledSprite.Update(dt)
 	}
-
+	if cp.WarpGreen != nil {
+		cp.WarpGreen.Update(dt)
+	}
 }
 
-func (co *CosmoPoint) Req(Q *graph.DrawQueue) {
+func (cp *CosmoPoint) Req(Q *graph.DrawQueue) {
 
-	co.recalcSprite()
+	clipped := false
+	if cp.cam != nil {
+		size := cp.Size
+		if cp.WarpSize > size {
+			size = cp.WarpSize
+		}
+		clipped = !cp.cam.CircleInSpace(cp.Pos, size)
+	}
+	if clipped {
+		return
+	}
 
-	markAlpha, spriteAlpha := MarkAlpha(co.Size*2/co.markLevelScale, co.cam)
+	cp.recalcSprite()
 
-	if markAlpha > 0 && co.MarkSprite != nil {
-		co.MarkSprite.SetAlpha(markAlpha)
-		co.MarkGlowSprite.SetAlpha(markAlpha)
+	markAlpha, spriteAlpha := MarkAlpha(cp.Size*2/cp.markLevelScale, cp.cam)
 
-		Q.Add(co.MarkSprite, graph.Z_GAME_OBJECT-co.level)
-		Q.Add(co.MarkGlowSprite, graph.Z_GAME_OBJECT-10)
+	if markAlpha > 0 && cp.MarkSprite != nil {
+		cp.MarkSprite.SetAlpha(markAlpha)
+		cp.MarkGlowSprite.SetAlpha(markAlpha)
+
+		Q.Add(cp.MarkSprite, graph.Z_GAME_OBJECT-cp.level)
+		Q.Add(cp.MarkGlowSprite, graph.Z_GAME_OBJECT-10)
 	}
 
 	if spriteAlpha > 0 {
 		if lowQ {
-			if co.SimpleSprite != nil {
-				co.SimpleSprite.SetAlpha(spriteAlpha)
-				Q.Add(co.SimpleSprite, graph.Z_GAME_OBJECT)
+			if cp.SimpleSprite != nil {
+				cp.SimpleSprite.SetAlpha(spriteAlpha)
+				Q.Add(cp.SimpleSprite, graph.Z_GAME_OBJECT)
 			}
 		} else {
-			if co.SlidingSphere != nil {
-				co.SlidingSphere.SetAlpha(spriteAlpha)
-				Q.Add(co.SlidingSphere, graph.Z_GAME_OBJECT)
+			if cp.SlidingSphere != nil {
+				cp.SlidingSphere.SetAlpha(spriteAlpha)
+				Q.Add(cp.SlidingSphere, graph.Z_GAME_OBJECT)
 			}
-			if co.CycledSprite != nil {
-				co.CycledSprite.SetAlpha(spriteAlpha)
-				Q.Add(co.CycledSprite, graph.Z_GAME_OBJECT)
+			if cp.CycledSprite != nil {
+				cp.CycledSprite.SetAlpha(spriteAlpha)
+				Q.Add(cp.CycledSprite, graph.Z_GAME_OBJECT)
 			}
 		}
 	}
 
-	if co.caption != nil {
-		base := co.cam.Apply(co.Pos)
+	if cp.caption != nil {
+		base := cp.cam.Apply(cp.Pos)
 		off := v2.V2{X: 0, Y: 30}.Mul(graph.GS())
-		co.caption.SetPosPivot(base.Add(off), graph.Center())
-		Q.Add(co.caption, graph.Z_ABOVE_OBJECT)
+		cp.caption.SetPosPivot(base.Add(off), graph.Center())
+		Q.Add(cp.caption, graph.Z_ABOVE_OBJECT)
 	}
 
-	if markAlpha == 0 && co.WarpCircles != nil {
-		for _, wcl := range co.WarpCircles {
-			Q.Append(wcl)
+	if markAlpha == 0 {
+		if cp.WarpOuter != nil {
+			Q.Add(cp.WarpOuter, graph.Z_UNDER_OBJECT)
+		}
+		if cp.WarpInner != nil {
+			Q.Add(cp.WarpInner, graph.Z_UNDER_OBJECT+1)
+		}
+		if cp.WarpGreen != nil {
+			Q.Append(cp.WarpGreen)
 		}
 	}
 
-	co.glyphs.setPos(co.cam.Apply(co.Pos))
-	co.glyphs.setSize(co.cam.Scale * co.Size)
+	cp.glyphs.setPos(cp.cam.Apply(cp.Pos))
+	cp.glyphs.setSize(cp.cam.Scale * cp.Size)
 
-	Q.Append(co.glyphs)
+	Q.Append(cp.glyphs)
 }
 
-func (co *CosmoPoint) recalcSprite() {
-	if co.SimpleSprite != nil {
-		co.SimpleSprite.SetPos(co.Pos)
+func (cp *CosmoPoint) recalcSprite() {
+	if cp.SimpleSprite != nil {
+		cp.SimpleSprite.SetPos(cp.Pos)
 	}
-	if co.SlidingSphere != nil {
-		co.SlidingSphere.SetPos(co.Pos)
+	if cp.SlidingSphere != nil {
+		cp.SlidingSphere.SetPos(cp.Pos)
 	}
-	if co.CycledSprite != nil {
-		co.CycledSprite.SetPos(co.Pos)
+	if cp.CycledSprite != nil {
+		cp.CycledSprite.SetPos(cp.Pos)
 	}
-	if co.MarkSprite != nil {
-		co.MarkSprite.SetPos(co.Pos)
+	if cp.MarkSprite != nil {
+		cp.MarkSprite.SetPos(cp.Pos)
 	}
-	if co.MarkGlowSprite != nil {
-		co.MarkGlowSprite.SetPos(co.Pos)
+	if cp.MarkGlowSprite != nil {
+		cp.MarkGlowSprite.SetPos(cp.Pos)
 	}
-	if co.WarpCircles != nil {
-		for _, c := range co.WarpCircles {
-			c.SetPos(co.Pos)
-		}
+	if cp.WarpGreen != nil {
+		cp.WarpGreen.SetPos(cp.Pos)
+	}
+	if cp.WarpOuter != nil {
+		cp.WarpOuter.SetPos(cp.Pos)
+	}
+	if cp.WarpInner != nil {
+		cp.WarpInner.SetPos(cp.Pos)
 	}
 }
 
@@ -281,11 +306,11 @@ func LowQualityCosmoPoint(v bool) {
 	lowQ = v
 }
 
-func (s *CosmoPoint) SetCaption(caption string, clr color.Color) {
-	s.caption = graph.NewText(caption, Fonts[Face_cap], clr)
-	s.captionText = caption
+func (cp *CosmoPoint) SetCaption(caption string, clr color.Color) {
+	cp.caption = graph.NewText(caption, Fonts[Face_cap], clr)
+	cp.captionText = caption
 }
 
-func (s *CosmoPoint) GetCaption() string{
-	return s.captionText
+func (cp *CosmoPoint) GetCaption() string {
+	return cp.captionText
 }

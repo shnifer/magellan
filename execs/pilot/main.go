@@ -58,10 +58,10 @@ func mainLoop(window *ebiten.Image) error {
 	return nil
 }
 
-func mainStart(){
+func mainStart() {
 	time.Sleep(time.Nanosecond)
-	}
-func mainStop(){
+}
+func mainStop() {
 	time.Sleep(time.Nanosecond)
 }
 
@@ -100,6 +100,7 @@ func main() {
 
 	commons.SetGravityConsts(DEFVAL.GravityConst, DEFVAL.WarpGravityConst)
 	commons.SetVelDistWarpK(DEFVAL.VelDistWarpK)
+	commons.SetWarpGravThreshold(DEFVAL.WarpGravThreshold)
 
 	createScenes()
 
