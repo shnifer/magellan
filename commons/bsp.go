@@ -46,7 +46,7 @@ type BSPParams struct {
 		DropSpeed float64 `json:"drop_speed"`
 		ScanRange float64 `json:"scan_range"`
 		ScanSpeed float64 `json:"scan_speed"`
-	} `json:"scanner"`
+	} `json:"scaner"`
 
 	Fuel_tank struct {
 		Fuel_volume   float64 `json:"fuel_volume"`

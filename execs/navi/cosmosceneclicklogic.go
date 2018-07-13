@@ -128,9 +128,14 @@ func (s *cosmoScene) scanState(scanState int) {
 		s.cosmoPanels.activeLeft(true)
 		s.cosmoPanels.activeRight(false)
 		s.cosmoPanels.left.Enable()
-		Data.NaviData.IsScanning = true
 		Data.NaviData.ScanObjectID = s.scanner.obj.ID
 	case scanProgress:
+		Data.NaviData.IsScanning = true
+		if s.scanner.work == "button_scan" {
+			Data.NaviData.IsDrop = false
+		} else {
+			Data.NaviData.IsDrop = true
+		}
 		s.cosmoPanels.left.Highlight(s.scanner.work)
 	case ScanDone:
 		switch s.scanner.work {
