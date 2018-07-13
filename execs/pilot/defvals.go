@@ -32,6 +32,7 @@ type tDefVals struct {
 	MinDistortion     float64
 	VelDistWarpK      float64
 	WarpGravThreshold float64
+	WarpGravPowN      float64
 
 	//in ms
 	LogTimeoutMs  int
@@ -55,6 +56,7 @@ func setDefDef() {
 		WinH:             768,
 		GravityConst:     100,
 		WarpGravityConst: 100,
+		WarpGravPowN:     3,
 		DT:               0.001,
 		LogTimeoutMs:     1000,
 		LogRetryMinMs:    10,

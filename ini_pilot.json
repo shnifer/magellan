@@ -12,6 +12,7 @@
     "GravityConst": 1,
     "WarpGravityConst": 1,
     "VelDistWarpK": 1,
+    "WarpGravPowN": 3,
     "WarpGravThreshold":0.001,
     "DT":0.001,
     "MinDistortion":0.3,

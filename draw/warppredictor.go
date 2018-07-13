@@ -5,9 +5,10 @@ import (
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
 	"image/color"
+	"math"
+	"runtime"
 	"sync"
 	"time"
-	"runtime"
 )
 
 type WarpPredictorOpts struct {
@@ -22,6 +23,8 @@ type WarpPredictorOpts struct {
 	UpdT     float64
 	NumInSec int
 	TrackLen int
+
+	PowN float64
 }
 
 type WarpPredictor struct {
@@ -31,9 +34,9 @@ type WarpPredictor struct {
 
 	//reset by update
 	startCalcTime time.Time
-	pos v2.V2
-	distortion      float64
-	dir float64
+	pos           v2.V2
+	distortion    float64
+	dir           float64
 
 	image gravImage
 
@@ -58,7 +61,7 @@ func NewWarpPredictor(opts WarpPredictorOpts) *WarpPredictor {
 
 	return &WarpPredictor{
 		opts:   opts,
-		image: image,
+		image:  image,
 		points: make([]v2.V2, 0),
 	}
 }
@@ -81,7 +84,7 @@ func (wp *WarpPredictor) drawPoints(Q *graph.DrawQueue) {
 	//in ms, must be a round part of minute
 	const markEach = 1
 
-	if wp.points == nil || len(wp.points)==0 || (wp.calcTime==time.Time{}){
+	if wp.points == nil || len(wp.points) == 0 || (wp.calcTime == time.Time{}) {
 		return
 	}
 
@@ -114,7 +117,7 @@ func (wp *WarpPredictor) drawPoints(Q *graph.DrawQueue) {
 	}
 }
 
-func (wp *WarpPredictor) SetPosDistDir(shipPos v2.V2, distortion,dir float64) {
+func (wp *WarpPredictor) SetPosDistDir(shipPos v2.V2, distortion, dir float64) {
 	wp.mu.Lock()
 	wp.pos = shipPos
 	wp.distortion = distortion
@@ -123,17 +126,17 @@ func (wp *WarpPredictor) SetPosDistDir(shipPos v2.V2, distortion,dir float64) {
 	wp.mu.Unlock()
 }
 
-func warpGravImage(galaxy *Galaxy) gravImage{
-	res:=make(gravImage,0)
+func warpGravImage(galaxy *Galaxy) gravImage {
+	res := make(gravImage, 0)
 	var imP gravP
-	for _,p:=range galaxy.Ordered{
-		if p.IsVirtual || p.Mass==0{
+	for _, p := range galaxy.Ordered {
+		if p.IsVirtual || p.Mass == 0 {
 			continue
 		}
 		imP = gravP{
-			mass:p.Mass,
-			gDepth:p.GDepth,
-			pos:p.Pos,
+			mass:   p.Mass,
+			gDepth: p.GDepth,
+			pos:    p.Pos,
 		}
 		res = append(res, imP)
 	}
@@ -146,8 +149,8 @@ func (wp *WarpPredictor) recalcPoints() {
 
 	wp.mu.Lock()
 	distortion := wp.distortion
-	pos:=wp.pos
-	dir:=wp.dir
+	pos := wp.pos
+	dir := wp.dir
 	calcTime := wp.startCalcTime
 	wp.mu.Unlock()
 
@@ -156,17 +159,17 @@ func (wp *WarpPredictor) recalcPoints() {
 	dt := 1 / float64(wp.opts.NumInSec)
 
 	points[0] = pos
-	gravK := distortion * distortion * distortion
+	//warp update COPYPASTE
+	gravK := math.Pow(distortion, wp.opts.PowN)
 	vel := VelDistWarpK * distortion
 
-	V:=v2.InDir(dir).Mul(vel)
+	V := v2.InDir(dir).Mul(vel)
 	var grav v2.V2
 	for i := 1; i < count; i++ {
-		//warp update COPYPASTE
 		grav = wp.image.sumWarpGrav(pos).Mul(gravK)
 		V.DoAddMul(grav, dt)
 		V = V.Normed().Mul(vel)
-		pos.DoAddMul(V,dt)
+		pos.DoAddMul(V, dt)
 
 		points[i] = pos
 		if i%100 == 0 {

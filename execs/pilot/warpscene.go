@@ -81,6 +81,7 @@ func (s *warpScene) Init() {
 		UpdT:     0.1,
 		NumInSec: 10,
 		TrackLen: 120,
+		PowN:     DEFVAL.WarpGravPowN,
 	}
 
 	s.predictor = NewWarpPredictor(opts)
@@ -97,7 +98,7 @@ func (s *warpScene) Init() {
 func (s *warpScene) Update(dt float64) {
 	defer LogFunc("warpScene.Update")()
 
-	UpdateWarpAndShip(Data, dt, DEFVAL.DT)
+	UpdateWarpAndShip(Data, dt, DEFVAL.DT, DEFVAL.WarpGravPowN)
 
 	for _, co := range s.objects {
 		co.Update(dt)
