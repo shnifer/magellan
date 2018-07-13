@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 )
 
 const generatorID = "!!ID"
@@ -24,7 +25,7 @@ type disk struct {
 	keySubs map[chan string]struct{}
 }
 
-func newDisk(diskOpts diskv.Options) *disk {
+func newDisk(diskOpts diskv.Options, refreshFilesPeriod int) *disk {
 	diskV := diskv.New(diskOpts)
 	curIDs, err := diskV.Read(generatorID)
 	if err != nil {
@@ -36,7 +37,12 @@ func newDisk(diskOpts diskv.Options) *disk {
 	}
 	id, err := strconv.Atoi(string(curIDs))
 	if err != nil {
-		panic(err)
+		curIDs = []byte("1")
+		id = 1
+		err := diskV.Write(generatorID, curIDs)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	keys := make(map[string]struct{}, 0)
@@ -50,17 +56,26 @@ func newDisk(diskOpts diskv.Options) *disk {
 		keys[key] = struct{}{}
 	}
 
-	return &disk{
+	res:= &disk{
 		curID:   id,
 		Diskv:   diskV,
 		keySubs: make(map[chan string]struct{}, 0),
 		keys:    keys,
 	}
+
+	if refreshFilesPeriod>0 {
+		go daemonFilesChecker(res, refreshFilesPeriod)
+	}
+
+	return res
 }
 
 //use this to add new pairs.
 //announce new key for subscribers
 func (d *disk) append(key, val string) error {
+	d.Lock()
+	defer d.Unlock()
+
 	if d.has(key) {
 		return ErrAlreadyExist
 	}
@@ -70,16 +85,11 @@ func (d *disk) append(key, val string) error {
 		return err
 	}
 
-	d.Lock()
-	defer d.Unlock()
-	for ch := range d.keySubs {
-		ch <- key
-	}
-	d.keys[key] = struct{}{}
+	d.registerNewKey(key)
+
 	return nil
 }
 
-//todo: update on manual file-copy
 //get list of all keys in storage and subscribe for new
 func (d *disk) subscribe() (fullKeys map[string]struct{}, subscribe chan string) {
 	d.Lock()
@@ -97,7 +107,7 @@ func (d *disk) subscribe() (fullKeys map[string]struct{}, subscribe chan string)
 	return fullKeys, subscribe
 }
 
-func (d *disk) unsubscribeAllKeys(subscribe chan string) {
+func (d *disk) unsubscribe(subscribe chan string) {
 	d.Lock()
 	defer d.Unlock()
 
@@ -130,4 +140,30 @@ func (d *disk) has(key string) bool {
 	defer d.RUnlock()
 	_, exist := d.keys[key]
 	return exist
+}
+
+//run under mutex
+func (d *disk) registerNewKey(key string) {
+	for ch := range d.keySubs {
+		ch <- key
+	}
+	d.keys[key] = struct{}{}
+}
+
+func daemonFilesChecker(d *disk, period int) {
+	var keys []string
+	for {
+		time.Sleep(time.Duration(period)*time.Second)
+		for key:=range d.Keys(nil){
+			keys = append(keys, key)
+		}
+
+		d.Lock()
+		for _,key:=range keys{
+			if _,exist:=d.keys[key]; !exist{
+				d.registerNewKey(key)
+			}
+		}
+		d.Unlock()
+	}
 }

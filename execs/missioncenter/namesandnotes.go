@@ -19,7 +19,7 @@ func initNamesStorage() {
 		BasePath:     namesPath,
 		CacheSizeMax: 1024 * 1024,
 	}
-	nameDisk = storage.New(DEFVAL.NodeName, diskOpts)
+	nameDisk = storage.New(DEFVAL.NodeName, diskOpts, DEFVAL.DiskRefreshPeriod)
 }
 
 func getNames(galaxyID string) {

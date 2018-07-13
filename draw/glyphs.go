@@ -19,7 +19,7 @@ type glyphs struct {
 }
 
 //todo: beacon and blackbox glyphs?
-//todo: warp mines for control
+//todo: warp mines for control center
 func newGlyphs(pd *GalaxyPoint) glyphs {
 	glyphs0 := make([]*graph.Sprite, 0)
 	glyphs1 := make([]*graph.Sprite, 0)

@@ -25,7 +25,6 @@ func (s *warpScene) procControlForward(dt float64) {
 	}
 }
 
-//todo: proc turn somehow
 func (s *warpScene) procControlTurn(dt float64) {
 	turnInput := input.GetF("turn")
 	s.maneurLevel = turnInput
