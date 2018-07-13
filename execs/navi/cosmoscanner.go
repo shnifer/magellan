@@ -99,7 +99,7 @@ func (s *scanner) update(ship v2.V2, dt float64) {
 		return
 	}
 
-	if s.work == "button_scan" {
+	if s.work == button_scan {
 		s.maxRange = Data.SP.Scanner.ScanRange
 		s.scanSpeed = Data.SP.Scanner.ScanSpeed
 	} else {
@@ -133,10 +133,10 @@ func (s *scanner) Start(work string) {
 
 func (s *scanner) Req(Q *graph.DrawQueue) {
 	switch s.work {
-	case "button_scan":
+	case button_scan:
 		s.scanRange.SetColor(colornames.Mediumpurple)
 		s.dropRange.SetColor(colornames.Dimgray)
-	case "button_mine", "button_landing":
+	case button_mine, button_landing:
 		s.scanRange.SetColor(colornames.Dimgray)
 		s.dropRange.SetColor(colornames.Orangered)
 	default:
