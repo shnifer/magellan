@@ -10,7 +10,6 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
-	"image/color"
 	"sort"
 	"time"
 )
@@ -108,9 +107,8 @@ func (s *warpScene) Update(dt float64) {
 	defer LogFunc("warpScene.Update")()
 
 	ppos := Data.PilotData.Ship.Pos
-	UpdateWarpAndShip(Data, dt, DEFVAL.DT)
-	s.distTravaled += Data.PilotData.Ship.Pos.Sub(ppos).Len()
 	UpdateWarpAndShip(Data, dt, DEFVAL.DT, DEFVAL.WarpGravPowN)
+	s.distTravaled += Data.PilotData.Ship.Pos.Sub(ppos).Len()
 
 	for _, co := range s.objects {
 		co.Update(dt)
