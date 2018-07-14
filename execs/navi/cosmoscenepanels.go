@@ -80,17 +80,17 @@ func (p *cosmoPanels) recalcLeft() {
 		Clr:    color.White,
 	}
 	bo.Caption = "SCAN"
-	bo.Tags = "button_scan"
+	bo.Tags = button_scan
 	p.left.AddButton(bo)
 
 	if len(Data.NaviData.Mines) > 0 {
 		bo.Caption = fmt.Sprintf("MINE [%v]", p.leftM)
-		bo.Tags = "button_mine"
+		bo.Tags = button_mine
 		p.left.AddButton(bo)
 	}
 	if len(Data.NaviData.Landing) > 0 {
 		bo.Caption = "LANDING"
-		bo.Tags = "button_landing"
+		bo.Tags = button_landing
 		p.left.AddButton(bo)
 	}
 }
@@ -129,7 +129,7 @@ func (p *cosmoPanels) rightLanding() {
 		CapClr:  color.White,
 		Clr:     color.White,
 		Caption: "DO ORBIT",
-		Tags:    "button_orbit",
+		Tags:    button_orbit,
 	}
 	p.right.AddButton(bo)
 
@@ -139,7 +139,7 @@ func (p *cosmoPanels) rightLanding() {
 		CapClr:  color.White,
 		Clr:     color.White,
 		Caption: "LEAVE ORBIT",
-		Tags:    "button_leaveorbit",
+		Tags:    button_leaveorbit,
 	}
 	p.right.AddButton(bo)
 
@@ -158,7 +158,7 @@ func (p *cosmoPanels) recalcTop() {
 		CapClr:       color.White,
 		Clr:          color.White,
 		Caption:      fmt.Sprintf("BEACON [%v]", p.leftB),
-		Tags:         "button_beacon",
+		Tags:         button_beacon,
 		HighlightClr: colornames.Green,
 	}
 	p.top.ClearButtons()

@@ -86,6 +86,7 @@ func main() {
 
 	commons.SetGravityConsts(DEFVAL.GravityConst, DEFVAL.WarpGravityConst)
 	commons.SetVelDistWarpK(DEFVAL.VelDistWarpK)
+	commons.SetWarpGravThreshold(DEFVAL.WarpGravThreshold)
 
 	createScenes()
 

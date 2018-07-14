@@ -45,6 +45,9 @@ func main() {
 			WarpGreenInDist:   2,
 			WarpGreenOutDist:  3,
 			WarpYellowOutDist: 4,
+			GreenColor: colornames.Green,
+			InnerColor: colornames.Firebrick,
+			OuterColor: colornames.Lightyellow,
 			Color:             colornames.White,
 		}
 		id := genID()

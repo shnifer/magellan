@@ -67,11 +67,11 @@ func (s *warpScene) Update(dt float64) {
 	rang := input.GetF("sonarrange")
 	wide := input.GetF("sonarwide")
 
-	Data.NaviData.SonarDir += turn * dt * Data.SP.Sonar.Rotate_speed
-	Data.NaviData.SonarRange += rang * dt * Data.SP.Sonar.Range_change
-	Data.NaviData.SonarRange = Clamp(Data.NaviData.SonarRange, 0, Data.SP.Sonar.Range_max)
-	Data.NaviData.SonarWide += wide * dt * Data.SP.Sonar.Angle_change
-	Data.NaviData.SonarWide = Clamp(Data.NaviData.SonarWide, Data.SP.Sonar.Angle_min, Data.SP.Sonar.Angle_max)
+	Data.NaviData.SonarDir += turn * dt * Data.SP.Radar.Rotate_Speed
+	Data.NaviData.SonarRange += rang * dt * Data.SP.Radar.Range_Change
+	Data.NaviData.SonarRange = Clamp(Data.NaviData.SonarRange, 0, Data.SP.Radar.Range_Max)
+	Data.NaviData.SonarWide += wide * dt * Data.SP.Radar.Angle_Change
+	Data.NaviData.SonarWide = Clamp(Data.NaviData.SonarWide, Data.SP.Radar.Angle_Min, Data.SP.Radar.Angle_Max)
 
 	//PilotData Rigid Body emulation
 	Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)

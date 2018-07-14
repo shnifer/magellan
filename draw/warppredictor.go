@@ -5,7 +5,7 @@ import (
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
 	"image/color"
-	"runtime"
+	"math"
 	"sync"
 	"time"
 )
@@ -24,6 +24,8 @@ type WarpPredictorOpts struct {
 	TrackLen int
 
 	DrawMaxP int
+
+	PowN float64
 }
 
 type WarpPredictor struct {
@@ -184,13 +186,13 @@ func (wp *WarpPredictor) recalcPoints() {
 	dt := 1 / float64(wp.opts.NumInSec)
 
 	points[0] = pos
-	gravK := distortion * distortion * distortion
+	//warp update COPYPASTE
+	gravK := math.Pow(distortion, wp.opts.PowN)
 	vel := VelDistWarpK * distortion
 
 	V := v2.InDir(dir).Mul(vel)
 	var grav v2.V2
 	for i := 1; i < count; i++ {
-		//warp update COPYPASTE
 		grav = wp.image.sumWarpGrav(pos).Mul(gravK)
 		V.DoAddMul(grav, dt)
 		V = V.Normed().Mul(vel)

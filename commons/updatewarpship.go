@@ -3,9 +3,10 @@ package commons
 import (
 	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/v2"
+	"math"
 )
 
-func UpdateWarpAndShip(data TData, sumT float64, dt float64) {
+func UpdateWarpAndShip(data TData, sumT float64, dt float64, powN float64) {
 	if data.Galaxy == nil {
 		Log(LVL_ERROR, "UpdateWarpAndShip called with nil Galaxy")
 		return
@@ -31,12 +32,12 @@ func UpdateWarpAndShip(data TData, sumT float64, dt float64) {
 
 	galaxy := data.Galaxy
 	ship := data.PilotData.Ship
-	gravK := distortion * distortion * distortion
+	//warp update COPYPASTE warpPredictor
+	gravK := math.Pow(distortion, powN)
 	vel := VelDistWarpK * distortion
 
 	var grav v2.V2
 	ship.Vel = v2.InDir(dir).Mul(vel)
-	//warp update COPYPASTE warpPredictor
 	sumT += galaxy.fixedTimeRest
 	for sumT >= dt {
 		sessionTime += dt

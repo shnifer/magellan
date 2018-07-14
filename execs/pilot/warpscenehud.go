@@ -24,6 +24,7 @@ type warpSceneHUD struct {
 	turnLevelHUD     *graph.Sprite
 	turnControlHUD   *graph.Sprite
 
+	compass    *graph.Sprite
 	distCircle *graph.CircleLine
 }
 
@@ -56,11 +57,17 @@ func newWarpSceneHUD(cam *graph.Camera) warpSceneHUD {
 	turnControlHUD.SetAng(180)
 	turnControlHUD.SetAlpha(0.5)
 
+	compass := NewAtlasSprite(CompassAN, cam.FixS())
+	compassSize := float64(WinH) * compassSize
+	compass.SetSize(compassSize, compassSize)
+	compass.SetAlpha(1)
+
 	trail := graph.NewFadingArray(GetAtlasTex(TrailAN), trailLifeTime/trailPeriod,
 		cam.Deny())
 
 	return warpSceneHUD{
 		trail:            trail,
+		compass:          compass,
 		caption:          caption,
 		distCircle:       distCircle,
 		thrustLevelHUD:   thrustLevelHUD,
@@ -88,6 +95,8 @@ func (s *warpScene) updateHUD() {
 
 	s.hud.turnLevelHUD.SetPos(graph.ScrP(0.5-0.4*s.maneurLevel, 0.15))
 	s.hud.turnControlHUD.SetPos(graph.ScrP(0.5-0.4*input.GetF("turn"), 0.1))
+
+	s.hud.compass.SetPos(Data.PilotData.Ship.Pos)
 }
 
 func (h warpSceneHUD) Req(Q *graph.DrawQueue) {
@@ -96,6 +105,7 @@ func (h warpSceneHUD) Req(Q *graph.DrawQueue) {
 	Q.Add(h.thrustControlHUD, graph.Z_HUD)
 	Q.Add(h.turnLevelHUD, graph.Z_HUD)
 	Q.Add(h.turnControlHUD, graph.Z_HUD)
+	Q.Add(h.compass, graph.Z_HUD)
 
 	Q.Add(h.caption, graph.Z_STAT_HUD)
 	Q.Append(h.distCircle)

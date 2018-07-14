@@ -26,11 +26,13 @@ type tDefVals struct {
 	DebugControl bool
 	DoProf       bool
 
-	GravityConst     float64
-	WarpGravityConst float64
-	DT               float64
-	MinDistortion float64
-	VelDistWarpK float64
+	GravityConst      float64
+	WarpGravityConst  float64
+	DT                float64
+	MinDistortion     float64
+	VelDistWarpK      float64
+	WarpGravThreshold float64
+	WarpGravPowN      float64
 
 	//in ms
 	LogTimeoutMs  int
@@ -54,6 +56,7 @@ func setDefDef() {
 		WinH:             768,
 		GravityConst:     100,
 		WarpGravityConst: 100,
+		WarpGravPowN:     3,
 		DT:               0.001,
 		LogTimeoutMs:     1000,
 		LogRetryMinMs:    10,

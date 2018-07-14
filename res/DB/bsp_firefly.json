@@ -35,9 +35,9 @@
             "turn_speed": 10
         },
         "scaner": {
-            "drop_range": 10,
+            "drop_range": 100,
             "drop_speed": 41,
-            "scan_range": 30,
+            "scan_range": 300,
             "scan_speed": 0.028
         },
         "radar": {

@@ -67,10 +67,10 @@ func (s *warpScene) OnCommand(command string) {
 			Log(LVL_ERROR, "onCommand can't decode event", string(buf), ":", err)
 		}
 		if way == storage.Add {
-			Data.Galaxy.AddBuilding(b)
+			Data.Galaxy.AddWarpBuilding(b)
 			s.addBuilding(b)
 		} else if way == storage.Remove {
-			Data.Galaxy.DelBuilding(b)
+			Data.Galaxy.DelWarpBuilding(b)
 			s.delBuilding(b)
 		}
 	default:

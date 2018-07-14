@@ -22,16 +22,17 @@ type scanner struct {
 	state int
 	work  string
 
-	scanT float64
-	obj   *CosmoPoint
+	scanPart float64
+	obj      *CosmoPoint
 
-	totalT    float64
-	maxRange2 float64
+	maxRange  float64
+	scanSpeed float64
 
 	countSprite *graph.Sprite
 	countN      int
 
-	scanRange  *graph.Sprite
+	scanRange  *graph.CircleLine
+	dropRange  *graph.CircleLine
 	scanSector *graph.Sector
 
 	onState func(state int)
@@ -45,9 +46,14 @@ func newScanner(cam *graph.Camera, onState func(int)) *scanner {
 	sprite := graph.NewSprite(GetAtlasTex(commons.ScannerAN), cam.Deny())
 	sprite.SetSize(15, 15)
 
-	scanRange := graph.NewSprite(graph.CircleTex(), cam.Phys())
-	scanRange.SetAlpha(0.5)
-	scanRange.SetColor(colornames.Indigo)
+	opts := graph.CircleLineOpts{
+		Params: cam.Phys(),
+		Layer:  graph.Z_UNDER_OBJECT,
+		PCount: 32,
+		Clr:    colornames.Indigo,
+	}
+	scanRange := graph.NewCircleLine(v2.ZV, 0, opts)
+	dropRange := graph.NewCircleLine(v2.ZV, 0, opts)
 
 	scanSector := graph.NewSector(cam.Phys())
 	scanSector.SetColor(colornames.Goldenrod)
@@ -56,16 +62,17 @@ func newScanner(cam *graph.Camera, onState func(int)) *scanner {
 		countSprite: sprite,
 		countN:      countN,
 		scanRange:   scanRange,
+		dropRange:   dropRange,
 		scanSector:  scanSector,
 		onState:     onState,
 	}
 }
 
 func (s *scanner) clicked(obj *CosmoPoint) bool {
-	if Data.PilotData.Ship.Pos.Sub(obj.Pos).LenSqr() > s.maxRange2 {
-		return false
-	}
-	if s.obj == obj {
+	/*	if Data.PilotData.Ship.Pos.Sub(obj.Pos).LenSqr() > s.maxRange2 {
+			return false
+		}
+	*/if s.obj == obj {
 		return false
 	}
 	s.stateSelect(obj)
@@ -74,18 +81,13 @@ func (s *scanner) clicked(obj *CosmoPoint) bool {
 
 func (s *scanner) update(ship v2.V2, dt float64) {
 	s.scanRange.SetPos(ship)
-	s.maxRange2 = Data.SP.Radar.Scan_range * Data.SP.Radar.Scan_range
+	s.dropRange.SetPos(ship)
 
 	if s.state == scanZero {
 		return
 	}
 
-	if Data.SP.Radar.Scan_speed > 0 {
-		s.totalT = 1 / Data.SP.Radar.Scan_speed
-	} else {
-		s.totalT = 0
-	}
-
+	//graphics
 	v := s.obj.Pos.Sub(ship)
 	dist := v.Len() + 0.1
 	ang := v.Dir()
@@ -93,19 +95,27 @@ func (s *scanner) update(ship v2.V2, dt float64) {
 	s.scanSector.SetCenterRadius(ship, dist)
 	s.scanSector.SetAngles(ang-angW, ang+angW)
 
-	if ship.Sub(s.obj.Pos).LenSqr() > s.maxRange2 {
+	if s.state == scanSelect {
+		return
+	}
+
+	if s.work == button_scan {
+		s.maxRange = Data.SP.Scanner.ScanRange
+		s.scanSpeed = Data.SP.Scanner.ScanSpeed
+	} else {
+		s.maxRange = Data.SP.Scanner.DropRange
+		s.scanSpeed = Data.SP.Scanner.DropSpeed
+	}
+
+	if ship.Sub(s.obj.Pos).LenSqr() > s.maxRange*s.maxRange {
 		s.stateZero()
 		return
 	}
 
 	if s.state == scanProgress {
-		if s.totalT > 0 {
-			s.scanT += dt
-			if s.scanT > s.totalT {
-				s.stateDone()
-			}
-		} else {
-			s.stateZero()
+		s.scanPart += dt * s.scanSpeed
+		if s.scanPart > 1 {
+			s.stateDone()
 		}
 	}
 }
@@ -122,9 +132,21 @@ func (s *scanner) Start(work string) {
 }
 
 func (s *scanner) Req(Q *graph.DrawQueue) {
-	Range := Data.SP.Radar.Scan_range * 2
-	s.scanRange.SetSize(Range, Range)
-	Q.Add(s.scanRange, graph.Z_UNDER_OBJECT)
+	switch s.work {
+	case button_scan:
+		s.scanRange.SetColor(colornames.Mediumpurple)
+		s.dropRange.SetColor(colornames.Dimgray)
+	case button_mine, button_landing:
+		s.scanRange.SetColor(colornames.Dimgray)
+		s.dropRange.SetColor(colornames.Orangered)
+	default:
+		s.scanRange.SetColor(colornames.Indigo)
+		s.dropRange.SetColor(colornames.Indianred)
+	}
+	s.scanRange.SetRadius(Data.SP.Scanner.ScanRange)
+	s.dropRange.SetRadius(Data.SP.Scanner.DropRange)
+	Q.Append(s.scanRange)
+	Q.Append(s.dropRange)
 
 	if s.state == scanZero {
 		return
@@ -134,7 +156,7 @@ func (s *scanner) Req(Q *graph.DrawQueue) {
 
 	if s.state != scanSelect {
 		//Draw circle counter
-		num := int(0.5 + s.scanT/s.totalT*float64(s.countN))
+		num := int(0.5 + s.scanPart*float64(s.countN))
 		obj := s.obj.Pos
 		rng := s.obj.Size * 1.1
 		if rng < 30 {
@@ -191,7 +213,7 @@ func (s *scanner) procOnState() {
 func (s *scanner) stateZero() {
 	s.state = scanZero
 	s.work = ""
-	s.scanT = 0
+	s.scanPart = 0
 	s.obj = nil
 	s.procOnState()
 }
@@ -199,14 +221,14 @@ func (s *scanner) stateZero() {
 func (s *scanner) stateSelect(obj *CosmoPoint) {
 	s.state = scanSelect
 	s.work = ""
-	s.scanT = 0
+	s.scanPart = 0
 	s.obj = obj
 	s.procOnState()
 }
 
 func (s *scanner) stateProgress(work string) {
 	s.work = work
-	s.scanT = 0
+	s.scanPart = 0
 	s.state = scanProgress
 	s.procOnState()
 }

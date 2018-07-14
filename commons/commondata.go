@@ -39,6 +39,7 @@ type NaviData struct {
 
 	//cosmo
 	IsScanning    bool   `json:"is"`
+	IsDrop        bool   `json:"st"`
 	ScanObjectID  string `json:"so"`
 	IsOrbiting    bool   `json:"io"`
 	OrbitObjectID string `json:"oo"`

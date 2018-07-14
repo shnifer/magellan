@@ -280,7 +280,12 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	}
 
 	if Data.NaviData.IsScanning {
-		Range := Data.SP.Scanner.ScanRange * 2
+		var Range float64
+		if Data.NaviData.IsDrop {
+			Range = Data.SP.Scanner.DropRange * 2
+		} else {
+			Range = Data.SP.Scanner.ScanRange * 2
+		}
 		if p, ok := Data.Galaxy.Points[Data.NaviData.ScanObjectID]; ok {
 			s.scanRange.SetPos(p.Pos)
 			s.scanRange.SetSize(Range, Range)

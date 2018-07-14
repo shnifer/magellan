@@ -4,6 +4,7 @@ import "github.com/Shnifer/magellan/v2"
 
 var gravityConst float64
 var warpGravityConst float64
+var warpGravThreshold float64
 
 var VelDistWarpK float64
 
@@ -14,6 +15,10 @@ func SetGravityConsts(G, W float64) {
 
 func SetVelDistWarpK(k float64) {
 	VelDistWarpK = k
+}
+
+func SetWarpGravThreshold(v float64) {
+	warpGravThreshold = v
 }
 
 //gravity acceleration (g) from planet with given mass at given range
@@ -70,6 +75,9 @@ func WarpGravity(mass, lenSqr, zDist float64) float64 {
 	if d2 == 0 {
 		return 0
 	}
+	if warpGravThreshold > 0 && mass < d2*warpGravThreshold {
+		return 0
+	}
 	return warpGravityConst * mass / d2
 }
 
@@ -83,7 +91,9 @@ func SumWarpGravityAcc(pos v2.V2, galaxy *Galaxy) (sumF v2.V2) {
 		v = obj.Pos.Sub(pos)
 		len2 = v.LenSqr()
 		G = WarpGravity(obj.Mass, len2, obj.GDepth)
-		sumF.DoAddMul(v.Normed(), G)
+		if G > 0 {
+			sumF.DoAddMul(v.Normed(), G)
+		}
 	}
 	return sumF
 }

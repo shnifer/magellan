@@ -14,6 +14,12 @@ import (
 
 const (
 	minecorptagprefix = "mine~"
+	button_scan       = "button_scan"
+	button_mine       = "button_mine"
+	button_landing    = "button_landing"
+	button_beacon     = "button_beacon"
+	button_orbit      = "button_orbit"
+	button_leaveorbit = "button_leaveorbit"
 )
 
 func (s *cosmoScene) updateControl(dt float64) {
@@ -69,15 +75,15 @@ func (s *cosmoScene) procMouseClick(x, y int) {
 
 func (s *cosmoScene) procButtonClick(tag string) {
 	switch tag {
-	case "button_mine":
+	case button_mine:
 		s.scanner.Start(tag)
-	case "button_landing":
+	case button_landing:
 		s.scanner.Start(tag)
-	case "button_scan":
+	case button_scan:
 		s.scanner.Start(tag)
-	case "button_beacon":
+	case button_beacon:
 		s.startBeaconTextInput()
-	case "button_orbit":
+	case button_orbit:
 		if !Data.NaviData.IsOrbiting {
 			Data.NaviData.IsOrbiting = true
 			Data.NaviData.OrbitObjectID = s.scanner.obj.ID
@@ -96,7 +102,7 @@ func (s *cosmoScene) procButtonClick(tag string) {
 			}
 		}
 
-	case "button_leaveorbit":
+	case button_leaveorbit:
 		Data.NaviData.IsOrbiting = false
 		s.scanner.stateZero()
 	default:
@@ -128,13 +134,18 @@ func (s *cosmoScene) scanState(scanState int) {
 		s.cosmoPanels.activeLeft(true)
 		s.cosmoPanels.activeRight(false)
 		s.cosmoPanels.left.Enable()
-		Data.NaviData.IsScanning = true
 		Data.NaviData.ScanObjectID = s.scanner.obj.ID
 	case scanProgress:
+		Data.NaviData.IsScanning = true
+		if s.scanner.work == button_scan {
+			Data.NaviData.IsDrop = false
+		} else {
+			Data.NaviData.IsDrop = true
+		}
 		s.cosmoPanels.left.Highlight(s.scanner.work)
 	case ScanDone:
 		switch s.scanner.work {
-		case "button_mine":
+		case button_mine:
 			msg, ok := s.checkMine()
 			if ok {
 				s.cosmoPanels.rightMines()
@@ -144,7 +155,7 @@ func (s *cosmoScene) scanState(scanState int) {
 				s.announce.AddMsg(msg, colornames.Red, 2)
 				s.scanner.stateZero()
 			}
-		case "button_landing":
+		case button_landing:
 			if s.checkLanding() {
 				s.cosmoPanels.rightLanding()
 				s.cosmoPanels.activeRight(true)
@@ -153,7 +164,7 @@ func (s *cosmoScene) scanState(scanState int) {
 				s.announce.AddMsg("высадка невозможна", colornames.Red, 2)
 				s.scanner.stateZero()
 			}
-		case "button_scan":
+		case button_scan:
 			s.doneScan()
 			s.scanner.stateZero()
 		}

@@ -61,13 +61,17 @@ type GalaxyPoint struct {
 	WarpGreenOutDist  float64 `json:"wgo,omitempty"`
 	WarpGreenInDist   float64 `json:"wgi,omitempty"`
 	WarpRedOutDist    float64 `json:"wro,omitempty"`
+	//for warp points
+	InnerColor color.RGBA `json:"wic,omitempty"`
+	OuterColor color.RGBA `json:"woc,omitempty"`
+	GreenColor color.RGBA `json:"wgc,omitempty"`
 
 	ScanData string `json:"sd,omitempty"`
 
 	Minerals   []int       `json:"mi,omitempty"`
 	Emissions  []Emission  `json:"emm,omitempty"`
 	Signatures []Signature `json:"sig,omitempty"`
-	Color      color.RGBA  `json:"clr"`
+	Color      color.RGBA  `json:"clr,omitempty"`
 
 	//updated on Decode or add|del building
 	//map[ownerName]fullkey
@@ -78,26 +82,19 @@ type GalaxyPoint struct {
 	//map[fullKey]message
 	Beacons    map[string]string `json:"bcs,omitempty"`
 	BlackBoxes map[string]string `json:"bbs,omitempty"`
-
-	/*	HasMine     bool   `json:"hm,omitempty"`
-		MineOwner   string `json:"mo,omitempty"`
-		MineFullKey string `json:"mk,omitempty"`
-
-		HasFishHouse     bool   `json:"fm,omitempty"`
-		FishHouseOwner   string `json:"fo,omitempty"`
-		FishHouseFullKey string `json:"fk,omitempty"`
-	*/
 }
 
 func (gp GalaxyPoint) MarshalJSON() ([]byte, error) {
 	//Marshal just as standard
 	//to avoid recursive GalaxyPoint.MarshalJSON()
 	type just GalaxyPoint
-	buf, err := json.Marshal(just(gp))
 
+	buf, err := json.Marshal(just(gp))
 	if err != nil {
 		return buf, err
 	}
 	buf = bytes.Replace(buf, []byte(`"Pos":{},`), []byte{}, -1)
+	buf = bytes.Replace(buf, []byte(`{"R":0,"G":0,"B":0,"A":0}`), []byte("{}"), -1)
+
 	return buf, nil
 }

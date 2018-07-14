@@ -90,6 +90,7 @@ func (s *warpScene) Init() {
 		NumInSec: 10,
 		TrackLen: 120,
 		DrawMaxP: 30,
+		PowN:     DEFVAL.WarpGravPowN,
 	}
 
 	s.predictor = NewWarpPredictor(opts)
@@ -109,6 +110,7 @@ func (s *warpScene) Update(dt float64) {
 	ppos := Data.PilotData.Ship.Pos
 	UpdateWarpAndShip(Data, dt, DEFVAL.DT)
 	s.distTravaled += Data.PilotData.Ship.Pos.Sub(ppos).Len()
+	UpdateWarpAndShip(Data, dt, DEFVAL.DT, DEFVAL.WarpGravPowN)
 
 	for _, co := range s.objects {
 		co.Update(dt)
