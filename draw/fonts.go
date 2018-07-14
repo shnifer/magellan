@@ -23,25 +23,25 @@ func fontLoader(filename string) ([]byte, error) {
 func InitFonts() {
 	Fonts = make(map[string]font.Face)
 
-	face, err := graph.GetFace("UbuntuMono-R.ttf", 20, fontLoader)
+	face, err := graph.GetFace("furore.ttf", 20, fontLoader)
 	if err != nil {
 		Log(LVL_ERROR, err)
 	}
 	Fonts[Face_cap] = face
 
-	face, err = graph.GetFace("interdim.ttf", 16, fontLoader)
+	face, err = graph.GetFace("furore.ttf", 16, fontLoader)
 	if err != nil {
 		Log(LVL_ERROR, err)
 	}
 	Fonts[Face_stats] = face
 
-	face, err = graph.GetFace("phantom.ttf", 12, fontLoader)
+	face, err = graph.GetFace("furore.ttf", 14, fontLoader)
 	if err != nil {
 		Log(LVL_ERROR, err)
 	}
 	Fonts[Face_list] = face
 
-	face, err = graph.GetFace("UbuntuMono-R.ttf", 12, fontLoader)
+	face, err = graph.GetFace("furore.ttf", 14, fontLoader)
 	if err != nil {
 		Log(LVL_ERROR, err)
 	}

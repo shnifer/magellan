@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
@@ -9,7 +10,9 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
+	"image/color"
 	"sort"
+	"time"
 )
 
 type warpScene struct {
@@ -31,6 +34,9 @@ type warpScene struct {
 	gravityReport []v2.V2
 
 	predictor *WarpPredictor
+
+	distTravaled float64
+	timerStart   time.Time
 
 	hud warpSceneHUD
 	q   *graph.DrawQueue
@@ -67,6 +73,8 @@ func (s *warpScene) Init() {
 	s.objects = make(map[string]*CosmoPoint)
 	s.thrustLevel = 0
 	s.maneurLevel = 0
+	s.distTravaled = 0
+	s.timerStart = time.Now()
 
 	stateData := Data.GetStateData()
 
@@ -81,6 +89,7 @@ func (s *warpScene) Init() {
 		UpdT:     0.1,
 		NumInSec: 10,
 		TrackLen: 120,
+		DrawMaxP: 30,
 	}
 
 	s.predictor = NewWarpPredictor(opts)
@@ -97,7 +106,9 @@ func (s *warpScene) Init() {
 func (s *warpScene) Update(dt float64) {
 	defer LogFunc("warpScene.Update")()
 
+	ppos := Data.PilotData.Ship.Pos
 	UpdateWarpAndShip(Data, dt, DEFVAL.DT)
+	s.distTravaled += Data.PilotData.Ship.Pos.Sub(ppos).Len()
 
 	for _, co := range s.objects {
 		co.Update(dt)
@@ -110,6 +121,11 @@ func (s *warpScene) Update(dt float64) {
 		Data.PilotData.Ship.AngVel = 0
 		Data.PilotData.Distortion = DEFVAL.MinDistortion
 		Data.PilotData.Dir = 0
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
+		s.timerStart = time.Now()
+		s.distTravaled = 0
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
@@ -185,6 +201,13 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 
 	Q.Append(s.predictor)
 	Q.Append(s.hud)
+
+	fps := ebiten.CurrentFPS()
+	msg := fmt.Sprintf("FPS: %.0f\nTravel: %.0f\nTimer: %.1f\nDraws: %v", fps,
+		s.distTravaled, time.Since(s.timerStart).Seconds(), Q.Len())
+	fpsText = graph.NewText(msg, Fonts[Face_list], colornames.Cyan)
+	fpsText.SetPosPivot(graph.ScrP(0.1, 0.1), v2.ZV)
+	Q.Add(fpsText, graph.Z_STAT_HUD+10)
 
 	Q.Run(image)
 }

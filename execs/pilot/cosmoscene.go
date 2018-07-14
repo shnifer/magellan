@@ -11,8 +11,10 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 	"image/color"
+	"log"
 	"math"
 	"sort"
+	"time"
 )
 
 const trailPeriod = 0.25
@@ -34,11 +36,11 @@ type cosmoScene struct {
 	otherShips   map[string]*OtherShip
 
 	//control
-	cruiseOn    bool
-	cruiseInput float64
+	cruiseOn     bool
+	cruiseInput  float64
 	maneurDetail bool
-	thrustLevel float64
-	maneurLevel float64
+	thrustLevel  float64
+	maneurLevel  float64
 
 	//trail
 	trailT float64
@@ -55,6 +57,10 @@ type cosmoScene struct {
 	//show from Navi
 	scanRange  *graph.Sprite
 	distCircle *graph.CircleLine
+
+	timerStart   time.Time
+	distTravaled float64
+	heatBucket   float64
 
 	q *graph.DrawQueue
 }
@@ -120,6 +126,9 @@ func (s *cosmoScene) Init() {
 	s.maneurDetail = false
 	s.trailT = 0
 	s.lastServerID = 0
+	s.distTravaled = 0
+	s.heatBucket = 0
+	s.timerStart = time.Now()
 	s.trail.Clear()
 
 	stateData := Data.GetStateData()
@@ -157,7 +166,16 @@ func (s *cosmoScene) Update(dt float64) {
 	//s.procShipGravity(dt)
 	//Data.PilotData.Ship = Data.PilotData.Ship.Extrapolate(dt)
 	if !Data.NaviData.IsOrbiting {
+		spos := Data.PilotData.Ship.Pos
 		UpdateGalaxyAndShip(Data, dt, DEFVAL.DT)
+		dpos := Data.PilotData.Ship.Pos.Sub(spos).Len()
+		s.distTravaled += dpos
+		starheat := 0.0
+		heat := s.thrustLevel*Data.SP.March_engine.Thrust_max*Data.SP.March_engine.Heat_prod/100 + starheat - Data.SP.Shields.Heat_sink
+		s.heatBucket += heat * dt
+		if s.heatBucket < 0 {
+			s.heatBucket = 0
+		}
 	} else {
 		Data.PilotData.SessionTime += dt
 		Data.Galaxy.Update(Data.PilotData.SessionTime)
@@ -197,7 +215,6 @@ func (s *cosmoScene) Update(dt float64) {
 	} else {
 		Data.PilotData.HeatProduction = 0
 	}
-	s.distCircle.Update(dt)
 	s.warpEngine.update(dt)
 	s.predictors.setParams()
 }
@@ -274,6 +291,12 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 	s.drawScale(Q)
 	s.drawGravity(Q)
 
+	fps := ebiten.CurrentFPS()
+	msg := fmt.Sprintf("FPS: %.0f\nHeat: %.0f/%v\nTravel: %.0f\nTimer: %.1f\nDraws: %v", fps, s.heatBucket/1000,
+		Data.SP.Shields.Heat_capacity, s.distTravaled, time.Since(s.timerStart).Seconds(), Q.Len())
+	fpsText = graph.NewText(msg, Fonts[Face_list], colornames.Cyan)
+	fpsText.SetPosPivot(graph.ScrP(0.1, 0.1), v2.ZV)
+	Q.Add(fpsText, graph.Z_STAT_HUD+10)
 	Q.Run(image)
 }
 
@@ -305,6 +328,17 @@ func (s *cosmoScene) updateDebugControl(dt float64) {
 
 	if inpututil.IsKeyJustPressed(ebiten.Key1) {
 		s.predictors.show = !s.predictors.show
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.Key2) {
+		v := !ebiten.IsVsyncEnabled()
+		ebiten.SetVsyncEnabled(v)
+		log.Println("VSync set to ", v)
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
+		s.timerStart = time.Now()
+		s.distTravaled = 0
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyP) {

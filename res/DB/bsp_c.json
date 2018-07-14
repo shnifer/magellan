@@ -1,70 +1,90 @@
 {
-    "ship_name": "late",
-    "mass": 1000,
-    "corp_name": "gd",
-    "known_minerals": ["M1","M2"],
-    "mines": ["gd","pre"],
-    "landing": ["earth"],
-    "beacon_count":1,
-    "march_engine": {
-        "thrust_max": 10000,
-        "thrust_acc": 300,
-        "thrust_slow": 300,
-        "reverse_max": 2500,
-        "reverse_acc": 300,
-        "reverse_slow": 300,
-        "heat_prod": 2000
+    "flight_id": 369,
+    "dock": 3,
+    "flight_start_time": "2018-08-19 12:00:00",
+    "ship": {
+        "name": "\u041b\u0430\u0441\u0442\u043e\u0447\u043a\u0430",
+        "nodes_weight": 2300
     },
-    "warp_engine": {
-        "distort_max": 2000,
-        "distort_acc": 8,
-        "distort_slow": 14,
-        "consumption": 0,
-        "warp_enter_consumption": 0,
-        "turn_speed": 10,
-        "turn_consumption": 0
+    "params": {
+        "march_engine": {
+            "thrust": 5000,
+            "thrust_rev": 2500,
+            "accel": 300,
+            "accel_rev": 300,
+            "slowdown": 300,
+            "slowdown_rev": 300,
+            "heat_prod": 45
+        },
+        "shunter": {
+            "turn": 540,
+            "strafe": 2500,
+            "turn_acc": 300,
+            "strafe_acc": 300,
+            "turn_slow": 300,
+            "strafe_slow": 300,
+            "heat_prod": 40
+        },
+        "warp_engine": {
+            "distort": 2000,
+			"warp_enter_consumption": 15,
+            "distort_acc": 12,
+            "distort_slow": 12,
+            "consumption": 0.03,
+ 			"turn_speed": 5,
+            "turn_consumption": 0.25
+        },
+        "scaner": {
+            "drop_range": 130,
+            "drop_speed": 150,
+            "scan_range": 150,
+            "scan_speed": 0.1
+        },
+        "radar": {
+            "range_max": 180,
+            "angle_min": 5,
+            "angle_max": 75,
+            "angle_change": 5,
+            "range_change": 20,
+            "rotate_speed": 90
+        },
+        "fuel_tank": {
+            "fuel_volume": 2500,
+            "fuel_protection": 70,
+            "radiation_def": 400
+        },
+        "lss": {
+            "thermal_def": 60,
+            "co2_level": 10,
+            "air_volume": 10000,
+            "air_speed": 50,
+            "lightness": 20
+        },
+        "shields": {
+            "radiation_def": 45,
+            "desinfect_level": 300,
+            "mechanical_def": 50,
+            "heat_reflection": 50,
+            "heat_capacity": 2200,
+            "heat_sink": 500
+        }
     },
-    "shunter": {
-        "turn_max": 540,
-        "turn_acc": 100,
-        "turn_slow": 100,
-        "strafe_max": 2500,
-        "strafe_acc": 300,
-        "strafe_slow": 300,
-        "heat_prod": 20
+    "cargo": {
+        "mines": [
+            {
+                "company": "mst",
+                "weight": 700
+            }
+        ]
     },
-    "radar": {
-        "range": 180000,
-        "angle": 15,
-        "scan_range": 750,
-        "scan_speed": 0.5
-    },
-    "sonar": {
-        "range_max": 180000,
-        "angle_min": 5,
-        "angle_max": 75,
-        "angle_change": 5,
-        "range_change": 20000,
-        "rotate_speed": 90
-    },
-    "fuel_tank": {
-        "fuel_volume": 0,
-        "compact": 0,
-        "radiation_def": 0
-    },
-    "lss": {
-        "thermal_def": 0,
-        "co2_level": 0,
-        "air_volume": 0,
-        "air_prepare_speed": 0,
-        "lightness": 0
-    },
-    "shields": {
-        "radiation_def": 0,
-        "disinfect_level": 0,
-        "mechanical_def": 0,
-        "heat_reflection": 0,
-        "heat_capacity": 0,
-        "heat_sink": 0
-    }
+    "known_minerals": [
+        {
+            "id": 6,
+            "name": "Tilium"
+        },
+        {
+            "id": 9,
+            "name": "Unobtanium"
+        }
+    ]
 }

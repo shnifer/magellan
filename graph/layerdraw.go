@@ -92,3 +92,7 @@ func (dq *DrawQueue) Run(dest *ebiten.Image) {
 		req.drawReq(dest)
 	}
 }
+
+func (dq *DrawQueue) Len()int{
+	return dq.reqs.Len()
+}

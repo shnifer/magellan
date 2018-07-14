@@ -31,6 +31,7 @@ func (p *predictors) init(cam *graph.Camera) {
 		NumInSec: 10,
 		GravEach: 2,
 		TrackLen: 30,
+		DrawMaxP: 30,
 	}
 
 	p.predictorThrust = NewTrackPredictor(opts)

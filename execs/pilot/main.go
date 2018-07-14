@@ -1,15 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/input"
 	"github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
-	"image/color"
 	"time"
 )
 
@@ -38,17 +35,6 @@ func mainLoop(window *ebiten.Image) error {
 	Data.Update(DEFVAL.Role)
 
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
-	select {
-	case <-showFps:
-		fps := ebiten.CurrentFPS()
-		msg := fmt.Sprintf("FPS: %.0f\nALT-F4 to close\nWASD to control\nQ-E scale\nSPACE - stop\nENTER - reset position", fps)
-		fpsText = graph.NewText(msg, draw.Fonts[draw.Face_list], color.White)
-		fpsText.SetPosPivot(graph.ScrP(0.1, 0.1), v2.ZV)
-	default:
-	}
-	if fpsText != nil {
-		fpsText.Draw(window)
-	}
 
 	t := time.Now()
 	dt = t.Sub(last).Seconds()
@@ -58,10 +44,10 @@ func mainLoop(window *ebiten.Image) error {
 	return nil
 }
 
-func mainStart(){
+func mainStart() {
 	time.Sleep(time.Nanosecond)
-	}
-func mainStop(){
+}
+func mainStop() {
 	time.Sleep(time.Nanosecond)
 }
 

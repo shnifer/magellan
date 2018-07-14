@@ -22,6 +22,7 @@ type TrackPredictorOpts struct {
 	NumInSec int
 	GravEach int
 	TrackLen int
+	DrawMaxP int
 }
 
 type TrackPredictor struct {
@@ -55,6 +56,9 @@ func NewTrackPredictor(opts TrackPredictorOpts) *TrackPredictor {
 	if opts.NumInSec == 0 {
 		opts.NumInSec = 1
 	}
+	if opts.DrawMaxP == 0 {
+		opts.DrawMaxP = 1
+	}
 	return &TrackPredictor{
 		opts:   opts,
 		gps:    opts.GPS,
@@ -78,10 +82,10 @@ func (tp *TrackPredictor) Req(Q *graph.DrawQueue) {
 
 //run under mutex
 func (tp *TrackPredictor) drawPoints(Q *graph.DrawQueue) {
-	//in ms, must be a round part of minute
+	//in s, must be a round part of minute
 	const markEach = 1
 
-	if tp.points == nil || len(tp.points)==0 || (tp.calcTime==time.Time{}){
+	if tp.points == nil || len(tp.points) == 0 || (tp.calcTime == time.Time{}) {
 		return
 	}
 
@@ -96,16 +100,41 @@ func (tp *TrackPredictor) drawPoints(Q *graph.DrawQueue) {
 	//in ms
 	dt := 1 / float64(tp.opts.NumInSec)
 
+	drawCount := len(tp.points) - 1
+	if tp.opts.Cam != nil {
+		for i, p := range tp.points {
+			if !tp.opts.Cam.PointInSpace(p) {
+				drawCount = i
+				break
+			}
+		}
+	}
+	if drawCount == 0 {
+		return
+	}
+	drawEach := drawCount/tp.opts.DrawMaxP + 1
+	if drawEach > 10 {
+		drawEach = 10
+	}
+	dt *= float64(drawEach)
+
 	var prev v2.V2
-	for i, p := range tp.points {
+	var p v2.V2
+	for i := 0; i < drawCount/drawEach+1; i++ {
+		if i*drawEach >= len(tp.points) {
+			break
+		}
+		p = tp.points[i*drawEach]
 		if i > 0 && cutTime > 0 {
 			graph.Line(Q, tp.opts.Cam, prev, p, tp.opts.Clr, tp.opts.Layer)
-			if timeOffset >= markEach {
+			for timeOffset >= markEach {
 				timeOffset -= markEach
-				k := timeOffset / dt
-				markP := p.Mul(1-k).AddMul(prev, k)
-				tp.opts.Sprite.SetPos(markP)
-				Q.Add(tp.opts.Sprite, tp.opts.Layer+1)
+				if timeOffset < markEach {
+					k := timeOffset / dt
+					markP := p.Mul(1-k).AddMul(prev, k)
+					tp.opts.Sprite.SetPos(markP)
+					Q.Add(tp.opts.Sprite, tp.opts.Layer+1)
+				}
 			}
 		}
 		prev = p
