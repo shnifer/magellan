@@ -137,7 +137,7 @@ func (s *Storage) procNewKey(newKey string) {
 
 	objKey, err := ReadKey(newKey)
 	if err != nil {
-		Log(LVL_ERROR, "subscribeLoop: can't read objKey ", newKey)
+		Log(LVL_ERROR, "procNewKey: can't read objKey ", newKey)
 		return
 	}
 

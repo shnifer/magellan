@@ -160,6 +160,9 @@ func daemonFilesChecker(d *disk, period int) {
 
 		d.Lock()
 		for _,key:=range keys{
+			if key==generatorID{
+				continue
+			}
 			if _,exist:=d.keys[key]; !exist{
 				d.registerNewKey(key)
 			}
