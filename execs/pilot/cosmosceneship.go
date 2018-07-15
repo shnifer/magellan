@@ -6,6 +6,8 @@ import (
 	"github.com/Shnifer/magellan/v2"
 )
 
+const maneurDetailK = 5
+
 func (s *cosmoScene) updateShipControl(dt float64) {
 	s.procCruise()
 	s.procControlTurn(dt)
@@ -27,7 +29,7 @@ func (s *cosmoScene) procCruise() {
 func (s *cosmoScene) procControlTurn(dt float64) {
 	turnInput := input.GetF("turn")
 	if s.maneurDetail {
-		turnInput /= 5
+		turnInput /= maneurDetailK
 	}
 	massK := 1000 / Data.CalcCurMass()
 	var min, max float64

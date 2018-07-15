@@ -110,7 +110,12 @@ func (s *cosmoScene) UpdateHUD() {
 	p = hPos.Add(v2.V2{X: ruler(s.maneurLevel), Y: arrS})
 	s.hud.turnLevel.SetPos(p)
 
-	p = hPos.Add(v2.V2{X: ruler(input.GetF("turn")), Y: -arrS})
+	turnInput := input.GetF("turn")
+	if s.maneurDetail {
+		turnInput /= maneurDetailK
+	}
+
+	p = hPos.Add(v2.V2{X: ruler(turnInput), Y: -arrS})
 	s.hud.turnControl.SetPos(p)
 
 	s.hud.compass.SetPos(Data.PilotData.Ship.Pos)
