@@ -27,7 +27,7 @@ func main() {
 	}
 
 	logDiskOpts := diskv.Options{
-		BasePath:     DEFVAL.StoragePath,
+		BasePath:     DEFVAL.LocalLogPath,
 		CacheSizeMax: 1024,
 	}
 	logDisk := storage.New(DEFVAL.NodeName, logDiskOpts, 0)
@@ -38,7 +38,7 @@ func main() {
 	log.SetStorage(logDisk)
 
 	diskOpts := diskv.Options{
-		BasePath:     DEFVAL.LocalLogPath,
+		BasePath:     DEFVAL.StoragePath,
 		CacheSizeMax: 1024 * 1024,
 	}
 	disk := storage.New(DEFVAL.NodeName, diskOpts, DEFVAL.DiskRefreshPeriod)

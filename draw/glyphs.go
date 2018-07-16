@@ -4,8 +4,8 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
+	"golang.org/x/image/colornames"
 	"strconv"
-	"image/color"
 )
 
 const glyphSize = 32
@@ -21,19 +21,18 @@ type glyphs struct {
 	size float64
 }
 
-//todo: beacon and blackbox glyphs?
-//todo: warp mines for control center
 func newGlyphs(pd *GalaxyPoint) glyphs {
 	glyphs0 := make([]*graph.Sprite, 0)
 	glyphs1 := make([]*graph.Sprite, 0)
-	countText:= make([]*graph.Text, 0)
+	countText := make([]*graph.Text, 0)
 
-	for _, owner :=range CorpNames{
-		if _,ok:=pd.Mines[owner]; !ok{
+	for _, owner := range CorpNames {
+		if _, ok := pd.Mines[owner]; !ok {
 			continue
 		}
-		text:=graph.NewText(strconv.Itoa(len(pd.Mines[owner])), Fonts[Face_list], color.White)
-		countText = append(countText,text)
+		text := graph.NewText(strconv.Itoa(len(pd.Mines[owner])),
+			Fonts[Face_list], colornames.Darkviolet)
+		countText = append(countText, text)
 		if len(glyphs0) < maxGlyphsInRow {
 			glyphs0 = append(glyphs0, newGlyph(BUILDING_MINE, owner))
 		} else {
@@ -54,8 +53,9 @@ func newGlyphs(pd *GalaxyPoint) glyphs {
 		}
 	*/
 	return glyphs{
-		Glyphs0: glyphs0,
-		Glyphs1: glyphs1,
+		Glyphs0:   glyphs0,
+		Glyphs1:   glyphs1,
+		CountText: countText,
 	}
 }
 
@@ -70,23 +70,23 @@ func newGlyph(t string, owner string) *graph.Sprite {
 func (g glyphs) Req(Q *graph.DrawQueue) {
 	var pos v2.V2
 	basePos := g.pos.AddMul(v2.V2{X: -1, Y: -1}, g.size)
-	n:=0
+	n := 0
 	for i, sprite := range g.Glyphs0 {
 		pos = basePos.AddMul(v2.V2{X: glyphSize, Y: 0}, float64(i))
 		sprite.SetPos(pos)
 		g.CountText[n].SetPosPivot(pos, graph.Center())
-		n++
 		Q.Add(sprite, graph.Z_ABOVE_OBJECT)
-		Q.Add(sprite, graph.Z_ABOVE_OBJECT+1)
+		Q.Add(g.CountText[n], graph.Z_ABOVE_OBJECT+1)
+		n++
 	}
 	basePos.DoAddMul(v2.V2{X: 0, Y: glyphSize}, 1)
 	for i, sprite := range g.Glyphs1 {
 		pos = basePos.AddMul(v2.V2{X: glyphSize, Y: 0}, float64(i))
 		sprite.SetPos(pos)
 		g.CountText[n].SetPosPivot(pos, graph.Center())
-		n++
 		Q.Add(sprite, graph.Z_ABOVE_OBJECT)
-		Q.Add(sprite, graph.Z_ABOVE_OBJECT+1)
+		Q.Add(g.CountText[n], graph.Z_ABOVE_OBJECT+1)
+		n++
 	}
 }
 
