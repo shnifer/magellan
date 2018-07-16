@@ -178,10 +178,11 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		sprite.SetColor(pd.GreenColor)
 
 		opts := graph.WavedCircleOpts{
-			Sprite: sprite,
-			PCount: 32,
-			Layer:  graph.Z_UNDER_OBJECT + 50,
-			Params: params,
+			Sprite:  sprite,
+			PCount:  32,
+			Layer:   graph.Z_UNDER_OBJECT + 50,
+			Params:  params,
+			RandGen: pd.ID,
 		}
 		res.WarpGreen = graph.NewWavedCircle(
 			pd.Pos, pd.WarpGreenInDist, pd.WarpGreenOutDist, opts)

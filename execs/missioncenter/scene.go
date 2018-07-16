@@ -129,12 +129,18 @@ func (s *scene) draw(window *ebiten.Image) {
 func (s *scene) updatePosition(dt float64) {
 	_, wheel := ebiten.MouseWheel()
 	if wheel != 0 {
+		newScale := s.cam.Scale
 		if wheel > 0 {
-			s.cam.Scale *= 1.19
+			newScale *= 1.19
 		} else {
-			s.cam.Scale /= 1.19
+			newScale /= 1.19
 		}
-		s.cam.Scale = commons.Clamp(s.cam.Scale, 0.1, 100)
+		newScale = commons.Clamp(newScale, 0.1, 100)
+		x, y := ebiten.CursorPosition()
+		mp := s.cam.UnApply(v2.V2{X: float64(x), Y: float64(y)})
+		v := s.cam.Pos.Sub(mp)
+		s.cam.Pos = mp.AddMul(v, s.cam.Scale/newScale)
+		s.cam.Scale = newScale
 		s.cam.Recalc()
 	}
 

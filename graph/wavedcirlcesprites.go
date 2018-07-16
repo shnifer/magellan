@@ -4,6 +4,7 @@ import (
 	"github.com/Shnifer/magellan/v2"
 	"math"
 	"math/rand"
+	"crypto/md5"
 )
 
 type WavedCircleOpts struct {
@@ -11,6 +12,7 @@ type WavedCircleOpts struct {
 	Params CamParams
 	Layer  int
 	PCount int
+	RandGen string
 }
 
 type waveParams struct {
@@ -31,7 +33,17 @@ type WavedCircle struct {
 	t float64
 }
 
-func defWaveParams() waveParams {
+func defWaveParams(randgen string) waveParams {
+	hash:=md5.Sum([]byte(randgen))
+	var seed int64
+	seed+=int64(hash[0])
+	seed = seed<<8
+	seed+=int64(hash[1])
+	seed = seed<<8
+	seed+=int64(hash[2])
+	seed = seed<<8
+	seed+=int64(hash[3])
+	rand.Seed(seed)
 	rSign1 := float64(rand.Intn(2)*2 - 1)
 	rSign2 := float64(rand.Intn(2)*2 - 1)
 	return waveParams{
@@ -51,7 +63,7 @@ func NewWavedCircle(center v2.V2, radMin, radMax float64, opts WavedCircleOpts) 
 		radMin:     radMin,
 		radMax:     radMax,
 		points:     getPoints(opts.PCount),
-		waveParams: defWaveParams(),
+		waveParams: defWaveParams(opts.RandGen),
 	}
 	return res
 }
