@@ -7,7 +7,7 @@
     "NeededRoles": [
         "Pilot", "Navi"
     ],
-    "DoProf": true,
+    "DoProf": false,
     "SolarStartLocationName": "magellan",
     "MinDistortion":0.3,
     "StoragePath":"xstore",
