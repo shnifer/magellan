@@ -150,8 +150,12 @@ func (galaxy *Galaxy) AddBuilding(b Building) {
 			return
 		}
 		if _, exist := gp.Mines[b.OwnerID]; exist {
-			Log(LVL_ERROR, "trying to add mine on planet ", b.PlanetID, " but already has mine")
-			return
+			for _,v:=range gp.Mines[b.OwnerID]{
+				if v==fullKey{
+					Log(LVL_ERROR, "trying to add mine on planet ", b.PlanetID, " but already has mine with fk ",fullKey)
+					return
+				}
+			}
 		}
 		gp.Mines[b.OwnerID] = append(gp.Mines[b.OwnerID],fullKey)
 	case BUILDING_FISHHOUSE:

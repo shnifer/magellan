@@ -56,14 +56,14 @@ func newDisk(diskOpts diskv.Options, refreshFilesPeriod int) *disk {
 		keys[key] = struct{}{}
 	}
 
-	res:= &disk{
+	res := &disk{
 		curID:   id,
 		Diskv:   diskV,
 		keySubs: make(map[chan string]struct{}, 0),
 		keys:    keys,
 	}
 
-	if refreshFilesPeriod>0 {
+	if refreshFilesPeriod > 0 {
 		go daemonFilesChecker(res, refreshFilesPeriod)
 	}
 
@@ -135,11 +135,16 @@ func (d *disk) getKeys() []string {
 	return res
 }
 
+//run under mutex
 func (d *disk) has(key string) bool {
-	d.RLock()
-	defer d.RUnlock()
 	_, exist := d.keys[key]
 	return exist
+}
+
+func (d *disk) Has(key string) bool {
+	d.RLock()
+	defer d.RUnlock()
+	return d.has(key)
 }
 
 //run under mutex
@@ -153,17 +158,17 @@ func (d *disk) registerNewKey(key string) {
 func daemonFilesChecker(d *disk, period int) {
 	var keys []string
 	for {
-		time.Sleep(time.Duration(period)*time.Second)
-		for key:=range d.Keys(nil){
+		time.Sleep(time.Duration(period) * time.Second)
+		for key := range d.Keys(nil) {
 			keys = append(keys, key)
 		}
 
 		d.Lock()
-		for _,key:=range keys{
-			if key==generatorID{
+		for _, key := range keys {
+			if key == generatorID {
 				continue
 			}
-			if _,exist:=d.keys[key]; !exist{
+			if _, exist := d.keys[key]; !exist {
 				d.registerNewKey(key)
 			}
 		}

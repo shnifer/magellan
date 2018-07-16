@@ -29,10 +29,18 @@ var showFps <-chan time.Time
 var changeGalaxy chan string
 var sessionTime float64
 
+var vSyncSet bool
+
 func mainLoop(window *ebiten.Image) error {
+	if !vSyncSet {
+		ebiten.SetVsyncEnabled(DEFVAL.VSync)
+		vSyncSet = true
+	}
+
 	sessionTime = time.Now().Sub(commons.StartDateTime).Seconds()
 
 	updateNamesAndNotes()
+	updateBuildings()
 
 	select {
 	case newGalaxy := <-changeGalaxy:
@@ -85,7 +93,6 @@ func main() {
 		WinW = DEFVAL.WinW
 		WinH = DEFVAL.WinH
 	}
-	ebiten.SetVsyncEnabled(DEFVAL.VSync)
 
 	initFlightStorage()
 	initNamesStorage()
@@ -114,5 +121,6 @@ func changeState(newGalaxy string) {
 	loadNewGalaxy(newGalaxy)
 	GalaxyName = newGalaxy
 	getNames(newGalaxy)
+	getBuildings(newGalaxy)
 	Scene.init()
 }

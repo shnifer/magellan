@@ -71,6 +71,7 @@ func (s *scene) init() {
 	s.objects = make(map[string]*CosmoPoint, len(CurGalaxy.Ordered))
 	s.objectsID = make([]string, 0, len(CurGalaxy.Ordered))
 	s.objectNamesFK = make(map[string]string)
+
 	for _, gp := range CurGalaxy.Ordered {
 		if gp.IsVirtual {
 			continue
@@ -78,6 +79,17 @@ func (s *scene) init() {
 		s.objects[gp.ID] = NewCosmoPoint(gp, s.cam.Phys())
 		s.objectsID = append(s.objectsID, gp.ID)
 	}
+
+	for objKey, data := range buildingData {
+		build, err := commons.Building{}.Decode([]byte(data))
+		if err != nil {
+			Log(LVL_ERROR, "can't decode building data ", data)
+			continue
+		}
+		fk := objKey.FullKey()
+		s.EventAddBuilding(build, fk)
+	}
+
 	for objKey, data := range namesData {
 		rec, err := nameRec{}.decode(data)
 		if err != nil {
@@ -92,10 +104,12 @@ func (s *scene) init() {
 func (s *scene) update(dt float64) {
 	CurGalaxy.Update(sessionTime)
 	for _, gp := range CurGalaxy.Ordered {
-		s.objects[gp.ID].Pos = gp.Pos
+		obj := s.objects[gp.ID]
+		obj.Pos = gp.Pos
+		obj.Update(dt)
 	}
 
-	s.updateposition(dt)
+	s.updatePosition(dt)
 	if s.focus == focus_enterName {
 		s.nameInput.Update(dt)
 	}
@@ -112,7 +126,7 @@ func (s *scene) draw(window *ebiten.Image) {
 	s.q.Run(window)
 }
 
-func (s *scene) updateposition(dt float64) {
+func (s *scene) updatePosition(dt float64) {
 	_, wheel := ebiten.MouseWheel()
 	if wheel != 0 {
 		if wheel > 0 {
@@ -189,6 +203,7 @@ func (s *scene) requestNewName(galaxyName, objectID, newName string) {
 			nameDisk.Remove(objKey)
 		}
 	}
+
 	key := objectID + " " + strconv.Itoa(nameDisk.NextID())
 	rec := nameRec{
 		planetID: objectID,
@@ -213,5 +228,40 @@ func (s *scene) EventDelName(fk string) {
 			s.objects[id].SetCaption("", captionColor)
 			s.objectNamesFK[id] = ""
 		}
+	}
+}
+
+func (s *scene) EventAddBuilding(build commons.Building, fk string) {
+	if build.Type != commons.BUILDING_MINE {
+		return
+	}
+	//for warp map we don't care of planet, Mines shown for systems
+	if GalaxyName == commons.WARP_Galaxy_ID {
+		build.PlanetID = build.GalaxyID
+		build.GalaxyID = commons.WARP_Galaxy_ID
+	}
+	if _, ok := CurGalaxy.Points[build.PlanetID]; !ok {
+		Log(LVL_ERROR, "mine on unknown target name ", build.PlanetID)
+	}
+	CurGalaxy.AddBuilding(build)
+	changeCP(s.objects, build.PlanetID,
+		NewCosmoPoint(CurGalaxy.Points[build.PlanetID], s.cam.Phys()))
+}
+
+func (s *scene) EventDelBuilding(build commons.Building, fk string) {
+	CurGalaxy.DelBuilding(build)
+	changeCP(s.objects, build.PlanetID,
+		NewCosmoPoint(CurGalaxy.Points[build.PlanetID], s.cam.Phys()))
+}
+
+func changeCP(objs map[string]*CosmoPoint, id string, point *CosmoPoint) {
+	if point == nil {
+		Log(LVL_ERROR, "scene change CosmoPoint with nil value")
+		return
+	}
+	if _, ok := objs[id]; ok {
+		*objs[id] = *point
+	} else {
+		objs[id] = point
 	}
 }

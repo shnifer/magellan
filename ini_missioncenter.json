@@ -8,6 +8,7 @@
     "DoProf": false,
     "FlightDiskPath": "xstore",
     "NamesDiskPath": "names",
+    "DiskRefreshPeriod": 5,
     "LogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 60000,

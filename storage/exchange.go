@@ -100,7 +100,7 @@ func (ex *exchanger) exchange() {
 	needKey := ""
 	for len(needed) > 0 {
 		mbKey := needed[0]
-		if !ex.disk.has(mbKey) {
+		if !ex.disk.Has(mbKey) {
 			needKey = mbKey
 			break
 		}
@@ -131,7 +131,7 @@ func (ex *exchanger) exchange() {
 	}
 
 	for _, key := range resp.IHaveFullKeys {
-		if !ex.disk.has(key) {
+		if !ex.disk.Has(key) {
 			needed = append(needed, key)
 		}
 	}
