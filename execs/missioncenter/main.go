@@ -85,6 +85,7 @@ func main() {
 		WinW = DEFVAL.WinW
 		WinH = DEFVAL.WinH
 	}
+	ebiten.SetVsyncEnabled(DEFVAL.VSync)
 
 	initFlightStorage()
 	initNamesStorage()

@@ -21,6 +21,7 @@ type tDefVals struct {
 	WinW, WinH     int
 	HalfResolution bool
 	LowQ           bool
+	VSync bool
 
 	DoProf bool
 

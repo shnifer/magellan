@@ -74,6 +74,7 @@ func main() {
 		WinH = DEFVAL.WinH
 	}
 
+	ebiten.SetVsyncEnabled(DEFVAL.VSync)
 	graph.SetScreenSize(WinW, WinH)
 	draw.LowQualityCosmoPoint(DEFVAL.LowQ)
 
