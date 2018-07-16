@@ -111,6 +111,9 @@ func (t *Text) Draw(dst *ebiten.Image) {
 }
 
 func (t *Text) DrawF() (DrawF, string) {
+	if len(t.text)==0{
+		return nil,""
+	}
 	return t.Draw, "~text"
 }
 

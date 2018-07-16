@@ -8,7 +8,6 @@ import (
 	"github.com/Shnifer/magellan/v2"
 	"golang.org/x/image/colornames"
 	"math"
-	"math/rand"
 )
 
 const (
@@ -168,40 +167,6 @@ func (s *scanner) Req(Q *graph.DrawQueue) {
 			Q.Add(s.countSprite, graph.Z_UNDER_OBJECT)
 		}
 	}
-}
-
-func (s *scanner) procScanned(obj *CosmoPoint) {
-	commons.ClientLogGame(Client, "scan", "SCANNED ", obj.ID)
-	gp, ok := Data.Galaxy.Points[obj.ID]
-	if !ok {
-		return
-	}
-	if gp.ScanData == "" {
-		return
-	}
-	if gp.Type == commons.BUILDING_BEACON {
-		commons.RequestRemoveBuilding(Client, obj.ID)
-	}
-	corp := commons.CorpNames[rand.Intn(5)]
-	if rand.Intn(2) == 0 {
-		//proc random mine
-		mineFK, exist := gp.Mines[corp]
-		if exist {
-			commons.RequestRemoveBuilding(Client, mineFK)
-		} else {
-			commons.AddMine(Data, Client, obj.ID, corp)
-		}
-	} else {
-		//proc random fishhouse
-		fishhouseFK, exist := gp.FishHouses[corp]
-		if exist {
-			commons.RequestRemoveBuilding(Client, fishhouseFK)
-		} else {
-			commons.AddFishHouse(Data, Client, obj.ID, corp)
-		}
-	}
-
-	return
 }
 
 func (s *scanner) procOnState() {

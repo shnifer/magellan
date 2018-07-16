@@ -4,6 +4,8 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/v2"
+	"strconv"
+	"image/color"
 )
 
 const glyphSize = 32
@@ -11,8 +13,9 @@ const maxGlyphsInRow = 3
 
 type glyphs struct {
 	//hardcoded 2 rows
-	Glyphs0 []*graph.Sprite
-	Glyphs1 []*graph.Sprite
+	Glyphs0   []*graph.Sprite
+	Glyphs1   []*graph.Sprite
+	CountText []*graph.Text
 
 	pos  v2.V2
 	size float64
@@ -23,8 +26,14 @@ type glyphs struct {
 func newGlyphs(pd *GalaxyPoint) glyphs {
 	glyphs0 := make([]*graph.Sprite, 0)
 	glyphs1 := make([]*graph.Sprite, 0)
+	countText:= make([]*graph.Text, 0)
 
-	for owner := range pd.Mines {
+	for _, owner :=range CorpNames{
+		if _,ok:=pd.Mines[owner]; !ok{
+			continue
+		}
+		text:=graph.NewText(strconv.Itoa(len(pd.Mines[owner])), Fonts[Face_list], color.White)
+		countText = append(countText,text)
 		if len(glyphs0) < maxGlyphsInRow {
 			glyphs0 = append(glyphs0, newGlyph(BUILDING_MINE, owner))
 		} else {
@@ -61,16 +70,23 @@ func newGlyph(t string, owner string) *graph.Sprite {
 func (g glyphs) Req(Q *graph.DrawQueue) {
 	var pos v2.V2
 	basePos := g.pos.AddMul(v2.V2{X: -1, Y: -1}, g.size)
+	n:=0
 	for i, sprite := range g.Glyphs0 {
 		pos = basePos.AddMul(v2.V2{X: glyphSize, Y: 0}, float64(i))
 		sprite.SetPos(pos)
+		g.CountText[n].SetPosPivot(pos, graph.Center())
+		n++
 		Q.Add(sprite, graph.Z_ABOVE_OBJECT)
+		Q.Add(sprite, graph.Z_ABOVE_OBJECT+1)
 	}
 	basePos.DoAddMul(v2.V2{X: 0, Y: glyphSize}, 1)
 	for i, sprite := range g.Glyphs1 {
 		pos = basePos.AddMul(v2.V2{X: glyphSize, Y: 0}, float64(i))
 		sprite.SetPos(pos)
+		g.CountText[n].SetPosPivot(pos, graph.Center())
+		n++
 		Q.Add(sprite, graph.Z_ABOVE_OBJECT)
+		Q.Add(sprite, graph.Z_ABOVE_OBJECT+1)
 	}
 }
 

@@ -87,7 +87,7 @@ func (galaxy *Galaxy) RecalcLvls() {
 	}
 	for id, v := range galaxy.Ordered {
 		if v.Mines == nil {
-			v.Mines = make(map[string]string)
+			v.Mines = make(map[string][]string)
 		}
 		if v.FishHouses == nil {
 			v.FishHouses = make(map[string]string)
@@ -153,7 +153,7 @@ func (galaxy *Galaxy) AddBuilding(b Building) {
 			Log(LVL_ERROR, "trying to add mine on planet ", b.PlanetID, " but already has mine")
 			return
 		}
-		gp.Mines[b.OwnerID] = fullKey
+		gp.Mines[b.OwnerID] = append(gp.Mines[b.OwnerID],fullKey)
 	case BUILDING_FISHHOUSE:
 		gp, ok := galaxy.Points[b.PlanetID]
 		if !ok {
@@ -229,7 +229,25 @@ func (galaxy *Galaxy) DelBuilding(b Building) {
 			Log(LVL_ERROR, "trying to del mine on planet", b.PlanetID, "but do not has mine")
 			return
 		}
-		delete(gp.Mines, b.OwnerID)
+		fks:=gp.Mines[b.OwnerID]
+		found:=false
+		for i,v:=range fks{
+			if v==b.FullKey{
+				fks = append(fks[:i], fks[i+1:]...)
+				found = true
+				break
+			}
+		}
+		if !found{
+			Log(LVL_ERROR, "trying to del mine on planet", b.PlanetID,
+				"but it do not has mine with fk ", b.FullKey)
+			return
+		}
+		if len(fks)==0 {
+			delete(gp.Mines, b.OwnerID)
+		} else {
+			gp.Mines[b.OwnerID] = fks
+		}
 	case BUILDING_FISHHOUSE:
 		gp, ok := galaxy.Points[b.PlanetID]
 		if !ok {

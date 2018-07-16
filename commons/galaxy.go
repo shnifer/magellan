@@ -74,8 +74,8 @@ type GalaxyPoint struct {
 	Color      color.RGBA  `json:"clr,omitempty"`
 
 	//updated on Decode or add|del building
-	//map[ownerName]fullkey
-	Mines      map[string]string `json:"mns,omitempty"`
+	//map[ownerName][]fullkey
+	Mines      map[string][]string `json:"mns,omitempty"`
 	FishHouses map[string]string `json:"fhs,omitempty"`
 
 	//for warp points

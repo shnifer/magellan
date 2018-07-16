@@ -214,7 +214,7 @@ func (s *cosmoScene) checkLanding() bool {
 	}
 	return found
 }
-
+//todo: set normal messages
 func (s *cosmoScene) checkMine() (msg string, ok bool) {
 	gp := Data.Galaxy.Points[s.scanner.obj.ID]
 	if len(gp.Mines) > 0 {
