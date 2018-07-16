@@ -135,7 +135,7 @@ func (s *scene) updatePosition(dt float64) {
 		} else {
 			newScale /= 1.19
 		}
-		newScale = commons.Clamp(newScale, 0.1, 100)
+		newScale = commons.Clamp(newScale, 0.001, 10000)
 		x, y := ebiten.CursorPosition()
 		mp := s.cam.UnApply(v2.V2{X: float64(x), Y: float64(y)})
 		v := s.cam.Pos.Sub(mp)
