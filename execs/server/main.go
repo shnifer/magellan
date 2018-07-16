@@ -13,11 +13,6 @@ import (
 
 var server *network.Server
 
-const (
-	storagePath  = "xstore"
-	localLogPath = "gamelog"
-)
-
 //todo: gamemaster control
 //todo: dump server state for crash cases
 func main() {
@@ -32,10 +27,10 @@ func main() {
 	}
 
 	logDiskOpts := diskv.Options{
-		BasePath:     localLogPath,
+		BasePath:     DEFVAL.StoragePath,
 		CacheSizeMax: 1024,
 	}
-	logDisk := storage.New(DEFVAL.NodeName, logDiskOpts,0)
+	logDisk := storage.New(DEFVAL.NodeName, logDiskOpts, 0)
 
 	if DEFVAL.LogExchPort != "" && DEFVAL.LogExchPeriodMs > 0 {
 		storage.RunExchanger(logDisk, DEFVAL.LogExchPort, DEFVAL.LogExchAddrs, DEFVAL.LogExchPeriodMs)
@@ -43,7 +38,7 @@ func main() {
 	log.SetStorage(logDisk)
 
 	diskOpts := diskv.Options{
-		BasePath:     storagePath,
+		BasePath:     DEFVAL.LocalLogPath,
 		CacheSizeMax: 1024 * 1024,
 	}
 	disk := storage.New(DEFVAL.NodeName, diskOpts, DEFVAL.DiskRefreshPeriod)

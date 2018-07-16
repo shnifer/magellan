@@ -8,15 +8,13 @@ import (
 	"strings"
 )
 
-const namesPath = "names"
-
 var nameDisk *storage.Storage
 var namesSubscribe chan storage.Event
 var namesData map[storage.ObjectKey]string
 
 func initNamesStorage() {
 	diskOpts := diskv.Options{
-		BasePath:     namesPath,
+		BasePath:     DEFVAL.NamesDiskPath,
 		CacheSizeMax: 1024 * 1024,
 	}
 	nameDisk = storage.New(DEFVAL.NodeName, diskOpts, DEFVAL.DiskRefreshPeriod)

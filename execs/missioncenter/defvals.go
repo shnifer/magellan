@@ -28,7 +28,9 @@ type tDefVals struct {
 	LogHostName   string
 
 	//node
-	NodeName    string
+	FlightDiskPath    string
+	NamesDiskPath     string
+	NodeName          string
 	DiskRefreshPeriod int
 
 	//storage exchanger
@@ -41,14 +43,14 @@ var DEFVAL tDefVals
 
 func setDefDef() {
 	DEFVAL = tDefVals{
-		WinW:             1024,
-		WinH:             768,
-		LogTimeoutMs:     1000,
-		LogRetryMinMs:    10,
-		LogRetryMaxMs:    60000,
+		WinW:              1024,
+		WinH:              768,
+		LogTimeoutMs:      1000,
+		LogRetryMinMs:     10,
+		LogRetryMaxMs:     60000,
 		DiskRefreshPeriod: 30,
-		NodeName: "MissionControl",
-		LogHostName: "DummyLogHost",
+		NodeName:          "MissionControl",
+		LogHostName:       "DummyLogHost",
 	}
 }
 

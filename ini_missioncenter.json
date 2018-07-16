@@ -6,6 +6,8 @@
     "LowQ": false,
     "DebugControl": false,
     "DoProf": false,
+    "FlightDiskPath": "xstore",
+    "NamesDiskPath": "names",
     "LogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 60000,

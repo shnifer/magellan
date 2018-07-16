@@ -5,13 +5,11 @@ import (
 	"github.com/peterbourgon/diskv"
 )
 
-const storagePath = "xstore"
-
 var flightDisk *storage.Storage
 
 func initFlightStorage() {
 	diskOpts := diskv.Options{
-		BasePath:     storagePath,
+		BasePath:     DEFVAL.FlightDiskPath,
 		CacheSizeMax: 1024 * 1024,
 	}
 	flightDisk = storage.New(DEFVAL.NodeName, diskOpts, DEFVAL.DiskRefreshPeriod)

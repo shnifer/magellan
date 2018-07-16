@@ -30,6 +30,8 @@ type tDefVals struct {
 	MinDistortion          float64
 
 	//in ms
+	StoragePath     string
+	LocalLogPath    string
 	LogLogTimeoutMs int
 	LogRetryMinMs   int
 	LogRetryMaxMs   int
@@ -61,7 +63,7 @@ func setDefDef() {
 		LogLogTimeoutMs:        1000,
 		LogRetryMinMs:          10,
 		LogRetryMaxMs:          60000,
-		DiskRefreshPeriod: 30,
+		DiskRefreshPeriod:      30,
 	}
 }
 
