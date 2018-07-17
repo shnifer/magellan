@@ -29,14 +29,7 @@ var showFps <-chan time.Time
 var changeGalaxy chan string
 var sessionTime float64
 
-var vSyncSet bool
-
 func mainLoop(window *ebiten.Image) error {
-	if !vSyncSet {
-		ebiten.SetVsyncEnabled(DEFVAL.VSync)
-		vSyncSet = true
-	}
-
 	sessionTime = time.Now().Sub(commons.StartDateTime).Seconds()
 
 	updateNamesAndNotes()
@@ -99,6 +92,7 @@ func main() {
 
 	graph.SetScreenSize(WinW, WinH)
 	draw.LowQualityCosmoPoint(DEFVAL.LowQ)
+	ebiten.SetVsyncEnabled(DEFVAL.VSync)
 
 	draw.InitFonts()
 	draw.InitTexAtlas()
