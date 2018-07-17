@@ -30,7 +30,11 @@ func newGlyphs(pd *GalaxyPoint) glyphs {
 		if _, ok := pd.Mines[owner]; !ok {
 			continue
 		}
-		text := graph.NewText(strconv.Itoa(len(pd.Mines[owner])),
+		ct:=strconv.Itoa(len(pd.Mines[owner]))
+		if ct=="1"{
+			ct=""
+		}
+		text := graph.NewText(ct,
 			Fonts[Face_list], colornames.Darkviolet)
 		countText = append(countText, text)
 		if len(glyphs0) < maxGlyphsInRow {
