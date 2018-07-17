@@ -124,6 +124,9 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 			simpleSprite := NewAtlasSprite(spriteAN, params)
 			simpleSprite.SetSize(pd.Size*2, pd.Size*2)
 			simpleSprite.SetAng(ang)
+			if pd.Color != zeroColor {
+				simpleSprite.SetColor(pd.Color)
+			}
 			cycledSprite = graph.NewCycledSprite(simpleSprite, graph.Cycle_Loop, 20)
 		default:
 			Log(LVL_ERROR, "Unknown galaxy point type ", pd.Type)

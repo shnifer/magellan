@@ -90,7 +90,7 @@ func newCosmoScene() *cosmoScene {
 	clo := graph.CircleLineOpts{
 		Layer:  graph.Z_STAT_HUD + 10,
 		Clr:    colornames.Oldlace,
-		PCount: 32,
+		PCount: 64,
 	}
 	distCircle := graph.NewCircleLine(cam.Center, float64(WinH)*0.3, clo)
 

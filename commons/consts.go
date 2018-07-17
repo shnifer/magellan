@@ -54,6 +54,7 @@ const (
 	RulerVAN            = "MAGIC_rulerv"
 	DefaultBackgroundAN = "MAGIC_DEFAULT_background"
 	EngiBackgroundAN    = "MAGIC_engibackground"
+	WarpBackgroundAN    = "MAGIC_warpbackground"
 	CompassAN           = "MAGIC_compass"
 	Frame9AN            = "front9"
 	ButtonAN            = "MAGIC_button"

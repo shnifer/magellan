@@ -5,6 +5,7 @@ import (
 	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/v2"
 	"golang.org/x/image/colornames"
+	"image/color"
 	"io/ioutil"
 	"math"
 	"math/rand"
@@ -20,7 +21,6 @@ type Options struct {
 }
 
 var Opts Options
-
 
 func main() {
 	buf, err := ioutil.ReadFile("starpos.json")
@@ -47,25 +47,25 @@ func main() {
 			Type:              commons.GPT_WARP,
 			Size:              1,
 			Mass:              okr(1 + rand.Float64()),
-			GDepth: 0.1,
+			GDepth:            0.1,
 			WarpSpawnDistance: 5,
 			WarpRedOutDist:    1,
 			WarpGreenInDist:   2,
 			WarpGreenOutDist:  3,
 			WarpYellowOutDist: 4,
-			GreenColor: colornames.Green,
-			InnerColor: colornames.Firebrick,
-			OuterColor: colornames.Lightyellow,
-			Color:             colornames.White,
+			GreenColor:        colornames.White,
+			InnerColor:        randomColor(),
+			OuterColor:        randomColor(),
+			Color:             randomColor(),
 		}
 		gal.Points[id] = &p
 	}
 	res, err := json.Marshal(gal)
-	if err!=nil{
+	if err != nil {
 		panic(err)
 	}
-	err=ioutil.WriteFile("galaxy_warp.json", res, 0)
-	if err!=nil{
+	err = ioutil.WriteFile("galaxy_warp.json", res, 0)
+	if err != nil {
 		panic(err)
 	}
 }
@@ -73,4 +73,16 @@ func main() {
 func okr(x float64) float64 {
 	const sgn = 100
 	return math.Floor(x*sgn) / sgn
+}
+
+func randomColor() color.RGBA {
+	r := func() byte {
+		return byte(rand.Intn(256))
+	}
+	return color.RGBA{
+		R: r(),
+		G: r(),
+		B: r(),
+		A: 255,
+	}
 }

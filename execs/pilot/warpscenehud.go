@@ -14,6 +14,7 @@ import (
 
 type warpSceneHUD struct {
 	caption *graph.Text
+	back *graph.Sprite
 
 	//trail
 	trailT float64
@@ -35,9 +36,17 @@ func newWarpSceneHUD(cam *graph.Camera) warpSceneHUD {
 	clo := graph.CircleLineOpts{
 		Layer:  graph.Z_STAT_HUD + 10,
 		Clr:    colornames.Oldlace,
-		PCount: 32,
+		PCount: 64,
 	}
 	distCircle := graph.NewCircleLine(cam.Center, float64(WinH)*0.3, clo)
+
+	var background *graph.Sprite
+	if !DEFVAL.LowQ {
+		background = NewAtlasSpriteHUD(WarpBackgroundAN)
+		background.SetSize(float64(WinW), float64(WinH))
+		background.SetPivot(graph.TopLeft())
+		background.SetColor(colornames.Dimgrey)
+	}
 
 	arrowTex := GetAtlasTex(ThrustArrowAN)
 	thrustLevelHUD := graph.NewSpriteHUD(arrowTex)
@@ -66,6 +75,7 @@ func newWarpSceneHUD(cam *graph.Camera) warpSceneHUD {
 		cam.Deny())
 
 	return warpSceneHUD{
+		back: background,
 		trail:            trail,
 		compass:          compass,
 		caption:          caption,
@@ -100,6 +110,7 @@ func (s *warpScene) updateHUD() {
 }
 
 func (h warpSceneHUD) Req(Q *graph.DrawQueue) {
+	Q.Add(h.back, graph.Z_STAT_BACKGROUND)
 	Q.Add(h.trail, graph.Z_UNDER_OBJECT)
 	Q.Add(h.thrustLevelHUD, graph.Z_HUD)
 	Q.Add(h.thrustControlHUD, graph.Z_HUD)
@@ -107,7 +118,7 @@ func (h warpSceneHUD) Req(Q *graph.DrawQueue) {
 	Q.Add(h.turnControlHUD, graph.Z_HUD)
 	Q.Add(h.compass, graph.Z_HUD)
 
-	Q.Add(h.caption, graph.Z_STAT_HUD)
+	//Q.Add(h.caption, graph.Z_STAT_HUD)
 	Q.Append(h.distCircle)
 }
 
