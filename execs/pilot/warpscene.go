@@ -12,6 +12,7 @@ import (
 	"golang.org/x/image/colornames"
 	"sort"
 	"time"
+	"math"
 )
 
 type warpScene struct {
@@ -90,7 +91,7 @@ func (s *warpScene) Init() {
 		UpdT:     0.1,
 		NumInSec: 10,
 		TrackLen: 120,
-		DrawMaxP: 30,
+		DrawMaxP: 60,
 		PowN:     DEFVAL.WarpGravPowN,
 	}
 
@@ -111,7 +112,8 @@ func (s *warpScene) Update(dt float64) {
 	ppos := Data.PilotData.Ship.Pos
 	UpdateWarpAndShip(Data, dt, DEFVAL.DT, DEFVAL.WarpGravPowN)
 	s.distTravaled += Data.PilotData.Ship.Pos.Sub(ppos).Len()
-	s.fuelConsumed += Data.SP.Warp_engine.Consumption * Data.PilotData.Distortion
+	s.fuelConsumed += Data.SP.Warp_engine.Consumption *
+		(s.thrustLevel + math.Abs(s.maneurLevel)) * dt
 
 	for _, co := range s.objects {
 		co.Update(dt)

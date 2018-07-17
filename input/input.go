@@ -129,6 +129,9 @@ func Update() {
 		in := impl.InputName
 		cur := inputState[in]
 		val := impl.get()
+		if impl.InputType == joyAxis {
+			val = bufferAndGet(in, val)
+		}
 		//needed cz many confs may affect one input i.e. joy+keyboard
 		if math.Abs(val) > math.Abs(cur) {
 			inputState[in] = val
