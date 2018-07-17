@@ -207,6 +207,12 @@ func (cp *CosmoPoint) Update(dt float64) {
 	if cp.WarpGreen != nil {
 		cp.WarpGreen.Update(dt)
 	}
+	if cp.WarpInner != nil{
+		cp.WarpInner.AddAng(-dt*10)
+	}
+	if cp.WarpOuter != nil{
+		cp.WarpOuter.AddAng(-dt*3)
+	}
 }
 
 func (cp *CosmoPoint) Req(Q *graph.DrawQueue) {

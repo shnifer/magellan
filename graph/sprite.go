@@ -314,3 +314,11 @@ func (s *Sprite) Rows() int {
 func (s *Sprite) SetTex(t Tex) {
 	s.tex = t
 }
+
+func (s *Sprite) AddAng(dAng float64) {
+	if dAng == 0{
+		return
+	}
+	s.angle += dAng*Deg2Rad
+	s.dirty = true
+}

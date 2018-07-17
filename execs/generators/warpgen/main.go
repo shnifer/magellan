@@ -42,17 +42,19 @@ func main() {
 	var gal commons.Galaxy
 	gal.Points = make(map[string]*commons.GalaxyPoint)
 	for id, pt := range pts {
+		r:=2+2*rand.Float64()
+		dr:=r*(0.3+0.4*rand.Float64())
 		p := commons.GalaxyPoint{
 			Pos:               pt.Mul(Opts.Scale),
 			Type:              commons.GPT_WARP,
-			Size:              1,
+			Size:              3,
 			Mass:              okr(1 + rand.Float64()),
 			GDepth:            0.1,
 			WarpSpawnDistance: 5,
-			WarpRedOutDist:    1,
-			WarpGreenInDist:   2,
-			WarpGreenOutDist:  3,
-			WarpYellowOutDist: 4,
+			WarpRedOutDist:    r,
+			WarpGreenInDist:   r+dr,
+			WarpGreenOutDist:  r+2*dr,
+			WarpYellowOutDist: r+3*dr,
 			GreenColor:        colornames.White,
 			InnerColor:        randomColor(),
 			OuterColor:        randomColor(),
