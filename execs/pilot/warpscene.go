@@ -36,6 +36,7 @@ type warpScene struct {
 
 	distTravaled float64
 	timerStart   time.Time
+	fuelConsumed float64
 
 	hud warpSceneHUD
 	q   *graph.DrawQueue
@@ -74,6 +75,7 @@ func (s *warpScene) Init() {
 	s.maneurLevel = 0
 	s.distTravaled = 0
 	s.timerStart = time.Now()
+	s.fuelConsumed = 0
 
 	stateData := Data.GetStateData()
 
@@ -109,6 +111,7 @@ func (s *warpScene) Update(dt float64) {
 	ppos := Data.PilotData.Ship.Pos
 	UpdateWarpAndShip(Data, dt, DEFVAL.DT, DEFVAL.WarpGravPowN)
 	s.distTravaled += Data.PilotData.Ship.Pos.Sub(ppos).Len()
+	s.fuelConsumed += Data.SP.Warp_engine.Consumption * Data.PilotData.Distortion
 
 	for _, co := range s.objects {
 		co.Update(dt)
@@ -126,6 +129,7 @@ func (s *warpScene) Update(dt float64) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
 		s.timerStart = time.Now()
 		s.distTravaled = 0
+		s.fuelConsumed = 0
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
@@ -203,8 +207,8 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 	Q.Append(s.hud)
 
 	fps := ebiten.CurrentFPS()
-	msg := fmt.Sprintf("FPS: %.0f\nTravel: %.0f\nTimer: %.1f\nDraws: %v", fps,
-		s.distTravaled, time.Since(s.timerStart).Seconds(), Q.Len())
+	msg := fmt.Sprintf("FPS: %.0f\nTravel: %.0f\nFuel used: %.0f\nTimer: %.1f\nDraws: %v",
+		fps, s.distTravaled, s.fuelConsumed, time.Since(s.timerStart).Seconds(), Q.Len())
 	fpsText = graph.NewText(msg, Fonts[Face_list], colornames.Cyan)
 	fpsText.SetPosPivot(graph.ScrP(0.1, 0.1), v2.ZV)
 	Q.Add(fpsText, graph.Z_STAT_HUD+10)
