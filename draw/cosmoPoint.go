@@ -119,7 +119,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 			}
 			slidingSphere.SetSize(pd.Size*2, pd.Size*2)
 			slidingSphere.SetAng(ang)
-		case GPT_WARP, GPT_ASTEROID, BUILDING_BEACON, BUILDING_BLACKBOX:
+		case GPT_WARP, GPT_ASTEROID, GPT_WORMHOLE, BUILDING_BEACON, BUILDING_BLACKBOX:
 			//cycling sprite
 			simpleSprite := NewAtlasSprite(spriteAN, params)
 			simpleSprite.SetSize(pd.Size*2, pd.Size*2)
