@@ -143,7 +143,7 @@ func (s *warpScene) Update(dt float64) {
 				minDist = dist
 			}
 		}
-
+		systemID = "solar"
 		if systemID != "" {
 			s.toCosmo(systemID)
 		}
