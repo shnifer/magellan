@@ -56,7 +56,7 @@ func main() {
 	defer f.Close()
 	w := csv.NewWriter(f)
 	w.UseCRLF = true
-	w.Write([]string{"id", "звёзд", "твёрдых планет", "нов. металлов в системе", "нов. газов в системе", "до солнца",
+	w.Write([]string{"id", "звёзд", "нов. элементы", "твёрдых планет", "нов. металлов в системе", "нов. газов в системе", "до солнца",
 		"М1", "М2", "М3", "М4", "М5", "М6", "М7", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "Железо", "Никель", "Магний", "Титан", "Аллюминий",
 		"Азот", "Углекислота", "Криптон", "Гелий", "Сера"})
 
@@ -231,7 +231,7 @@ func main() {
 			Egasstrs[v-1] = "1"
 		}
 
-		strs := []string{id, fs(starCount), fs(hp), fs(ms), fs(len(gas)), fs(solarRange)}
+		strs := []string{id, fs(starCount), fs(newElements),fs(hp), fs(ms), fs(len(gas)), fs(solarRange)}
 		strs = append(strs, minstrs...)
 		strs = append(strs, gasstrs...)
 		strs = append(strs, Emetstrs...)
