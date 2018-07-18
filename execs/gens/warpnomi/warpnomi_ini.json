@@ -3,6 +3,14 @@
   "SysWithMinerals": [160,70],
   "Minerals":[25,25,50,50,50,50,50],
 
-  "NoobRange": 350,
-  "NoobMinerals": [0,0,0,0,0,5,5]
+  "NoobRange": 240,
+  "NoobMinerals": [0,0,0,3,3,6,6],
+
+  "DoubleStarPercent1Min": 20,
+  "TripleStartPercent2Min": 20,
+
+  "Gas7Percent": 4,
+
+  "EarthGasPercent": 50,
+  "EarthMetalPercent": 50
 }
