@@ -1,6 +1,6 @@
 package input
 
-const warpLevelThreshold = 0.25
+const warpLevelThreshold = 0.1
 
 func WarpLevel(inputname string) float64 {
 	v := GetF(inputname)

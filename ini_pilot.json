@@ -16,7 +16,7 @@
     "WarpGravPowN": 3,
     "WarpGravThreshold":0.001,
     "DT":0.001,
-    "MinDistortion":0.3,
+    "MinDistortion":300,
     "LogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 10000,

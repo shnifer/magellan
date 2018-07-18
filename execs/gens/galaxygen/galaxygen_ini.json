@@ -1,0 +1,13 @@
+{
+  "N": 1000,
+
+  "MinRes":20,
+  "MaxRes":255,
+  "CloseDist":2,
+
+  "SolarX": 1300,
+  "SolarY": 1600,
+
+  "DotOutSize":5,
+  "DotInSize":2
+}

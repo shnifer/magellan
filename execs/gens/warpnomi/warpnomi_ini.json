@@ -1,0 +1,8 @@
+{
+  "SysWithHardPlanets": [75,100,75,50,10],
+  "SysWithMinerals": [160,70],
+  "Minerals":[25,25,50,50,50,50,50],
+
+  "NoobRange": 350,
+  "NoobMinerals": [0,0,0,0,0,5,5]
+}
