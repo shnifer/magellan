@@ -1,6 +1,8 @@
 {
   "SysWithHardPlanets": [75,100,75,50,10],
-  "SysWithMinerals": [160,70],
+  "RichPlanets": [170,30],
+  "SystemsMineralTypes": [140,60],
+  "PlanetsMineralCount": [160,70],
   "Minerals":[25,25,50,50,50,50,50],
 
   "NoobRange": 240,

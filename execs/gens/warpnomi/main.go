@@ -19,9 +19,11 @@ func init() {
 }
 
 type Options struct {
-	SysWithHardPlanets []int
-	SysWithMinerals    []int
-	Minerals           []int
+	SysWithHardPlanets  []int
+	RichPlanets         []int
+	SystemsMineralTypes []int
+	PlanetsMineralCount []int
+	Minerals            []int
 
 	NoobRange    float64
 	NoobMinerals []int
@@ -38,7 +40,9 @@ type Options struct {
 type WarpStat struct {
 	StarCount        int
 	HardPlanetsCount int
-	MineralsCount    int
+	MineralsTypes    int
+	RichPlanets      int
+	MinesCount       int
 	RangeFromSolar   float64
 	MineralList      []int
 	GasList          []int
@@ -56,7 +60,7 @@ func main() {
 	defer f.Close()
 	w := csv.NewWriter(f)
 	w.UseCRLF = true
-	w.Write([]string{"id", "звёзд", "нов. элементы", "твёрдых планет", "нов. металлов в системе", "нов. газов в системе", "до солнца",
+	w.Write([]string{"id", "звёзд", "нов. элементы", "твёрдых планет", "нов. металлов в системе", "богатых планет", "мест для шахт", "нов. газов в системе", "до солнца",
 		"М1", "М2", "М3", "М4", "М5", "М6", "М7", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "Железо", "Никель", "Магний", "Титан", "Аллюминий",
 		"Азот", "Углекислота", "Криптон", "Гелий", "Сера"})
 
@@ -80,11 +84,9 @@ func main() {
 	stats := make(map[string]WarpStat)
 	total := len(pts) - 1
 	hpBase := newBase(total, Opts.SysWithHardPlanets)
-	s := 0
-	for _, v := range Opts.SysWithHardPlanets {
-		s += v
-	}
-	msBase := newBase(s, Opts.SysWithMinerals)
+	richBase := newBase(sum(Opts.SysWithHardPlanets), Opts.RichPlanets)
+	SystemsMineralTypesBase := append([]int{0}, Opts.SystemsMineralTypes...)
+	PlanetsMineralCount := append([]int{0}, Opts.PlanetsMineralCount...)
 	mnrlsBase := append([]int{0}, Opts.Minerals...)
 	noobBase := append([]int{0}, Opts.NoobMinerals...)
 
@@ -97,7 +99,7 @@ func main() {
 		}
 		solarRange := p.Sub(solarP).Len()
 		var useNoob bool
-		if solarRange < Opts.NoobRange && sum(noobBase) > 0 && msBase[1] > 0 {
+		if solarRange < Opts.NoobRange && sum(noobBase) > 0 && richBase[1] > 0 {
 			useNoob = true
 		}
 		var hp int
@@ -109,23 +111,47 @@ func main() {
 			}
 		}
 		hpBase[hp]--
-		ms := 0
+		richPlanets := 0
 		if hp > 0 {
+			var ok bool
+			var z int
+			for !ok {
+				z++
+				if z > 100 {
+					log.Println("rich out")
+					break
+				}
+				if richPlanets <= hp {
+					ok = true
+				}
+				richPlanets = get(richBase)
+			}
+			richBase[richPlanets]--
+		}
+		isRich := richPlanets > 0
+
+		mines := 0
+		for i := 0; i < richPlanets; i++ {
+			mines += extract(PlanetsMineralCount)
+		}
+
+		metalTypesInSystem := 0
+		if isRich {
 			if useNoob {
 				var ok bool
 				for !ok {
-					ms = get(msBase)
-					if ms > 0 {
+					metalTypesInSystem = get(SystemsMineralTypesBase)
+					if metalTypesInSystem > 0 {
 						ok = true
 					}
 				}
-				msBase[ms]--
+				SystemsMineralTypesBase[metalTypesInSystem]--
 			} else {
-				ms = extract(msBase)
+				metalTypesInSystem = extract(SystemsMineralTypesBase)
 			}
 		}
-		minerals := make([]int, ms)
-		for i := 0; i < ms; i++ {
+		minerals := make([]int, metalTypesInSystem)
+		for i := 0; i < metalTypesInSystem; i++ {
 			if i == 0 && solarRange < Opts.NoobRange {
 				min := extract(noobBase)
 				if min > 0 {
@@ -138,8 +164,6 @@ func main() {
 				n := extract(mnrlsBase)
 				if n > 0 {
 					minerals[i] = n
-				} else {
-					log.Println("auchtung")
 				}
 			} else {
 				var n, z int
@@ -174,7 +198,7 @@ func main() {
 
 		var starCount int
 		var g7 bool
-		switch ms {
+		switch metalTypesInSystem {
 		case 0:
 			starCount = 1
 			if hp == 0 {
@@ -201,7 +225,7 @@ func main() {
 			}
 		}
 
-		var newElements = g7 || ms > 0
+		var newElements = g7 || metalTypesInSystem > 0
 		gas := make([]int, 0)
 		if newElements {
 			gas = genGas(starCount, g7, minerals)
@@ -231,7 +255,7 @@ func main() {
 			Egasstrs[v-1] = "1"
 		}
 
-		strs := []string{id, fs(starCount), fs(newElements),fs(hp), fs(ms), fs(len(gas)), fs(solarRange)}
+		strs := []string{id, fs(starCount), fs(newElements), fs(hp), fs(metalTypesInSystem), fs(richPlanets), fs(mines), fs(len(gas)), fs(solarRange)}
 		strs = append(strs, minstrs...)
 		strs = append(strs, gasstrs...)
 		strs = append(strs, Emetstrs...)
@@ -243,7 +267,9 @@ func main() {
 			StarCount:        starCount,
 			RangeFromSolar:   solarRange,
 			HardPlanetsCount: hp,
-			MineralsCount:    ms,
+			MineralsTypes:    metalTypesInSystem,
+			RichPlanets:      richPlanets,
+			MinesCount:       mines,
 			MineralList:      minerals,
 			GasList:          gas,
 			EMetals:          earthMetal,
