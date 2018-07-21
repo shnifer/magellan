@@ -1,0 +1,10 @@
+{
+  "N": 10,
+
+  "MinRes":20,
+  "MaxRes":255,
+  "CloseDist":2,
+
+  "DotOutSize":5,
+  "DotInSize":2
+}
