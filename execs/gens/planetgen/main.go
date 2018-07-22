@@ -1,9 +1,15 @@
 package main
 
 import (
+	"bytes"
+	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
+	"os"
+	"strings"
 )
 
 const (
@@ -68,13 +74,13 @@ type Options struct {
 
 var Opts Options
 
-type planet struct {
-	isGas    bool
-	spheres  [15]int
-	minerals []int
-	grav     int //*100% of G
-	temp     int
-	radi     int
+type Planet struct {
+	IsGas       bool
+	Spheres     [15]int
+	Minerals    []int
+	Grav        int //*100% of G
+	Temperature int
+	Radiation   int
 }
 
 func main() {
@@ -94,19 +100,24 @@ func main() {
 	}
 	json.Unmarshal(dat, &Opts)
 
-	outData := make(map[string][]planet)
+	f, err := os.Create("all_planets.csv")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	w := csv.NewWriter(f)
+	w.UseCRLF = true
+	w.Write([]string{"система", "звёзд", "твёрдых планет", "кол-во минералов системы", "минералы системы", "газы системы", "богатых планет", "шахт",
+		"номер планеты", "газовая", "металлы планеты", "температура"})
 
-	var maxCount = 10
+	outData := make(map[string][]Planet)
+
 	for id, stat := range warpP {
-		maxCount--
-		if maxCount == 0 {
-			break
-		}
 		stat.newElements = len(stat.GasList)+len(stat.MineralList) > 0
 		stat.g7 = has(stat.GasList, 7)
 		stat.eg = len(stat.EGas) > 0
 		stat.em = len(stat.EMetals) > 0
-		sysData := make([]planet, 0)
+		sysData := make([]Planet, 0)
 		hpc := stat.HardPlanetsCount
 		for i := 0; i < stat.HardPlanetsCount; i++ {
 			sysData = append(sysData, genHardPlanet(stat, i))
@@ -127,7 +138,13 @@ func main() {
 		for i := 0; i < stat.RichPlanets; i++ {
 			var ok bool
 			var n int
+			var z int
 			for !ok {
+				z++
+				if z > 100 {
+					log.Println(id, "can't ", stat.HardPlanetsCount, rich)
+					break
+				}
 				n = rand.Intn(stat.HardPlanetsCount)
 				ok = !has(rich, n)
 			}
@@ -135,39 +152,52 @@ func main() {
 		}
 		if len(stat.MineralList) == 1 {
 			for _, plN := range rich {
-				copy(sysData[plN].minerals, stat.MineralList)
+				sysData[plN].Minerals = stat.MineralList
 			}
 		} else if len(stat.MineralList) == 2 {
 			if stat.RichPlanets == 1 {
-				copy(sysData[rich[0]].minerals, stat.MineralList)
+				sysData[rich[0]].Minerals = stat.MineralList
 			} else if stat.MinesCount == 3 {
-				copy(sysData[rich[0]].minerals, stat.MineralList)
-				copy(sysData[rich[1]].minerals, []int{stat.MineralList[rand.Intn(2)]})
+				sysData[rich[0]].Minerals = stat.MineralList
+				sysData[rich[1]].Minerals = []int{stat.MineralList[rand.Intn(2)]}
 			} else if stat.MinesCount == 4 {
-				copy(sysData[rich[0]].minerals, stat.MineralList)
-				copy(sysData[rich[1]].minerals, stat.MineralList)
+				sysData[rich[0]].Minerals = stat.MineralList
+				sysData[rich[1]].Minerals = stat.MineralList
 			}
 		}
 
 		outData[id] = sysData
 	}
 
+	//csv out
+	for id, stat := range warpP {
+		for ind, planet := range outData[id] {
+			str := []string{id, fs(stat.StarCount), fs(stat.HardPlanetsCount), fs(len(stat.MineralList)),
+				fs(stat.MineralList), fs(stat.GasList), fs(stat.RichPlanets), fs(stat.MinesCount)}
+			str = append(str, fs(ind), fs(planet.IsGas), fs(planet.Minerals), fs(planet.Temperature))
+			w.Write(str)
+		}
+	}
+	w.Flush()
+
 	buf, err = json.Marshal(outData)
 	if err != nil {
 		panic(err)
 	}
-	err = ioutil.WriteFile("all_planets.json", buf, 0)
+	identbuf := bytes.Buffer{}
+	json.Indent(&identbuf, buf, "", "    ")
+	err = ioutil.WriteFile("all_planets.json", identbuf.Bytes(), 0)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func genGasPlanet(stat WarpStat) planet {
-	res := planet{
-		isGas:    true,
-		minerals: []int{},
+func genGasPlanet(stat WarpStat) Planet {
+	res := Planet{
+		IsGas:    true,
+		Minerals: []int{},
 	}
-	sph := res.spheres
+	sph := res.Spheres
 	//3.1
 	if stat.newElements {
 		if !stat.g7 {
@@ -208,16 +238,16 @@ func genGasPlanet(stat WarpStat) planet {
 		sph[BIO] = rr(WAS, PRESENT)
 	}
 
-	res.spheres = sph
+	res.Spheres = sph
 	return res
 }
 
-func genHardPlanet(stat WarpStat, num int) planet {
-	res := planet{
-		isGas:    false,
-		minerals: []int{},
+func genHardPlanet(stat WarpStat, num int) Planet {
+	res := Planet{
+		IsGas:    false,
+		Minerals: []int{},
 	}
-	sph := res.spheres
+	sph := res.Spheres
 	isClosest := num == 0
 	var isGreen bool
 	switch stat.HardPlanetsCount {
@@ -239,7 +269,7 @@ func genHardPlanet(stat WarpStat, num int) planet {
 	case 5:
 		x = []int{100, 50, 15, 15, 0, -15, -50}
 	}
-	res.temp = rr(x[num : num+3]...)
+	res.Temperature = rr(x[num : num+3]...)
 
 	//1
 	if !stat.newElements {
@@ -257,11 +287,11 @@ func genHardPlanet(stat WarpStat, num int) planet {
 	}
 	//4
 	sph[RADIATIONBELT] = sph[MAGNET]
-	res.radi = STRONG - sph[RADIATIONBELT]
+	res.Radiation = STRONG - sph[RADIATIONBELT]
 	//5
 	sph[VULCAN] = rr(WAS, WEAK, NORM, STRONG)
 	if has(stat.GasList, 4) || sph[VULCAN] == STRONG {
-		res.temp = rr(200, 400, 500)
+		res.Temperature = rr(200, 400, 500)
 	}
 	//6
 	if !stat.newElements {
@@ -339,9 +369,9 @@ func genHardPlanet(stat WarpStat, num int) planet {
 	if sph[OXYGEN]+sph[GASES]+sph[ATMOMETALS]+sph[OZONE]+sph[ION] == NONE ||
 		(sph[MAGNET]+sph[RADIATIONBELT] == NONE && sph[ION] == NONE) ||
 		sph[COREMADE] == NONE || sph[VULCAN] == STRONG || sph[WATER] == WATER ||
-		isClosest || res.temp >= 200 || res.temp <= -100 {
+		isClosest || res.Temperature >= 200 || res.Temperature <= -100 {
 		sph[BIO] = NONE
-	} else if !res.isGas && (sph[COREVEL] == EXTINCT || sph[VULCAN] == NORM || res.temp == -50) {
+	} else if !res.IsGas && (sph[COREVEL] == EXTINCT || sph[VULCAN] == NORM || res.Temperature == -50) {
 		sph[BIO] = WAS
 	} else if sph[OXYGEN] > NONE ||
 		(sph[GASES] > NONE && (has(stat.GasList, 1) || has(stat.GasList, 2))) ||
@@ -349,7 +379,7 @@ func genHardPlanet(stat WarpStat, num int) planet {
 		sph[BIO] = PRESENT
 	}
 
-	res.spheres = sph
+	res.Spheres = sph
 	return res
 }
 
@@ -392,4 +422,9 @@ func sum(a []int) int {
 		s += v
 	}
 	return s
+}
+
+func fs(v interface{}) string {
+	str := fmt.Sprint(v)
+	return strings.Replace(str, ".", ",", -1)
 }

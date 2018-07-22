@@ -121,10 +121,10 @@ func main() {
 					log.Println("rich out")
 					break
 				}
+				richPlanets = get(richBase)
 				if richPlanets <= hp {
 					ok = true
 				}
-				richPlanets = get(richBase)
 			}
 			richBase[richPlanets]--
 		}
