@@ -130,11 +130,6 @@ func main() {
 		}
 		isRich := richPlanets > 0
 
-		mines := 0
-		for i := 0; i < richPlanets; i++ {
-			mines += extract(PlanetsMineralCount)
-		}
-
 		metalTypesInSystem := 0
 		if isRich {
 			if useNoob {
@@ -150,6 +145,23 @@ func main() {
 				metalTypesInSystem = extract(SystemsMineralTypesBase)
 			}
 		}
+
+		mines := 0
+		for i := 0; i < richPlanets; i++ {
+			var mc int
+			if metalTypesInSystem > 1 {
+				if rand.Intn(2) == 0 && PlanetsMineralCount[2] > 0 {
+					mc = 2
+				} else {
+					mc = get(PlanetsMineralCount)
+				}
+			} else {
+				mc = 1
+			}
+			mines += mc
+			PlanetsMineralCount[mc]--
+		}
+
 		minerals := make([]int, metalTypesInSystem)
 		for i := 0; i < metalTypesInSystem; i++ {
 			if i == 0 && solarRange < Opts.NoobRange {

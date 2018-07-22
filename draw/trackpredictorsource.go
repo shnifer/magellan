@@ -13,6 +13,7 @@ type gravGalaxyP struct {
 	pos       v2.V2
 	orbit     float64
 	period    float64
+	angPhase float64
 	mass      float64
 	gDepth    float64
 }
@@ -111,6 +112,7 @@ func newGravGalaxy(galaxy *Galaxy) gravGalaxyT {
 			pos:    obj.Pos,
 			orbit:  obj.Orbit,
 			period: obj.Period,
+			angPhase: obj.AngPhase,
 			mass:   obj.Mass,
 			gDepth: obj.GDepth,
 		}
@@ -144,7 +146,7 @@ func (gg gravGalaxyT) calc(sessionTime float64) gravImage {
 			continue
 		}
 		parent = gg[p.parentInd].pos
-		angle := (360 / p.period) * sessionTime
+		angle := (360 / p.period) * sessionTime + p.angPhase
 		pos = parent.AddMul(v2.InDir(angle), p.orbit)
 		gg[i].pos = pos
 		res[i] = gravP{

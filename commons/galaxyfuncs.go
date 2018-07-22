@@ -128,7 +128,7 @@ func (galaxy *Galaxy) Update(sessionTime float64) {
 			parent = galaxy.Points[obj.ParentID].Pos
 			posMap[obj.ParentID] = parent
 		}
-		angle := (360 / obj.Period) * sessionTime
+		angle := (360 / obj.Period) * sessionTime + obj.AngPhase
 		obj.Pos = parent.AddMul(v2.InDir(angle), obj.Orbit)
 	}
 }

@@ -86,7 +86,7 @@ func moveMasses(galaxy *Galaxy, sessionTime float64, moveList map[string]struct{
 		}
 
 		parent = galaxy.Points[obj.ParentID].Pos
-		angle := (360 / obj.Period) * sessionTime
+		angle := (360 / obj.Period) * sessionTime + obj.AngPhase
 		obj.Pos = parent.AddMul(v2.InDir(angle), obj.Orbit)
 	}
 }

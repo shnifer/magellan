@@ -48,6 +48,7 @@ type GalaxyPoint struct {
 
 	Orbit  float64 `json:"orb,omitempty"`
 	Period float64 `json:"per,omitempty"`
+	AngPhase float64 `json:"ang,omitempty"`
 
 	Type     string  `json:"t,omitempty"`
 	SpriteAN string  `json:"sp,omitempty"`
