@@ -112,11 +112,14 @@ func (tp *TrackPredictor) drawPoints(Q *graph.DrawQueue) {
 	if drawCount == 0 {
 		return
 	}
-	drawEach := drawCount/tp.opts.DrawMaxP + 1
-	if drawEach > 10 {
-		drawEach = 10
+	var drawEach = 1
+	if tp.opts.DrawMaxP > 0 {
+		drawEach := drawCount/tp.opts.DrawMaxP + 1
+		if drawEach > 10 {
+			drawEach = 10
+		}
+		dt *= float64(drawEach)
 	}
-	dt *= float64(drawEach)
 
 	var prev v2.V2
 	var p v2.V2

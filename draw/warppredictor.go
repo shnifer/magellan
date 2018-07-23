@@ -56,9 +56,6 @@ func NewWarpPredictor(opts WarpPredictorOpts) *WarpPredictor {
 	if opts.NumInSec == 0 {
 		opts.NumInSec = 1
 	}
-	if opts.DrawMaxP == 0 {
-		opts.DrawMaxP = 1
-	}
 
 	image := warpGravImage(opts.Galaxy)
 
@@ -116,11 +113,15 @@ func (wp *WarpPredictor) drawPoints(Q *graph.DrawQueue) {
 	if drawCount == 0 {
 		return
 	}
-	drawEach := drawCount/wp.opts.DrawMaxP + 1
-	if drawEach > 10 {
-		drawEach = 10
+
+	var drawEach =1
+	if wp.opts.DrawMaxP>0 {
+		drawEach := drawCount/wp.opts.DrawMaxP + 1
+		if drawEach > 10 {
+			drawEach = 10
+		}
+		dt *= float64(drawEach)
 	}
-	dt *= float64(drawEach)
 
 	var prev v2.V2
 	var p v2.V2

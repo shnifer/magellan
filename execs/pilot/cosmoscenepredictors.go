@@ -27,11 +27,11 @@ func (p *predictors) init(cam *graph.Camera) {
 		GPS:      gps,
 		Clr:      colornames.Palevioletred,
 		Layer:    graph.Z_ABOVE_OBJECT + 1,
-		UpdT:     0.1,
-		NumInSec: 10,
-		GravEach: 2,
-		TrackLen: 30,
-		DrawMaxP: 30,
+		UpdT:     DEFVAL.CosmoPredictorUpdT,
+		NumInSec: DEFVAL.CosmoPredictorNumInSec,
+		GravEach: DEFVAL.CosmoPredictorGravEach,
+		TrackLen: DEFVAL.CosmoPredictorTrackLen,
+		DrawMaxP: DEFVAL.CosmoPredictorDrawMaxP,
 	}
 
 	p.predictorThrust = NewTrackPredictor(opts)

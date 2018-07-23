@@ -101,10 +101,10 @@ func (s *warpScene) Init() {
 		Clr:      colornames.Palevioletred,
 		Layer:    graph.Z_ABOVE_OBJECT + 1,
 		Galaxy:   stateData.Galaxy,
-		UpdT:     0.1,
-		NumInSec: 10,
-		TrackLen: 120,
-		DrawMaxP: 60,
+		UpdT:     DEFVAL.WarpPredictorUpdT,
+		NumInSec: DEFVAL.WarpPredictorNumInSec,
+		TrackLen: DEFVAL.WarpPredictorTrackLen,
+		DrawMaxP: DEFVAL.WarpPredictorDrawMaxP,
 		PowN:     DEFVAL.WarpGravPowN,
 	}
 
