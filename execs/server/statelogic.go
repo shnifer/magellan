@@ -68,7 +68,7 @@ func toWarpCommonData(common CommonData, stateData StateData, newState, prevStat
 		Log(LVL_ERROR, "toWarpCommonData: can't find system", fromSystem, "on warp map!")
 		return common
 	}
-
+	//todo:zero galaxy coords save
 	pos := systemPoint.Pos
 	ang := common.PilotData.Ship.Ang
 	spawnRange := systemPoint.WarpSpawnDistance
@@ -127,6 +127,9 @@ func (rd *roomServer) isValidFlyShip(roomName string, shipID string) bool {
 
 //run internal mutex call
 func (rd *roomServer) isValidFlyGalaxy(galaxyID string) bool {
+	if galaxyID == ZERO_Galaxy_ID {
+		return true
+	}
 	return static.Exist("DB", "galaxy_"+galaxyID+".json")
 }
 

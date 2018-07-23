@@ -10,10 +10,14 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
+	"log"
+	"math"
 	"sort"
 	"time"
-	"math"
 )
+
+const warpingOutTime = 3
+const warpingOutAnnounceP = 0.2
 
 type warpScene struct {
 	ship *graph.Sprite
@@ -39,6 +43,10 @@ type warpScene struct {
 	timerStart   time.Time
 	fuelConsumed float64
 
+	warpingOutT float64
+	at          *AnnounceText
+	atTime      float64
+
 	hud warpSceneHUD
 	q   *graph.DrawQueue
 }
@@ -55,6 +63,9 @@ func newWarpScene() *warpScene {
 	sonarSector := graph.NewSector(cam.Phys())
 	sonarSector.SetColor(colornames.Forestgreen)
 
+	at := NewAnnounceText(graph.ScrP(0.5, 0.3), graph.Center(),
+		Fonts[Face_cap], graph.Z_STAT_HUD)
+
 	res := warpScene{
 		ship:        ship,
 		cam:         cam,
@@ -63,6 +74,7 @@ func newWarpScene() *warpScene {
 		sonarSector: sonarSector,
 		q:           graph.NewDrawQueue(),
 		hud:         newWarpSceneHUD(cam),
+		at:          at,
 	}
 
 	return &res
@@ -72,11 +84,12 @@ func (s *warpScene) Init() {
 	defer LogFunc("warpScene.Init")()
 
 	s.objects = make(map[string]*CosmoPoint)
-	s.thrustLevel = 0
+	s.thrustLevel = 0.01
 	s.maneurLevel = 0
 	s.distTravaled = 0
 	s.timerStart = time.Now()
 	s.fuelConsumed = 0
+	s.warpingOutT = 0
 
 	stateData := Data.GetStateData()
 
@@ -88,10 +101,10 @@ func (s *warpScene) Init() {
 		Clr:      colornames.Palevioletred,
 		Layer:    graph.Z_ABOVE_OBJECT + 1,
 		Galaxy:   stateData.Galaxy,
-		UpdT:     0.1,
-		NumInSec: 10,
-		TrackLen: 120,
-		DrawMaxP: 60,
+		UpdT:     DEFVAL.WarpPredictorUpdT,
+		NumInSec: DEFVAL.WarpPredictorNumInSec,
+		TrackLen: DEFVAL.WarpPredictorTrackLen,
+		DrawMaxP: DEFVAL.WarpPredictorDrawMaxP,
 		PowN:     DEFVAL.WarpGravPowN,
 	}
 
@@ -115,47 +128,43 @@ func (s *warpScene) Update(dt float64) {
 	s.fuelConsumed += Data.SP.Warp_engine.Consumption *
 		(s.thrustLevel + math.Abs(s.maneurLevel)) * dt
 
+	s.at.Update(dt)
+
+	if Data.PilotData.Distortion == 0 {
+		s.warpingOutT += dt
+		s.atTime -= dt
+
+		if s.atTime <= 0 {
+			s.atTime = warpingOutAnnounceP
+
+			msg := fmt.Sprintf("warping out in %1.1f", warpingOutTime-s.warpingOutT)
+			clr := colornames.Red
+			if s.warpingOutT < warpingOutTime {
+				clr = colornames.Yellow
+			}
+			s.at.AddMsg(msg, clr, warpingOutAnnounceP)
+		}
+	} else {
+		s.warpingOutT = 0
+		s.atTime = 0
+	}
+	if s.warpingOutT > warpingOutTime {
+		s.warpedOut()
+	}
+	for _, gp := range Data.Galaxy.Ordered {
+		if Data.PilotData.Ship.Pos.Sub(gp.Pos).LenSqr() <
+			gp.WarpRedOutDist*gp.WarpRedOutDist {
+			s.warpedOut()
+		}
+	}
+
 	for _, co := range s.objects {
 		co.Update(dt)
 	}
 	s.updateShipControl(dt)
 
-	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
-		Data.PilotData.Ship.Pos = v2.V2{}
-		Data.PilotData.Ship.Vel = v2.V2{}
-		Data.PilotData.Ship.AngVel = 0
-		Data.PilotData.Distortion = DEFVAL.MinDistortion
-		Data.PilotData.Dir = 0
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
-		s.timerStart = time.Now()
-		s.distTravaled = 0
-		s.fuelConsumed = 0
-	}
-
-	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
-		//spawn to closest
-		minDist := -1.0
-		systemID := ""
-		for _, v := range Data.Galaxy.Points {
-			dist := Data.PilotData.Ship.Pos.Sub(v.Pos).LenSqr()
-			if minDist < 0 || dist < minDist {
-				systemID = v.ID
-				minDist = dist
-			}
-		}
-		systemID = "solar"
-		if systemID != "" {
-			s.toCosmo(systemID)
-		}
-	}
-
-	if ebiten.IsKeyPressed(ebiten.KeyQ) {
-		s.cam.Scale *= (1 + dt)
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyE) {
-		s.cam.Scale /= (1 + dt)
+	if DEFVAL.DebugControl {
+		s.debugControl()
 	}
 
 	s.updateHUD()
@@ -205,6 +214,8 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 
 	Q.Add(s.ship, graph.Z_GAME_OBJECT)
 
+	Q.Append(s.at)
+
 	Q.Append(s.predictor)
 	Q.Append(s.hud)
 
@@ -218,6 +229,32 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 	Q.Run(image)
 }
 
+func (s *warpScene) warpedOut() {
+	s.warpingOutT =0
+	systemID := ""
+	for _, gp := range Data.Galaxy.Ordered {
+		if Data.PilotData.Ship.Pos.Sub(gp.Pos).LenSqr() <
+			gp.WarpYellowOutDist*gp.WarpYellowOutDist {
+			systemID = gp.ID
+			break
+		}
+	}
+	if systemID == "" {
+		log.Println("warp to zero system")
+		s.toCosmo(ZERO_Galaxy_ID)
+		return
+	}
+	ship := Data.PilotData.Ship.Pos
+	sys := Data.Galaxy.Points[systemID]
+	dist := ship.Sub(sys.Pos).Len()
+	if dist <= sys.WarpRedOutDist {
+		log.Println("hard damage")
+	} else if dist < sys.WarpGreenInDist || dist > sys.WarpGreenOutDist {
+		log.Println("medium damage")
+	}
+	//s.toCosmo(systemID)
+}
+
 func (s *warpScene) toCosmo(systemID string) {
 	state := Data.State
 	state.StateID = STATE_cosmo
@@ -226,4 +263,31 @@ func (s *warpScene) toCosmo(systemID string) {
 }
 
 func (*warpScene) Destroy() {
+}
+
+func (s *warpScene) debugControl() {
+	if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		Data.PilotData.Ship.Pos = v2.V2{}
+		Data.PilotData.Ship.Vel = v2.V2{}
+		Data.PilotData.Ship.AngVel = 0
+		Data.PilotData.Distortion = DEFVAL.MinDistortion
+		Data.PilotData.Dir = 0
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
+		s.timerStart = time.Now()
+		s.distTravaled = 0
+		s.fuelConsumed = 0
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
+		s.toCosmo("solar")
+	}
+
+	if ebiten.IsKeyPressed(ebiten.KeyQ) {
+		s.cam.Scale *= (1 + dt)
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyE) {
+		s.cam.Scale /= (1 + dt)
+	}
 }

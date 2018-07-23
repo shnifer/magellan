@@ -14,16 +14,20 @@ import (
 
 type warpSceneHUD struct {
 	caption *graph.Text
-	back *graph.Sprite
+	back    *graph.Sprite
 
 	//trail
 	trailT float64
 	trail  *graph.FadingArray
 
-	thrustLevelHUD   *graph.Sprite
-	thrustControlHUD *graph.Sprite
-	turnLevelHUD     *graph.Sprite
-	turnControlHUD   *graph.Sprite
+	thrustLevel   *graph.Sprite
+	thrustControl *graph.Sprite
+	turnLevel     *graph.Sprite
+	turnControl   *graph.Sprite
+	rulerV        *graph.Sprite
+	rulerH        *graph.Sprite
+	arrowSize     float64
+	rulerSize     float64
 
 	compass    *graph.Sprite
 	distCircle *graph.CircleLine
@@ -48,23 +52,24 @@ func newWarpSceneHUD(cam *graph.Camera) warpSceneHUD {
 		background.SetColor(colornames.Dimgrey)
 	}
 
+	arrowSize := float64(WinH) * arrSize
 	arrowTex := GetAtlasTex(ThrustArrowAN)
-	thrustLevelHUD := graph.NewSpriteHUD(arrowTex)
-	thrustLevelHUD.SetSize(50, 50)
-	thrustLevelHUD.SetAng(-90)
-	thrustLevelHUD.SetAlpha(0.7)
-	thrustControlHUD := graph.NewSpriteHUD(arrowTex)
-	thrustControlHUD.SetSize(50, 50)
-	thrustControlHUD.SetAng(90)
-	thrustControlHUD.SetAlpha(0.5)
-	turnLevelHUD := graph.NewSpriteHUD(arrowTex)
-	turnLevelHUD.SetSize(50, 50)
-	turnLevelHUD.SetAng(0)
-	turnLevelHUD.SetAlpha(0.7)
-	turnControlHUD := graph.NewSpriteHUD(arrowTex)
-	turnControlHUD.SetSize(50, 50)
-	turnControlHUD.SetAng(180)
-	turnControlHUD.SetAlpha(0.5)
+	thrustLevel := graph.NewSpriteHUD(arrowTex)
+	thrustLevel.SetSize(50, 50)
+	thrustLevel.SetAng(-90)
+	thrustLevel.SetAlpha(0.7)
+	thrustControl := graph.NewSpriteHUD(arrowTex)
+	thrustControl.SetSize(50, 50)
+	thrustControl.SetAng(90)
+	thrustControl.SetAlpha(0.5)
+	turnLevel := graph.NewSpriteHUD(arrowTex)
+	turnLevel.SetSize(50, 50)
+	turnLevel.SetAng(0)
+	turnLevel.SetAlpha(0.7)
+	turnControl := graph.NewSpriteHUD(arrowTex)
+	turnControl.SetSize(50, 50)
+	turnControl.SetAng(180)
+	turnControl.SetAlpha(0.5)
 
 	compass := NewAtlasSprite(CompassAN, cam.FixS())
 	compassSize := float64(WinH) * compassSize
@@ -74,16 +79,28 @@ func newWarpSceneHUD(cam *graph.Camera) warpSceneHUD {
 	trail := graph.NewFadingArray(GetAtlasTex(TrailAN), trailLifeTime/trailPeriod,
 		cam.Deny())
 
+	rulerSize := float64(WinH) * wide
+	rulerH := NewAtlasSpriteHUD(RulerWarpHAN)
+	rulerH.SetSizeProportion(rulerSize * rulerWideK)
+	rulerH.SetPos(graph.ScrP(0.5, rulerY))
+	rulerV := NewAtlasSpriteHUD(RulerWarpVAN)
+	rulerV.SetSizeProportion(rulerSize * rulerWideK)
+	rulerV.SetPos(graph.ScrP(rulerX, 0.5))
+
 	return warpSceneHUD{
-		back: background,
-		trail:            trail,
-		compass:          compass,
-		caption:          caption,
-		distCircle:       distCircle,
-		thrustLevelHUD:   thrustLevelHUD,
-		turnLevelHUD:     turnLevelHUD,
-		turnControlHUD:   turnControlHUD,
-		thrustControlHUD: thrustControlHUD,
+		back:          background,
+		trail:         trail,
+		compass:       compass,
+		caption:       caption,
+		distCircle:    distCircle,
+		thrustLevel:   thrustLevel,
+		turnLevel:     turnLevel,
+		turnControl:   turnControl,
+		thrustControl: thrustControl,
+		arrowSize:     arrowSize,
+		rulerSize:     rulerSize,
+		rulerV:        rulerV,
+		rulerH:        rulerH,
 	}
 }
 
@@ -100,11 +117,29 @@ func (s *warpScene) updateHUD() {
 	}
 	s.hud.trail.Update(dt)
 
-	s.hud.thrustLevelHUD.SetPos(graph.ScrP(0.15, 0.9-0.8*s.thrustLevel))
-	s.hud.thrustControlHUD.SetPos(graph.ScrP(0.1, 0.9-0.8*input.WarpLevel("warpspeed")))
+	var p v2.V2
+	arrS := s.hud.arrowSize * 0.6
 
-	s.hud.turnLevelHUD.SetPos(graph.ScrP(0.5-0.4*s.maneurLevel, 0.15))
-	s.hud.turnControlHUD.SetPos(graph.ScrP(0.5-0.4*input.GetF("turn"), 0.1))
+	ruler := func(x float64) float64 {
+		return -s.hud.rulerSize / 2 * x
+	}
+	vRuler := func(x float64) float64 {
+		return s.hud.rulerSize/2 - s.hud.rulerSize*x
+	}
+	vPos := graph.ScrP(rulerX, 0.5)
+	p = vPos.Add(v2.V2{X: arrS, Y: vRuler(s.thrustLevel)})
+	s.hud.thrustLevel.SetPos(p)
+
+	p = vPos.Add(v2.V2{X: -arrS, Y: vRuler(input.WarpLevel("warpspeed"))})
+	s.hud.thrustControl.SetPos(p)
+
+	hPos := graph.ScrP(0.5, rulerY)
+	p = hPos.Add(v2.V2{X: ruler(s.maneurLevel), Y: arrS})
+	s.hud.turnLevel.SetPos(p)
+
+	turnInput := input.GetF("turn")
+	p = hPos.Add(v2.V2{X: ruler(turnInput), Y: -arrS})
+	s.hud.turnControl.SetPos(p)
 
 	s.hud.compass.SetPos(Data.PilotData.Ship.Pos)
 }
@@ -112,11 +147,13 @@ func (s *warpScene) updateHUD() {
 func (h warpSceneHUD) Req(Q *graph.DrawQueue) {
 	Q.Add(h.back, graph.Z_STAT_BACKGROUND)
 	Q.Add(h.trail, graph.Z_UNDER_OBJECT)
-	Q.Add(h.thrustLevelHUD, graph.Z_HUD)
-	Q.Add(h.thrustControlHUD, graph.Z_HUD)
-	Q.Add(h.turnLevelHUD, graph.Z_HUD)
-	Q.Add(h.turnControlHUD, graph.Z_HUD)
+	Q.Add(h.thrustLevel, graph.Z_HUD)
+	Q.Add(h.thrustControl, graph.Z_HUD)
+	Q.Add(h.turnLevel, graph.Z_HUD)
+	Q.Add(h.turnControl, graph.Z_HUD)
 	Q.Add(h.compass, graph.Z_HUD)
+	Q.Add(h.rulerV, graph.Z_HUD)
+	Q.Add(h.rulerH, graph.Z_HUD)
 
 	//Q.Add(h.caption, graph.Z_STAT_HUD)
 	Q.Append(h.distCircle)

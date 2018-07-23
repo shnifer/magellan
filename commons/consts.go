@@ -20,6 +20,7 @@ const (
 const (
 	START_Galaxy_ID = "solar"
 	WARP_Galaxy_ID  = "warp"
+	ZERO_Galaxy_ID  = "zero"
 )
 
 const (
@@ -52,6 +53,8 @@ const (
 	ThrustArrowAN       = "MAGIC_thurstarrow"
 	RulerHAN            = "MAGIC_rulerh"
 	RulerVAN            = "MAGIC_rulerv"
+	RulerWarpHAN        = "MAGIC_warprulerh"
+	RulerWarpVAN        = "MAGIC_warprulerv"
 	DefaultBackgroundAN = "MAGIC_DEFAULT_background"
 	EngiBackgroundAN    = "MAGIC_engibackground"
 	WarpBackgroundAN    = "MAGIC_warpbackground"

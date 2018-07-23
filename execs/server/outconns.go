@@ -18,7 +18,11 @@ func (rd *roomServer) loadStateData(state State) (sd StateData, subscribe chan s
 	}
 
 	if state.GalaxyID != "" {
-		sd.Galaxy = loadGalaxyState(state.GalaxyID)
+		if state.GalaxyID == ZERO_Galaxy_ID {
+			sd.Galaxy = zeroGalaxy()
+		} else {
+			sd.Galaxy = loadGalaxyState(state.GalaxyID)
+		}
 		sd.Buildings, subscribe = loadBuildingsAndSubscribe(rd.storage, state.GalaxyID)
 	}
 
@@ -64,6 +68,15 @@ func loadGalaxyState(GalaxyID string) *Galaxy {
 		}
 	}
 	//Second - recalc lvls!
+	res.RecalcLvls()
+
+	return &res
+}
+
+func zeroGalaxy() *Galaxy {
+	res := Galaxy{
+		Points: make(map[string]*GalaxyPoint),
+	}
 	res.RecalcLvls()
 
 	return &res

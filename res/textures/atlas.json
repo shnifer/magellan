@@ -36,6 +36,8 @@
   "MAGIC_compass": {"FileName": "HUD_Radar.png", "Smooth":true},
   "MAGIC_rulerh":{"FileName": "HUD_RUS2.png"},
   "MAGIC_rulerv":{"FileName": "HUD_RUD2.png"},
+  "MAGIC_warprulerh":{"FileName": "HUD_WARP_RUS2.png"},
+  "MAGIC_warprulerv":{"FileName": "HUD_WARP_RUD2.png"},
   "MAGIC_waypoint": {"FileName": "marker.png"},
   "MAGIC_wayarrow": {"FileName": "HUD_Arrow.png"},
   "MAGIC_warpinner": {"FileName": "Warp_Inner_Sprite.png"},

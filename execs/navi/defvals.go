@@ -28,6 +28,13 @@ type tDefVals struct {
 	NaviMarketDuration float64
 	GravityConst       float64
 
+	//predictors
+	CosmoPredictorUpdT float64
+	CosmoPredictorNumInSec int
+	CosmoPredictorGravEach int
+	CosmoPredictorTrackLen int
+	CosmoPredictorDrawMaxP int
+
 	//in ms
 	LogTimeoutMs  int
 	LogRetryMinMs int

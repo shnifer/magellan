@@ -35,6 +35,17 @@ type tDefVals struct {
 	WarpGravThreshold float64
 	WarpGravPowN      float64
 
+	//predictors
+	CosmoPredictorUpdT float64
+	CosmoPredictorNumInSec int
+	CosmoPredictorGravEach int
+	CosmoPredictorTrackLen int
+	CosmoPredictorDrawMaxP int
+	WarpPredictorUpdT float64
+	WarpPredictorNumInSec int
+	WarpPredictorTrackLen int
+	WarpPredictorDrawMaxP int
+
 	//in ms
 	LogTimeoutMs  int
 	LogRetryMinMs int

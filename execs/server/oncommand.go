@@ -10,7 +10,7 @@ import (
 
 func (rd *roomServer) OnCommand(room, role, command string) {
 	Log(LVL_DEBUG, "room", room, "role", role, "command", command)
-
+	//todo: buildings in zero galaxy
 	switch {
 	case strings.HasPrefix(command, CMD_ADDBUILDREQ):
 		buildStr := strings.TrimPrefix(command, CMD_ADDBUILDREQ)
