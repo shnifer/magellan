@@ -20,6 +20,7 @@ const (
 const (
 	START_Galaxy_ID = "solar"
 	WARP_Galaxy_ID  = "warp"
+	ZERO_Galaxy_ID  = "zero"
 )
 
 const (

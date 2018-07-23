@@ -230,6 +230,7 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 }
 
 func (s *warpScene) warpedOut() {
+	s.warpingOutT =0
 	systemID := ""
 	for _, gp := range Data.Galaxy.Ordered {
 		if Data.PilotData.Ship.Pos.Sub(gp.Pos).LenSqr() <
@@ -240,7 +241,8 @@ func (s *warpScene) warpedOut() {
 	}
 	if systemID == "" {
 		log.Println("warp to zero system")
-		//s.toCosmo(zero)
+		s.toCosmo(ZERO_Galaxy_ID)
+		return
 	}
 	ship := Data.PilotData.Ship.Pos
 	sys := Data.Galaxy.Points[systemID]
