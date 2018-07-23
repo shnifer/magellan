@@ -96,7 +96,7 @@ func (s *cosmoScene) UpdateHUD() {
 	arrS := s.hud.arrowSize * 0.6
 
 	ruler := func(x float64) float64 {
-		return 0.5 - s.hud.rulerSize/2*x
+		return -s.hud.rulerSize / 2 * x
 	}
 
 	vPos := graph.ScrP(rulerX, 0.5)
