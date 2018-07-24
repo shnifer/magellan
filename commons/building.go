@@ -149,14 +149,14 @@ func AddBeacon(Data TData, Client *network.Client, msg string) {
 	N := int(sessionTime / basePeriod)
 	period := sessionTime / (angle + float64(N))
 
-	b1 := Building{
+	b := Building{
 		Type:     BUILDING_BEACON,
 		GalaxyID: Data.State.GalaxyID,
 		Period:   period,
 		Message:  msg,
 	}
 	//duplicated into warp on server side
-	RequestNewBuilding(Client, b1)
+	RequestNewBuilding(Client, b)
 }
 
 func AddMine(Data TData, Client *network.Client, planetID string, owner string) {
