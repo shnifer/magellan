@@ -82,7 +82,6 @@ func newWarpScene() *warpScene {
 
 func (s *warpScene) Init() {
 	defer LogFunc("warpScene.Init")()
-	log.Println("warpScene.Init")
 
 	s.objects = make(map[string]*CosmoPoint)
 	s.thrustLevel = 0.01

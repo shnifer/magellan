@@ -17,12 +17,35 @@ func (s *roomServer) saveRestorePoint(roomName string) {
 	var rec RestoreRec
 	s.stateMu.RLock()
 	s.commonMu.RLock()
-	rec.State = s.curState[roomName]
+	defer s.stateMu.RUnlock()
+	defer s.commonMu.RUnlock()
+
+	state := s.curState[roomName]
+	if state.ShipID=="" || state.GalaxyID=="" {
+		return
+	}
+	rec.State = state
 	rec.CommonData = s.commonData[roomName].Copy()
-	s.commonMu.RUnlock()
-	s.stateMu.RUnlock()
+	rec.CommonData.ServerData.MsgID=0
+	rec.CommonData.ServerData.OtherShips = nil
 
 	go saveRec(s, rec)
+}
+
+func saveRec(s *roomServer, rec RestoreRec) {
+	ship := rec.State.ShipID
+	i, ok :=1, false
+	for !ok{
+		ch:=s.restore.KeysPrefix(ship+" - "+strconv.Itoa(i),nil)
+		_,exist:=<-ch
+		if exist{
+			i++
+		} else {
+			ok = true
+		}
+	}
+	key := ship+" - "+strconv.Itoa(i)+" - "+rec.State.GalaxyID
+	s.restore.Write(key, rec.Encode())
 }
 
 func (s *roomServer) loadRestorePoint(roomName string, ship string, n int) error{
@@ -66,22 +89,6 @@ func (s *roomServer) loadRestorePoint(roomName string, ship string, n int) error
 	s.commonMu.Unlock()
 
 	return nil
-}
-
-func saveRec(s *roomServer, rec RestoreRec) {
-	ship := rec.State.ShipID
-	i, ok :=1, false
-	for !ok{
-		ch:=s.restore.KeysPrefix(ship+" - "+strconv.Itoa(i),nil)
-		_,exist:=<-ch
-		if exist{
-			i++
-		} else {
-			ok = true
-		}
-	}
-	key := ship+" - "+strconv.Itoa(i)+" - "+rec.State.GalaxyID
-	s.restore.Write(key, rec.Encode())
 }
 
 func (r RestoreRec) Encode() []byte {

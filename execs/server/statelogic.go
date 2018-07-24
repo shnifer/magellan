@@ -44,6 +44,7 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 		if prevState.StateID == STATE_warp {
 			common.PilotData.Ship.Pos =
 				v2.InDir(180 + common.PilotData.Ship.Ang).Mul(stateData.Galaxy.SpawnDistance)
+			common.PilotData.Ship.Vel = v2.InDir(common.PilotData.Ship.Ang)
 		}
 	case STATE_warp:
 		//from cosmo to warp

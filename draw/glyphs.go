@@ -8,7 +8,8 @@ import (
 	"strconv"
 )
 
-const glyphSize = 32
+const glyphW = 37
+const glyphH = 50
 const maxGlyphsInRow = 3
 
 type glyphs struct {
@@ -30,9 +31,9 @@ func newGlyphs(pd *GalaxyPoint) glyphs {
 		if _, ok := pd.Mines[owner]; !ok {
 			continue
 		}
-		ct:=strconv.Itoa(len(pd.Mines[owner]))
-		if ct=="1"{
-			ct=""
+		ct := strconv.Itoa(len(pd.Mines[owner]))
+		if ct == "1" {
+			ct = ""
 		}
 		text := graph.NewText(ct,
 			Fonts[Face_list], colornames.Darkviolet)
@@ -66,7 +67,7 @@ func newGlyphs(pd *GalaxyPoint) glyphs {
 
 func newGlyph(t string, owner string) *graph.Sprite {
 	res := NewAtlasSprite("MAGIC_GLYPH_"+t, graph.NoCam)
-	res.SetSize(glyphSize, glyphSize)
+	res.SetSize(glyphW, glyphH)
 	clr := ColorByOwner(owner)
 	res.SetColor(clr)
 	return res
@@ -74,19 +75,19 @@ func newGlyph(t string, owner string) *graph.Sprite {
 
 func (g glyphs) Req(Q *graph.DrawQueue) {
 	var pos v2.V2
-	basePos := g.pos.AddMul(v2.V2{X: -1, Y: -1}, g.size)
+	basePos := g.pos.AddMul(v2.V2{X: -1, Y: -1}, g.size/2).Sub(v2.V2{X: glyphW/2, Y:glyphH/2})
 	n := 0
 	for i, sprite := range g.Glyphs0 {
-		pos = basePos.AddMul(v2.V2{X: glyphSize, Y: 0}, float64(i))
+		pos = basePos.AddMul(v2.V2{X: glyphW, Y: 0}, float64(i))
 		sprite.SetPos(pos)
 		g.CountText[n].SetPosPivot(pos, graph.Center())
 		Q.Add(sprite, graph.Z_ABOVE_OBJECT)
 		Q.Add(g.CountText[n], graph.Z_ABOVE_OBJECT+1)
 		n++
 	}
-	basePos.DoAddMul(v2.V2{X: 0, Y: glyphSize}, 1)
+	basePos.DoAddMul(v2.V2{X: 0, Y: glyphH}, 1)
 	for i, sprite := range g.Glyphs1 {
-		pos = basePos.AddMul(v2.V2{X: glyphSize, Y: 0}, float64(i))
+		pos = basePos.AddMul(v2.V2{X: glyphW, Y: 0}, float64(i))
 		sprite.SetPos(pos)
 		g.CountText[n].SetPosPivot(pos, graph.Center())
 		Q.Add(sprite, graph.Z_ABOVE_OBJECT)
@@ -100,7 +101,7 @@ func (g *glyphs) setPos(pos v2.V2) {
 }
 
 func (g *glyphs) setSize(size float64) {
-	g.size = size/2 + glyphSize/2
+	g.size = size/2
 	if g.size < Mark_size/2 {
 		g.size = Mark_size / 2
 	}

@@ -116,7 +116,6 @@ func newCosmoScene() *cosmoScene {
 
 func (s *cosmoScene) Init() {
 	defer LogFunc("cosmoScene.Init")()
-	log.Println("cosmoScene.Init")
 
 	s.objects = make(map[string]*CosmoPoint)
 	s.otherShips = make(map[string]*OtherShip)
