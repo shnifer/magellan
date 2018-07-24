@@ -12,6 +12,7 @@
     "MinDistortion":0.3,
     "StoragePath":"xstore",
     "LocalLogPath":"gamelog",
+    "RestorePath":"restore",
     "DiskRefreshPeriod": 5,
     "LogLogTimeoutMs": 1000,
     "LogRetryMinMs": 10,

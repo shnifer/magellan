@@ -82,6 +82,7 @@ func newWarpScene() *warpScene {
 
 func (s *warpScene) Init() {
 	defer LogFunc("warpScene.Init")()
+	log.Println("warpScene.Init")
 
 	s.objects = make(map[string]*CosmoPoint)
 	s.thrustLevel = 0.01
@@ -128,35 +129,11 @@ func (s *warpScene) Update(dt float64) {
 	s.fuelConsumed += Data.SP.Warp_engine.Consumption *
 		(s.thrustLevel + math.Abs(s.maneurLevel)) * dt
 
+	Data.PilotData.WarpPos = Data.PilotData.Ship.Pos
+
 	s.at.Update(dt)
 
-	if Data.PilotData.Distortion == 0 {
-		s.warpingOutT += dt
-		s.atTime -= dt
-
-		if s.atTime <= 0 {
-			s.atTime = warpingOutAnnounceP
-
-			msg := fmt.Sprintf("warping out in %1.1f", warpingOutTime-s.warpingOutT)
-			clr := colornames.Red
-			if s.warpingOutT < warpingOutTime {
-				clr = colornames.Yellow
-			}
-			s.at.AddMsg(msg, clr, warpingOutAnnounceP)
-		}
-	} else {
-		s.warpingOutT = 0
-		s.atTime = 0
-	}
-	if s.warpingOutT > warpingOutTime {
-		s.warpedOut()
-	}
-	for _, gp := range Data.Galaxy.Ordered {
-		if Data.PilotData.Ship.Pos.Sub(gp.Pos).LenSqr() <
-			gp.WarpRedOutDist*gp.WarpRedOutDist {
-			s.warpedOut()
-		}
-	}
+	s.warpChecks()
 
 	for _, co := range s.objects {
 		co.Update(dt)
@@ -230,7 +207,7 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 }
 
 func (s *warpScene) warpedOut() {
-	s.warpingOutT =0
+	s.warpingOutT = 0
 	systemID := ""
 	for _, gp := range Data.Galaxy.Ordered {
 		if Data.PilotData.Ship.Pos.Sub(gp.Pos).LenSqr() <
@@ -252,6 +229,7 @@ func (s *warpScene) warpedOut() {
 	} else if dist < sys.WarpGreenInDist || dist > sys.WarpGreenOutDist {
 		log.Println("medium damage")
 	}
+	//todo: uncomment then galaxy ready
 	//s.toCosmo(systemID)
 }
 
@@ -289,5 +267,35 @@ func (s *warpScene) debugControl() {
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyE) {
 		s.cam.Scale /= (1 + dt)
+	}
+}
+
+func (s *warpScene) warpChecks() {
+	if Data.PilotData.Distortion == 0 {
+		s.warpingOutT += dt
+		s.atTime -= dt
+
+		if s.atTime <= 0 {
+			s.atTime = warpingOutAnnounceP
+
+			msg := fmt.Sprintf("warping out in %1.1f", warpingOutTime-s.warpingOutT)
+			clr := colornames.Red
+			if s.warpingOutT < warpingOutTime {
+				clr = colornames.Yellow
+			}
+			s.at.AddMsg(msg, clr, warpingOutAnnounceP)
+		}
+	} else {
+		s.warpingOutT = 0
+		s.atTime = 0
+	}
+	if s.warpingOutT > warpingOutTime {
+		s.warpedOut()
+	}
+	for _, gp := range Data.Galaxy.Ordered {
+		if Data.PilotData.Ship.Pos.Sub(gp.Pos).LenSqr() <
+			gp.WarpRedOutDist*gp.WarpRedOutDist {
+			s.warpedOut()
+		}
 	}
 }

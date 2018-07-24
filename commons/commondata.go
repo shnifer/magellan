@@ -21,6 +21,8 @@ type PilotData struct {
 	//for warp
 	Distortion float64 `json:"wd", omitempty`
 	Dir        float64 `json:"dr", omitempty`
+	//warp position for return from zero system
+	WarpPos v2.V2 `json:"wp", omitempty`
 
 	//for engu
 	HeatProduction float64 `json:"hp", omitempty`

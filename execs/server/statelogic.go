@@ -55,23 +55,30 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 
 func toWarpCommonData(common CommonData, stateData StateData, newState, prevState State) CommonData {
 	fromSystem := prevState.GalaxyID
-	var systemPoint *GalaxyPoint
-	var found bool
-	for _, v := range stateData.Galaxy.Points {
-		if v.ID == fromSystem {
-			systemPoint = v
-			found = true
-			break
+	var pos v2.V2
+	var spawnRange float64
+	if fromSystem == ZERO_Galaxy_ID {
+		pos = common.PilotData.WarpPos
+		spawnRange = 0
+	} else {
+		var systemPoint *GalaxyPoint
+		var found bool
+		for _, v := range stateData.Galaxy.Points {
+			if v.ID == fromSystem {
+				systemPoint = v
+				found = true
+				break
+			}
 		}
+		if !found {
+			Log(LVL_ERROR, "toWarpCommonData: can't find system", fromSystem, "on warp map!")
+			return common
+		}
+
+		pos = systemPoint.Pos
+		spawnRange = systemPoint.WarpSpawnDistance
 	}
-	if !found {
-		Log(LVL_ERROR, "toWarpCommonData: can't find system", fromSystem, "on warp map!")
-		return common
-	}
-	//todo:zero galaxy coords save
-	pos := systemPoint.Pos
 	ang := common.PilotData.Ship.Ang
-	spawnRange := systemPoint.WarpSpawnDistance
 
 	ship := RBData{
 		Pos:    pos.AddMul(v2.InDir(ang), spawnRange),

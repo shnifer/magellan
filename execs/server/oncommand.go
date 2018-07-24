@@ -10,7 +10,7 @@ import (
 
 func (rd *roomServer) OnCommand(room, role, command string) {
 	Log(LVL_DEBUG, "room", room, "role", role, "command", command)
-	//todo: buildings in zero galaxy
+
 	switch {
 	case strings.HasPrefix(command, CMD_ADDBUILDREQ):
 		buildStr := strings.TrimPrefix(command, CMD_ADDBUILDREQ)
@@ -19,6 +19,11 @@ func (rd *roomServer) OnCommand(room, role, command string) {
 			Log(LVL_ERROR, "Command CMD_ADDBUILDREQ sent strange building: "+buildStr)
 			return
 		}
+		if b.GalaxyID == ZERO_Galaxy_ID {
+			Log(LVL_INFO, "build in zero galaxy, idiot")
+			return
+		}
+
 		key := b.Type + strconv.Itoa(rd.storage.NextID())
 
 		err = rd.storage.Add(b.GalaxyID, key, buildStr)
