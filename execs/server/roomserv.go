@@ -6,12 +6,14 @@ import (
 	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/network"
 	"github.com/Shnifer/magellan/storage"
+	"github.com/peterbourgon/diskv"
 	"sync"
 	"time"
 )
 
 type roomServer struct {
 	storage *storage.Storage
+	restore *diskv.Diskv
 
 	stateMu  sync.RWMutex
 	curState map[string]State
@@ -28,7 +30,7 @@ type roomServer struct {
 	commonData map[string]CommonData
 }
 
-func newRoomServer(disk *storage.Storage) *roomServer {
+func newRoomServer(disk *storage.Storage, restore *diskv.Diskv) *roomServer {
 	stateData := make(map[string]StateData)
 	commonData := make(map[string]CommonData)
 	curState := make(map[string]State)
@@ -40,6 +42,7 @@ func newRoomServer(disk *storage.Storage) *roomServer {
 		commonData: commonData,
 		subscribes: subscribes,
 		storage:    disk,
+		restore:    restore,
 	}
 	return roomServ
 }
@@ -134,6 +137,8 @@ func (rd *roomServer) SetRoomCommon(room string, data []byte) error {
 
 func (rd *roomServer) RdyStateData(room string, stateStr string) {
 	defer LogFunc("RdyStateData")()
+
+	rd.saveRestorePoint(room)
 
 	Log(LVL_DEBUG, "RdyStateData: try rd.stateMu.Lock()")
 	rd.stateMu.Lock()

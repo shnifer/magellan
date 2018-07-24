@@ -46,7 +46,13 @@ func main() {
 		storage.RunExchanger(disk, DEFVAL.GameExchPort, DEFVAL.GameExchAddrs, DEFVAL.GameExchPeriodMs)
 	}
 
-	roomServ := newRoomServer(disk)
+	restoreOpts := diskv.Options{
+		BasePath:     DEFVAL.RestorePath,
+		CacheSizeMax: 1024 * 1024,
+	}
+	diskRestore := diskv.New(restoreOpts)
+
+	roomServ := newRoomServer(disk, diskRestore)
 
 	startState := commons.State{
 		StateID: commons.STATE_login,
