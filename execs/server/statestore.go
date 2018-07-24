@@ -5,6 +5,7 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/log"
 	"strconv"
+	"github.com/pkg/errors"
 )
 
 type RestoreRec struct {
@@ -22,6 +23,49 @@ func (s *roomServer) saveRestorePoint(roomName string) {
 	s.stateMu.RUnlock()
 
 	go saveRec(s, rec)
+}
+
+func (s *roomServer) loadRestorePoint(roomName string, ship string, n int) error{
+	cancel:=make(chan struct{})
+	defer close(cancel)
+
+	ch:=s.restore.KeysPrefix(ship+" - "+strconv.Itoa(n),cancel)
+	key, ok:=<-ch
+	if !ok {
+		return errors.New("no such file")
+	}
+
+	dat,err:=s.restore.Read(key)
+	if err!=nil{
+		return err
+	}
+	rec, err:=RestoreRec{}.Decode(dat)
+	if err!=nil{
+		return err
+	}
+
+	s.stateMu.Lock()
+	s.curState[roomName] = rec.State
+	s.stateMu.Unlock()
+
+	stateData, subscribe := s.loadStateData(rec.State)
+
+	s.stateDataMu.Lock()
+	s.stateData[roomName] = stateData
+	s.stateDataMu.Unlock()
+
+	s.subsMu.Lock()
+	if s.subscribes[roomName] != nil {
+		s.storage.Unsubscribe(s.subscribes[roomName])
+	}
+	s.subscribes[roomName] = subscribe
+	s.subsMu.Unlock()
+
+	s.commonMu.Lock()
+	s.commonData[roomName] = rec.CommonData
+	s.commonMu.Unlock()
+
+	return nil
 }
 
 func saveRec(s *roomServer, rec RestoreRec) {

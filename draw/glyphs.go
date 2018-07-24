@@ -37,10 +37,11 @@ func newGlyphs(pd *GalaxyPoint) glyphs {
 		text := graph.NewText(ct,
 			Fonts[Face_list], colornames.Darkviolet)
 		countText = append(countText, text)
+
 		if len(glyphs0) < maxGlyphsInRow {
-			glyphs0 = append(glyphs0, newGlyph(BUILDING_MINE, owner))
+			glyphs0 = append(glyphs0, newGlyph(BUILDING_MINE+"_"+owner, owner))
 		} else {
-			glyphs1 = append(glyphs0, newGlyph(BUILDING_MINE, owner))
+			glyphs1 = append(glyphs0, newGlyph(BUILDING_MINE+"_"+owner, owner))
 		}
 	}
 
