@@ -8,8 +8,8 @@ import (
 	"strconv"
 )
 
-const glyphW = 37
-const glyphH = 50
+const glyphW = 150
+const glyphH = 200
 const maxGlyphsInRow = 3
 
 type glyphs struct {
@@ -68,8 +68,8 @@ func newGlyphs(pd *GalaxyPoint) glyphs {
 func newGlyph(t string, owner string) *graph.Sprite {
 	res := NewAtlasSprite("MAGIC_GLYPH_"+t, graph.NoCam)
 	res.SetSize(glyphW, glyphH)
-	clr := ColorByOwner(owner)
-	res.SetColor(clr)
+	//clr := ColorByOwner(owner)
+	//res.SetColor(clr)
 	return res
 }
 
