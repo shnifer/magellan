@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
@@ -75,6 +74,7 @@ type Options struct {
 var Opts Options
 
 type Planet struct {
+	ID	        string
 	IsGas       bool
 	Spheres     [15]int
 	Minerals    []int
@@ -166,6 +166,11 @@ func main() {
 			}
 		}
 
+		gen:=newIDgen()
+		for i:=range sysData{
+			sysData[i].ID = gen.get()
+		}
+
 		outData[id] = sysData
 	}
 
@@ -184,9 +189,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	identbuf := bytes.Buffer{}
-	json.Indent(&identbuf, buf, "", "    ")
-	err = ioutil.WriteFile("all_planets.json", identbuf.Bytes(), 0)
+	//identbuf := bytes.Buffer{}
+	//json.Indent(&identbuf, buf, "", "    ")
+	//err = ioutil.WriteFile("all_planets.json", identbuf.Bytes(), 0)
+	err = ioutil.WriteFile("all_planets.json", buf, 0)
 	if err != nil {
 		panic(err)
 	}
@@ -427,4 +433,24 @@ func sum(a []int) int {
 func fs(v interface{}) string {
 	str := fmt.Sprint(v)
 	return strings.Replace(str, ".", ",", -1)
+}
+
+type gen struct{
+	used map[int]struct{}
+}
+
+func newIDgen() *gen{
+	return &gen{
+		used: make(map[int]struct{}),
+	}
+}
+
+func (g *gen) get() string{
+	for {
+		n:=rand.Intn(999)+1
+		if _,exist:=g.used[n]; !exist{
+			g.used[n]= struct{}{}
+			return fmt.Sprintf("%03d",n)
+		}
+	}
 }
