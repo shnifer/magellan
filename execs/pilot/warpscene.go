@@ -46,6 +46,7 @@ type warpScene struct {
 	warpingOutT float64
 	at          *AnnounceText
 	atTime      float64
+	alreadyWarp bool
 
 	hud warpSceneHUD
 	q   *graph.DrawQueue
@@ -90,6 +91,7 @@ func (s *warpScene) Init() {
 	s.timerStart = time.Now()
 	s.fuelConsumed = 0
 	s.warpingOutT = 0
+	s.alreadyWarp = false
 
 	stateData := Data.GetStateData()
 
@@ -206,7 +208,10 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 }
 
 func (s *warpScene) warpedOut() {
-	s.warpingOutT = 0
+	if s.alreadyWarp{
+		return
+	}
+	s.alreadyWarp = true
 	systemID := ""
 	for _, gp := range Data.Galaxy.Ordered {
 		if Data.PilotData.Ship.Pos.Sub(gp.Pos).LenSqr() <
