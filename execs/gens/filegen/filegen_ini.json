@@ -1,4 +1,37 @@
 {
   "StarANCount": 0,
-  "SizeMassDevPercent": 20
+  "SizeMassDevPercent": 20,
+  "OrbitDevPercent": 20,
+  "SingleStar":
+  {
+    "R10": 4000,
+    "Size": 400,
+    "MaxG": 2
+  },
+  "DoubleStar":
+  {
+    "R10": 3000,
+    "Size": 300,
+    "MaxG": 1.5,
+    "Radius":1000,
+    "Period": 10
+  },
+  "TripleStar":
+  {
+    "R10": 3000,
+    "Size": 300,
+    "MaxG": 1.5,
+    "Radius":2000,
+    "Period": 30,
+    "Pair":
+    {
+      "R10": 1000,
+      "Size": 100,
+      "MaxG": 0.8,
+      "Radius":300,
+      "Period": 8
+    }
+  }
+
+
 }

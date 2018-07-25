@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/v2"
 	hls "github.com/gerow/go-color"
 	"image/color"
@@ -41,6 +41,36 @@ type Planet struct {
 type Options struct {
 	StarANCount        int
 	SizeMassDevPercent float64
+	OrbitDevPercent    float64
+
+	SingleStar struct {
+		R10  float64
+		Size float64
+		MaxG float64
+	}
+
+	DoubleStar struct {
+		R10    float64
+		Size   float64
+		MaxG   float64
+		Radius float64
+		Period float64
+	}
+
+	TripleStar struct {
+		R10    float64
+		Size   float64
+		MaxG   float64
+		Radius float64
+		Period float64
+		Pair   struct {
+			R10    float64
+			Size   float64
+			MaxG   float64
+			Radius float64
+			Period float64
+		}
+	}
 }
 
 var Opts Options
@@ -76,37 +106,11 @@ func main() {
 		pref := sysName + "-"
 		planets := allPlanet[sysName]
 		_ = planets
-		points := make(map[string]*commons.GalaxyPoint)
+		points := make(map[string]*GalaxyPoint)
 
-		switch stat.StarCount {
-		case 1:
-			points[pref+"S"] = pOpts{
-				t:    commons.GPT_STAR,
-				r10:  4000,
-				size: 400,
-				maxG: 2,
-			}.gp()
-		case 2:
-			points[pref+"sv"] = &commons.GalaxyPoint{IsVirtual: true}
+		createStars(stat, points, pref)
 
-			points[pref+"S1"] = pOpts{
-				t:      commons.GPT_STAR,
-				parent: pref + "sv",
-				r10:    4000,
-				size:   400,
-				maxG:   2,
-			}.gp()
-			points[pref+"S2"] = pOpts{
-				t:      commons.GPT_STAR,
-				parent: pref + "sv",
-				r10:    4000,
-				size:   400,
-				maxG:   2,
-			}.gp()
-		case 3:
-		}
-
-		galaxy := commons.Galaxy{
+		galaxy := Galaxy{
 			Points:        points,
 			SpawnDistance: 5000,
 		}
@@ -116,6 +120,99 @@ func main() {
 		}
 
 		ioutil.WriteFile("galaxy_"+sysName+".json", dat, 0)
+	}
+}
+
+func createStars(stat WarpStat, points map[string]*GalaxyPoint, pref string) {
+	switch stat.StarCount {
+	case 1:
+		points[pref+"S"] = pOpts{
+			t:    GPT_STAR,
+			r10:  Opts.SingleStar.R10,
+			size: Opts.SingleStar.Size,
+			maxG: Opts.SingleStar.MaxG,
+		}.gp()
+	case 2:
+		points[pref+"sv"] = &GalaxyPoint{IsVirtual: true}
+
+		kOrbitPeriod := KDev(Opts.OrbitDevPercent)
+		r := Opts.DoubleStar.Radius * kOrbitPeriod
+		period := Opts.DoubleStar.Period * kOrbitPeriod
+
+		kr := KDev(Opts.OrbitDevPercent)
+
+		points[pref+"S1"] = pOpts{
+			t:      GPT_STAR,
+			parent: pref + "sv",
+			orbit:  r * kr,
+			period: period,
+			phase:  0,
+			r10:    Opts.DoubleStar.R10 / kr,
+			size:   Opts.DoubleStar.Size / kr,
+			maxG:   Opts.DoubleStar.MaxG / kr,
+		}.gp()
+		points[pref+"S2"] = pOpts{
+			t:      GPT_STAR,
+			parent: pref + "sv",
+			orbit:  r / kr,
+			period: period,
+			phase:  180,
+			r10:    Opts.DoubleStar.R10 * kr,
+			size:   Opts.DoubleStar.Size * kr,
+			maxG:   Opts.DoubleStar.MaxG * kr,
+		}.gp()
+	case 3:
+		points[pref+"sv1"] = &GalaxyPoint{IsVirtual: true}
+
+		kOrbitPeriod := KDev(Opts.OrbitDevPercent)
+		r := Opts.TripleStar.Radius * kOrbitPeriod
+		period := Opts.TripleStar.Period * kOrbitPeriod
+
+		kr := KDev(Opts.OrbitDevPercent)
+
+		points[pref+"S1"] = pOpts{
+			t:      GPT_STAR,
+			parent: pref + "sv1",
+			orbit:  r * kr,
+			period: period,
+			phase:  0,
+			r10:    Opts.DoubleStar.R10 / kr,
+			size:   Opts.DoubleStar.Size / kr,
+			maxG:   Opts.DoubleStar.MaxG / kr,
+		}.gp()
+		points[pref+"sv2"] = &GalaxyPoint{
+			IsVirtual: true,
+			ParentID:  pref + "sv1",
+			Orbit:     r / kr,
+			Period:    period,
+			AngPhase:  180,
+		}
+
+		kOrbitPeriod = KDev(Opts.OrbitDevPercent)
+		r = Opts.TripleStar.Pair.Radius * kOrbitPeriod
+		period = Opts.TripleStar.Pair.Period * kOrbitPeriod
+
+		kr = KDev(Opts.OrbitDevPercent)
+		points[pref+"S2"] = pOpts{
+			t:      GPT_STAR,
+			parent: pref + "sv2",
+			orbit:  r * kr,
+			period: period,
+			phase:  0,
+			r10:    Opts.TripleStar.Pair.R10 / kr,
+			size:   Opts.TripleStar.Pair.Size / kr,
+			maxG:   Opts.TripleStar.Pair.MaxG / kr,
+		}.gp()
+		points[pref+"S3"] = pOpts{
+			t:      GPT_STAR,
+			parent: pref + "sv2",
+			orbit:  r / kr,
+			period: period,
+			phase:  180,
+			r10:    Opts.TripleStar.Pair.R10 * kr,
+			size:   Opts.TripleStar.Pair.Size * kr,
+			maxG:   Opts.TripleStar.Pair.MaxG * kr,
+		}.gp()
 	}
 }
 
@@ -130,13 +227,16 @@ func sAN(t string, count int) string {
 type pOpts struct {
 	parent string
 	t      string
+	orbit  float64
+	period float64
+	phase  float64
 	size   float64
 	r10    float64
 	maxG   float64
 	shps   [15]int
 }
 
-func (o pOpts) gp() *commons.GalaxyPoint {
+func (o pOpts) gp() *GalaxyPoint {
 	okr := func(x float64) float64 {
 		const sgn = 100
 		return float64(int(x*sgn)) / sgn
@@ -144,11 +244,11 @@ func (o pOpts) gp() *commons.GalaxyPoint {
 
 	count := 0
 	switch o.t {
-	case commons.GPT_STAR:
+	case GPT_STAR:
 		count = Opts.StarANCount
 	}
 
-	massSizeK := commons.KDev(Opts.SizeMassDevPercent)
+	massSizeK := KDev(Opts.SizeMassDevPercent)
 
 	zd := o.r10 / 3 * massSizeK
 	maxG := o.maxG * massSizeK
@@ -156,10 +256,13 @@ func (o pOpts) gp() *commons.GalaxyPoint {
 
 	signatures := sphs2sigs(o.shps)
 
-	return &commons.GalaxyPoint{
+	return &GalaxyPoint{
 		ParentID:   o.parent,
 		Type:       o.t,
 		SpriteAN:   sAN(o.t, count),
+		Orbit:      o.orbit,
+		Period:     o.period,
+		AngPhase:   o.phase,
 		Size:       okr(o.size * massSizeK),
 		Mass:       okr(mass),
 		GDepth:     okr(zd),
@@ -183,11 +286,11 @@ func randBright() color.RGBA {
 	}
 }
 
-func sphs2sigs(s [15]int) []commons.Signature {
-	res := make([]commons.Signature, 0)
+func sphs2sigs(s [15]int) []Signature {
+	res := make([]Signature, 0)
 
 	add := func(a, b int) {
-		res = append(res, commons.Signature{
+		res = append(res, Signature{
 			TypeName: strconv.Itoa(a) + "-" + strconv.Itoa(b),
 			Dev:      v2.RandomInCircle(1),
 		})
