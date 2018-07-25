@@ -1,3 +1,10 @@
 {
-  "Scale": 3333
+  "PosScale": 10,
+  "Size": 1,
+  "R10": 10,
+  "Mass": 1,
+  "DevPercent":20,
+  "RedR": 3,
+  "DR": 2,
+  "SpawnOutK": 1.1
 }

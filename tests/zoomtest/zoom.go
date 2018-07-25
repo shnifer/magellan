@@ -28,7 +28,7 @@ func update(window *ebiten.Image) error {
 	}
 	/*
 		op:=&ebiten.DrawImageOptions{}
-		op.GeoM.Scale(1.5,1.5)
+		op.GeoM.PosScale(1.5,1.5)
 		window.DrawImage(tex,op)
 	*/
 	msg := fmt.Sprintf("FPS: %v", ebiten.CurrentFPS())

@@ -115,7 +115,7 @@ func main() {
 			panic(err)
 		}
 
-		ioutil.WriteFile("galaxy_"+sysName, dat, 0)
+		ioutil.WriteFile("galaxy_"+sysName+".json", dat, 0)
 	}
 }
 
@@ -137,6 +137,11 @@ type pOpts struct {
 }
 
 func (o pOpts) gp() *commons.GalaxyPoint {
+	okr := func(x float64) float64 {
+		const sgn = 100
+		return float64(int(x*sgn)) / sgn
+	}
+
 	count := 0
 	switch o.t {
 	case commons.GPT_STAR:
@@ -155,9 +160,9 @@ func (o pOpts) gp() *commons.GalaxyPoint {
 		ParentID:   o.parent,
 		Type:       o.t,
 		SpriteAN:   sAN(o.t, count),
-		Size:       o.size * massSizeK,
-		Mass:       mass,
-		GDepth:     zd,
+		Size:       okr(o.size * massSizeK),
+		Mass:       okr(mass),
+		GDepth:     okr(zd),
 		Emissions:  nil,
 		Signatures: signatures,
 		Color:      randBright(),

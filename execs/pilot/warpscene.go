@@ -228,8 +228,7 @@ func (s *warpScene) warpedOut() {
 	} else if dist < sys.WarpGreenInDist || dist > sys.WarpGreenOutDist {
 		log.Println("medium damage")
 	}
-	//todo: uncomment then galaxy ready
-	//s.toCosmo(systemID)
+	s.toCosmo(systemID)
 }
 
 func (s *warpScene) toCosmo(systemID string) {

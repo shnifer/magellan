@@ -17,7 +17,17 @@ func init() {
 }
 
 type Options struct {
-	Scale float64
+	PosScale float64
+
+	Size float64
+	R10 float64
+	Mass float64
+
+	DevPercent float64
+
+	RedR float64
+	DR float64
+	SpawnOutK float64
 }
 
 var Opts Options
@@ -42,19 +52,22 @@ func main() {
 	var gal commons.Galaxy
 	gal.Points = make(map[string]*commons.GalaxyPoint)
 	for id, pt := range pts {
-		r := 2 + 2*rand.Float64()
-		dr := r * (0.3 + 0.4*rand.Float64())
+		kMass:=commons.KDev(Opts.DevPercent)
+		kR:=commons.KDev(Opts.DevPercent)
+		r := Opts.RedR*kR
+		kR=commons.KDev(Opts.DevPercent)
+		dr := Opts.DR*kR
 		p := commons.GalaxyPoint{
-			Pos:               pt.Mul(Opts.Scale),
+			Pos:               okrV2(pt.Mul(Opts.PosScale)),
 			Type:              commons.GPT_WARP,
-			Size:              3,
-			Mass:              okr(1 + rand.Float64()),
-			GDepth:            0.1,
-			WarpSpawnDistance: 5,
-			WarpRedOutDist:    r,
-			WarpGreenInDist:   r + dr,
-			WarpGreenOutDist:  r + 2*dr,
-			WarpYellowOutDist: r + 3*dr,
+			Size:              okr(Opts.Size*kMass),
+			Mass:              okr(Opts.Mass*kMass),
+			GDepth:            okr(Opts.R10/3*kMass),
+			WarpRedOutDist:    okr(r),
+			WarpGreenInDist:   okr(r + dr),
+			WarpGreenOutDist:  okr(r + 2*dr),
+			WarpYellowOutDist: okr(r + 3*dr),
+			WarpSpawnDistance: okr((r + 3*dr)*Opts.SpawnOutK),
 			GreenColor:        colornames.White,
 			InnerColor:        randomColor(),
 			OuterColor:        randomColor(),
@@ -86,5 +99,12 @@ func randomColor() color.RGBA {
 		G: r(),
 		B: r(),
 		A: 255,
+	}
+}
+
+func okrV2(v v2.V2) v2.V2{
+	return v2.V2{
+		X: okr(v.X),
+		Y: okr(v.Y),
 	}
 }

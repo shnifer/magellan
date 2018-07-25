@@ -395,7 +395,7 @@ func (s *cosmoScene) actualizeOtherShips() {
 }
 
 func (s *cosmoScene) drawScale(Q *graph.DrawQueue) {
-	//Scale factor hud
+	//PosScale factor hud
 	camScale := s.cam.Scale * graph.GS()
 	maxLen := float64(WinW) * 0.8
 	order := math.Floor(math.Log10(maxLen / camScale))
