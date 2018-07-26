@@ -7,10 +7,10 @@ import (
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
-	"image/color"
+	"io/ioutil"
+	"encoding/json"
+	"golang.org/x/image/colornames"
 )
-
-const addr = "http://tagunil.ru:8000/system/"
 
 var (
 	slotSprite  *graph.Sprite
@@ -27,18 +27,29 @@ func run(image *ebiten.Image) error {
 	if ebiten.IsRunningSlowly() {
 		return nil
 	}
-	image.Fill(color.White)
+	image.Fill(colornames.Darkgoldenrod)
 	drawSlots(image)
 	return nil
 }
 
 func main() {
+	inid,err:=ioutil.ReadFile("engi_ini.json")
+	if err!=nil{
+		panic(err)
+	}
+	var ini struct{Addr string}
+	err = json.Unmarshal(inid,&ini)
+	if err!=nil{
+		panic(err)
+	}
+	addr:=ini.Addr
+
 	draw.InitTexAtlas()
 
-	slotSprite = draw.NewAtlasSprite("BUILDING_BEACON", graph.NoCam)
+	slotSprite = draw.NewAtlasSprite("aim", graph.NoCam)
 	slotSprite.SetSize(50, 50)
 
-	dotSprite = draw.NewAtlasSprite("trail", graph.NoCam)
+	dotSprite = draw.NewAtlasSprite("MAGIC_MARK_WARP", graph.NoCam)
 	dotSprite.SetSize(60, 60)
 
 	smokeSprite = draw.NewAtlasSprite("smoke", graph.NoCam)

@@ -42,6 +42,7 @@ func (r *Ranma) send(sn int, x uint16) {
 	resp, err := r.client.Post(addr, "application/json", req)
 	if err != nil {
 		Log(LVL_ERROR, "Ranma.send POST error:", err)
+		return
 	}
 	resp.Body.Close()
 }

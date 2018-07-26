@@ -59,6 +59,7 @@
   "asteroid4": {"FileName": "asteroid4_ani.png", "Sx":32, "Sy":32,"Count":19, "Smooth":true},
   "warpstar": {"FileName": "particle.png"},
   "smoke": {"FileName": "smoke.png"},
+  "aim": {"FileName": "aim.png"},
   "noise": {"FileName": "noisesheet.png","Sx": 400,"Sy": 400},
   "front90": {"FileName": "HUD_TL_mini.png"},
   "front91": {"FileName": "HUD_TC_mini.png"},
