@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	. "github.com/Shnifer/magellan/commons"
 	"io/ioutil"
+	"fmt"
 )
 
 type WarpStat struct {
@@ -60,14 +61,18 @@ func main() {
 		panic(err)
 	}
 
+	fmt.Println("files loaded")
 	for sysName, stat := range warpP {
+		fmt.Println("system "+sysName)
 		pref := sysName + "-"
 		planets := allPlanet[sysName]
-		_ = planets
 		points := make(map[string]*GalaxyPoint)
 
+		fmt.Println("got")
 		createStars(stat, points, pref)
+		fmt.Println("stars created")
 		createPlanets(stat, points, pref, planets)
+		fmt.Println("planets created")
 
 		galaxy := Galaxy{
 			Points:        points,

@@ -48,16 +48,16 @@ func createPlanets(stat WarpStat, points map[string]*GalaxyPoint, pref string, p
 		if asteroidBelted {
 			if rand.Intn(100)<Opts.MoreBeltsPercent{
 				addBelt(points, parentID, dist, period, pref+strconv.Itoa(n)+"-")
+				nextDistPeriod(&dist, &period)
+				continue
 			}
-			nextDistPeriod(&dist, &period)
-			continue
 		} else {
 			if rand.Intn(100)<Opts.FirstBeltPercent{
 				addBelt(points, parentID, dist, period, pref+strconv.Itoa(n)+"-")
+				nextDistPeriod(&dist, &period)
+				asteroidBelted = true
+				continue
 			}
-			nextDistPeriod(&dist, &period)
-			asteroidBelted = true
-			continue
 		}
 
 		//move hard on hard

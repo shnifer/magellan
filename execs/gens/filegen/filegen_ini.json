@@ -31,7 +31,39 @@
       "Radius":300,
       "Period": 8
     }
-  }
+  },
 
+  "PlanetMinR":1000,
+  "ClosePeriod":20,
+  "DistStep":1.5,
+  "PeriodStep":1.5,
 
+  "LastHardOnGasPercent":30,
+  "MoveHardOnHardPercent":30,
+
+  "FirstBeltPercent":40,
+  "MoreBeltsPercent":20,
+  "BeltOrbitDev":10,
+  "BeltSizeDev":20,
+
+  "AsteroidSize":20,
+  "AsteroidR10":100,
+  "AsteroidG":0.1,
+
+  "BeltCount":50,
+  "BeltCountDev":60,
+
+  "PlanetOrbitDev":20,
+  "GasDev":30,
+  "GasSize":200,
+  "GasG":0.7,
+  "GasR10":1000,
+  "HardDev":30,
+  "HardSize":70,
+  "HardG":0.5,
+  "HardR10":600,
+
+  "SatelliteOrbitPart":2,
+
+  "GasBeltPercent": 30
 }
