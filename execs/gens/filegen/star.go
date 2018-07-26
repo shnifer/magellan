@@ -41,7 +41,7 @@ func createStars(stat WarpStat, points map[string]*GalaxyPoint, pref string) {
 			maxG:   Opts.DoubleStar.MaxG * kr,
 		}.gp()
 	case 3:
-		points[pref+"sv1"] = &GalaxyPoint{IsVirtual: true}
+		points[pref+"sv"] = &GalaxyPoint{IsVirtual: true}
 
 		kOrbitPeriod := KDev(Opts.OrbitDevPercent)
 		r := Opts.TripleStar.Radius * kOrbitPeriod
@@ -51,7 +51,7 @@ func createStars(stat WarpStat, points map[string]*GalaxyPoint, pref string) {
 
 		points[pref+"S1"] = pOpts{
 			t:      GPT_STAR,
-			parent: pref + "sv1",
+			parent: pref + "sv",
 			orbit:  r * kr,
 			period: period,
 			phase:  0,
@@ -61,7 +61,7 @@ func createStars(stat WarpStat, points map[string]*GalaxyPoint, pref string) {
 		}.gp()
 		points[pref+"sv2"] = &GalaxyPoint{
 			IsVirtual: true,
-			ParentID:  pref + "sv1",
+			ParentID:  pref + "sv",
 			Orbit:     r / kr,
 			Period:    period,
 			AngPhase:  180,
