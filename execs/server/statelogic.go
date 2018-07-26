@@ -87,7 +87,6 @@ func toWarpCommonData(common CommonData, stateData StateData, newState, prevStat
 		AngVel: 0,
 		Ang:    ang,
 	}
-
 	common.PilotData.Ship = ship
 	common.PilotData.Distortion = DEFVAL.MinDistortion
 	common.PilotData.Dir = ang

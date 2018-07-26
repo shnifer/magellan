@@ -150,7 +150,7 @@ func main() {
 		for i := 0; i < richPlanets; i++ {
 			var mc int
 			if metalTypesInSystem > 1 {
-				if rand.Intn(2) == 0 && PlanetsMineralCount[2] > 0 {
+				if PlanetsMineralCount[2] > 0 {
 					mc = 2
 				} else {
 					mc = get(PlanetsMineralCount)

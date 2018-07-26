@@ -85,6 +85,7 @@ func (s *warpScene) Init() {
 	defer LogFunc("warpScene.Init")()
 
 	s.objects = make(map[string]*CosmoPoint)
+	s.objIDs = make([]string, 0)
 	s.thrustLevel = 0.01
 	s.maneurLevel = 0
 	s.distTravaled = 0
@@ -92,6 +93,7 @@ func (s *warpScene) Init() {
 	s.fuelConsumed = 0
 	s.warpingOutT = 0
 	s.alreadyWarp = false
+	s.cam.Scale = 1
 
 	stateData := Data.GetStateData()
 
@@ -131,7 +133,6 @@ func (s *warpScene) Update(dt float64) {
 		(s.thrustLevel + math.Abs(s.maneurLevel)) * dt
 
 	Data.PilotData.WarpPos = Data.PilotData.Ship.Pos
-
 	s.at.Update(dt)
 
 	s.warpChecks()
@@ -208,10 +209,9 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 }
 
 func (s *warpScene) warpedOut() {
-	if s.alreadyWarp{
+	if s.alreadyWarp {
 		return
 	}
-	s.alreadyWarp = true
 	systemID := ""
 	for _, gp := range Data.Galaxy.Ordered {
 		if Data.PilotData.Ship.Pos.Sub(gp.Pos).LenSqr() <
@@ -237,6 +237,7 @@ func (s *warpScene) warpedOut() {
 }
 
 func (s *warpScene) toCosmo(systemID string) {
+	s.alreadyWarp = true
 	state := Data.State
 	state.StateID = STATE_cosmo
 	state.GalaxyID = systemID
@@ -262,7 +263,7 @@ func (s *warpScene) debugControl() {
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
-		s.toCosmo("solar")
+		s.toCosmo("TT6")
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
@@ -271,6 +272,7 @@ func (s *warpScene) debugControl() {
 	if ebiten.IsKeyPressed(ebiten.KeyE) {
 		s.cam.Scale /= (1 + dt)
 	}
+	s.cam.Scale = Clamp(s.cam.Scale, 0.0001, 10000)
 }
 
 func (s *warpScene) warpChecks() {

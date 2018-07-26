@@ -121,6 +121,7 @@ func (s *cosmoScene) Init() {
 
 	s.objects = make(map[string]*CosmoPoint)
 	s.otherShips = make(map[string]*OtherShip)
+	s.objIDs = make([]string, 0)
 	s.lastServerID = 0
 	s.isCamToShip = true
 	s.scanner = newScanner(s.cam, s.scanState)
@@ -299,10 +300,12 @@ func (s *cosmoScene) updateInputMain() {
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {
 		s.cam.Scale *= 1 + dt
+		s.cam.Scale = commons.Clamp(s.cam.Scale, 0.0001, 10000)
 		s.cam.Recalc()
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyE) {
 		s.cam.Scale /= 1 + dt
+		s.cam.Scale = commons.Clamp(s.cam.Scale, 0.0001, 10000)
 		s.cam.Recalc()
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyW) || ebiten.IsKeyPressed(ebiten.KeyUp) {

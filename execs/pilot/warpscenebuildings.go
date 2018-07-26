@@ -74,6 +74,6 @@ func (s *warpScene) OnCommand(command string) {
 			s.delBuilding(b)
 		}
 	default:
-		Log(LVL_WARN, "OnCommand strange command:", command)
+		Log(LVL_ERROR, "OnCommand strange command:", command)
 	}
 }

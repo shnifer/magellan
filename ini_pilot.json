@@ -14,7 +14,7 @@
     "WarpGravityConst": 1,
     "VelDistWarpK": 1,
     "WarpGravPowN": 3,
-    "WarpGravThreshold":0.001,
+    "WarpGravThreshold":0,
     "DT":0.001,
     "MinDistortion":300,
     "CosmoPredictorUpdT":0.1,

@@ -21,7 +21,7 @@ func (s *warpScene) procControlForward(dt float64) {
 		Data.PilotData.Distortion = 0
 	} else {
 		Data.PilotData.Distortion = DEFVAL.MinDistortion +
-			s.thrustLevel*Data.SP.Warp_engine.Distort_max
+			s.thrustLevel*(Data.SP.Warp_engine.Distort_max-DEFVAL.MinDistortion)
 	}
 }
 

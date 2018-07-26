@@ -1,6 +1,8 @@
 package commons
 
-import "github.com/Shnifer/magellan/v2"
+import (
+	"github.com/Shnifer/magellan/v2"
+)
 
 var gravityConst float64
 var warpGravityConst float64

@@ -31,6 +31,7 @@ type warpSceneHUD struct {
 
 	compass    *graph.Sprite
 	distCircle *graph.CircleLine
+	physRadText *graph.Text
 }
 
 func newWarpSceneHUD(cam *graph.Camera) warpSceneHUD {
@@ -142,6 +143,14 @@ func (s *warpScene) updateHUD() {
 	s.hud.turnControl.SetPos(p)
 
 	s.hud.compass.SetPos(Data.PilotData.Ship.Pos)
+
+	circleRadPx := float64(WinH) * 0.3
+	physRad := circleRadPx / s.cam.Scale / graph.GS()
+
+	msg := fmt.Sprintf("circle radius: %f", physRad)
+	physRadText := graph.NewText(msg, Fonts[Face_mono], colornames.Oldlace)
+	physRadText.SetPosPivot(graph.ScrP(0.5, 0.4), graph.TopMiddle())
+	s.hud.physRadText = physRadText
 }
 
 func (h warpSceneHUD) Req(Q *graph.DrawQueue) {
@@ -157,6 +166,7 @@ func (h warpSceneHUD) Req(Q *graph.DrawQueue) {
 
 	//Q.Add(h.caption, graph.Z_STAT_HUD)
 	Q.Append(h.distCircle)
+	Q.Add(h.physRadText, graph.Z_STAT_HUD+10)
 }
 
 func (s *warpScene) drawScale(Q *graph.DrawQueue) {

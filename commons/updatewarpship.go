@@ -50,7 +50,6 @@ func UpdateWarpAndShip(data TData, sumT float64, dt float64, powN float64) {
 		ship.Vel = ship.Vel.Rotate(data.PilotData.Ship.AngVel * dt)
 	}
 	ship.Ang = ship.Vel.Dir()
-
 	//final update for all and every object, slow but once
 	data.Galaxy.Update(sessionTime)
 

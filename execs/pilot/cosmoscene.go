@@ -119,6 +119,7 @@ func (s *cosmoScene) Init() {
 
 	s.objects = make(map[string]*CosmoPoint)
 	s.otherShips = make(map[string]*OtherShip)
+	s.objIDs = make([]string, 0)
 	s.warpEngine = newCosmoSceneWarpEngine()
 	s.thrustLevel = 0
 	s.cruiseOn = false
@@ -361,6 +362,7 @@ func (s *cosmoScene) updateDebugControl(dt float64) {
 	if ebiten.IsKeyPressed(ebiten.KeyE) {
 		s.cam.Scale /= 1 + dt
 	}
+	s.cam.Scale = Clamp(s.cam.Scale, 0.0001, 10000)
 }
 
 func (*cosmoScene) Destroy() {
