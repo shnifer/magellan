@@ -1,9 +1,9 @@
 package main
 
 import (
-	."github.com/Shnifer/magellan/commons"
-	"strconv"
+	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/v2"
+	"strconv"
 )
 
 func sphs2sigs(s [15]int) []Signature {
@@ -93,4 +93,3 @@ const (
 	LITOMETAL
 	BIO
 )
-

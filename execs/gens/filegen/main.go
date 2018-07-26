@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	. "github.com/Shnifer/magellan/commons"
 	"io/ioutil"
-	"fmt"
 )
 
 type WarpStat struct {
@@ -63,7 +63,7 @@ func main() {
 
 	fmt.Println("files loaded")
 	for sysName, stat := range warpP {
-		fmt.Println("system "+sysName)
+		fmt.Println("system " + sysName)
 		pref := sysName + "-"
 		planets := allPlanet[sysName]
 		points := make(map[string]*GalaxyPoint)

@@ -1,23 +1,24 @@
 package main
 
 import (
-	"image/color"
-	."github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/commons"
 	hls "github.com/gerow/go-color"
+	"image/color"
 	"math/rand"
 	"strconv"
 )
 
 type pOpts struct {
-	parent string
-	t      string
-	orbit  float64
-	period float64
-	phase  float64
-	size   float64
-	r10    float64
-	maxG   float64
-	shps   [15]int
+	parent   string
+	t        string
+	orbit    float64
+	period   float64
+	phase    float64
+	size     float64
+	r10      float64
+	maxG     float64
+	shps     [15]int
+	minerals []int
 }
 
 func (o pOpts) gp() *GalaxyPoint {
@@ -52,6 +53,7 @@ func (o pOpts) gp() *GalaxyPoint {
 		GDepth:     okr(zd),
 		Emissions:  nil,
 		Signatures: signatures,
+		Minerals:   o.minerals,
 		Color:      randBright(),
 	}
 }
@@ -69,7 +71,6 @@ func randBright() color.RGBA {
 		A: 255,
 	}
 }
-
 
 func sAN(t string, count int) string {
 	if count == 0 {
