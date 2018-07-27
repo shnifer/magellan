@@ -37,6 +37,7 @@
   "ClosePeriod":20,
   "DistStep":1.5,
   "PeriodStep":1.5,
+  "StepDev": 15,
 
   "LastHardOnGasPercent":30,
   "MoveHardOnHardPercent":30,

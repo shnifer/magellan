@@ -11,11 +11,11 @@ import (
 )
 
 type Signature struct {
-	TypeName  string
-	SigString string
+	TypeName  string `json:"t"`
+	SigString string `json:"s",omitempty`
 	//deviation of this instance
 	//supposed to be Len<=1
-	Dev v2.V2
+	Dev v2.V2 `json:"d"`
 }
 
 const sigAtlasFN = "signatures.json"
