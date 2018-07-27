@@ -43,6 +43,8 @@ type scene struct {
 	nameInput  *TextInput
 }
 
+//todo: wormhole show
+
 func newScene() *scene {
 	cam := graph.NewCamera()
 	cam.Center = graph.ScrP(0.5, 0.5)

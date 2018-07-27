@@ -12,6 +12,7 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 	"math"
+	"strings"
 )
 
 type warpScene struct {
@@ -22,6 +23,8 @@ type warpScene struct {
 	sonar *graph.Sector
 
 	sonarHUD   *SonarHUD
+
+	sonarText string
 
 	q *graph.DrawQueue
 }
@@ -85,7 +88,8 @@ func (s *warpScene) Update(dt float64) {
 
 	s.ship.SetAng(Data.PilotData.Ship.Ang)
 
-	activeSigs := sonarSigs()
+	var activeSigs[]Signature
+	activeSigs, s.sonarText = sonarSigs()
 	s.sonarHUD.ActiveSignatures(activeSigs)
 	s.sonarHUD.Update(dt)
 }
@@ -107,13 +111,19 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 	Q.Add(stats, graph.Z_HUD)
 	Q.Add(s.caption, graph.Z_STAT_HUD)
 
+	t:=graph.NewText(s.sonarText, Fonts[Face_cap], colornames.White)
+	t.SetPosPivot(graph.ScrP(0.5,0.5),graph.Center())
+	Q.Add(t, graph.Z_STAT_HUD)
+
 	Q.Append(s.sonarHUD)
 
 	Q.Run(image)
 }
 
-func sonarSigs() []Signature{
+func sonarSigs() ([]Signature, string){
 	res:=make([]Signature,0)
+	var text string
+
 	ship:=Data.PilotData.Ship.Pos
 	range2:=Data.NaviData.SonarRange * Data.NaviData.SonarRange
 	for _,p:=range Data.Galaxy.Ordered{
@@ -126,8 +136,20 @@ func sonarSigs() []Signature{
 			continue
 		}
 		res = append(res, p.Signatures...)
+
+		for _,s:=range p.BlackBoxes{
+			if s!=""{
+				text  = text  + "ЧЯ: "+s+"\n"
+			}
+		}
+		for _,s:=range p.Beacons{
+			if s!=""{
+				text  = text +"Маяк: "+s+"\n"
+			}
+		}
 	}
-	return res
+	strings.TrimRight(text,"\n")
+	return res, text
 }
 
 func (s *warpScene) procMouseClick(scrPos v2.V2) {

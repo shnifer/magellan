@@ -33,7 +33,7 @@ func (rd *roomServer) OnCommand(room, role, command string) {
 		}
 
 		//duplicate in warp
-		if b.Type == BUILDING_BEACON {
+		if b.Type == BUILDING_BEACON || b.Type == BUILDING_BLACKBOX {
 			b.PlanetID = b.GalaxyID
 			b.GalaxyID = WARP_Galaxy_ID
 			b.Period = 0
