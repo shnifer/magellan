@@ -68,5 +68,21 @@
   "front95": {"FileName": "HUD_CR_mini.png"},
   "front96": {"FileName": "HUD_BL_mini.png"},
   "front97": {"FileName": "HUD_BC_mini.png"},
-  "front98": {"FileName": "HUD_BR_mini.png"}
+  "front98": {"FileName": "HUD_BR_mini.png"},
+  "s1": {"FileName": "Signature01.png"},
+  "s2": {"FileName": "Signature02.png"},
+  "s3": {"FileName": "Signature03.png"},
+  "s4": {"FileName": "Signature04.png"},
+  "s5": {"FileName": "Signature05.png"},
+  "s6": {"FileName": "Signature06.png"},
+  "s7": {"FileName": "Signature07.png"},
+  "s8": {"FileName": "Signature08.png"},
+  "s9": {"FileName": "Signature09.png"},
+  "s10": {"FileName": "Signature10.png"},
+  "s11": {"FileName": "Signature11.png"},
+  "s12": {"FileName": "Signature12.png"},
+  "s13": {"FileName": "Signature13.png"},
+  "s14": {"FileName": "Signature14.png"},
+  "s15": {"FileName": "Signature15.png"},
+  "s16": {"FileName": "Signature16.png"}
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
-	"golang.org/x/image/font"
+	"math"
 )
 
 type warpScene struct {
@@ -21,7 +21,7 @@ type warpScene struct {
 
 	sonar *graph.Sector
 
-	face font.Face
+	sonarHUD   *SonarHUD
 
 	q *graph.DrawQueue
 }
@@ -41,12 +41,14 @@ func newWarpScene() *warpScene {
 	sonarSector := graph.NewSector(cam.Phys())
 	sonarSector.SetColor(colornames.Indigo)
 
+	sonarSize:=0.8*float64(WinH)
+
 	return &warpScene{
 		caption: caption,
 		ship:    ship,
 		cam:     cam,
-		face:    Fonts[Face_stats],
 		sonar:   sonarSector,
+		sonarHUD: NewSonarHUD(graph.ScrP(0.5, 0.5), sonarSize, graph.NoCam, graph.Z_HUD),
 		q:       graph.NewDrawQueue(),
 	}
 }
@@ -82,6 +84,10 @@ func (s *warpScene) Update(dt float64) {
 		Data.NaviData.SonarDir+Data.NaviData.SonarWide/2)
 
 	s.ship.SetAng(Data.PilotData.Ship.Ang)
+
+	activeSigs := sonarSigs()
+	s.sonarHUD.ActiveSignatures(activeSigs)
+	s.sonarHUD.Update(dt)
 }
 
 func (s *warpScene) Draw(image *ebiten.Image) {
@@ -96,12 +102,32 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 
 	msg := fmt.Sprintf("DIRECTION: %.f\nRANGE: %.f\nWIDE: %.1f",
 		Data.NaviData.SonarDir, Data.NaviData.SonarRange, Data.NaviData.SonarWide)
-	stats := graph.NewText(msg, s.face, colornames.Palegoldenrod)
+	stats := graph.NewText(msg, Fonts[Face_stats], colornames.Palegoldenrod)
 	stats.SetPosPivot(graph.ScrP(0.6, 0.1), graph.TopLeft())
 	Q.Add(stats, graph.Z_HUD)
 	Q.Add(s.caption, graph.Z_STAT_HUD)
 
+	Q.Append(s.sonarHUD)
+
 	Q.Run(image)
+}
+
+func sonarSigs() []Signature{
+	res:=make([]Signature,0)
+	ship:=Data.PilotData.Ship.Pos
+	range2:=Data.NaviData.SonarRange * Data.NaviData.SonarRange
+	for _,p:=range Data.Galaxy.Ordered{
+		v:=p.Pos.Sub(ship)
+		if v.LenSqr()>range2{
+			continue
+		}
+		angD:=math.Abs(AngDiff(Data.NaviData.SonarDir,v.Dir()))
+		if angD>Data.NaviData.SonarWide/2{
+			continue
+		}
+		res = append(res, p.Signatures...)
+	}
+	return res
 }
 
 func (s *warpScene) procMouseClick(scrPos v2.V2) {
@@ -111,4 +137,15 @@ func (s *warpScene) OnCommand(command string) {
 }
 
 func (*warpScene) Destroy() {
+}
+
+func AngDiff(a,b float64) float64 {
+	angle:=a-b
+	for angle < -180 {
+		angle += 360
+	}
+	for angle >= 180 {
+		angle -= 360
+	}
+	return angle
 }

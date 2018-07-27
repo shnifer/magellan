@@ -41,11 +41,11 @@
             "scan_speed": 0.1
         },
         "radar": {
-            "range_max": 180,
+            "range_max": 100000,
             "angle_min": 5,
             "angle_max": 75,
             "angle_change": 5,
-            "range_change": 20,
+            "range_change": 20000,
             "rotate_speed": 90
         },
         "fuel_tank": {

@@ -1,16 +1,18 @@
 {
-  "star": {
-    "SpriteName": "trail"
-  },
-  "planet1": {
-    "SpriteName": "planet",
-    "FPS": 10,
-    "CycleType": 1
-  },
-  "planet2": {
-    "SpriteName": "planet2",
-    "FPS": 20,
-    "CycleType": 2
-  }
-
+  "s1": {"SpriteName": "s1"},
+  "s2": {"SpriteName": "s2"},
+  "s3": {"SpriteName": "s3"},
+  "s4": {"SpriteName": "s4"},
+  "s5": {"SpriteName": "s5"},
+  "s6": {"SpriteName": "s6"},
+  "s7": {"SpriteName": "s7"},
+  "s8": {"SpriteName": "s8"},
+  "s9": {"SpriteName": "s9"},
+  "s10": {"SpriteName": "s10"},
+  "s11": {"SpriteName": "s11"},
+  "s12": {"SpriteName": "s12"},
+  "s13": {"SpriteName": "s13"},
+  "s14": {"SpriteName": "s14"},
+  "s15": {"SpriteName": "s15"},
+  "s16": {"SpriteName": "s16"}
 }
