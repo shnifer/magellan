@@ -7,7 +7,14 @@ import (
 	"strconv"
 )
 
+var newEl, eEl bool
+var starCount int
+
 func createPlanets(stat WarpStat, points map[string]*GalaxyPoint, pref string, planets []Planet) {
+	newEl = len(stat.GasList)+len(stat.MineralList) > 0
+	eEl = len(stat.EGas)+len(stat.EMetals) > 0
+	starCount = stat.StarCount
+
 	var parentID string
 	var minR float64
 	if stat.StarCount == 1 {
@@ -154,7 +161,46 @@ func addBelt(points map[string]*GalaxyPoint, parent string, dist, period float64
 }
 
 func asteroidSphs() [15]int {
-	return [15]int{}
+
+	res := [15]int{}
+	if !newEl {
+		res[PEDOMETALS] = EARTH
+	} else if eEl {
+		res[PEDOMETALS] = EARTHANDNEW
+	} else {
+		res[PEDOMETALS] = NEW
+	}
+
+	switch rand.Intn(10) {
+	case 0:
+		res[WATER] = HARD
+	case 1:
+		res[WATER] = WAS
+	}
+
+	if res[WATER] > NONE {
+		if !newEl {
+			res[MIXTURES] = EARTH
+		} else if starCount == 1 {
+			switch rand.Intn(2) {
+			case 0:
+				res[MIXTURES] = EARTHANDNEW
+			case 1:
+				res[MIXTURES] = NEW
+			}
+		} else {
+			switch rand.Intn(3) {
+			case 0:
+				res[MIXTURES] = EARTHANDNEW
+			case 1:
+				res[MIXTURES] = NEW
+			case 2:
+				res[MIXTURES] = RADICAL
+			}
+		}
+	}
+
+	return res
 }
 
 func nextDistPeriod(dist, period *float64) {

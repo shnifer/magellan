@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	. "github.com/Shnifer/magellan/commons"
+	"github.com/Shnifer/magellan/v2"
 	"io/ioutil"
 )
 
@@ -61,22 +62,41 @@ func main() {
 		panic(err)
 	}
 
+	warpSignatures := make(map[string][]Signature)
+
 	fmt.Println("files loaded")
 	for sysName, stat := range warpP {
-		fmt.Println("system " + sysName)
 		pref := sysName + "-"
 		planets := allPlanet[sysName]
 		points := make(map[string]*GalaxyPoint)
 
-		fmt.Println("got")
 		createStars(stat, points, pref)
-		fmt.Println("stars created")
 		createPlanets(stat, points, pref, planets)
-		fmt.Println("planets created")
+
+		sigs := make(map[string]Signature)
+		var sd float64
+		sd = 1500
+		for _, p := range points {
+			if sd < p.Orbit {
+				sd = p.Orbit
+			}
+			for _, sig := range p.Signatures {
+				if v, exist := sigs[sig.TypeName]; exist {
+					v.Dev = okrV2(v2.RandomInCircle(1))
+					sigs[sig.TypeName] = v
+				} else {
+					sigs[sig.TypeName] = sig
+				}
+			}
+		}
+
+		for _, v := range sigs {
+			warpSignatures[sysName] = append(warpSignatures[sysName], v)
+		}
 
 		galaxy := Galaxy{
 			Points:        points,
-			SpawnDistance: 5000,
+			SpawnDistance: sd*1.1,
 		}
 		dat, err := json.Marshal(galaxy)
 		if err != nil {
@@ -85,4 +105,30 @@ func main() {
 
 		ioutil.WriteFile("galaxy_"+sysName+".json", dat, 0)
 	}
+
+	var warpGal Galaxy
+	wgDat, err := ioutil.ReadFile("galaxy_warp.json")
+	if err != nil {
+		panic(err)
+	}
+	err = json.Unmarshal(wgDat, &warpGal)
+	if err != nil {
+		panic(err)
+	}
+
+	for id, sigs := range warpSignatures {
+		v, ok := warpGal.Points[id]
+		if !ok {
+			continue
+		}
+		v.Signatures = sigs
+		warpGal.Points[id] = v
+	}
+
+	wgDat, err = json.Marshal(warpGal)
+	if err != nil {
+		panic(err)
+	}
+
+	ioutil.WriteFile("galaxy_warp.json", wgDat, 0)
 }
