@@ -8,7 +8,7 @@
     "WinH": 800,
     "VSync": true,
     "DebugControl":true,
-    "DoProf": true,
+    "DoProf": false,
     "LowQ": false,
     "GravityConst": 1,
     "WarpGravityConst": 1,
