@@ -206,8 +206,13 @@ func asteroidSphs() [15]int {
 
 func nextDistPeriod(dist, period *float64) {
 	k:=KDev(Opts.StepDev)
-	*dist = *dist * Opts.DistStep * k
-	*period = *period * Opts.PeriodStep *k
+	if *dist<Opts.DistStepLevel{
+		*dist = *dist * ((Opts.DistStep-1)*k+1)
+		*period = *period * ((Opts.PeriodStep-1)*k+1)
+	} else {
+		*dist = *dist * ((Opts.DistFarStep-1)*k+1)
+		*period = *period * ((Opts.PeriodFarStep-1)*k+1)
+	}
 }
 
 func satellite(dist, period float64) (sdist, speriod float64) {

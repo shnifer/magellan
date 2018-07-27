@@ -38,6 +38,10 @@
   "DistStep":1.5,
   "PeriodStep":1.5,
   "StepDev": 15,
+  "DistStepLevel": 7000,
+  "DistFarStep":1.5,
+  "PeriodFarStep":1.5,
+
 
   "LastHardOnGasPercent":30,
   "MoveHardOnHardPercent":30,

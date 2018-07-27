@@ -39,6 +39,10 @@ type Options struct {
 	DistStep    float64
 	PeriodStep  float64
 	StepDev float64
+	DistStepLevel float64
+	DistFarStep    float64
+	PeriodFarStep  float64
+
 
 	LastHardOnGasPercent  int
 	MoveHardOnHardPercent int
