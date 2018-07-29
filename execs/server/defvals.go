@@ -24,6 +24,7 @@ type tDefVals struct {
 	DiskRefreshPeriod      int
 
 	DoProf bool
+	DebugPort string
 
 	StartWarpSpeed         float64
 	SolarStartLocationName string

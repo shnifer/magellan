@@ -9,7 +9,7 @@ import (
 	"runtime/trace"
 )
 
-func StartProfile(prefix string) {
+func StartProfile(prefix string, debugPort string) {
 	defer LogFunc("StartProfile " + prefix)()
 
 	f, err := os.Create(prefix + "cpu.prof")

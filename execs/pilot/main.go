@@ -58,7 +58,7 @@ func main() {
 		DEFVAL.LogIP, DEFVAL.LogHostName)
 
 	if DEFVAL.DoProf {
-		commons.StartProfile(roleName)
+		commons.StartProfile(roleName, DEFVAL.DebugPort)
 		defer commons.StopProfile(roleName)
 	}
 

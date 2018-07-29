@@ -23,6 +23,7 @@ type tDefVals struct {
 	LowQ           bool
 	VSync bool
 
+	DebugPort string
 	DoProf bool
 
 	NaviMarketDuration float64

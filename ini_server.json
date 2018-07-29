@@ -8,6 +8,7 @@
         "Pilot", "Navi"
     ],
     "DoProf": true,
+    "DebugPort": "8020",
     "SolarStartLocationName": "magellan",
     "MinDistortion":0.3,
     "StoragePath":"xstore/buildings",

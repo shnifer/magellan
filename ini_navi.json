@@ -7,6 +7,7 @@
     "WinW": 800,
     "WinH": 800,
     "DoProf": false,
+    "DebugPort": "8022",
     "GravityConst": 1,
     "CosmoPredictorUpdT":0.1,
     "CosmoPredictorNumInSec":10,

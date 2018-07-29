@@ -26,6 +26,7 @@ type tDefVals struct {
 
 	DebugControl bool
 	DoProf       bool
+	DebugPort string
 
 	GravityConst      float64
 	WarpGravityConst  float64

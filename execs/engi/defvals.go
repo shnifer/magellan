@@ -18,6 +18,7 @@ type tDefVals struct {
 	WinW, WinH int
 
 	DoProf bool
+	DebugPort string
 
 	//in ms
 	LogLogTimeoutMs int

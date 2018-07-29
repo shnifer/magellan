@@ -1,5 +1,5 @@
 {
-    "Port": "http://localhost:8010",
+    "Port": "http://localhost:8010/",
     "Timeout":100,
     "PingPeriod": 100,
     "Room": "room101",
@@ -9,6 +9,7 @@
     "VSync": true,
     "DebugControl":true,
     "DoProf": false,
+    "DebugPort": "8021",
     "LowQ": false,
     "GravityConst": 1,
     "WarpGravityConst": 1,
