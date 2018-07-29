@@ -263,7 +263,7 @@ func (s *warpScene) debugControl() {
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
-		s.toCosmo("TT6")
+		s.toCosmo("solar")
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyQ) {

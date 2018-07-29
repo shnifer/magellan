@@ -190,6 +190,8 @@ func (s *cosmoScene) doneScan() {
 		key = "blackbox"
 	}
 	ClientLogGame(Client, key, "SCANNED ", msg)
+
+
 }
 
 func (s *cosmoScene) doneMine(corp string) {
@@ -214,11 +216,11 @@ func (s *cosmoScene) checkLanding() bool {
 	}
 	return found
 }
-//todo: set normal messages
+
 func (s *cosmoScene) checkMine() (msg string, ok bool) {
 	gp := Data.Galaxy.Points[s.scanner.obj.ID]
 	if len(gp.Mines) > 0 {
-		return "у нас есть a mine already", false
+		return "Тут уже есть шахта", false
 	}
 
 	hasknown := make([]string, 0)
@@ -241,14 +243,14 @@ func (s *cosmoScene) checkMine() (msg string, ok bool) {
 
 	if len(hasknown) == 0 {
 		if hasunknown {
-			return "неизвестные minerals", false
+			return "неизвестные минералы", false
 		} else {
-			return "nothing здесь нет", false
+			return "нет минералов", false
 		}
 	}
 	msg = "Добыча: " + strings.Join(hasknown, ",")
 	if hasunknown {
-		msg += "\nтакже неизвестные minerals"
+		msg += "\nтакже есть неизвестные минералы"
 	}
 	return msg, true
 }
