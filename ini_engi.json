@@ -1,6 +1,7 @@
 {
     "Port": "http://localhost:8010",
     "Room": "room101",
+    "Role": "Engi",
     "Timeout":50,
     "PingPeriod": 60,
     "FullScreen": false,
@@ -11,5 +12,7 @@
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 10000,
     "LogIP": "https://elasticsearch.alice.magellan2018.ru",
-    "LogHostName": "room1noteAsus123"
+    "LogHostName": "room1noteAsus123",
+    "SpriteSizeW": 1000,
+    "SpriteSizeH": 654
 }

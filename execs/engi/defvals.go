@@ -11,17 +11,17 @@ import (
 const DefValPath = "./"
 
 type tDefVals struct {
-	Port       string
-	Timeout    int
-	PingPeriod int
-	Room       string
-	Role       string
-	FullScreen bool
-	WinW, WinH int
+	Port           string
+	Timeout        int
+	PingPeriod     int
+	Room           string
+	Role           string
+	FullScreen     bool
+	WinW, WinH     int
 	HalfResolution bool
-	VSync bool
+	VSync          bool
 
-	DoProf bool
+	DoProf    bool
 	DebugPort string
 
 	//in ms
@@ -30,6 +30,9 @@ type tDefVals struct {
 	LogRetryMaxMs   int
 	LogIP           string
 	LogHostName     string
+
+	SpriteSizeW,
+	SpriteSizeH int
 }
 
 var DEFVAL tDefVals
@@ -37,8 +40,8 @@ var DEFVAL tDefVals
 func setDefDef() {
 	DEFVAL = tDefVals{
 		Port:            "http://localhost:8000",
-		Timeout:100,
-		PingPeriod:100,
+		Timeout:         100,
+		PingPeriod:      100,
 		Room:            "room101",
 		Role:            commons.ROLE_Engi,
 		WinW:            1024,

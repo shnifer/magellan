@@ -90,7 +90,7 @@ func (f9 *Frame9HUD) recalc() {
 		case 4:
 			//skip middle
 		case 5:
-			sprite.SetSize(float64(sprite.tex.sw)*actualS, f9.h-actualS*(f9.hN(3)+f9.hN(8)))
+			sprite.SetSize(float64(sprite.tex.sw)*actualS, f9.h-actualS*(f9.hN(2)+f9.hN(8)))
 			sprite.SetPos(V2{X: f9.w, Y: f9.hN(2) * actualS})
 		case 6:
 			sprite.SetScale(actualS, actualS)

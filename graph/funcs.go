@@ -15,10 +15,10 @@ func SetScreenSize(W, H int) {
 	winW = float64(W)
 	winH = float64(H)
 
-	globalScale = calcGlobalScale(H)
+	globalScale = CalcGlobalScale(H)
 }
 
-func calcGlobalScale(H int) float64 {
+func CalcGlobalScale(H int) float64 {
 	bounds := []float64{0.5, 0.75, 0.8, 1.0, 1.25, 1.5,
 		1.75, 2.0, 2.5, 3.0, 4.0, 5.0}
 	res := float64(H) / 1000
@@ -33,11 +33,12 @@ func calcGlobalScale(H int) float64 {
 		if i == 0 || res > v {
 			continue
 		}
-		if res/bounds[i-1] < v/res {
-			return bounds[i-1]
-		} else {
-			return v
-		}
+		/*		if res/bounds[i-1] < v/res {
+					return bounds[i-1]
+				} else {
+					return v
+				}	*/
+		return bounds[i-1]
 	}
 	return bounds[l-1]
 }

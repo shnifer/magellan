@@ -56,9 +56,9 @@ func stateChanged(wanted string) {
 	case STATE_login:
 		Scenes.Activate(scene_login, true)
 	case STATE_cosmo:
-		Scenes.Activate(scene_engi, true)
+		Scenes.Activate(scene_engi, false)
 	case STATE_warp:
-		Scenes.Activate(scene_engi, true)
+		Scenes.Activate(scene_engi, false)
 	}
 }
 
