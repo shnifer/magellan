@@ -19,8 +19,8 @@ func SetScreenSize(W, H int) {
 }
 
 func calcGlobalScale(H int) float64 {
-	bounds := []float64{0.75, 0.8, 0.9, 1.0, 1.1, 1.2, 1.25, 1.333333, 1.4, 1.5, 1.6, 1.666666,
-		1.75, 1.8, 2.0, 2.25, 2.5, 2.75, 3.0, 4.0, 5.0}
+	bounds := []float64{0.5, 0.75, 0.8, 1.0, 1.25, 1.5,
+		1.75, 2.0, 2.5, 3.0, 4.0, 5.0}
 	res := float64(H) / 1000
 	l := len(bounds)
 	if res <= bounds[0] {
