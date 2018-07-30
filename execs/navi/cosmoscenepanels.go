@@ -13,6 +13,13 @@ import (
 type cosmoPanels struct {
 	leftB, leftM, leftL int
 	left, top, right    *ButtonsPanel
+
+	showSignature bool
+	sigs          []commons.Signature
+	sonar         *SonarHUD
+	sonarPos      v2.V2
+	sonarSize     float64
+	sonarName     string
 }
 
 func newCosmoPanels() *cosmoPanels {
@@ -56,10 +63,18 @@ func newCosmoPanels() *cosmoPanels {
 
 	topPanel := NewButtonsPanel(panelOpts)
 
+	sonarSize := float64(WinH / 3)
+	sonarPos := graph.ScrP(1, 0).AddMul(v2.V2{X: -1, Y: 1}, sonarSize/2)
+	sonar := NewSonarHUD(sonarPos, sonarSize, graph.NoCam, graph.Z_HUD)
+
 	return &cosmoPanels{
 		left:  leftPanel,
 		right: rightPanel,
 		top:   topPanel,
+
+		sonar:     sonar,
+		sonarPos:  sonarPos,
+		sonarSize: sonarSize,
 	}
 }
 
@@ -173,6 +188,9 @@ func (p *cosmoPanels) update(dt float64) {
 	p.left.Update(dt)
 	p.right.Update(dt)
 	p.top.Update(dt)
+
+	p.sonar.ActiveSignatures(p.sigs)
+	p.sonar.Update(dt)
 }
 
 func (p *cosmoPanels) activeLeft(active bool) {
@@ -186,4 +204,23 @@ func (p *cosmoPanels) Req(Q *graph.DrawQueue) {
 	Q.Append(p.left)
 	Q.Append(p.right)
 	Q.Append(p.top)
+
+	if p.showSignature {
+		Q.Append(p.sonar)
+		T := graph.NewText(p.sonarName, Fonts[Face_cap], colornames.Orangered)
+		T.SetPosPivot(p.sonarPos.Sub(graph.ScrP(0, 0.2)), graph.Center())
+		Q.Add(T, graph.Z_STAT_BACKGROUND)
+	}
+}
+
+func (p *cosmoPanels) ShowSonar(sigs []commons.Signature, name string) {
+	p.showSignature = true
+	p.sigs = sigs
+	p.sonarName = name
+}
+
+func (p *cosmoPanels) CloseSonar() {
+	p.showSignature = false
+	p.sigs = []commons.Signature{}
+	p.sonarName = ""
 }

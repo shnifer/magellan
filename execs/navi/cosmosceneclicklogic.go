@@ -56,6 +56,14 @@ func (s *cosmoScene) procMouseClick(x, y int) {
 			return
 		}
 	}
+	//SONAR
+	if s.cosmoPanels.showSignature {
+		d := v2.V2{X: float64(x), Y: float64(y)}.Sub(s.cosmoPanels.sonarPos).Len()
+		if d <= s.cosmoPanels.sonarSize/2 {
+			s.cosmoPanels.CloseSonar()
+			return
+		}
+	}
 	//COSMOOBJECTS
 	worldPos := s.cam.UnApply(v2.V2{X: float64(x), Y: float64(y)})
 	for id, obj := range Data.Galaxy.Points {
@@ -173,7 +181,6 @@ func (s *cosmoScene) scanState(scanState int) {
 	}
 }
 
-//todo: show signature and name
 func (s *cosmoScene) doneScan() {
 	id := s.scanner.obj.ID
 	gp, ok := Data.Galaxy.Points[id]
@@ -185,12 +192,15 @@ func (s *cosmoScene) doneScan() {
 	if msg == "" {
 		msg = "id: " + id
 	}
+	sigs := make([]Signature, len(gp.Signatures))
+	copy(sigs, gp.Signatures)
+	s.cosmoPanels.ShowSonar(sigs, msg)
+
 	if gp.Type == BUILDING_BLACKBOX {
 		RequestRemoveBuilding(Client, id)
 		key = "blackbox"
 	}
 	ClientLogGame(Client, key, "SCANNED ", msg)
-
 
 }
 
