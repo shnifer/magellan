@@ -35,10 +35,10 @@
             "turn_consumption": 0.25
         },
         "scaner": {
-            "drop_range": 130,
-            "drop_speed": 150,
-            "scan_range": 150,
-            "scan_speed": 0.1
+            "drop_range": 1300,
+            "drop_speed": 1,
+            "scan_range": 10000,
+            "scan_speed": 1
         },
         "radar": {
             "range_max": 100000,
