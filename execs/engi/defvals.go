@@ -12,10 +12,14 @@ const DefValPath = "./"
 
 type tDefVals struct {
 	Port       string
+	Timeout    int
+	PingPeriod int
 	Room       string
 	Role       string
 	FullScreen bool
 	WinW, WinH int
+	HalfResolution bool
+	VSync bool
 
 	DoProf bool
 	DebugPort string
@@ -33,6 +37,8 @@ var DEFVAL tDefVals
 func setDefDef() {
 	DEFVAL = tDefVals{
 		Port:            "http://localhost:8000",
+		Timeout:100,
+		PingPeriod:100,
 		Room:            "room101",
 		Role:            commons.ROLE_Engi,
 		WinW:            1024,

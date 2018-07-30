@@ -8,6 +8,9 @@ import (
 	"github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
 	"time"
+	"fmt"
+	"image/color"
+	"github.com/Shnifer/magellan/v2"
 )
 
 const roleName = "pilot"
@@ -25,8 +28,6 @@ var fpsText *graph.Text
 var showFps <-chan time.Time
 
 func mainLoop(window *ebiten.Image) error {
-	go mainStart()
-
 	input.Update()
 	//Pilot data must not be overwriten by other clients each tick, cz of Ship.Pos.Extrapolate
 	if Data.CommonData.PilotData != nil {
@@ -36,19 +37,23 @@ func mainLoop(window *ebiten.Image) error {
 
 	Scenes.UpdateAndDraw(dt, window, !ebiten.IsRunningSlowly())
 
+	select {
+	case <-showFps:
+		fps := ebiten.CurrentFPS()
+		msg := fmt.Sprintf("FPS: %.0f\n", fps)
+		fpsText = graph.NewText(msg, draw.Fonts[draw.Face_list], color.White)
+		fpsText.SetPosPivot(graph.ScrP(0.1, 0.1), v2.ZV)
+	default:
+	}
+	if fpsText != nil {
+		fpsText.Draw(window)
+	}
+
 	t := time.Now()
 	dt = t.Sub(last).Seconds()
 	last = t
 
-	go mainStop()
 	return nil
-}
-
-func mainStart() {
-	time.Sleep(time.Nanosecond)
-}
-func mainStop() {
-	time.Sleep(time.Nanosecond)
 }
 
 func main() {

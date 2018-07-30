@@ -4,6 +4,7 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/network"
+	"time"
 )
 
 var Client *network.Client
@@ -13,6 +14,8 @@ func initClient() {
 		Addr:           DEFVAL.Port,
 		Room:           DEFVAL.Room,
 		Role:           DEFVAL.Role,
+		Timeout:        time.Duration(DEFVAL.Timeout) * time.Millisecond,
+		PingPeriod:     time.Duration(DEFVAL.PingPeriod) * time.Millisecond,
 		OnReconnect:    recon,
 		OnDisconnect:   discon,
 		OnPause:        pause,
