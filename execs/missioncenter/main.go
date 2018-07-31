@@ -1,14 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
-	"image/color"
 	"time"
 )
 
@@ -47,15 +44,6 @@ func mainLoop(window *ebiten.Image) error {
 		if fpsText != nil {
 			fpsText.Draw(window)
 		}
-	}
-
-	select {
-	case <-showFps:
-		fps := ebiten.CurrentFPS()
-		msg := fmt.Sprintf("FPS: %.0f", fps)
-		fpsText = graph.NewText(msg, draw.Fonts[draw.Face_list], color.White)
-		fpsText.SetPosPivot(graph.ScrP(0.1, 0.1), v2.ZV)
-	default:
 	}
 
 	t := time.Now()

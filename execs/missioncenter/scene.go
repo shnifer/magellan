@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
@@ -14,7 +15,6 @@ import (
 	"math"
 	"sort"
 	"strconv"
-	"fmt"
 )
 
 const (
@@ -113,12 +113,7 @@ func (s *scene) init() {
 		if gp.IsVirtual {
 			continue
 		}
-		s.objects[gp.ID] = NewCosmoPoint(gp, s.cam.Phys())
-		if GalaxyName == commons.WARP_Galaxy_ID {
-			s.objects[gp.ID].SetCaption(gp.ID, color.White)
-		} else if len(gp.Minerals)>0{
-			s.objects[gp.ID].SetCaption(fmt.Sprint(gp.Minerals), colornames.Red)
-		}
+		s.objects[gp.ID] = newCP(gp, s.cam.Phys())
 		s.objectsID = append(s.objectsID, gp.ID)
 	}
 
@@ -147,7 +142,7 @@ func (s *scene) update(dt float64) {
 	CurGalaxy.Update(sessionTime)
 	for _, gp := range CurGalaxy.Ordered {
 		obj := s.objects[gp.ID]
-		if obj==nil{
+		if obj == nil {
 			continue
 		}
 		obj.Pos = gp.Pos
@@ -341,13 +336,27 @@ func (s *scene) EventAddBuilding(build commons.Building, fk string) {
 	}
 	CurGalaxy.AddBuilding(build)
 	changeCP(s.objects, build.PlanetID,
-		NewCosmoPoint(CurGalaxy.Points[build.PlanetID], s.cam.Phys()))
+		newCP(CurGalaxy.Points[build.PlanetID], s.cam.Phys()))
 }
 
 func (s *scene) EventDelBuilding(build commons.Building, fk string) {
 	CurGalaxy.DelBuilding(build)
 	changeCP(s.objects, build.PlanetID,
-		NewCosmoPoint(CurGalaxy.Points[build.PlanetID], s.cam.Phys()))
+		newCP(CurGalaxy.Points[build.PlanetID], s.cam.Phys()))
+}
+
+func newCP(gp *commons.GalaxyPoint, param graph.CamParams) *CosmoPoint {
+	res := NewCosmoPoint(gp, param)
+	if GalaxyName == commons.WARP_Galaxy_ID {
+		msg := gp.ID
+		if len(gp.Minerals) > 0 {
+			msg = msg + " " + fmt.Sprint(gp.Minerals)
+		}
+		res.SetCaption(msg, color.White)
+	} else if len(gp.Minerals) > 0 {
+		res.SetCaption(fmt.Sprint(gp.Minerals), colornames.Red)
+	}
+	return res
 }
 
 func changeCP(objs map[string]*CosmoPoint, id string, point *CosmoPoint) {

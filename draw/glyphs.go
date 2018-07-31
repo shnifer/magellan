@@ -8,8 +8,8 @@ import (
 	"strconv"
 )
 
-const glyphW = 150
-const glyphH = 200
+const glyphW = 37
+const glyphH = 50
 const maxGlyphsInRow = 3
 
 type glyphs struct {
@@ -75,7 +75,7 @@ func newGlyph(t string, owner string) *graph.Sprite {
 
 func (g glyphs) Req(Q *graph.DrawQueue) {
 	var pos v2.V2
-	basePos := g.pos.AddMul(v2.V2{X: -1, Y: -1}, g.size/2).Sub(v2.V2{X: glyphW/2, Y:glyphH/2})
+	basePos := g.pos.AddMul(v2.V2{X: -1, Y: -1}, g.size/2).Sub(v2.V2{X: glyphW / 2, Y: glyphH / 2})
 	n := 0
 	for i, sprite := range g.Glyphs0 {
 		pos = basePos.AddMul(v2.V2{X: glyphW, Y: 0}, float64(i))
@@ -101,7 +101,7 @@ func (g *glyphs) setPos(pos v2.V2) {
 }
 
 func (g *glyphs) setSize(size float64) {
-	g.size = size/2
+	g.size = size / 2
 	if g.size < Mark_size/2 {
 		g.size = Mark_size / 2
 	}
