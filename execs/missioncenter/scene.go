@@ -13,6 +13,7 @@ import (
 	"image/color"
 	"sort"
 	"strconv"
+	"math"
 )
 
 const (
@@ -230,7 +231,8 @@ func mousePosV() v2.V2 {
 func (s *scene) objectClicked() (pressed bool, id string) {
 	p := s.cam.UnApply(mousePosV())
 	for id, obj := range s.objects {
-		if obj.Pos.Sub(p).Len() < 10/s.cam.Scale {
+		dist:=math.Max(obj.Size, 10/s.cam.Scale)
+		if obj.Pos.Sub(p).Len() <  dist{
 			return true, id
 		}
 	}
