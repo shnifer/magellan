@@ -48,6 +48,8 @@ type scene struct {
 	sigs          []commons.Signature
 	sonar         *SonarHUD
 	sonarBack     *graph.Sprite
+	sonarPos v2.V2
+	sonarName *graph.Text
 }
 
 //todo: wormhole show
@@ -77,6 +79,7 @@ func newScene() *scene {
 		q:             graph.NewDrawQueue(),
 		sonar:         sonar,
 		sonarBack:     sonarBack,
+		sonarPos: sonarPos,
 	}
 
 	textPanel := NewAtlasSprite(commons.TextPanelAN, graph.NoCam)
@@ -152,6 +155,9 @@ func (s *scene) update(dt float64) {
 
 func (s *scene) draw(window *ebiten.Image) {
 	s.q.Clear()
+	t:=graph.NewText(GalaxyName, Fonts[Face_cap], color.White)
+	t.SetPosPivot(graph.ScrP(0.1,0.2),v2.ZV)
+	s.q.Add(t,graph.Z_STAT_HUD)
 	for _, id := range s.objectsID {
 		s.q.Append(s.objects[id])
 	}
@@ -161,6 +167,7 @@ func (s *scene) draw(window *ebiten.Image) {
 	if s.showSignature {
 		s.q.Add(s.sonarBack, graph.Z_HUD-1)
 		s.q.Append(s.sonar)
+		s.q.Add(s.sonarName, graph.Z_STAT_HUD)
 	}
 	s.q.Run(window)
 }
@@ -246,11 +253,17 @@ func (s *scene) procWarpObjectClick(id string) {
 	s.nameInput.SetText(caption)
 	s.showSignature = true
 	s.sigs = CurGalaxy.Points[id].Signatures
+	t:=graph.NewText(id,Fonts[Face_cap],color.White)
+	t.SetPosPivot(s.sonarPos, graph.Center())
+	s.sonarName = t
 }
 
 func (s *scene) procStarObjectClick(id string) {
 	s.showSignature = true
 	s.sigs = CurGalaxy.Points[id].Signatures
+	t:=graph.NewText(id,Fonts[Face_cap],color.White)
+	t.SetPosPivot(s.sonarPos, graph.Center())
+	s.sonarName = t
 }
 
 func (s *scene) procWarpRightObjectClick(id string) {
