@@ -31,6 +31,12 @@ func (o pOpts) gp() *GalaxyPoint {
 	switch o.t {
 	case GPT_STAR:
 		count = Opts.StarANCount
+	case GPT_HARDPLANET:
+		count = Opts.HardANCount
+	case GPT_GASPLANET:
+		count = Opts.GasANCount
+	case GPT_ASTEROID:
+		count = Opts.AsteroidANCount
 	}
 
 	massSizeK := KDev(Opts.SizeMassDevPercent)
@@ -76,6 +82,6 @@ func sAN(t string, count int) string {
 	if count == 0 {
 		return ""
 	} else {
-		return t + "-" + strconv.Itoa(rand.Intn(count))
+		return t + "-" + strconv.Itoa(rand.Intn(count)+1)
 	}
 }

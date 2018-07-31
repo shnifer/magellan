@@ -1,5 +1,9 @@
 {
-  "StarANCount": 0,
+  "StarANCount": 5,
+  "HardANCount": 5,
+  "GasANCount" :5,
+  "AsteroidANCount": 5,
+
   "SizeMassDevPercent": 20,
   "OrbitDevPercent": 20,
   "SingleStar":

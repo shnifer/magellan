@@ -1,7 +1,11 @@
 package main
 
 type Options struct {
-	StarANCount        int
+	StarANCount     int
+	HardANCount     int
+	GasANCount      int
+	AsteroidANCount int
+
 	SizeMassDevPercent float64
 	OrbitDevPercent    float64
 
@@ -34,15 +38,14 @@ type Options struct {
 		}
 	}
 
-	PlanetMinR  float64
-	ClosePeriod float64
-	DistStep    float64
-	PeriodStep  float64
-	StepDev float64
+	PlanetMinR    float64
+	ClosePeriod   float64
+	DistStep      float64
+	PeriodStep    float64
+	StepDev       float64
 	DistStepLevel float64
-	DistFarStep    float64
-	PeriodFarStep  float64
-
+	DistFarStep   float64
+	PeriodFarStep float64
 
 	LastHardOnGasPercent  int
 	MoveHardOnHardPercent int

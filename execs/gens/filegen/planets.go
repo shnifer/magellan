@@ -48,7 +48,7 @@ func createPlanets(stat WarpStat, points map[string]*GalaxyPoint, pref string, p
 	var asteroidBelted bool
 
 	n := 0
-	k:=KDev(Opts.StepDev)
+	k := KDev(Opts.StepDev)
 	dist := minR * k
 	period := Opts.ClosePeriod * k
 	for n < len(planets) {
@@ -134,7 +134,7 @@ func addPlanet(points map[string]*GalaxyPoint, parent string, dist, period float
 
 	if planet.IsGas {
 		if rand.Intn(100) < Opts.GasBeltPercent {
-			addBelt(points, id, dist, period, pref+id+"-")
+			addBelt(points, id, dist, period, id+"-")
 		}
 	}
 
@@ -205,13 +205,13 @@ func asteroidSphs() [15]int {
 }
 
 func nextDistPeriod(dist, period *float64) {
-	k:=KDev(Opts.StepDev)
-	if *dist<Opts.DistStepLevel{
-		*dist = *dist * ((Opts.DistStep-1)*k+1)
-		*period = *period * ((Opts.PeriodStep-1)*k+1)
+	k := KDev(Opts.StepDev)
+	if *dist < Opts.DistStepLevel {
+		*dist = *dist * ((Opts.DistStep-1)*k + 1)
+		*period = *period * ((Opts.PeriodStep-1)*k + 1)
 	} else {
-		*dist = *dist * ((Opts.DistFarStep-1)*k+1)
-		*period = *period * ((Opts.PeriodFarStep-1)*k+1)
+		*dist = *dist * ((Opts.DistFarStep-1)*k + 1)
+		*period = *period * ((Opts.PeriodFarStep-1)*k + 1)
 	}
 }
 

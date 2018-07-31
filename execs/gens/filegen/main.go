@@ -6,6 +6,7 @@ import (
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/v2"
 	"io/ioutil"
+	"sort"
 )
 
 type WarpStat struct {
@@ -63,6 +64,7 @@ func main() {
 	}
 
 	warpSignatures := make(map[string][]Signature)
+	warpMinerals := make(map[string][]int)
 
 	fmt.Println("files loaded")
 	for sysName, stat := range warpP {
@@ -74,6 +76,7 @@ func main() {
 		createPlanets(stat, points, pref, planets)
 
 		sigs := make(map[string]Signature)
+		minerals := make(map[int]struct{})
 		var sd float64
 		sd = 1500
 		for _, p := range points {
@@ -88,15 +91,22 @@ func main() {
 					sigs[sig.TypeName] = sig
 				}
 			}
+			for _, min := range p.Minerals {
+				minerals[min] = struct{}{}
+			}
 		}
 
 		for _, v := range sigs {
 			warpSignatures[sysName] = append(warpSignatures[sysName], v)
 		}
+		for i := range minerals {
+			warpMinerals[sysName] = append(warpMinerals[sysName], i)
+		}
+		sort.IntSlice(warpMinerals[sysName]).Sort()
 
 		galaxy := Galaxy{
 			Points:        points,
-			SpawnDistance: sd*1.1,
+			SpawnDistance: sd * 1.1,
 		}
 		dat, err := json.Marshal(galaxy)
 		if err != nil {
@@ -122,6 +132,15 @@ func main() {
 			continue
 		}
 		v.Signatures = sigs
+		warpGal.Points[id] = v
+	}
+
+	for id, mins := range warpMinerals {
+		v, ok := warpGal.Points[id]
+		if !ok {
+			continue
+		}
+		v.Minerals = mins
 		warpGal.Points[id] = v
 	}
 

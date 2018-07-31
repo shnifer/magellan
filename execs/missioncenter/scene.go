@@ -147,6 +147,9 @@ func (s *scene) update(dt float64) {
 	CurGalaxy.Update(sessionTime)
 	for _, gp := range CurGalaxy.Ordered {
 		obj := s.objects[gp.ID]
+		if obj==nil{
+			continue
+		}
 		obj.Pos = gp.Pos
 		obj.Update(dt)
 	}
