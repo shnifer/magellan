@@ -96,6 +96,7 @@ func main() {
 
 	draw.InitFonts()
 	draw.InitTexAtlas()
+	commons.InitSignatureAtlas()
 
 	ebiten.SetRunnableInBackground(true)
 

@@ -10,6 +10,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
+	"image/color"
 	"sort"
 	"strconv"
 )
@@ -41,6 +42,11 @@ type scene struct {
 
 	selectedID string
 	nameInput  *TextInput
+
+	showSignature bool
+	sigs          []commons.Signature
+	sonar         *SonarHUD
+	sonarBack     *graph.Sprite
 }
 
 //todo: wormhole show
@@ -51,12 +57,25 @@ func newScene() *scene {
 	cam.Scale = 1
 	cam.Recalc()
 
+	sonarSize := float64(WinH / 3)
+	offset := float64(WinH / 10)
+	sonarPos := graph.ScrP(1, 0).AddMul(v2.V2{X: -1, Y: 1}, sonarSize/2+offset)
+	sonar := NewSonarHUD(sonarPos, sonarSize, graph.NoCam, graph.Z_HUD)
+
+	sonarBack := graph.NewSprite(graph.CircleTex(), graph.NoCam)
+	sonarBack.SetPos(sonarPos)
+	sonarBack.SetSize(sonarSize, sonarSize)
+	sonarBack.SetColor(color.RGBA{R: 50, G: 50, B: 50, A: 255})
+	sonarBack.SetAlpha(0.8)
+
 	res := &scene{
 		cam:           cam,
 		objects:       make(map[string]*CosmoPoint),
 		objectsID:     make([]string, 0),
 		objectNamesFK: make(map[string]string),
 		q:             graph.NewDrawQueue(),
+		sonar:         sonar,
+		sonarBack:     sonarBack,
 	}
 
 	textPanel := NewAtlasSprite(commons.TextPanelAN, graph.NoCam)
@@ -73,6 +92,16 @@ func (s *scene) init() {
 	s.objects = make(map[string]*CosmoPoint, len(CurGalaxy.Ordered))
 	s.objectsID = make([]string, 0, len(CurGalaxy.Ordered))
 	s.objectNamesFK = make(map[string]string)
+	s.focus = focus_main
+	s.showSignature = false
+	s.sigs = []commons.Signature{}
+	if GalaxyName == commons.WARP_Galaxy_ID {
+		s.cam.Scale = 0.001
+	} else {
+		s.cam.Scale = 0.01
+	}
+	s.cam.Pos = v2.ZV
+	s.cam.Recalc()
 
 	for _, gp := range CurGalaxy.Ordered {
 		if gp.IsVirtual {
@@ -115,6 +144,9 @@ func (s *scene) update(dt float64) {
 	if s.focus == focus_enterName {
 		s.nameInput.Update(dt)
 	}
+
+	s.sonar.ActiveSignatures(s.sigs)
+	s.sonar.Update(dt)
 }
 
 func (s *scene) draw(window *ebiten.Image) {
@@ -124,6 +156,10 @@ func (s *scene) draw(window *ebiten.Image) {
 	}
 	if s.focus == focus_enterName {
 		s.q.Append(s.nameInput)
+	}
+	if s.showSignature {
+		s.q.Add(s.sonarBack, graph.Z_HUD-1)
+		s.q.Append(s.sonar)
 	}
 	s.q.Run(window)
 }
@@ -148,11 +184,16 @@ func (s *scene) updatePosition(dt float64) {
 
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		if pressed, id := s.objectClicked(); pressed {
-			s.procObjectClick(id)
+			if GalaxyName == commons.WARP_Galaxy_ID {
+				s.procWarpObjectClick(id)
+			} else {
+				s.procStarObjectClick(id)
+			}
 		} else {
 			//startDrag
 			s.dragLastPos = mousePosV()
 			s.isDragging = true
+			s.showSignature = false
 		}
 	}
 
@@ -169,6 +210,16 @@ func (s *scene) updatePosition(dt float64) {
 			s.cam.Recalc()
 		}
 	}
+
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight) {
+		if pressed, id := s.objectClicked(); GalaxyName == commons.WARP_Galaxy_ID && pressed {
+			s.procWarpRightObjectClick(id)
+		}
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) && GalaxyName != commons.WARP_Galaxy_ID {
+		changeGalaxy <- commons.WARP_Galaxy_ID
+	}
 }
 
 func mousePosV() v2.V2 {
@@ -179,18 +230,29 @@ func mousePosV() v2.V2 {
 func (s *scene) objectClicked() (pressed bool, id string) {
 	p := s.cam.UnApply(mousePosV())
 	for id, obj := range s.objects {
-		if obj.Pos.Sub(p).LenSqr() < obj.Size*obj.Size {
+		if obj.Pos.Sub(p).Len() < 10/s.cam.Scale {
 			return true, id
 		}
 	}
 	return false, ""
 }
 
-func (s *scene) procObjectClick(id string) {
+func (s *scene) procWarpObjectClick(id string) {
 	s.focus = focus_enterName
 	s.selectedID = id
 	caption := s.objects[id].GetCaption()
 	s.nameInput.SetText(caption)
+	s.showSignature = true
+	s.sigs = CurGalaxy.Points[id].Signatures
+}
+
+func (s *scene) procStarObjectClick(id string) {
+	s.showSignature = true
+	s.sigs = CurGalaxy.Points[id].Signatures
+}
+
+func (s *scene) procWarpRightObjectClick(id string) {
+	changeGalaxy <- id
 }
 
 func (s *scene) onNameTextInput(text string, done bool) {
@@ -199,6 +261,7 @@ func (s *scene) onNameTextInput(text string, done bool) {
 		s.requestNewName(GalaxyName, s.selectedID, text)
 	}
 	s.selectedID = ""
+	s.showSignature = false
 }
 
 func (s *scene) requestNewName(galaxyName, objectID, newName string) {
