@@ -14,6 +14,7 @@ import (
 	"math"
 	"sort"
 	"strconv"
+	"fmt"
 )
 
 const (
@@ -115,6 +116,8 @@ func (s *scene) init() {
 		s.objects[gp.ID] = NewCosmoPoint(gp, s.cam.Phys())
 		if GalaxyName == commons.WARP_Galaxy_ID {
 			s.objects[gp.ID].SetCaption(gp.ID, color.White)
+		} else if len(gp.Minerals)>0{
+			s.objects[gp.ID].SetCaption(fmt.Sprint(gp.Minerals), colornames.Red)
 		}
 		s.objectsID = append(s.objectsID, gp.ID)
 	}
