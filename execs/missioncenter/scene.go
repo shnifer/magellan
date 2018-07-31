@@ -11,9 +11,9 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 	"image/color"
+	"math"
 	"sort"
 	"strconv"
-	"math"
 )
 
 const (
@@ -48,8 +48,8 @@ type scene struct {
 	sigs          []commons.Signature
 	sonar         *SonarHUD
 	sonarBack     *graph.Sprite
-	sonarPos v2.V2
-	sonarName *graph.Text
+	sonarPos      v2.V2
+	sonarName     *graph.Text
 }
 
 //todo: wormhole show
@@ -79,7 +79,7 @@ func newScene() *scene {
 		q:             graph.NewDrawQueue(),
 		sonar:         sonar,
 		sonarBack:     sonarBack,
-		sonarPos: sonarPos,
+		sonarPos:      sonarPos,
 	}
 
 	textPanel := NewAtlasSprite(commons.TextPanelAN, graph.NoCam)
@@ -101,10 +101,11 @@ func (s *scene) init() {
 	s.sigs = []commons.Signature{}
 	if GalaxyName == commons.WARP_Galaxy_ID {
 		s.cam.Scale = 0.001
+		s.cam.Pos = CurGalaxy.Points["solar"].Pos
 	} else {
+		s.cam.Pos = v2.ZV
 		s.cam.Scale = 0.01
 	}
-	s.cam.Pos = v2.ZV
 	s.cam.Recalc()
 
 	for _, gp := range CurGalaxy.Ordered {
@@ -112,6 +113,9 @@ func (s *scene) init() {
 			continue
 		}
 		s.objects[gp.ID] = NewCosmoPoint(gp, s.cam.Phys())
+		if GalaxyName == commons.WARP_Galaxy_ID {
+			s.objects[gp.ID].SetCaption(gp.ID, color.White)
+		}
 		s.objectsID = append(s.objectsID, gp.ID)
 	}
 
@@ -155,9 +159,9 @@ func (s *scene) update(dt float64) {
 
 func (s *scene) draw(window *ebiten.Image) {
 	s.q.Clear()
-	t:=graph.NewText(GalaxyName, Fonts[Face_cap], color.White)
-	t.SetPosPivot(graph.ScrP(0.1,0.2),v2.ZV)
-	s.q.Add(t,graph.Z_STAT_HUD)
+	t := graph.NewText(GalaxyName, Fonts[Face_cap], color.White)
+	t.SetPosPivot(graph.ScrP(0.1, 0.2), v2.ZV)
+	s.q.Add(t, graph.Z_STAT_HUD)
 	for _, id := range s.objectsID {
 		s.q.Append(s.objects[id])
 	}
@@ -238,8 +242,8 @@ func mousePosV() v2.V2 {
 func (s *scene) objectClicked() (pressed bool, id string) {
 	p := s.cam.UnApply(mousePosV())
 	for id, obj := range s.objects {
-		dist:=math.Max(obj.Size, 10/s.cam.Scale)
-		if obj.Pos.Sub(p).Len() <  dist{
+		dist := math.Max(obj.Size, 10/s.cam.Scale)
+		if obj.Pos.Sub(p).Len() < dist {
 			return true, id
 		}
 	}
@@ -253,7 +257,7 @@ func (s *scene) procWarpObjectClick(id string) {
 	s.nameInput.SetText(caption)
 	s.showSignature = true
 	s.sigs = CurGalaxy.Points[id].Signatures
-	t:=graph.NewText(id,Fonts[Face_cap],color.White)
+	t := graph.NewText(id, Fonts[Face_cap], color.White)
 	t.SetPosPivot(s.sonarPos, graph.Center())
 	s.sonarName = t
 }
@@ -261,7 +265,7 @@ func (s *scene) procWarpObjectClick(id string) {
 func (s *scene) procStarObjectClick(id string) {
 	s.showSignature = true
 	s.sigs = CurGalaxy.Points[id].Signatures
-	t:=graph.NewText(id,Fonts[Face_cap],color.White)
+	t := graph.NewText(id, Fonts[Face_cap], color.White)
 	t.SetPosPivot(s.sonarPos, graph.Center())
 	s.sonarName = t
 }
