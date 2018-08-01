@@ -14,6 +14,7 @@ import (
 var server *network.Server
 
 //todo: gamemaster control
+//todo: drop send, recv state on restore
 func main() {
 	log.Start(time.Duration(DEFVAL.LogLogTimeoutMs)*time.Millisecond,
 		time.Duration(DEFVAL.LogRetryMinMs)*time.Millisecond,
