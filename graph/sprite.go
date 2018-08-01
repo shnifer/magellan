@@ -316,9 +316,25 @@ func (s *Sprite) SetTex(t Tex) {
 }
 
 func (s *Sprite) AddAng(dAng float64) {
-	if dAng == 0{
+	if dAng == 0 {
 		return
 	}
-	s.angle += dAng*Deg2Rad
+	s.angle += dAng * Deg2Rad
 	s.dirty = true
+}
+
+func (s *Sprite) IsOver(pos v2.V2, checkTransparent bool) bool {
+	_, op := s.ImageOp()
+	geom := op.GeoM
+	geom.Invert()
+	px, py := geom.Apply(pos.X, pos.Y)
+	p := image.Pt(int(px), int(py))
+	if !p.In(s.tex.image.Bounds()) {
+		return false
+	}
+	if !checkTransparent {
+		return true
+	}
+	_, _, _, a := s.tex.image.At(p.X, p.Y).RGBA()
+	return a > 0
 }

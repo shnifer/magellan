@@ -16,6 +16,7 @@ type CommonData struct {
 type PilotData struct {
 	Ship        RBData  `json:"sh", omitempty`
 	SessionTime float64 `json:"ss", omitempty`
+	FlightTime  float64 `json:"ft", omitempty`
 	//for cosmo
 	ThrustVector v2.V2 `json:"tv", omitempty`
 	//for warp
@@ -57,9 +58,12 @@ type NaviData struct {
 type EngiData struct {
 	//[0.0 - 1.0]
 	//0 for fully OKEY, 1 - for totally DEGRADED
-	BSPDegrade    BSPDegrade
-	HeatCumulated float64
-	DmgCumulated  [8]float64
+	BSPDegrade BSPDegrade
+	Fuel       float64
+	Air        float64
+	Calories   float64
+	AZ         [8]float64
+	InV        [8]uint16
 }
 
 //Rework CalcDegrade on change

@@ -33,6 +33,11 @@ type tDefVals struct {
 
 	SpriteSizeW,
 	SpriteSizeH int
+
+	RanmaAddr         string
+	DropOnRepair      bool
+	RanmaTimeoutMs    int
+	RanmaHistoryDepth int
 }
 
 var DEFVAL tDefVals

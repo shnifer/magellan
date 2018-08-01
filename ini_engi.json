@@ -1,12 +1,12 @@
 {
     "Port": "http://localhost:8010",
     "Room": "room101",
-    "Role": "Engi",
-    "Timeout":50,
-    "PingPeriod": 60,
+    "Timeout":100,
+    "PingPeriod": 100,
     "FullScreen": false,
-    "WinW": 500,
-    "WinH": 500,
+    "VSync": true,
+    "WinW": 1000,
+    "WinH": 1000,
     "DoProf": false,
     "LogLogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
@@ -14,5 +14,10 @@
     "LogIP": "https://elasticsearch.alice.magellan2018.ru",
     "LogHostName": "room1noteAsus123",
     "SpriteSizeW": 1000,
-    "SpriteSizeH": 654
+    "SpriteSizeH": 654,
+    "RanmaAddr": "http://tagunil.ru:8000/system/",
+    "DropOnRepair": true,
+    "RanmaTimeoutMs": 100,
+    "RanmaHistoryDepth": 16
+
 }

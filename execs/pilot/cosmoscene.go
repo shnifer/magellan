@@ -150,6 +150,7 @@ func (s *cosmoScene) Init() {
 func (s *cosmoScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
 
+	Data.PilotData.FlightTime+=dt
 	//received new data about otherShips
 	if Data.ServerData.MsgID != s.lastServerID {
 		s.actualizeOtherShips()

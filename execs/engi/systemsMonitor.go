@@ -1,15 +1,19 @@
 package main
 
 import (
+	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/draw"
 	. "github.com/Shnifer/magellan/graph"
+	"github.com/Shnifer/magellan/v2"
+	"image/color"
 	"math"
+	"strconv"
 )
 
 type systemsMonitor struct {
 	params CamParams
 
-	all *Sprite
+	sprites map[string]*Sprite
 }
 
 func newSystemsMonitor() *systemsMonitor {
@@ -24,18 +28,106 @@ func newSystemsMonitor() *systemsMonitor {
 
 	cam.Scale = scale
 	cam.Recalc()
+
 	param := cam.Phys()
 
-	all := draw.NewAtlasSprite("engi_all", param)
+	sprites := getSprites(param)
 
 	res := systemsMonitor{
-		params: param,
-		all:    all,
+		params:  param,
+		sprites: sprites,
 	}
 
 	return &res
 }
 
 func (s *systemsMonitor) Req(Q *DrawQueue) {
-	Q.Add(s.all, Z_GAME_OBJECT)
+	Q.Add(s.sprites["all"], Z_GAME_OBJECT-1)
+	Q.Add(s.sprites["upp"], Z_GAME_OBJECT+2)
+	for i := 0; i < SysCount; i++ {
+		sprite := s.sprites[strconv.Itoa(i)]
+		sprite.SetColor(sysColor(Data.EngiData.AZ[i]))
+		Q.Add(sprite, Z_GAME_OBJECT)
+	}
+	s.drawTemp(Q)
+	s.drawFuel(Q)
+	s.drawAir(Q)
+}
+
+func (s *systemsMonitor) mouseOverSystem(pos v2.V2) (sysN int, isOver bool) {
+
+	for i := 0; i < SysCount; i++ {
+		if s.sprites[strconv.Itoa(i)].IsOver(pos, true) {
+			return i, true
+		}
+	}
+
+	return 0, false
+}
+
+func getSprites(params CamParams) map[string]*Sprite {
+	res := make(map[string]*Sprite)
+	a := func(id string) {
+		res[id] = draw.NewAtlasSprite("engi_"+id, params)
+	}
+
+	a("all")
+	a("0")
+	a("1")
+	a("2")
+	a("3")
+	a("4")
+	a("5")
+	a("6")
+	a("7")
+	a("upp")
+
+	for i := 0; i <= 100; i += 5 {
+		a("f" + strconv.Itoa(i))
+	}
+
+	for i := 0; i <= 100; i += 10 {
+		a("a" + strconv.Itoa(i))
+	}
+
+	for i := 0; i <= 110; i += 10 {
+		a("t" + strconv.Itoa(i))
+	}
+
+	return res
+}
+
+func sysColor(az float64) color.Color {
+	k := commons.Clamp(az/100, 0, 1)
+	return color.RGBA{
+		R: uint8(255 * k),
+		G: uint8(255 * (1 - k)),
+		B: 0,
+		A: 255,
+	}
+}
+
+func (s *systemsMonitor) s(pref string, n int) *Sprite {
+	return s.sprites[pref+strconv.Itoa(n)]
+}
+
+func (s *systemsMonitor) drawAir(Q *DrawQueue) {
+	n := int(math.Round(commons.Clamp(Data.EngiData.Air/Data.BSP.Lss.Air_volume, 0, 1) * 10))
+	n *= 10
+	Q.Add(s.s("a", n), Z_GAME_OBJECT+1)
+}
+
+func (s *systemsMonitor) drawTemp(Q *DrawQueue) {
+	n := int(math.Round(commons.Clamp(Data.EngiData.Calories/Data.BSP.Shields.Heat_capacity, 0, 2) * 10))
+	if n > 10 {
+		n = 11
+	}
+	n *= 10
+	Q.Add(s.s("t", n), Z_GAME_OBJECT+1)
+}
+
+func (s *systemsMonitor) drawFuel(Q *DrawQueue) {
+	n := int(math.Round(commons.Clamp(Data.EngiData.Fuel/Data.BSP.Fuel_tank.Fuel_volume, 0, 1) * 20))
+	n *= 5
+	Q.Add(s.s("f", n), Z_GAME_OBJECT+1)
 }

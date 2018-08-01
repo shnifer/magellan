@@ -38,6 +38,10 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 				common.NaviData.Landing[i] = v.Owner
 			}
 			common.NaviData.BeaconCount = stateData.BSP.Beacons.Count
+			common.EngiData.InV = [8]uint16{}
+			common.EngiData.AZ = getStartAZ(stateData)
+			common.EngiData.Fuel = stateData.BSP.Fuel_tank.Fuel_volume
+			common.EngiData.Air = stateData.BSP.Lss.Air_volume
 		}
 
 		//from warp to cosmo
@@ -213,5 +217,18 @@ func doUpdateOtherShips(rs *roomServer) {
 
 		}
 		rs.commonData[room] = CD
+	}
+}
+
+func getStartAZ(sd StateData) [8]float64 {
+	return [8]float64{
+		sd.BSP.March_engine.AZ,
+		sd.BSP.Warp_engine.AZ,
+		sd.BSP.Shunter.AZ,
+		sd.BSP.Radar.AZ,
+		sd.BSP.Scanner.AZ,
+		sd.BSP.Fuel_tank.AZ,
+		sd.BSP.Lss.AZ,
+		sd.BSP.Shields.AZ,
 	}
 }

@@ -126,6 +126,8 @@ func (s *warpScene) Init() {
 func (s *warpScene) Update(dt float64) {
 	defer LogFunc("warpScene.Update")()
 
+	Data.PilotData.FlightTime+=dt
+
 	ppos := Data.PilotData.Ship.Pos
 	UpdateWarpAndShip(Data, dt, DEFVAL.DT, DEFVAL.WarpGravPowN)
 	s.distTravaled += Data.PilotData.Ship.Pos.Sub(ppos).Len()

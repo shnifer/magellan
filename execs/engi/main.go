@@ -1,16 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	"github.com/Shnifer/magellan/input"
 	"github.com/Shnifer/magellan/log"
-	"github.com/hajimehoshi/ebiten"
-	"time"
-	"fmt"
-	"image/color"
 	"github.com/Shnifer/magellan/v2"
+	"github.com/hajimehoshi/ebiten"
+	"image/color"
+	"time"
 )
 
 const roleName = "engi"
@@ -18,6 +18,8 @@ const roleName = "engi"
 var (
 	WinW int
 	WinH int
+
+	SysCount = 8
 )
 
 var last time.Time

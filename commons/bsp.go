@@ -10,6 +10,7 @@ type BSPParams struct {
 		Reverse_acc  float64 `json:"accel_rev"`
 		Reverse_slow float64 `json:"slowdown_rev"`
 		Heat_prod    float64 `json:"heat_prod"`
+		AZ           float64 `json:"az_level"`
 	} `json:"march_engine"`
 
 	Warp_engine struct {
@@ -20,6 +21,7 @@ type BSPParams struct {
 		Warp_enter_consumption float64 `json:"warp_enter_consumption"`
 		Turn_speed             float64 `json:"turn_speed"`
 		Turn_consumption       float64 `json:"turn_consumption"`
+		AZ                     float64 `json:"az_level"`
 	} `json:"warp_engine"`
 
 	Shunter struct {
@@ -30,6 +32,7 @@ type BSPParams struct {
 		Strafe_acc  float64 `json:"strafe_acc"`
 		Strafe_slow float64 `json:"strafe_slow"`
 		Heat_prod   float64 `json:"heat_prod"`
+		AZ          float64 `json:"az_level"`
 	} `json:"shunter"`
 
 	Radar struct {
@@ -39,6 +42,7 @@ type BSPParams struct {
 		Angle_Change float64 `json:"angle_change"`
 		Range_Change float64 `json:"range_change"`
 		Rotate_Speed float64 `json:"rotate_speed"`
+		AZ           float64 `json:"az_level"`
 	} `json:"radar"`
 
 	Scanner struct {
@@ -46,12 +50,14 @@ type BSPParams struct {
 		DropSpeed float64 `json:"drop_speed"`
 		ScanRange float64 `json:"scan_range"`
 		ScanSpeed float64 `json:"scan_speed"`
+		AZ        float64 `json:"az_level"`
 	} `json:"scaner"`
 
 	Fuel_tank struct {
 		Fuel_volume   float64 `json:"fuel_volume"`
 		Compact       float64 `json:"compact"`
 		Radiation_def float64 `json:"radiation_def"`
+		AZ            float64 `json:"az_level"`
 	} `json:"fuel_tank"`
 
 	Lss struct {
@@ -60,6 +66,7 @@ type BSPParams struct {
 		Air_volume        float64 `json:"air_volume"`
 		Air_prepare_speed float64 `json:"air_speed"`
 		Lightness         float64 `json:"lightness"`
+		AZ                float64 `json:"az_level"`
 	} `json:"lss"`
 
 	Shields struct {
@@ -69,6 +76,7 @@ type BSPParams struct {
 		Heat_reflection float64 `json:"heat_reflection"`
 		Heat_capacity   float64 `json:"heat_capacity"`
 		Heat_sink       float64 `json:"heat_sink"`
+		AZ              float64 `json:"az_level"`
 	} `json:"shields"`
 }
 
