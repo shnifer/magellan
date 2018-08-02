@@ -106,8 +106,8 @@ func getSprites(params CamParams) map[string]*Sprite {
 func sysColor(az float64) color.Color {
 	k := commons.Clamp(az/100, 0, 1)
 	return color.RGBA{
-		R: uint8(255 * k),
-		G: uint8(255 * (1 - k)),
+		R: uint8(255 * (1 - k)),
+		G: uint8(255 * k),
 		B: 0,
 		A: 255,
 	}
