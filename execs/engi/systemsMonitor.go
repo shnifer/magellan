@@ -50,8 +50,13 @@ func (s *systemsMonitor) Req(Q *DrawQueue) {
 	Q.Add(s.sprites["upp"], Z_GAME_OBJECT+2)
 	for i := 0; i < SysCount; i++ {
 		sprite := s.sprites[strconv.Itoa(i)]
-		sprite.SetColor(sysColor(Data.EngiData.AZ[i]))
+		sprite.SetColor(sysColor(Data.EngiData.AZ[i] / 100))
 		Q.Add(sprite, Z_GAME_OBJECT)
+		if i == 5 {
+			sprite := s.sprites["fuelc"]
+			sprite.SetColor(sysColor(Data.EngiData.AZ[i] / 100))
+			Q.Add(sprite, Z_GAME_OBJECT)
+		}
 
 		s.writeSysText(Q, i)
 	}
@@ -65,7 +70,10 @@ func (s *systemsMonitor) mouseOverSystem(pos v2.V2) (sysN int, isOver bool) {
 	for i := 0; i < SysCount; i++ {
 		if s.sprites[strconv.Itoa(i)].IsOver(pos, true) {
 			return i, true
+		} else if pos.Sub(s.sysNvs[i]).Len() < 200 {
+			return i, true
 		}
+
 	}
 
 	return 0, false
@@ -87,6 +95,9 @@ func getSprites(params CamParams) map[string]*Sprite {
 	a("6")
 	a("7")
 	a("upp")
+	a("fuelc")
+	a("tempc")
+	a("airc")
 
 	for i := 0; i <= 100; i += 5 {
 		a("f" + strconv.Itoa(i))
@@ -103,13 +114,24 @@ func getSprites(params CamParams) map[string]*Sprite {
 	return res
 }
 
-func sysColor(az float64) color.Color {
-	k := commons.Clamp(az/100, 0, 1)
-	return color.RGBA{
-		R: uint8(255 * (1 - k)),
-		G: uint8(255 * k),
-		B: 0,
-		A: 255,
+func sysColor(v float64) color.Color {
+	k := commons.Clamp(v, 0, 1)
+	if k > 0.5 {
+		k := (k - 0.5) * 2
+		return color.RGBA{
+			R: uint8(255 * (1 - k)),
+			G: 255,
+			B: 0,
+			A: 255,
+		}
+	} else {
+		k := k * 2
+		return color.RGBA{
+			R: 255,
+			G: uint8(255 * k),
+			B: 0,
+			A: 255,
+		}
 	}
 }
 
@@ -118,22 +140,31 @@ func (s *systemsMonitor) s(pref string, n int) *Sprite {
 }
 
 func (s *systemsMonitor) drawAir(Q *DrawQueue) {
-	n := int(math.Round(commons.Clamp(Data.EngiData.Air/Data.BSP.Lss.Air_volume, 0, 1) * 10))
+	v := commons.Clamp(Data.EngiData.Air/Data.BSP.Lss.Air_volume, 0, 1)
+	n := int(math.Round(v * 10))
 	n *= 10
 	Q.Add(s.s("a", n), Z_GAME_OBJECT+1)
+	sprite := s.sprites["airc"]
+	sprite.SetColor(sysColor(v))
+	Q.Add(sprite, Z_GAME_OBJECT)
 }
 
 func (s *systemsMonitor) drawTemp(Q *DrawQueue) {
-	n := int(math.Round(commons.Clamp(Data.EngiData.Calories/Data.BSP.Shields.Heat_capacity, 0, 2) * 10))
+	v := commons.Clamp(Data.EngiData.Calories/Data.BSP.Shields.Heat_capacity, 0, 2)
+	n := int(math.Round(v * 10))
 	if n > 10 {
 		n = 11
 	}
 	n *= 10
 	Q.Add(s.s("t", n), Z_GAME_OBJECT+1)
+	sprite := s.sprites["tempc"]
+	sprite.SetColor(sysColor(1 - v))
+	Q.Add(sprite, Z_GAME_OBJECT)
 }
 
 func (s *systemsMonitor) drawFuel(Q *DrawQueue) {
-	n := int(math.Round(commons.Clamp(Data.EngiData.Fuel/Data.BSP.Fuel_tank.Fuel_volume, 0, 1) * 20))
+	v := commons.Clamp(Data.EngiData.Fuel/Data.BSP.Fuel_tank.Fuel_volume, 0, 1)
+	n := int(math.Round(v * 20))
 	n *= 5
 	Q.Add(s.s("f", n), Z_GAME_OBJECT+1)
 }

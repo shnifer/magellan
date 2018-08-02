@@ -4,7 +4,7 @@
     "Timeout":100,
     "PingPeriod": 100,
     "FullScreen": false,
-    "VSync": true,
+    "VSync": false,
     "WinW": 800,
     "WinH": 800,
     "DoProf": false,
