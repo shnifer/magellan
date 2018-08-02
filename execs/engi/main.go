@@ -14,12 +14,11 @@ import (
 )
 
 const roleName = "engi"
+const SysCount = 8
 
 var (
 	WinW int
 	WinH int
-
-	SysCount = 8
 )
 
 var last time.Time
