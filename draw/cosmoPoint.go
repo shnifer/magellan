@@ -38,6 +38,8 @@ type CosmoPoint struct {
 	Size float64
 	Type string
 
+	EmiDist *graph.CircleLine
+
 	caption     *graph.Text
 	captionText string
 
@@ -135,12 +137,19 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 
 	glyphs := newGlyphs(pd)
 
-	emiR := 0.0
-	for _, emi := range pd.Emissions {
-		if emi.MainRange > emiR {
-			emiR = emi.MainRange
+	var emiR float64
+	for _, e := range pd.Emissions {
+		if emiR < e.FarRange {
+			emiR = e.FarRange
 		}
 	}
+	o := graph.CircleLineOpts{
+		Params: params,
+		Clr:    colornames.Powderblue,
+		Layer:  graph.Z_UNDER_OBJECT,
+		PCount: 32,
+	}
+	emiDist := graph.NewCircleLine(pd.Pos, emiR, o)
 
 	var captionText *graph.Text
 	res := CosmoPoint{
@@ -158,6 +167,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		glyphs:         glyphs,
 		caption:        captionText,
 		cam:            params.Cam,
+		EmiDist:        emiDist,
 	}
 	switch pd.Type {
 	case BUILDING_BEACON, BUILDING_BLACKBOX:
@@ -212,6 +222,9 @@ func (cp *CosmoPoint) Update(dt float64) {
 	}
 	if cp.WarpOuter != nil {
 		cp.WarpOuter.AddAng(-dt * 3)
+	}
+	if cp.EmiDist != nil {
+		cp.EmiDist.SetPos(cp.Pos)
 	}
 }
 
@@ -276,9 +289,10 @@ func (cp *CosmoPoint) Req(Q *graph.DrawQueue) {
 			Q.Append(cp.WarpGreen)
 		}
 	}
-
 	cp.glyphs.setPos(cp.cam.Apply(cp.Pos))
 	cp.glyphs.setSize(cp.cam.Scale * cp.Size)
+
+	Q.Append(cp.EmiDist)
 
 	Q.Append(cp.glyphs)
 }

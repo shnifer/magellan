@@ -10,6 +10,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"log"
+	"time"
 )
 
 type engiScene struct {
@@ -19,6 +20,8 @@ type engiScene struct {
 	systemsMonitor *systemsMonitor
 
 	q *graph.DrawQueue
+
+	tick <-chan time.Time
 }
 
 func newEngiScene() *engiScene {
@@ -33,6 +36,7 @@ func newEngiScene() *engiScene {
 		background:     back,
 		systemsMonitor: newSystemsMonitor(),
 		q:              graph.NewDrawQueue(),
+		tick:           time.Tick(time.Second),
 	}
 }
 
@@ -60,6 +64,12 @@ func (s *engiScene) Update(dt float64) {
 
 	Data.EngiData.Emissions = CalculateEmissions(Data.Galaxy, Data.PilotData.Ship.Pos)
 
+	select {
+	case <-s.tick:
+		s.procTick()
+	default:
+	}
+
 	s.systemsMonitor.update(dt, s.ranma)
 }
 
@@ -81,4 +91,8 @@ func (*engiScene) Destroy() {
 
 func (s *engiScene) showSystemInfo(n int) {
 	log.Println("show system info #", n)
+}
+
+func (s *engiScene) procTick() {
+
 }

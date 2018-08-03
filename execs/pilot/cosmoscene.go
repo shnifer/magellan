@@ -198,7 +198,6 @@ func (s *cosmoScene) Update(dt float64) {
 	//same with emissions
 	if !Data.NaviData.IsOrbiting {
 		s.updateShipControl(dt)
-		s.procEmissions(dt)
 	}
 
 	//for display draw calls only
