@@ -57,6 +57,10 @@ func (s *engiScene) Update(dt float64) {
 			s.showSystemInfo(sysN)
 		}
 	}
+
+	Data.EngiData.Emissions = CalculateEmissions(Data.Galaxy, Data.PilotData.Ship.Pos)
+
+	s.systemsMonitor.update(dt, s.ranma)
 }
 
 func (s *engiScene) Draw(image *ebiten.Image) {

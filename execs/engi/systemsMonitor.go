@@ -2,13 +2,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/draw"
 	. "github.com/Shnifer/magellan/graph"
+	"github.com/Shnifer/magellan/ranma"
 	"github.com/Shnifer/magellan/v2"
+	"golang.org/x/image/colornames"
 	"image/color"
 	"math"
 	"strconv"
+	"time"
 )
 
 type systemsMonitor struct {
@@ -16,6 +19,9 @@ type systemsMonitor struct {
 
 	sprites map[string]*Sprite
 	sysNvs  [SysCount]v2.V2
+
+	isEmid [8]bool
+	isDmgd [8]bool
 }
 
 func newSystemsMonitor() *systemsMonitor {
@@ -45,16 +51,46 @@ func newSystemsMonitor() *systemsMonitor {
 	return &res
 }
 
+func (s *systemsMonitor) update(dt float64, ranma *ranma.Ranma) {
+	e := Data.EngiData.Emissions
+	s.isEmid[0] = 0 < e[EMI_VEL_UP]+e[EMI_VEL_DOWN]+e[EMI_ACCEL]+e[EMI_REVERSE]+e[EMI_ENGINE_HEAT]
+	s.isEmid[1] = 0 < e[EMI_DIST_UP]+e[EMI_DIST_DOWN]+e[EMI_WARP_TURN]
+	s.isEmid[2] = 0 < e[EMI_TURN]+e[EMI_STRAFE]
+	s.isEmid[3] = 0 < e[EMI_RADAR_COSMOS]+e[EMI_RADAR_WARP]+e[EMI_RADAR_ANG_DOWN]+e[EMI_RADAR_ANG_UP]
+	s.isEmid[4] = 0 < e[EMI_SCAN_RADIUS]+e[EMI_SCAN_SPEED]+e[EMI_DROP_RADIUS]+e[EMI_DROP_SPEED]
+	s.isEmid[5] = 0 < e[EMI_FUEL]
+	s.isEmid[6] = 0 < e[EMI_CO2]
+	s.isEmid[7] = 0 < e[EMI_DEF_HEAT]+e[EMI_DEF_RADI]+e[EMI_DEF_MECH]
+
+	for i := 0; i < SysCount; i++ {
+		s.isDmgd[i] = ranma.GetOut(i) > 0
+	}
+}
+
 func (s *systemsMonitor) Req(Q *DrawQueue) {
 	Q.Add(s.sprites["all"], Z_GAME_OBJECT-1)
 	Q.Add(s.sprites["upp"], Z_GAME_OBJECT+2)
 	for i := 0; i < SysCount; i++ {
 		sprite := s.sprites[strconv.Itoa(i)]
-		sprite.SetColor(sysColor(Data.EngiData.AZ[i] / 100))
+		var clr color.Color
+		if s.isDmgd[i] {
+			clr = colornames.Darkgray
+		} else {
+			clr = sysColor(Data.EngiData.AZ[i] / 100)
+		}
+		sprite.SetColor(clr)
+		if s.isEmid[i] {
+			t := float64(time.Now().Nanosecond()) / 1000000000
+			a := math.Sin(t*2*math.Pi)*0.5 + 0.5
+			sprite.SetAlpha(a)
+		} else {
+			sprite.SetAlpha(1)
+		}
 		Q.Add(sprite, Z_GAME_OBJECT)
+
 		if i == 5 {
 			sprite := s.sprites["fuelc"]
-			sprite.SetColor(sysColor(Data.EngiData.AZ[i] / 100))
+			sprite.SetColor(clr)
 			Q.Add(sprite, Z_GAME_OBJECT)
 		}
 
@@ -115,7 +151,7 @@ func getSprites(params CamParams) map[string]*Sprite {
 }
 
 func sysColor(v float64) color.Color {
-	k := commons.Clamp(v, 0, 1)
+	k := Clamp(v, 0, 1)
 	if k > 0.5 {
 		k := (k - 0.5) * 2
 		return color.RGBA{
@@ -140,7 +176,7 @@ func (s *systemsMonitor) s(pref string, n int) *Sprite {
 }
 
 func (s *systemsMonitor) drawAir(Q *DrawQueue) {
-	v := commons.Clamp(Data.EngiData.Air/Data.BSP.Lss.Air_volume, 0, 1)
+	v := Clamp(Data.EngiData.Air/Data.BSP.Lss.Air_volume, 0, 1)
 	n := int(math.Round(v * 10))
 	n *= 10
 	Q.Add(s.s("a", n), Z_GAME_OBJECT+1)
@@ -150,7 +186,7 @@ func (s *systemsMonitor) drawAir(Q *DrawQueue) {
 }
 
 func (s *systemsMonitor) drawTemp(Q *DrawQueue) {
-	v := commons.Clamp(Data.EngiData.Calories/Data.BSP.Shields.Heat_capacity, 0, 2)
+	v := Clamp(Data.EngiData.Calories/Data.BSP.Shields.Heat_capacity, 0, 2)
 	n := int(math.Round(v * 10))
 	if n > 10 {
 		n = 11
@@ -163,7 +199,7 @@ func (s *systemsMonitor) drawTemp(Q *DrawQueue) {
 }
 
 func (s *systemsMonitor) drawFuel(Q *DrawQueue) {
-	v := commons.Clamp(Data.EngiData.Fuel/Data.BSP.Fuel_tank.Fuel_volume, 0, 1)
+	v := Clamp(Data.EngiData.Fuel/Data.BSP.Fuel_tank.Fuel_volume, 0, 1)
 	n := int(math.Round(v * 20))
 	n *= 5
 	Q.Add(s.s("f", n), Z_GAME_OBJECT+1)

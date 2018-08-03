@@ -64,6 +64,7 @@ type EngiData struct {
 	Calories   float64
 	AZ         [8]float64
 	InV        [8]uint16
+	Emissions  map[string]float64
 }
 
 //Rework CalcDegrade on change
@@ -156,7 +157,7 @@ func (CommonData) Empty() CommonData {
 	return CommonData{
 		PilotData:  &PilotData{},
 		NaviData:   &NaviData{Mines: []string{}, Landing: []string{}},
-		EngiData:   &EngiData{},
+		EngiData:   &EngiData{Emissions: make(map[string]float64)},
 		ServerData: &ServerData{OtherShips: []OtherShipData{}},
 	}
 }

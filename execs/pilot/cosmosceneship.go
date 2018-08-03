@@ -87,7 +87,7 @@ func (s *cosmoScene) procEmissions(dt float64) {
 	emissions := CalculateEmissions(Data.Galaxy, Data.PilotData.Ship.Pos)
 	for emiType, emiVal := range emissions {
 		switch emiType {
-		case EMISSION_SLOW:
+		case EMI_VEL_DOWN:
 			Data.PilotData.Ship.Vel =
 				Data.PilotData.Ship.Vel.Mul(1 - emiVal*dt/100)
 		}
