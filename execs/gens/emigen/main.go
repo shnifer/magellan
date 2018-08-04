@@ -97,6 +97,8 @@ func genEmissions(p *commons.GalaxyPoint) []commons.Emission {
 		return res
 	}
 
+	initEmi(&res, chance, t)
+
 	doFirst := rand.Intn(100) < chance.First
 	if !doFirst {
 		return res
@@ -110,6 +112,15 @@ func genEmissions(p *commons.GalaxyPoint) []commons.Emission {
 	return res
 }
 
+func initEmi(E *[]commons.Emission, c EmiChance, t string) {
+	switch t {
+	case commons.GPT_STAR:
+		*E = append(*E, emi(c, commons.EMI_DMG_HEAT))
+	case commons.GPT_ASTEROID:
+		*E = append(*E, emi(c, commons.EMI_DMG_MECH))
+	}
+}
+
 func newEmi(E *[]commons.Emission, c EmiChance, d EmiDistib) {
 	var ok bool
 	var t int
@@ -119,19 +130,22 @@ func newEmi(E *[]commons.Emission, c EmiChance, d EmiDistib) {
 			ok = true
 		}
 	}
+	*E = append(*E, emi(c, strconv.Itoa(t)))
+}
+
+func emi(c EmiChance, t string) commons.Emission {
 	farRange := math.Round(commons.KDev(Opts.Dev) * c.Far)
 	closeRange := math.Round(commons.KDev(Opts.Dev) * c.Close)
 	if closeRange > farRange*0.9 {
 		closeRange = farRange * 0.9
 	}
-	e := commons.Emission{
-		Type:      strconv.Itoa(t),
+	return commons.Emission{
+		Type:      t,
 		FarRange:  farRange,
 		FarValue:  0,
 		MainRange: closeRange,
 		MainValue: 1,
 	}
-	*E = append(*E, e)
 }
 
 func procSignatures(p *commons.GalaxyPoint) []commons.Signature {
