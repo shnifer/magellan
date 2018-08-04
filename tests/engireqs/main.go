@@ -64,14 +64,14 @@ func drawSlots(image *ebiten.Image) {
 	for n := 0; n < 8; n++ {
 		for m := 0; m < 16; m++ {
 			p := pos(n, m)
-			if Ranma.GetInByte(n, m) {
+			if Ranma.GetInBit(n, m) {
 				smokeSprite.SetPos(p)
 				smokeSprite.Draw(image)
 			}
 			slotSprite.SetPos(p)
 			slotSprite.Draw(image)
 
-			if Ranma.GetOutByte(n, m) {
+			if Ranma.GetOutBit(n, m) {
 				dotSprite.SetPos(p)
 				dotSprite.Draw(image)
 			}

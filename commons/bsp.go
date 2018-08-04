@@ -1,5 +1,16 @@
 package commons
 
+const (
+	SYS_MARCH = iota
+	SYS_WARP
+	SYS_SHUNTER
+	SYS_SCANNER
+	SYS_RADAR
+	SYS_FUEL
+	SYS_LSS
+	SYS_SHIELD
+)
+
 type BSPParams struct {
 	//0...100
 	March_engine struct {

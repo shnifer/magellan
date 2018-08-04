@@ -221,6 +221,7 @@ func doUpdateOtherShips(rs *roomServer) {
 }
 
 func getStartAZ(sd StateData) [8]float64 {
+	//fixme: Check radar scanner order
 	return [8]float64{
 		sd.BSP.March_engine.AZ,
 		sd.BSP.Warp_engine.AZ,

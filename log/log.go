@@ -100,7 +100,7 @@ func SetLogFields(keys map[string]string) {
 	Log(LVL_INFO, "become", keys)
 }
 
-//TODO: check somethere and set dynamically
+//TODO: неважно: check somethere and set dynamically
 func SetLogLevel(lvl int) {
 	if logger == nil {
 		return

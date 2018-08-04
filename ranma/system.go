@@ -37,7 +37,7 @@ func (s *system) get() uint16 {
 	return s.dat
 }
 
-func (s *system) getByte(b int) bool {
+func (s *system) getBit(b int) bool {
 	s.Lock()
 	defer s.Unlock()
 

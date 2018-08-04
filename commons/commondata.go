@@ -68,9 +68,7 @@ type EngiData struct {
 }
 
 //Rework CalcDegrade on change
-type BSPDegrade struct {
-	BSPParams
-}
+type BSPDegrade BSPParams
 
 type OtherShipData struct {
 	Id   string

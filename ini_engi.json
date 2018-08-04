@@ -18,6 +18,7 @@
     "RanmaAddr": "http://tagunil.ru:8000/system/",
     "DropOnRepair": true,
     "RanmaTimeoutMs": 100,
-    "RanmaHistoryDepth": 16
-
+    "RanmaHistoryDepth": 16,
+    "RanmaMaxDegradePercent": 125,
+    "EmissionDegradePercent": 50
 }

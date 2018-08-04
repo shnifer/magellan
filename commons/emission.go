@@ -17,22 +17,22 @@ const (
 	EMI_WARP_TURN      = "9"
 	EMI_ACCEL          = "10"
 	EMI_REVERSE        = "11"
-	EMI_ENGINE_HEAT    = "12"
+	EMI_ENGINE_HEAT    = "12" //in Engi into BSPDegrade
 	EMI_FUEL           = "13"
 	EMI_TURN           = "14"
 	EMI_STRAFE         = "15"
-	EMI_SCAN_RADIUS    = "16"
-	EMI_SCAN_SPEED     = "17"
-	EMI_DROP_RADIUS    = "18"
-	EMI_DROP_SPEED     = "19"
-	EMI_RADAR_COSMOS   = "20"
-	EMI_RADAR_WARP     = "21"
-	EMI_RADAR_ANG_UP   = "22"
-	EMI_RADAR_ANG_DOWN = "23"
-	EMI_CO2            = "24"
-	EMI_DEF_HEAT       = "25"
-	EMI_DEF_RADI       = "26"
-	EMI_DEF_MECH       = "27"
+	EMI_SCAN_RADIUS    = "16" //in Engi into BSPDegrade
+	EMI_SCAN_SPEED     = "17" //in Engi into BSPDegrade
+	EMI_DROP_RADIUS    = "18" //in Engi into BSPDegrade
+	EMI_DROP_SPEED     = "19" //in Engi into BSPDegrade
+	EMI_RADAR_COSMOS   = "20" //in Engi into BSPDegrade
+	EMI_RADAR_WARP     = "21" //in Engi into BSPDegrade
+	EMI_RADAR_ANG_UP   = "22" //in Engi into BSPDegrade
+	EMI_RADAR_ANG_DOWN = "23" //in Engi into BSPDegrade
+	EMI_CO2            = "24" //in Engi into BSPDegrade
+	EMI_DEF_HEAT       = "25" //in Engi into BSPDegrade
+	EMI_DEF_RADI       = "26" //in Engi into BSPDegrade
+	EMI_DEF_MECH       = "27" //in Engi into BSPDegrade
 )
 
 type Emission struct {

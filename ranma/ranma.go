@@ -42,7 +42,7 @@ func (r *Ranma) GetIn(sn int) uint16 {
 	return r.programmed[sn]
 }
 
-func (r *Ranma) GetInByte(sn, bn int) bool {
+func (r *Ranma) GetInBit(sn, bn int) bool {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -94,11 +94,11 @@ func (r *Ranma) GetOut(sn int) uint16 {
 	return r.corrected[sn].get()
 }
 
-func (r *Ranma) GetOutByte(sn, bn int) bool {
+func (r *Ranma) GetOutBit(sn, bn int) bool {
 	if !r.broken[sn] {
 		return false
 	}
-	return r.corrected[sn].getByte(bn)
+	return r.corrected[sn].getBit(bn)
 }
 
 func (r *Ranma) reset() {

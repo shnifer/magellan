@@ -38,6 +38,9 @@ type tDefVals struct {
 	DropOnRepair      bool
 	RanmaTimeoutMs    int
 	RanmaHistoryDepth int
+
+	RanmaMaxDegradePercent float64
+	EmissionDegradePercent float64
 }
 
 var DEFVAL tDefVals
