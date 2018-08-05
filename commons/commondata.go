@@ -14,19 +14,19 @@ type CommonData struct {
 }
 
 type PilotData struct {
-	Ship        RBData  `json:"sh", omitempty`
-	SessionTime float64 `json:"ss", omitempty`
-	FlightTime  float64 `json:"ft", omitempty`
+	Ship        RBData  `json:"sh,omitempty"`
+	SessionTime float64 `json:"ss,omitempty"`
+	FlightTime  float64 `json:"ft,omitempty"`
 	//for cosmo
-	ThrustVector v2.V2 `json:"tv", omitempty`
+	ThrustVector v2.V2 `json:"tv,omitempty"`
 	//for warp
-	Distortion float64 `json:"wd", omitempty`
-	Dir        float64 `json:"dr", omitempty`
+	Distortion float64 `json:"wd,omitempty"`
+	Dir        float64 `json:"dr,omitempty"`
 	//warp position for return from zero system
-	WarpPos v2.V2 `json:"wp", omitempty`
+	WarpPos v2.V2 `json:"wp,omitempty"`
 
 	//to Engi
-	HeatProduction float64 `json:"hp", omitempty`
+	HeatProduction float64 `json:"hp,omitempty"`
 
 	//do not reload same Msg, cz of ship.Pos extrapolate and SessionTime+=dt
 	MsgID int `json:"id"`
@@ -34,43 +34,43 @@ type PilotData struct {
 
 type NaviData struct {
 	//drop items
-	BeaconCount int `json:"bc"`
+	BeaconCount int `json:"bc,omitempty"`
 	//[]corpName, i.e. ["gd","gd","pre"]
 	//[]planetName, i.e. ["CV8-85","RD4-42-13"]
-	Mines   []string `json:"mn"`
-	Landing []string `json:"ld"`
+	Mines   []string `json:"mn,omitempty"`
+	Landing []string `json:"ld,omitempty"`
 
 	//cosmo
-	IsScanning    bool   `json:"is"`
-	IsDrop        bool   `json:"st"`
-	ScanObjectID  string `json:"so"`
-	IsOrbiting    bool   `json:"io"`
-	OrbitObjectID string `json:"oo"`
-	ActiveMarker  bool   `json:"ma"`
-	MarkerPos     v2.V2  `json:"mp"`
+	IsScanning    bool   `json:"is,omitempty"`
+	IsDrop        bool   `json:"st,omitempty"`
+	ScanObjectID  string `json:"so,omitempty"`
+	IsOrbiting    bool   `json:"io,omitempty"`
+	OrbitObjectID string `json:"oo,omitempty"`
+	ActiveMarker  bool   `json:"ma,omitempty"`
+	MarkerPos     v2.V2  `json:"mp,omitempty"`
 
 	//warp
-	SonarDir   float64 `json:"sd"`
-	SonarRange float64 `json:"sr"`
-	SonarWide  float64 `json:"sw"`
+	SonarDir   float64 `json:"sd,omitempty"`
+	SonarRange float64 `json:"sr,omitempty"`
+	SonarWide  float64 `json:"sw,omitempty"`
 }
 
 type EngiCounters struct {
-	Fuel     float64
-	Air      float64
-	Calories float64
+	Fuel     float64 `json:"f,omitempty"`
+	Air      float64 `json:"a,omitempty"`
+	Calories float64 `json:"t,omitempty"`
 }
 
 type EngiData struct {
 	//[0.0 - 1.0]
 	//0 for fully OKEY, 1 - for totally DEGRADED
-	BSPDegrade BSPDegrade
-	AZ         [8]float64
-	InV        [8]uint16
-	Emissions  map[string]float64
+	BSPDegrade BSPDegrade         `json:"deg,omitempty"`
+	AZ         [8]float64         `json:"az,omitempty"`
+	InV        [8]uint16          `json:"inv,omitempty"`
+	Emissions  map[string]float64 `json:"emm,omitempty"`
 
 	//Counters
-	Counters EngiCounters
+	Counters EngiCounters `json:"c,omitempty"`
 }
 
 //Rework CalcDegrade on change
