@@ -2,13 +2,13 @@ package commons
 
 const (
 	SYS_MARCH = iota
-	SYS_WARP
 	SYS_SHUNTER
-	SYS_SCANNER
+	SYS_WARP
+	SYS_SHIELD
 	SYS_RADAR
+	SYS_SCANNER
 	SYS_FUEL
 	SYS_LSS
-	SYS_SHIELD
 )
 
 type BSPParams struct {
@@ -65,10 +65,10 @@ type BSPParams struct {
 	} `json:"scaner"`
 
 	Fuel_tank struct {
-		Fuel_volume   float64 `json:"fuel_volume"`
-		Compact       float64 `json:"compact"`
-		Radiation_def float64 `json:"radiation_def"`
-		AZ            float64 `json:"az_level"`
+		Fuel_volume     float64 `json:"fuel_volume"`
+		Fuel_Protection float64 `json:"fuel_protection"`
+		Radiation_def   float64 `json:"radiation_def"`
+		AZ              float64 `json:"az_level"`
 	} `json:"fuel_tank"`
 
 	Lss struct {

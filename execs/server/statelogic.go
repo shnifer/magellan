@@ -27,21 +27,7 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 	case STATE_cosmo:
 		//start of fly
 		if prevState.StateID == STATE_login {
-			common.PilotData.Ship.Pos =
-				stateData.Galaxy.Points[DEFVAL.SolarStartLocationName].Pos
-			common.NaviData.Mines = make([]string, len(stateData.BSP.Mines))
-			for i, v := range stateData.BSP.Mines {
-				common.NaviData.Mines[i] = v.Owner
-			}
-			common.NaviData.Landing = make([]string, len(stateData.BSP.Modules))
-			for i, v := range stateData.BSP.Modules {
-				common.NaviData.Landing[i] = v.Owner
-			}
-			common.NaviData.BeaconCount = stateData.BSP.Beacons.Count
-			common.EngiData.InV = [8]uint16{}
-			common.EngiData.AZ = getStartAZ(stateData)
-			common.EngiData.Fuel = stateData.BSP.Fuel_tank.Fuel_volume
-			common.EngiData.Air = stateData.BSP.Lss.Air_volume
+			prepareStartCommon(&common, stateData)
 		}
 
 		//from warp to cosmo
@@ -116,6 +102,24 @@ func (rd *roomServer) IsValidState(roomName string, stateStr string) bool {
 	}
 
 	return res
+}
+
+func prepareStartCommon(common *CommonData, stateData StateData) {
+	common.PilotData.Ship.Pos =
+		stateData.Galaxy.Points[DEFVAL.SolarStartLocationName].Pos
+	common.NaviData.Mines = make([]string, len(stateData.BSP.Mines))
+	for i, v := range stateData.BSP.Mines {
+		common.NaviData.Mines[i] = v.Owner
+	}
+	common.NaviData.Landing = make([]string, len(stateData.BSP.Modules))
+	for i, v := range stateData.BSP.Modules {
+		common.NaviData.Landing[i] = v.Owner
+	}
+	common.NaviData.BeaconCount = stateData.BSP.Beacons.Count
+	common.EngiData.InV = [8]uint16{}
+	common.EngiData.AZ = getStartAZ(stateData)
+	common.EngiData.Counters.Fuel = stateData.BSP.Fuel_tank.Fuel_volume
+	common.EngiData.Counters.Air = stateData.BSP.Lss.Air_volume
 }
 
 //run internal mutex call
@@ -221,15 +225,14 @@ func doUpdateOtherShips(rs *roomServer) {
 }
 
 func getStartAZ(sd StateData) [8]float64 {
-	//fixme: Check radar scanner order
 	return [8]float64{
 		sd.BSP.March_engine.AZ,
-		sd.BSP.Warp_engine.AZ,
 		sd.BSP.Shunter.AZ,
+		sd.BSP.Warp_engine.AZ,
+		sd.BSP.Shields.AZ,
 		sd.BSP.Radar.AZ,
 		sd.BSP.Scanner.AZ,
 		sd.BSP.Fuel_tank.AZ,
 		sd.BSP.Lss.AZ,
-		sd.BSP.Shields.AZ,
 	}
 }

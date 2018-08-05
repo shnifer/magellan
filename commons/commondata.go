@@ -25,7 +25,7 @@ type PilotData struct {
 	//warp position for return from zero system
 	WarpPos v2.V2 `json:"wp", omitempty`
 
-	//for engu
+	//to Engi
 	HeatProduction float64 `json:"hp", omitempty`
 
 	//do not reload same Msg, cz of ship.Pos extrapolate and SessionTime+=dt
@@ -55,16 +55,22 @@ type NaviData struct {
 	SonarWide  float64 `json:"sw"`
 }
 
+type EngiCounters struct {
+	Fuel     float64
+	Air      float64
+	Calories float64
+}
+
 type EngiData struct {
 	//[0.0 - 1.0]
 	//0 for fully OKEY, 1 - for totally DEGRADED
 	BSPDegrade BSPDegrade
-	Fuel       float64
-	Air        float64
-	Calories   float64
 	AZ         [8]float64
 	InV        [8]uint16
 	Emissions  map[string]float64
+
+	//Counters
+	Counters EngiCounters
 }
 
 //Rework CalcDegrade on change

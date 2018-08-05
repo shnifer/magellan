@@ -176,7 +176,7 @@ func (s *systemsMonitor) s(pref string, n int) *Sprite {
 }
 
 func (s *systemsMonitor) drawAir(Q *DrawQueue) {
-	v := Clamp(Data.EngiData.Air/Data.BSP.Lss.Air_volume, 0, 1)
+	v := Clamp(Data.EngiData.Counters.Air/Data.BSP.Lss.Air_volume, 0, 1)
 	n := int(math.Round(v * 10))
 	n *= 10
 	Q.Add(s.s("a", n), Z_GAME_OBJECT+1)
@@ -186,7 +186,7 @@ func (s *systemsMonitor) drawAir(Q *DrawQueue) {
 }
 
 func (s *systemsMonitor) drawTemp(Q *DrawQueue) {
-	v := Clamp(Data.EngiData.Calories/Data.BSP.Shields.Heat_capacity, 0, 2)
+	v := Clamp(Data.EngiData.Counters.Calories/Data.BSP.Shields.Heat_capacity, 0, 2)
 	n := int(math.Round(v * 10))
 	if n > 10 {
 		n = 11
@@ -199,7 +199,7 @@ func (s *systemsMonitor) drawTemp(Q *DrawQueue) {
 }
 
 func (s *systemsMonitor) drawFuel(Q *DrawQueue) {
-	v := Clamp(Data.EngiData.Fuel/Data.BSP.Fuel_tank.Fuel_volume, 0, 1)
+	v := Clamp(Data.EngiData.Counters.Fuel/Data.BSP.Fuel_tank.Fuel_volume, 0, 1)
 	n := int(math.Round(v * 20))
 	n *= 5
 	Q.Add(s.s("f", n), Z_GAME_OBJECT+1)

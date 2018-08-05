@@ -7,16 +7,17 @@ import (
 
 func CalculateBSPDegrade(ranma *ranma.Ranma) (res BSPDegrade) {
 	var b uint16
+	k := func(x uint16) float64 {
+		var n uint16
+		for i := 0; i < 16; i++ {
+			n += x & 1
+			x = x >> 1
+		}
+		return float64(n)
+	}
 	f := func(v uint16, mask uint16) float64 {
 		x := v & mask
-		var kv, km uint16
-		for i := 0; i < 16; i++ {
-			kv += x & 1
-			km += mask & 1
-			x = x >> 1
-			mask = mask >> 1
-		}
-		return float64(kv) / float64(km) * DEFVAL.RanmaMaxDegradePercent
+		return k(x) / k(mask) * DEFVAL.RanmaMaxDegradePercent
 	}
 	d := func(v uint16, mask uint16) float64 {
 		x := f(v, mask)
@@ -79,12 +80,13 @@ func CalculateBSPDegrade(ranma *ranma.Ranma) (res BSPDegrade) {
 	res.Scanner.DropRange = d(b, 9590) / e(EMI_DROP_RADIUS)
 	res.Scanner.DropSpeed = d(b, 4830) / e(EMI_DROP_SPEED)
 
-	//fixme:
 	b = ranma.GetOut(SYS_FUEL)
-	res.Fuel_tank.Radiation_def = d(b, 58355)
+	res.Fuel_tank.Fuel_Protection = d(b, 8095)
+	res.Fuel_tank.Radiation_def = k(b & 58355)
 
 	b = ranma.GetOut(SYS_LSS)
 	res.Lss.Thermal_def = d(b, 36411)
+	//fixme:check this!
 	res.Lss.Co2_level = d(b, 18862) / e(EMI_CO2)
 	res.Lss.Air_prepare_speed = d(b, 9590)
 	res.Lss.Lightness = d(b, 4831)

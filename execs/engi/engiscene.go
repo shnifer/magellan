@@ -64,6 +64,7 @@ func (s *engiScene) Update(dt float64) {
 
 	Data.EngiData.Emissions = CalculateEmissions(Data.Galaxy, Data.PilotData.Ship.Pos)
 	Data.EngiData.BSPDegrade = CalculateBSPDegrade(s.ranma)
+	CalculateCounters(dt)
 
 	select {
 	case <-s.tick:

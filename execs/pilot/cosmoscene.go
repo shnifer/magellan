@@ -216,6 +216,8 @@ func (s *cosmoScene) Update(dt float64) {
 	} else {
 		Data.PilotData.HeatProduction = 0
 	}
+	Data.PilotData.HeatProduction += Data.SP.Shunter.Heat_prod * math.Abs(s.maneurLevel)
+
 	s.warpEngine.update(dt)
 	s.predictors.setParams()
 }
