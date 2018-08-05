@@ -133,7 +133,31 @@ func (base *BSP) CalcDegrade(degrade BSPDegrade) (result *BSP) {
 	}
 	res := *base
 
-	//todo: calc degrade
+	res.March_engine.Thrust_max *= degrade.March_engine.Thrust_max
+	res.March_engine.Thrust_acc *= degrade.March_engine.Thrust_acc
+	res.March_engine.Thrust_slow *= degrade.March_engine.Thrust_slow
+	res.March_engine.Reverse_max *= degrade.March_engine.Reverse_max
+	res.March_engine.Reverse_acc *= degrade.March_engine.Reverse_acc
+	res.March_engine.Reverse_slow *= degrade.March_engine.Reverse_slow
+	res.March_engine.Heat_prod *= degrade.March_engine.Heat_prod
+
+	res.Shunter.Turn_max *= degrade.Shunter.Turn_max
+	res.Shunter.Turn_acc *= degrade.Shunter.Turn_acc
+	res.Shunter.Turn_slow *= degrade.Shunter.Turn_slow
+	res.Shunter.Strafe_max *= degrade.Shunter.Strafe_max
+	res.Shunter.Strafe_acc *= degrade.Shunter.Strafe_acc
+	res.Shunter.Strafe_slow *= degrade.Shunter.Strafe_slow
+	res.Shunter.Heat_prod *= degrade.Shunter.Heat_prod
+
+	res.Warp_engine.Distort_max *= degrade.Warp_engine.Distort_max
+	res.Warp_engine.Distort_acc *= degrade.Warp_engine.Distort_acc
+	res.Warp_engine.Distort_slow *= degrade.Warp_engine.Distort_slow
+	res.Warp_engine.Turn_speed *= degrade.Warp_engine.Turn_speed
+	res.Warp_engine.Turn_consumption *= degrade.Warp_engine.Turn_consumption
+	res.Warp_engine.Warp_enter_consumption *= degrade.Warp_engine.Warp_enter_consumption
+	res.Warp_engine.Consumption *= degrade.Warp_engine.Consumption
+
+	res.Shields.Heat_sink *= degrade.Shields.Heat_sink
 
 	return &res
 }

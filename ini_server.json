@@ -25,5 +25,7 @@
     "GameExchPeriodMs": 0,
     "LogExchPort": "8012",
     "LogExchAddrs": ["192.168.0.1:8012"],
-    "LogExchPeriodMs": 0
+    "LogExchPeriodMs": 0,
+    "WormHoleExitDistK": 1.2,
+    "WormHoleExitVel": 100
 }

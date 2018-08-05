@@ -72,6 +72,8 @@ func (s *engiScene) Update(dt float64) {
 	default:
 	}
 
+	s.checkForWormHole()
+
 	s.systemsMonitor.update(dt, s.ranma)
 }
 
@@ -97,4 +99,24 @@ func (s *engiScene) showSystemInfo(n int) {
 
 func (s *engiScene) procTick() {
 
+}
+
+func (s *engiScene) checkForWormHole() {
+	if Data.EngiData.Emissions[EMI_WORMHOLE] == 0 {
+		return
+	}
+
+	target, err := GetWormHoleTarget(Data.State.GalaxyID)
+	if err != nil {
+		Log(LVL_ERROR, err)
+	}
+	if target == WarmHoleYouDIE {
+
+	}
+
+	//to other system
+	state := Data.State
+	state.StateID = STATE_cosmo
+	state.GalaxyID = target
+	Client.RequestNewState(state.Encode(), false)
 }

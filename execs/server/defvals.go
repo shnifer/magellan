@@ -23,7 +23,7 @@ type tDefVals struct {
 	OtherShipsUpdatePeriod int
 	DiskRefreshPeriod      int
 
-	DoProf bool
+	DoProf    bool
 	DebugPort string
 
 	StartWarpSpeed         float64
@@ -47,6 +47,9 @@ type tDefVals struct {
 	LogExchPort      string
 	LogExchAddrs     []string
 	LogExchPeriodMs  int
+
+	WormHoleExitDistK float64
+	WormHoleExitVel   float64
 }
 
 var DEFVAL tDefVals

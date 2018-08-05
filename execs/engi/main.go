@@ -81,6 +81,7 @@ func main() {
 	Data = commons.NewData()
 
 	initClient()
+	commons.InitWormHoles()
 
 	draw.InitFonts()
 	draw.InitTexAtlas()

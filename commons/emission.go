@@ -33,6 +33,7 @@ const (
 	EMI_DEF_HEAT       = "25" //in Engi into BSPDegrade
 	EMI_DEF_RADI       = "26" //in Engi into BSPDegrade
 	EMI_DEF_MECH       = "27" //in Engi into BSPDegrade
+	EMI_WORMHOLE       = "28" //Engi update checks
 )
 
 type Emission struct {

@@ -2,6 +2,7 @@ package commons
 
 import (
 	"github.com/Shnifer/magellan/v2"
+	"math"
 )
 
 var gravityConst float64
@@ -35,6 +36,12 @@ func Gravity(mass, lenSqr, zDist float64) float64 {
 
 	//d2 = d2 * d2
 	//return gravityConst * mass * lenSqr / d2
+}
+
+func UnGravity(mass, zDist, grav float64) float64 {
+	d2 := gravityConst * mass / grav
+	lenSqr := d2 - zDist*zDist
+	return math.Sqrt(lenSqr)
 }
 
 func SumGravityAcc(pos v2.V2, galaxy *Galaxy) (sumF v2.V2) {

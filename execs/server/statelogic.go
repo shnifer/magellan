@@ -36,6 +36,37 @@ func generateCommonData(common CommonData, stateData StateData, newState, prevSt
 				v2.InDir(180 + common.PilotData.Ship.Ang).Mul(stateData.Galaxy.SpawnDistance)
 			common.PilotData.Ship.Vel = v2.InDir(common.PilotData.Ship.Ang)
 		}
+
+		//wormhole -- cosmo to cosmo
+		if prevState.StateID == STATE_cosmo {
+			var obj *GalaxyPoint
+			for _, p := range stateData.Galaxy.Points {
+				if p.Type == GPT_WORMHOLE {
+					obj = p
+					break
+				}
+			}
+			if obj == nil {
+				Log(LVL_ERROR, "Not found warmhole in system ", newState.GalaxyID)
+				//do as usual warp in
+				common.PilotData.Ship.Pos =
+					v2.InDir(180 + common.PilotData.Ship.Ang).Mul(stateData.Galaxy.SpawnDistance)
+				common.PilotData.Ship.Vel = v2.InDir(common.PilotData.Ship.Ang)
+				return common
+			}
+			thrust := stateData.BSP.March_engine.Thrust_max / stateData.BSP.Ship.NodesMass
+			dist := UnGravity(obj.Mass, obj.GDepth, thrust)
+			for _, e := range obj.Emissions {
+				if dist < e.FarRange {
+					dist = e.FarRange
+				}
+			}
+			stateData.Galaxy.Update(sessionTime)
+			dist *= DEFVAL.WormHoleExitDistK
+			common.PilotData.Ship.Pos = obj.Pos.Add(
+				v2.InDir(common.PilotData.Ship.Ang).Mul(dist))
+			common.PilotData.Ship.Vel = v2.InDir(common.PilotData.Ship.Ang).Mul(DEFVAL.WormHoleExitVel)
+		}
 	case STATE_warp:
 		//from cosmo to warp
 		common = toWarpCommonData(common, stateData, newState, prevState)
