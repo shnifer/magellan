@@ -3,6 +3,7 @@ package main
 import (
 	. "github.com/Shnifer/magellan/commons"
 	hls "github.com/gerow/go-color"
+	"golang.org/x/image/colornames"
 	"image/color"
 	"math/rand"
 	"strconv"
@@ -28,15 +29,19 @@ func (o pOpts) gp() *GalaxyPoint {
 	}
 
 	count := 0
+	clr := colornames.White
 	switch o.t {
 	case GPT_STAR:
 		count = Opts.StarANCount
+		clr = randomRed()
 	case GPT_HARDPLANET:
 		count = Opts.HardANCount
 	case GPT_GASPLANET:
 		count = Opts.GasANCount
 	case GPT_ASTEROID:
 		count = Opts.AsteroidANCount
+	default:
+		clr = randBright()
 	}
 
 	massSizeK := KDev(Opts.SizeMassDevPercent)
@@ -60,7 +65,7 @@ func (o pOpts) gp() *GalaxyPoint {
 		Emissions:  nil,
 		Signatures: signatures,
 		Minerals:   o.minerals,
-		Color:      randBright(),
+		Color:      clr,
 	}
 }
 
@@ -74,6 +79,15 @@ func randBright() color.RGBA {
 		R: uint8(rgb.R * 255),
 		G: uint8(rgb.G * 255),
 		B: uint8(rgb.B * 255),
+		A: 255,
+	}
+}
+
+func randomRed() color.RGBA {
+	return color.RGBA{
+		R: uint8(200 + rand.Intn(56)),
+		G: uint8(rand.Intn(100)),
+		B: uint8(rand.Intn(100)),
 		A: 255,
 	}
 }
