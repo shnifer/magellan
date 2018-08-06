@@ -5,6 +5,7 @@ import (
 	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/static"
 	"github.com/pkg/errors"
+	"log"
 	"strconv"
 	"time"
 )
@@ -26,6 +27,9 @@ var wormHoles map[int]*WormHole
 var whBySystem map[string]*WormHole
 
 func InitWormHoles() {
+	wormHoles = make(map[int]*WormHole)
+	whBySystem = make(map[string]*WormHole)
+
 	dat, err := static.Load("DB", WormHoleFN)
 	if err != nil {
 		Log(LVL_ERROR, err)
@@ -39,6 +43,8 @@ func InitWormHoles() {
 		wormHoles[v.ID] = v
 		whBySystem[v.System] = v
 	}
+	log.Println(wormHoles)
+	log.Println(whBySystem)
 }
 
 func GetWormHoleTarget(src string) (string, error) {

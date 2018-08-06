@@ -82,6 +82,7 @@ func main() {
 
 	initClient()
 	commons.InitWormHoles()
+	commons.SetGravityConsts(DEFVAL.GravityConst, 0)
 
 	draw.InitFonts()
 	draw.InitTexAtlas()

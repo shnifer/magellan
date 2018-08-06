@@ -41,6 +41,8 @@ type tDefVals struct {
 
 	RanmaMaxDegradePercent float64
 	EmissionDegradePercent float64
+
+	GravityConst float64
 }
 
 var DEFVAL tDefVals

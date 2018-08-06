@@ -39,8 +39,14 @@ func Gravity(mass, lenSqr, zDist float64) float64 {
 }
 
 func UnGravity(mass, zDist, grav float64) float64 {
+	if grav <= 0 {
+		return 0
+	}
 	d2 := gravityConst * mass / grav
 	lenSqr := d2 - zDist*zDist
+	if lenSqr <= 0 {
+		return 0
+	}
 	return math.Sqrt(lenSqr)
 }
 

@@ -22,6 +22,8 @@ type engiScene struct {
 	q *graph.DrawQueue
 
 	tick <-chan time.Time
+
+	wormOut string
 }
 
 func newEngiScene() *engiScene {
@@ -47,10 +49,14 @@ func (s *engiScene) Init() {
 			s.ranma.SetIn(sysN, Data.EngiData.InV[sysN])
 		}
 	}
+
+	s.wormOut = ""
 }
 
 func (s *engiScene) Update(dt float64) {
 	defer LogFunc("engiScene.Update")()
+
+	Data.Galaxy.Update(Data.PilotData.SessionTime)
 
 	x, y := ebiten.CursorPosition()
 	mouse := v2.V2{X: float64(x), Y: float64(y)}
@@ -109,9 +115,12 @@ func (s *engiScene) checkForWormHole() {
 	target, err := GetWormHoleTarget(Data.State.GalaxyID)
 	if err != nil {
 		Log(LVL_ERROR, err)
+		return
 	}
-	if target == WarmHoleYouDIE {
 
+	if target == WarmHoleYouDIE {
+		Log(LVL_INFO, "Die by wormhole")
+		return
 	}
 
 	//to other system

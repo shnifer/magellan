@@ -51,11 +51,10 @@ func CalculateEmissions(galaxy *Galaxy, ship v2.V2) (res map[string]float64) {
 
 	var dist float64
 
-	for _, point := range galaxy.Points {
+	for _, point := range galaxy.Ordered {
 		if len(point.Emissions) == 0 {
 			continue
 		}
-
 		dist = point.Pos.Sub(ship).Len()
 		for _, emission := range point.Emissions {
 			v := 0.0

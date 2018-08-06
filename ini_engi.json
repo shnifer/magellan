@@ -5,8 +5,8 @@
     "PingPeriod": 100,
     "FullScreen": false,
     "VSync": false,
-    "WinW": 800,
-    "WinH": 800,
+    "WinW": 400,
+    "WinH": 400,
     "DoProf": false,
     "LogLogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
@@ -20,5 +20,6 @@
     "RanmaTimeoutMs": 100,
     "RanmaHistoryDepth": 16,
     "RanmaMaxDegradePercent": 125,
-    "EmissionDegradePercent": 50
+    "EmissionDegradePercent": 50,
+    "GravityConst": 1
 }
