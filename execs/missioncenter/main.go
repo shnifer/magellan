@@ -82,6 +82,7 @@ func main() {
 	draw.LowQualityCosmoPoint(DEFVAL.LowQ)
 	ebiten.SetVsyncEnabled(DEFVAL.VSync)
 
+	commons.InitWormHoles()
 	draw.InitFonts()
 	draw.InitTexAtlas()
 	commons.InitSignatureAtlas()

@@ -74,3 +74,12 @@ func defaultLineTex() Tex {
 	img.ReplacePixels(p)
 	return TexFromImage(img, ebiten.FilterDefault, 0, 0, 0, "~line")
 }
+
+func Arrow(Q *DrawQueue, cam *Camera, from, to v2.V2, clr color.Color, ang, len float64, layer int) {
+	fromPos := cam.Apply(from)
+	toPos := cam.Apply(to)
+	LineScr(Q, fromPos, toPos, clr, layer)
+	dir := cam.Apply(from).Sub(to).Dir()
+	LineScr(Q, toPos, toPos.AddMul(v2.InDir(dir+ang), len), clr, layer)
+	LineScr(Q, toPos, toPos.AddMul(v2.InDir(dir-ang), len), clr, layer)
+}

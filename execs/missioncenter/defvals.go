@@ -16,11 +16,13 @@ type tDefVals struct {
 	WinW, WinH     int
 	HalfResolution bool
 	LowQ           bool
-	VSync bool
+	VSync          bool
+
+	ShowWormHoles bool
 
 	DebugControl bool
 	DoProf       bool
-	DebugPort string
+	DebugPort    string
 
 	//in ms
 	LogTimeoutMs  int

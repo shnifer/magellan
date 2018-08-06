@@ -53,8 +53,6 @@ type scene struct {
 	sonarName     *graph.Text
 }
 
-//todo: wormhole show
-
 func newScene() *scene {
 	cam := graph.NewCamera()
 	cam.Center = graph.ScrP(0.5, 0.5)
@@ -169,10 +167,12 @@ func (s *scene) draw(window *ebiten.Image) {
 	if s.focus == focus_enterName {
 		s.q.Append(s.nameInput)
 	}
-	if s.showSignature {
-		s.q.Add(s.sonarBack, graph.Z_HUD-1)
-		s.q.Append(s.sonar)
-		s.q.Add(s.sonarName, graph.Z_STAT_HUD)
+	if DEFVAL.DebugControl {
+		if s.showSignature {
+			s.q.Add(s.sonarBack, graph.Z_HUD-1)
+			s.q.Append(s.sonar)
+			s.q.Add(s.sonarName, graph.Z_STAT_HUD)
+		}
 	}
 	s.q.Run(window)
 }
@@ -272,7 +272,9 @@ func (s *scene) procStarObjectClick(id string) {
 }
 
 func (s *scene) procWarpRightObjectClick(id string) {
-	changeGalaxy <- id
+	if DEFVAL.DebugControl {
+		changeGalaxy <- id
+	}
 }
 
 func (s *scene) onNameTextInput(text string, done bool) {
@@ -347,14 +349,16 @@ func (s *scene) EventDelBuilding(build commons.Building, fk string) {
 
 func newCP(gp *commons.GalaxyPoint, param graph.CamParams) *CosmoPoint {
 	res := NewCosmoPoint(gp, param)
-	if GalaxyName == commons.WARP_Galaxy_ID {
-		msg := gp.ID
-		if len(gp.Minerals) > 0 {
-			msg = msg + " " + fmt.Sprint(gp.Minerals)
+	if DEFVAL.DebugControl {
+		if GalaxyName == commons.WARP_Galaxy_ID {
+			msg := gp.ID
+			if len(gp.Minerals) > 0 {
+				msg = msg + " " + fmt.Sprint(gp.Minerals)
+			}
+			res.SetCaption(msg, color.White)
+		} else if len(gp.Minerals) > 0 {
+			res.SetCaption(fmt.Sprint(gp.Minerals), colornames.Red)
 		}
-		res.SetCaption(msg, color.White)
-	} else if len(gp.Minerals) > 0 {
-		res.SetCaption(fmt.Sprint(gp.Minerals), colornames.Red)
 	}
 	return res
 }

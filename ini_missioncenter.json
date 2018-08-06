@@ -4,6 +4,7 @@
     "WinH": 768,
     "HalfResolution": false,
     "LowQ": false,
+    "ShowWormHoles": true,
     "DebugControl": false,
     "DoProf": false,
     "VSync": false,
