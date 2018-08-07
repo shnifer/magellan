@@ -25,8 +25,12 @@ const WormHolePeriod = 60 * 15
 var wormHoles map[int]*WormHole
 var whBySystem map[string]*WormHole
 
-type WormHoleDir struct {
+type WormHoleDirSys struct {
 	Src, Dest string
+}
+
+type WormHoleDirN struct {
+	Src, Dest int
 }
 
 func InitWormHoles() {
@@ -64,13 +68,23 @@ func GetWormHoleTarget(src string) (string, error) {
 	return target.System, nil
 }
 
-func GetCurrentWormHoleDirections() []WormHoleDir {
-	res := make([]WormHoleDir, 0)
+func GetCurrentWormHoleDirectionSys() []WormHoleDirSys {
+	res := make([]WormHoleDirSys, 0)
 	for src, wh := range whBySystem {
 		dest := wh.getTarget()
 		if dest > 0 {
-			res = append(res, WormHoleDir{Src: src, Dest: wormHoles[dest].System})
+			res = append(res, WormHoleDirSys{Src: src, Dest: wormHoles[dest].System})
 		}
+	}
+	return res
+}
+
+
+func GetCurrentWormHoleDirectionN() map[string]WormHoleDirN {
+	res := make(map[string]WormHoleDirN)
+	for src, wh := range wormHoles {
+		dest := wh.getTarget()
+		res[wh.System]= WormHoleDirN{Src: src, Dest: dest}
 	}
 	return res
 }
@@ -82,4 +96,12 @@ func (wh WormHole) getTarget() int {
 	}
 	n := int(time.Now().Unix()/WormHolePeriod) % l
 	return wh.TimePlan[n]
+}
+
+func GetWormHolesNs() map[int]struct{} {
+	res:=make(map[int]struct{})
+	for i:=range wormHoles{
+		res[i]= struct{}{}
+	}
+	return res
 }

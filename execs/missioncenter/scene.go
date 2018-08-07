@@ -15,6 +15,7 @@ import (
 	"math"
 	"sort"
 	"strconv"
+	"math/rand"
 )
 
 const (
@@ -46,6 +47,10 @@ type scene struct {
 	nameInput  *TextInput
 
 	back *graph.Sprite
+
+	wormHolesT float64
+	usedNs map[int]struct{}
+	randomNs map[int]int
 
 	showSignature bool
 	sigs          []commons.Signature
@@ -86,6 +91,8 @@ func newScene() *scene {
 		sonarBack:     sonarBack,
 		sonarPos:      sonarPos,
 		back:          back,
+		usedNs: make(map[int]struct{}),
+		randomNs: make(map[int]int),
 	}
 
 	textPanel := NewAtlasSprite(commons.TextPanelAN, graph.NoCam)
@@ -105,6 +112,9 @@ func (s *scene) init() {
 	s.focus = focus_main
 	s.showSignature = false
 	s.sigs = []commons.Signature{}
+	s.usedNs = commons.GetWormHolesNs()
+	s.randomNs = make(map[int]int)
+
 	if GalaxyName == commons.WARP_Galaxy_ID {
 		s.cam.Scale = 0.001
 		s.cam.Pos = CurGalaxy.Points["solar"].Pos
@@ -159,6 +169,14 @@ func (s *scene) update(dt float64) {
 		s.nameInput.Update(dt)
 	}
 
+	if GalaxyName == commons.WARP_Galaxy_ID && DEFVAL.ShowWormHoles {
+		s.wormHolesT+=dt
+		if s.wormHolesT>10{
+			s.wormHolesT = 0
+			s.setTopCaptions()
+		}
+	}
+
 	s.sonar.ActiveSignatures(s.sigs)
 	s.sonar.Update(dt)
 }
@@ -180,9 +198,6 @@ func (s *scene) draw(window *ebiten.Image) {
 			s.q.Append(s.sonar)
 			s.q.Add(s.sonarName, graph.Z_STAT_HUD)
 		}
-	}
-	if GalaxyName == commons.WARP_Galaxy_ID && DEFVAL.ShowWormHoles {
-		drawWormHoleArrows(s.q, s.cam)
 	}
 	if s.back != nil {
 		s.q.Add(s.back, graph.Z_BACKGROUND)
@@ -388,8 +403,9 @@ func changeCP(objs map[string]*CosmoPoint, id string, point *CosmoPoint) {
 	}
 }
 
+//depricated
 func drawWormHoleArrows(Q *graph.DrawQueue, cam *graph.Camera) {
-	dirs := commons.GetCurrentWormHoleDirections()
+	dirs := commons.GetCurrentWormHoleDirectionSys()
 	for _, d := range dirs {
 		from, ok := CurGalaxy.Points[d.Src]
 		if !ok {
@@ -401,4 +417,32 @@ func drawWormHoleArrows(Q *graph.DrawQueue, cam *graph.Camera) {
 		}
 		graph.Arrow(Q, cam, from.Pos, to.Pos, colornames.Red, 30, 30, graph.Z_HUD)
 	}
+}
+
+func (s *scene) setTopCaptions(){
+	dirs:=commons.GetCurrentWormHoleDirectionN()
+	for sys, d:= range dirs {
+		dst:=d.Dest
+		if d.Dest==0{
+			dst=s.getRandomDest(d.Src)
+		} else {
+			s.randomNs[d.Src] = 0
+		}
+		msg:=fmt.Sprintf("ИЗЛУЧЕНИЕ:\n%05d%05d",d.Src, dst)
+		s.objects[sys].SetCaptionTop(msg, color.White)
+	}
+}
+func (s *scene) getRandomDest(whN int) int {
+	v:=s.randomNs[whN]
+	if v>0 {
+		return v
+	}
+	var ok bool
+	for !ok{
+		v=rand.Intn(100000-100)+100
+		_,exist:=s.usedNs[v]
+		ok = !exist
+	}
+	s.randomNs[whN] = v
+	return v
 }

@@ -43,6 +43,9 @@ type CosmoPoint struct {
 	caption     *graph.Text
 	captionText string
 
+	captionTop     *graph.Text
+	captionTopText string
+
 	//hardcoded 2 rows
 	glyphs glyphs
 
@@ -168,6 +171,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		Type:           pd.Type,
 		glyphs:         glyphs,
 		caption:        captionText,
+		captionTop: captionText,
 		cam:            params.Cam,
 		EmiDist:        emiDist,
 	}
@@ -279,6 +283,12 @@ func (cp *CosmoPoint) Req(Q *graph.DrawQueue) {
 		cp.caption.SetPosPivot(base.Add(off), graph.Center())
 		Q.Add(cp.caption, graph.Z_ABOVE_OBJECT)
 	}
+	if cp.captionTop != nil {
+		base := cp.cam.Apply(cp.Pos)
+		off := v2.V2{X: 0, Y: -30}.Mul(graph.GS())
+		cp.captionTop.SetPosPivot(base.Add(off), graph.Center())
+		Q.Add(cp.captionTop, graph.Z_ABOVE_OBJECT)
+	}
 
 	if markAlpha == 0 {
 		if cp.WarpOuter != nil {
@@ -336,6 +346,15 @@ func (cp *CosmoPoint) SetCaption(caption string, clr color.Color) {
 	cp.captionText = caption
 }
 
+func (cp *CosmoPoint) SetCaptionTop(caption string, clr color.Color) {
+	cp.captionTop = graph.NewText(caption, Fonts[Face_cap], clr)
+	cp.captionTopText = caption
+}
+
 func (cp *CosmoPoint) GetCaption() string {
 	return cp.captionText
+}
+
+func (cp *CosmoPoint) GetCaptionTop() string {
+	return cp.captionTopText
 }

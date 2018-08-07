@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 )
 
-const maxN = 18
-const fstr = "\"STAR-%v\": {\"FileName\": \"BWStar-%v.png\"},\n"
+const maxN = 69
+const fstr = "\"HARDPLANET-%v\": {\"FileName\": \"Solid%02d.png\"},\n"
 
 func main(){
 	var res string
