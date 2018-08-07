@@ -79,7 +79,7 @@ func Arrow(Q *DrawQueue, cam *Camera, from, to v2.V2, clr color.Color, ang, len 
 	fromPos := cam.Apply(from)
 	toPos := cam.Apply(to)
 	LineScr(Q, fromPos, toPos, clr, layer)
-	dir := cam.Apply(from).Sub(to).Dir()
+	dir := fromPos.Sub(toPos).Dir()
 	LineScr(Q, toPos, toPos.AddMul(v2.InDir(dir+ang), len), clr, layer)
 	LineScr(Q, toPos, toPos.AddMul(v2.InDir(dir-ang), len), clr, layer)
 }

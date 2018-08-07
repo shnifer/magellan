@@ -81,6 +81,8 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		typeGlowScale = 0.3
 	case GPT_STAR:
 		typeGlowScale = 2
+	case GPT_WARP:
+		typeGlowScale = 0
 	default:
 		typeGlowScale = 1.5
 	}

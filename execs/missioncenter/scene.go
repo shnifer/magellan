@@ -45,6 +45,8 @@ type scene struct {
 	selectedID string
 	nameInput  *TextInput
 
+	back *graph.Sprite
+
 	showSignature bool
 	sigs          []commons.Signature
 	sonar         *SonarHUD
@@ -70,6 +72,9 @@ func newScene() *scene {
 	sonarBack.SetColor(color.RGBA{R: 50, G: 50, B: 50, A: 255})
 	sonarBack.SetAlpha(0.8)
 
+	/*	back:=NewAtlasSprite("mission_control_back", cam.Phys())
+		back.SetScale(6400,6400)*/
+
 	res := &scene{
 		cam:           cam,
 		objects:       make(map[string]*CosmoPoint),
@@ -79,6 +84,7 @@ func newScene() *scene {
 		sonar:         sonar,
 		sonarBack:     sonarBack,
 		sonarPos:      sonarPos,
+		//		back: back,
 	}
 
 	textPanel := NewAtlasSprite(commons.TextPanelAN, graph.NoCam)
@@ -173,6 +179,12 @@ func (s *scene) draw(window *ebiten.Image) {
 			s.q.Append(s.sonar)
 			s.q.Add(s.sonarName, graph.Z_STAT_HUD)
 		}
+	}
+	if GalaxyName == commons.WARP_Galaxy_ID && DEFVAL.ShowWormHoles {
+		drawWormHoleArrows(s.q, s.cam)
+	}
+	if s.back != nil {
+		s.q.Add(s.back, graph.Z_BACKGROUND)
 	}
 	s.q.Run(window)
 }
@@ -372,5 +384,20 @@ func changeCP(objs map[string]*CosmoPoint, id string, point *CosmoPoint) {
 		*objs[id] = *point
 	} else {
 		objs[id] = point
+	}
+}
+
+func drawWormHoleArrows(Q *graph.DrawQueue, cam *graph.Camera) {
+	dirs := commons.GetCurrentWormHoleDirections()
+	for _, d := range dirs {
+		from, ok := CurGalaxy.Points[d.Src]
+		if !ok {
+			Log(LVL_WARN, "can't found system ", d.Src)
+		}
+		to, ok := CurGalaxy.Points[d.Dest]
+		if !ok {
+			Log(LVL_WARN, "can't found system ", d.Src)
+		}
+		graph.Arrow(Q, cam, from.Pos, to.Pos, colornames.Red, 30, 30, graph.Z_HUD)
 	}
 }

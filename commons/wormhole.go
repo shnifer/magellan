@@ -5,7 +5,6 @@ import (
 	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/static"
 	"github.com/pkg/errors"
-	"log"
 	"strconv"
 	"time"
 )
@@ -26,6 +25,10 @@ const WormHolePeriod = 60 * 15
 var wormHoles map[int]*WormHole
 var whBySystem map[string]*WormHole
 
+type WormHoleDir struct {
+	Src, Dest string
+}
+
 func InitWormHoles() {
 	wormHoles = make(map[int]*WormHole)
 	whBySystem = make(map[string]*WormHole)
@@ -43,8 +46,6 @@ func InitWormHoles() {
 		wormHoles[v.ID] = v
 		whBySystem[v.System] = v
 	}
-	log.Println(wormHoles)
-	log.Println(whBySystem)
 }
 
 func GetWormHoleTarget(src string) (string, error) {
@@ -61,6 +62,17 @@ func GetWormHoleTarget(src string) (string, error) {
 		return "", errors.New("Not found target wormhole id " + strconv.Itoa(targetId))
 	}
 	return target.System, nil
+}
+
+func GetCurrentWormHoleDirections() []WormHoleDir {
+	res := make([]WormHoleDir, 0)
+	for src, wh := range whBySystem {
+		dest := wh.getTarget()
+		if dest > 0 {
+			res = append(res, WormHoleDir{Src: src, Dest: wormHoles[dest].System})
+		}
+	}
+	return res
 }
 
 func (wh WormHole) getTarget() int {
