@@ -24,6 +24,8 @@ type engiScene struct {
 	tick <-chan time.Time
 
 	wormOut string
+
+	local localCounters
 }
 
 func newEngiScene() *engiScene {
@@ -43,6 +45,8 @@ func newEngiScene() *engiScene {
 }
 
 func (s *engiScene) Init() {
+	s.local = initLocal()
+
 	defer LogFunc("engiScene.Init")()
 	for sysN := 0; sysN < SysCount; sysN++ {
 		if s.ranma.GetIn(sysN) != Data.EngiData.InV[sysN] {
@@ -71,6 +75,7 @@ func (s *engiScene) Update(dt float64) {
 	Data.EngiData.Emissions = CalculateEmissions(Data.Galaxy, Data.PilotData.Ship.Pos)
 	Data.EngiData.BSPDegrade = CalculateBSPDegrade(s.ranma)
 	CalculateCounters(dt)
+	s.CalculateLocalCounters()
 
 	select {
 	case <-s.tick:

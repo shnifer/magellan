@@ -43,6 +43,11 @@ type tDefVals struct {
 	EmissionDegradePercent float64
 
 	GravityConst float64
+
+	NormTemperature      float64
+	PoolTemperatureK     float64
+	EmiTemperatureK      float64
+	HeatProdTemperatureK float64
 }
 
 var DEFVAL tDefVals

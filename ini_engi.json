@@ -21,5 +21,9 @@
     "RanmaHistoryDepth": 16,
     "RanmaMaxDegradePercent": 125,
     "EmissionDegradePercent": 50,
-    "GravityConst": 1
+    "GravityConst": 1,
+    "NormTemperature":20,
+    "PoolTemperatureK":1,
+    "EmiTemperatureK":1,
+    "HeatProdTemperatureK":1
 }
