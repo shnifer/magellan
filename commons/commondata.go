@@ -26,6 +26,7 @@ type PilotData struct {
 	WarpPos v2.V2 `json:"wp,omitempty"`
 
 	//to Engi
+
 	HeatProduction float64 `json:"hp,omitempty"`
 
 	//do not reload same Msg, cz of ship.Pos extrapolate and SessionTime+=dt

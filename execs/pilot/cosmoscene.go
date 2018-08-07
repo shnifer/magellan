@@ -212,11 +212,13 @@ func (s *cosmoScene) Update(dt float64) {
 	s.trailUpdate(dt)
 
 	if s.thrustLevel > 0 {
-		Data.PilotData.HeatProduction = Data.SP.March_engine.Heat_prod * s.thrustLevel
+		Data.PilotData.HeatProduction = Data.SP.March_engine.Heat_prod * s.thrustLevel *
+			Data.SP.March_engine.Thrust_max / 100
 	} else {
 		Data.PilotData.HeatProduction = 0
 	}
-	Data.PilotData.HeatProduction += Data.SP.Shunter.Heat_prod * math.Abs(s.maneurLevel)
+	Data.PilotData.HeatProduction += Data.SP.Shunter.Heat_prod * math.Abs(s.maneurLevel) *
+		Data.SP.Shunter.Turn_max / 100
 
 	s.warpEngine.update(dt)
 	s.predictors.setParams()
