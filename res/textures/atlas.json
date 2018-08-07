@@ -142,5 +142,5 @@
   "engi_t90": {"FileName": "Sys_Temp_90.png"},
   "engi_t100": {"FileName": "Sys_Temp_Full.png"},
   "engi_t110": {"FileName": "Sys_Temp_Extreme.png"},
-  "mission_control_back": {"FileName": "mission_control_back.png", "Smooth":true}
+  "mission_control_back": {"FileName": "mission_control_back.jpg", "Smooth":true}
 }

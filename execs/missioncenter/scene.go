@@ -72,8 +72,9 @@ func newScene() *scene {
 	sonarBack.SetColor(color.RGBA{R: 50, G: 50, B: 50, A: 255})
 	sonarBack.SetAlpha(0.8)
 
-	/*	back:=NewAtlasSprite("mission_control_back", cam.Phys())
-		back.SetScale(6400,6400)*/
+	back := NewAtlasSprite("mission_control_back", graph.NoCam)
+	back.SetSize(float64(WinW), float64(WinH))
+	back.SetPivot(graph.TopLeft())
 
 	res := &scene{
 		cam:           cam,
@@ -84,7 +85,7 @@ func newScene() *scene {
 		sonar:         sonar,
 		sonarBack:     sonarBack,
 		sonarPos:      sonarPos,
-		//		back: back,
+		back:          back,
 	}
 
 	textPanel := NewAtlasSprite(commons.TextPanelAN, graph.NoCam)
