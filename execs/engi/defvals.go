@@ -57,6 +57,12 @@ type tDefVals struct {
 	AirLoseQuot          float64
 	RepairQuot           float64
 	NormPressure         float64
+	MinHole              float64
+	MaxHole              float64
+	HoleAZK              float64
+	BrakeChanceK         float64
+	OverheatAZK          float64
+	RadiAZK              float64
 }
 
 var DEFVAL tDefVals

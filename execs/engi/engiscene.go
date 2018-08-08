@@ -109,7 +109,8 @@ func (s *engiScene) showSystemInfo(n int) {
 }
 
 func (s *engiScene) procTick() {
-
+	s.checkDamage()
+	s.checkMedicine()
 }
 
 func (s *engiScene) checkForWormHole() {

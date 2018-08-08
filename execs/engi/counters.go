@@ -3,6 +3,8 @@ package main
 import (
 	. "github.com/Shnifer/magellan/commons"
 	"math"
+	"math/rand"
+	."github.com/Shnifer/magellan/log"
 )
 
 /*type EngiCounters struct {
@@ -79,8 +81,8 @@ func calcHolePressureAir(dt float64) {
 }
 
 type localCounters struct {
-	temperature float64
-	radiation   float64
+	temperature  float64
+	radiationSum float64
 }
 
 func (s *engiScene) CalculateLocalCounters() {
@@ -97,11 +99,168 @@ func (s *engiScene) CalculateLocalCounters() {
 	}
 	inRadi := tankRadi * totalUndef * DEFVAL.InRadiK
 
-	s.local.radiation = outRadi + inRadi
+	s.local.radiationSum = outRadi + inRadi
 }
 
 func initLocal() localCounters {
 	return localCounters{
 		temperature: DEFVAL.NormTemperature,
 	}
+}
+
+func (s *engiScene) checkDamage() {
+	if Data.EngiData.Emissions[EMI_DMG_MECH] > 0 {
+		s.procPhys()
+	}
+	if s.local.radiationSum > 0 {
+		s.procRadiation(s.local.radiationSum)
+	}
+	overHeat := Data.EngiData.Counters.Calories - Data.SP.Shields.Heat_capacity
+	if overHeat > 0 {
+		s.procOverHeat(overHeat)
+	}
+}
+
+func (s *engiScene) procPhys() {
+	hMin, hMax := DEFVAL.MinHole, DEFVAL.MaxHole
+	makeHole := Data.EngiData.Emissions[EMI_DMG_MECH] *
+		(rand.Float64()*(hMax-hMin) + hMin)
+	Data.EngiData.Counters.HoleSize += makeHole
+	if Data.EngiData.Counters.HoleSize < hMin {
+		Data.EngiData.Counters.HoleSize = hMin
+	} else if Data.EngiData.Counters.HoleSize > hMax {
+		Data.EngiData.Counters.HoleSize = hMax
+	}
+
+	var countSys int
+	var doMedical bool
+	switch rand.Intn(8) {
+	case 1, 2:
+		countSys = 1
+	case 3, 4:
+		countSys = 1
+		doMedical = true
+	case 5:
+		countSys = 2
+	case 6:
+		countSys = 2
+		doMedical = true
+	case 7:
+		doMedical = true
+	case 0:
+		countSys = 3
+	}
+
+	s.doAZDamage(countSys, Data.EngiData.Counters.HoleSize*DEFVAL.HoleAZK)
+	if doMedical {
+		s.procPhysMedicine(Data.EngiData.Emissions[EMI_DMG_MECH])
+	}
+}
+
+func (s *engiScene) procOverHeat(overheat float64) {
+	var countSys int
+	switch rand.Intn(8) {
+	case 0:
+	case 1, 2, 3, 4:
+		countSys = 1
+	case 5, 6:
+		countSys = 2
+	case 7:
+		countSys = 3
+	}
+	s.doAZDamage(countSys, overheat*DEFVAL.OverheatAZK)
+}
+
+func (s *engiScene) procRadiation(radiation float64) {
+	var countSys int
+	switch rand.Intn(8) {
+	case 0:
+	case 1, 2, 3, 4:
+		countSys = 1
+	case 5, 6:
+		countSys = 2
+	case 7:
+		countSys = 3
+	}
+	s.doAZDamage(countSys, radiation*DEFVAL.RadiAZK)
+}
+
+func (s *engiScene) doAZDamage(repeats int, dmg float64) {
+	if dmg == 0 || repeats == 0 {
+		return
+	}
+
+	brakeSystems := make(map[int]struct{})
+
+	for i := 0; i < repeats; i++ {
+		sysN := getRandomSysByValue()
+		dmg = math.Min(dmg, Data.EngiData.AZ[sysN])
+		var brakeChance float64
+		if Data.EngiData.AZ[sysN] == 0 {
+			brakeChance = 1
+		} else {
+			brakeChance = dmg / Data.EngiData.AZ[sysN] * DEFVAL.BrakeChanceK
+		}
+		if rand.Float64() < brakeChance {
+			brakeSystems[sysN] = struct{}{}
+		}
+	}
+
+	for sysN := range brakeSystems {
+		v := uint16(rand.Intn(65536))
+		s.ranma.SetIn(sysN, v)
+	}
+}
+
+func getRandomSysByValue() int {
+	sum := Data.BSP.March_engine.Volume +
+		Data.BSP.Shunter.Volume +
+		Data.BSP.Warp_engine.Volume +
+		Data.BSP.Shields.Volume +
+		Data.BSP.Radar.Volume +
+		Data.BSP.Scanner.Volume +
+		Data.BSP.Lss.Volume +
+		Data.BSP.Fuel_tank.Volume
+
+	if sum==0{
+		Log(LVL_ERROR, "Zero ship .Volumes!")
+		return 0
+	}
+	v := rand.Float64() * sum
+	if v < Data.BSP.March_engine.Volume {
+		return SYS_MARCH
+	} else {
+		v -= Data.BSP.March_engine.Volume
+	}
+	if v < Data.BSP.Shunter.Volume {
+		return SYS_SHUNTER
+	} else {
+		v -= Data.BSP.Shunter.Volume
+	}
+	if v < Data.BSP.Warp_engine.Volume {
+		return SYS_WARP
+	} else {
+		v -= Data.BSP.Warp_engine.Volume
+	}
+	if v < Data.BSP.Shields.Volume {
+		return SYS_SHIELD
+	} else {
+		v -= Data.BSP.Shields.Volume
+	}
+	if v < Data.BSP.Radar.Volume {
+		return SYS_RADAR
+	} else {
+		v -= Data.BSP.Radar.Volume
+	}
+	if v < Data.BSP.Scanner.Volume {
+		return SYS_SCANNER
+	} else {
+		v -= Data.BSP.Scanner.Volume
+	}
+	if v < Data.BSP.Lss.Volume {
+		return SYS_LSS
+	} else {
+		v -= Data.BSP.Lss.Volume
+	}
+	return SYS_FUEL
 }

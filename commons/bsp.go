@@ -22,6 +22,7 @@ type BSPParams struct {
 		Reverse_slow float64 `json:"slowdown_rev"`
 		Heat_prod    float64 `json:"heat_prod"`
 		AZ           float64 `json:"az_level"`
+		Volume       float64 `json:"volume"`
 	} `json:"march_engine"`
 
 	Warp_engine struct {
@@ -33,6 +34,7 @@ type BSPParams struct {
 		Turn_speed             float64 `json:"turn_speed"`
 		Turn_consumption       float64 `json:"turn_consumption"`
 		AZ                     float64 `json:"az_level"`
+		Volume                 float64 `json:"volume"`
 	} `json:"warp_engine"`
 
 	Shunter struct {
@@ -44,6 +46,7 @@ type BSPParams struct {
 		Strafe_slow float64 `json:"strafe_slow"`
 		Heat_prod   float64 `json:"heat_prod"`
 		AZ          float64 `json:"az_level"`
+		Volume      float64 `json:"volume"`
 	} `json:"shunter"`
 
 	Radar struct {
@@ -54,6 +57,7 @@ type BSPParams struct {
 		Range_Change float64 `json:"range_change"`
 		Rotate_Speed float64 `json:"rotate_speed"`
 		AZ           float64 `json:"az_level"`
+		Volume       float64 `json:"volume"`
 	} `json:"radar"`
 
 	Scanner struct {
@@ -62,6 +66,7 @@ type BSPParams struct {
 		ScanRange float64 `json:"scan_range"`
 		ScanSpeed float64 `json:"scan_speed"`
 		AZ        float64 `json:"az_level"`
+		Volume    float64 `json:"volume"`
 	} `json:"scaner"`
 
 	Fuel_tank struct {
@@ -69,6 +74,7 @@ type BSPParams struct {
 		Fuel_Protection float64 `json:"fuel_protection"`
 		Radiation_def   float64 `json:"radiation_def"`
 		AZ              float64 `json:"az_level"`
+		Volume          float64 `json:"volume"`
 	} `json:"fuel_tank"`
 
 	Lss struct {
@@ -78,6 +84,7 @@ type BSPParams struct {
 		Air_prepare_speed float64 `json:"air_speed"`
 		Lightness         float64 `json:"lightness"`
 		AZ                float64 `json:"az_level"`
+		Volume            float64 `json:"volume"`
 	} `json:"lss"`
 
 	Shields struct {
@@ -88,6 +95,7 @@ type BSPParams struct {
 		Heat_capacity   float64 `json:"heat_capacity"`
 		Heat_sink       float64 `json:"heat_sink"`
 		AZ              float64 `json:"az_level"`
+		Volume          float64 `json:"volume"`
 	} `json:"shields"`
 }
 

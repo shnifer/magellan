@@ -139,12 +139,16 @@ func emi(c EmiChance, t string) commons.Emission {
 	if closeRange > farRange*0.9 {
 		closeRange = farRange * 0.9
 	}
+	okr := func(x float64) float64 {
+		const sgn = 100
+		return float64(int(x*sgn)) / sgn
+	}
 	return commons.Emission{
 		Type:      t,
 		FarRange:  farRange,
 		FarValue:  0,
 		MainRange: closeRange,
-		MainValue: 1,
+		MainValue: okr(commons.KDev(Opts.Dev)),
 	}
 }
 

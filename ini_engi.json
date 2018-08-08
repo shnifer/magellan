@@ -34,5 +34,11 @@
     "MaxAirLose":10,
     "AirLoseQuot":0.00003,
     "RepairQuot":0.01,
-    "NormPressure":750
+    "NormPressure":750,
+    "MinHole":375,
+    "MaxHole": 500,
+    "HoleAZK": 0.05,
+    "OverheatAZK": 0.03,
+    "RadiAZK": 0.01,
+    "BrakeChanceK": 1
 }

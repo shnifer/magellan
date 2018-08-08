@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	EMI_DMG_MECH       = "1"
-	EMI_DMG_HEAT       = "2"
-	EMI_DMG_RADI       = "3"
+	EMI_DMG_MECH       = "1" //in Engi Counters
+	EMI_DMG_HEAT       = "2" //in Engi Counters
+	EMI_DMG_RADI       = "3" //in Engi Counters
 	EMI_DMG_GRAVI      = "4"
 	EMI_VEL_UP         = "5"
 	EMI_VEL_DOWN       = "6"
