@@ -5,6 +5,10 @@ import (
 	"github.com/Shnifer/magellan/ranma"
 )
 
+func e(emi string) float64 {
+	return 1 + Data.EngiData.Emissions[emi]*(DEFVAL.EmissionDegradePercent/100)
+}
+
 func CalculateBSPDegrade(ranma *ranma.Ranma) (res BSPDegrade) {
 	var b uint16
 	k := func(x uint16) float64 {
@@ -29,9 +33,6 @@ func CalculateBSPDegrade(ranma *ranma.Ranma) (res BSPDegrade) {
 	}
 	u := func(v uint16, mask uint16) float64 {
 		return 1 + f(v, mask)
-	}
-	e := func(emi string) float64 {
-		return 1 + Data.EngiData.Emissions[emi]*(DEFVAL.EmissionDegradePercent/100)
 	}
 
 	b = ranma.GetOut(SYS_MARCH)
@@ -82,12 +83,11 @@ func CalculateBSPDegrade(ranma *ranma.Ranma) (res BSPDegrade) {
 
 	b = ranma.GetOut(SYS_FUEL)
 	res.Fuel_tank.Fuel_Protection = d(b, 8095)
-	res.Fuel_tank.Radiation_def = k(b & 58355)
+	res.Fuel_tank.Radiation_def = k(b & 58355) //K - Count of bits
 
 	b = ranma.GetOut(SYS_LSS)
 	res.Lss.Thermal_def = d(b, 36411)
-	//fixme:check this!
-	res.Lss.Co2_level = d(b, 18862) / e(EMI_CO2)
+	res.Lss.Co2_level = k(b & 18862) //K - Count of bits
 	res.Lss.Air_prepare_speed = d(b, 9590)
 	res.Lss.Lightness = d(b, 4831)
 

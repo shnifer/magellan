@@ -57,9 +57,13 @@ type NaviData struct {
 }
 
 type EngiCounters struct {
-	Fuel     float64 `json:"f,omitempty"`
-	Air      float64 `json:"a,omitempty"`
-	Calories float64 `json:"t,omitempty"`
+	Fuel       float64 `json:"f,omitempty"`
+	HoleSize   float64 `json:"h,omitempty"`
+	Pressure   float64 `json:"p,omitempty"`
+	Air        float64 `json:"a,omitempty"`
+	Calories   float64 `json:"t,omitempty"`
+	CO2        float64 `json:"co2,omitempty"`
+	FlightTime float64 `json:"ft,omitempty"`
 }
 
 type EngiData struct {
@@ -162,7 +166,7 @@ func (CommonData) Empty() CommonData {
 	return CommonData{
 		PilotData:  &PilotData{},
 		NaviData:   &NaviData{Mines: []string{}, Landing: []string{}},
-		EngiData:   &EngiData{Emissions: make(map[string]float64)},
+		EngiData:   &EngiData{Emissions: make(map[string]float64), BSPDegrade: emptyDegrade()},
 		ServerData: &ServerData{OtherShips: []OtherShipData{}},
 	}
 }

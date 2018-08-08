@@ -45,6 +45,8 @@ type tDefVals struct {
 
 	//inms
 	OtherShipElastic int
+
+	ReportHyMineAddr string
 }
 
 var DEFVAL tDefVals

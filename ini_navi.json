@@ -18,5 +18,6 @@
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 10000,
     "LogIP": "https://elasticsearch.alice.magellan2018.ru",
-    "LogHostName": "room1noteAsus123"
+    "LogHostName": "room1noteAsus123",
+    "ReportHyMineAddr": "127.0.0.1:8500/economics/set_mine"
 }

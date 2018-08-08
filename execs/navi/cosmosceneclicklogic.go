@@ -10,6 +10,7 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 	"strings"
+	"fmt"
 )
 
 const (
@@ -96,6 +97,11 @@ func (s *cosmoScene) procButtonClick(tag string) {
 			Data.NaviData.IsOrbiting = true
 			Data.NaviData.OrbitObjectID = s.scanner.obj.ID
 			ClientLogGame(Client, "landing", s.scanner.obj.ID)
+			for _,v:=range Data.BSP.Modules{
+				if v.Planet == s.scanner.obj.ID{
+					s.doneMine(v.Owner, true)
+				}
+			}
 			found := false
 			for i, v := range Data.NaviData.Landing {
 				if v == Data.NaviData.OrbitObjectID {
@@ -113,12 +119,13 @@ func (s *cosmoScene) procButtonClick(tag string) {
 	case button_leaveorbit:
 		Data.NaviData.IsOrbiting = false
 		s.scanner.stateZero()
+	//сброс шахт отдельная проверка по префиксу
 	default:
 		if strings.HasPrefix(tag, minecorptagprefix) {
 			msg, ok := s.checkMine()
 			if ok {
 				corp := tag[len(minecorptagprefix):]
-				s.doneMine(corp)
+				s.doneMine(corp, false)
 				s.scanner.stateSelect(s.scanner.obj)
 			} else {
 				s.announce.AddMsg(msg, colornames.Red, 2)
@@ -204,17 +211,34 @@ func (s *cosmoScene) doneScan() {
 
 }
 
-func (s *cosmoScene) doneMine(corp string) {
+func (s *cosmoScene) doneMine(corp string, byLanding bool) {
 	AddMine(Data, Client, s.scanner.obj.ID, corp)
-	msg := "planet " + s.scanner.obj.ID + " corp " + CompanyNameByOwner(corp)
-	ClientLogGame(Client, "mine", msg)
-	for i, c := range Data.NaviData.Mines {
-		if c == corp {
-			Data.NaviData.Mines = append(Data.NaviData.Mines[:i], Data.NaviData.Mines[i+1:]...)
-			return
-		}
+	msg := "planet " + s.scanner.obj.ID + " corp " + CompanyNameByOwner(corp)+" "
+	mins:=Data.Galaxy.Points[s.scanner.obj.ID].Minerals
+	if len(mins)>0{
+		msg+=fmt.Sprint("minerals",mins)
 	}
-	Log(LVL_ERROR, "we placed mine that we had not on board")
+
+	var key string
+	if byLanding{
+		key = "mine land"
+	} else {
+		key = "mine drop"
+	}
+
+	ClientLogGame(Client, key, msg)
+
+	go reportHyMine(s.scanner.obj.ID, corp, mins)
+
+	if !byLanding {
+		for i, c := range Data.NaviData.Mines {
+			if c == corp {
+				Data.NaviData.Mines = append(Data.NaviData.Mines[:i], Data.NaviData.Mines[i+1:]...)
+				return
+			}
+		}
+		Log(LVL_ERROR, "we placed mine that we had not on board")
+	}
 }
 
 func (s *cosmoScene) checkLanding() bool {

@@ -158,6 +158,83 @@ func (base *BSP) CalcDegrade(degrade BSPDegrade) (result *BSP) {
 	res.Warp_engine.Consumption *= degrade.Warp_engine.Consumption
 
 	res.Shields.Heat_sink *= degrade.Shields.Heat_sink
+	res.Shields.Heat_reflection *= degrade.Shields.Heat_reflection
+	res.Shields.Heat_capacity *= degrade.Shields.Heat_capacity
+	res.Shields.Disinfect_level *= degrade.Shields.Disinfect_level
+	res.Shields.Mechanical_def *= degrade.Shields.Mechanical_def
+	res.Shields.Radiation_def *= degrade.Shields.Radiation_def
+
+	res.Fuel_tank.Fuel_Protection *= degrade.Fuel_tank.Fuel_Protection
+
+	res.Scanner.DropRange *= degrade.Scanner.DropRange
+	res.Scanner.DropSpeed *= degrade.Scanner.DropSpeed
+	res.Scanner.ScanRange *= degrade.Scanner.ScanRange
+	res.Scanner.ScanSpeed *= degrade.Scanner.ScanSpeed
+
+	res.Radar.Angle_Change *= degrade.Radar.Angle_Change
+	res.Radar.Angle_Min *= degrade.Radar.Angle_Min
+	res.Radar.Angle_Max *= degrade.Radar.Angle_Max
+	res.Radar.Range_Max *= degrade.Radar.Range_Max
+	res.Radar.Range_Change *= degrade.Radar.Range_Change
+	res.Radar.Rotate_Speed *= degrade.Radar.Rotate_Speed
+
+	res.Lss.Thermal_def *= degrade.Lss.Thermal_def
+	res.Lss.Air_prepare_speed *= degrade.Lss.Air_prepare_speed
 
 	return &res
+}
+
+func emptyDegrade() BSPDegrade {
+	var res BSPDegrade
+
+	res.March_engine.Thrust_max = 1
+	res.March_engine.Thrust_acc = 1
+	res.March_engine.Thrust_slow = 1
+	res.March_engine.Reverse_max = 1
+	res.March_engine.Reverse_acc = 1
+	res.March_engine.Reverse_slow = 1
+	res.March_engine.Heat_prod = 1
+
+	res.Shunter.Turn_max = 1
+	res.Shunter.Turn_acc = 1
+	res.Shunter.Turn_slow = 1
+	res.Shunter.Strafe_max = 1
+	res.Shunter.Strafe_acc = 1
+	res.Shunter.Strafe_slow = 1
+	res.Shunter.Heat_prod = 1
+
+	res.Warp_engine.Distort_max = 1
+	res.Warp_engine.Distort_acc = 1
+	res.Warp_engine.Distort_slow = 1
+	res.Warp_engine.Turn_speed = 1
+	res.Warp_engine.Turn_consumption = 1
+	res.Warp_engine.Warp_enter_consumption = 1
+	res.Warp_engine.Consumption = 1
+
+	res.Shields.Heat_sink = 1
+	res.Shields.Heat_reflection = 1
+	res.Shields.Heat_capacity = 1
+	res.Shields.Disinfect_level = 1
+	res.Shields.Mechanical_def = 1
+	res.Shields.Radiation_def = 1
+
+	res.Fuel_tank.Fuel_Protection = 1
+
+	res.Scanner.DropRange = 1
+	res.Scanner.DropSpeed = 1
+	res.Scanner.ScanRange = 1
+	res.Scanner.ScanSpeed = 1
+
+	res.Radar.Angle_Change = 1
+	res.Radar.Angle_Min = 1
+	res.Radar.Angle_Max = 1
+	res.Radar.Range_Max = 1
+	res.Radar.Range_Change = 1
+	res.Radar.Rotate_Speed = 1
+
+	res.Lss.Thermal_def = 1
+	res.Lss.Air_prepare_speed = 1
+	res.Lss.Co2_level = 0
+
+	return res
 }

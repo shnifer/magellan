@@ -48,6 +48,15 @@ type tDefVals struct {
 	PoolTemperatureK     float64
 	EmiTemperatureK      float64
 	HeatProdTemperatureK float64
+	CO2StepK             float64
+	TankRadiBase         float64
+	TankRadiK            float64
+	OutRadiK             float64
+	InRadiK              float64
+	MaxAirLose           float64
+	AirLoseQuot          float64
+	RepairQuot           float64
+	NormPressure         float64
 }
 
 var DEFVAL tDefVals

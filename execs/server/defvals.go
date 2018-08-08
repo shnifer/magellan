@@ -50,6 +50,8 @@ type tDefVals struct {
 
 	WormHoleExitDistK float64
 	WormHoleExitVel   float64
+
+	NormPressure float64
 }
 
 var DEFVAL tDefVals

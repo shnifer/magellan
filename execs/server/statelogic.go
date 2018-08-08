@@ -151,6 +151,7 @@ func prepareStartCommon(common *CommonData, stateData StateData) {
 	common.EngiData.AZ = getStartAZ(stateData)
 	common.EngiData.Counters.Fuel = stateData.BSP.Fuel_tank.Fuel_volume
 	common.EngiData.Counters.Air = stateData.BSP.Lss.Air_volume
+	common.EngiData.Counters.Pressure = DEFVAL.NormPressure
 }
 
 //run internal mutex call

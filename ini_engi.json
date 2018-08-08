@@ -25,5 +25,14 @@
     "NormTemperature":20,
     "PoolTemperatureK":1,
     "EmiTemperatureK":1,
-    "HeatProdTemperatureK":1
+    "HeatProdTemperatureK":1,
+    "CO2StepK": 0.011,
+    "TankRadiBase": 100,
+    "TankRadiK":0.2,
+    "OutRadiK":1,
+    "InRadiK":1,
+    "MaxAirLose":10,
+    "AirLoseQuot":0.00003,
+    "RepairQuot":0.01,
+    "NormPressure":750
 }

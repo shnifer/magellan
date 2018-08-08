@@ -27,5 +27,6 @@
     "LogExchAddrs": ["192.168.0.1:8012"],
     "LogExchPeriodMs": 0,
     "WormHoleExitDistK": 1.2,
-    "WormHoleExitVel": 100
+    "WormHoleExitVel": 100,
+    "NormPressure": 750
 }

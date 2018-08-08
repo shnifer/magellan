@@ -5,7 +5,7 @@
     "HalfResolution": false,
     "LowQ": false,
     "ShowWormHoles": true,
-    "DebugControl": false,
+    "DebugControl": true,
     "DoProf": false,
     "VSync": false,
     "FlightDiskPath": "xstore/buildings",
