@@ -63,6 +63,10 @@ type tDefVals struct {
 	BrakeChanceK         float64
 	OverheatAZK          float64
 	RadiAZK              float64
+
+	MediLowCounterS int
+	MediMidTotalS   int
+	MediMidNeededS  int
 }
 
 var DEFVAL tDefVals
