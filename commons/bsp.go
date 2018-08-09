@@ -130,7 +130,7 @@ type BSP struct {
 	BSPCargo `json:"cargo"`
 
 	KnownMinerals []struct {
-		ID       int    `json:"id"`
+		ID       string `json:"id"`
 		UserName string `json:"name"`
 	} `json:"known_minerals"`
 }
