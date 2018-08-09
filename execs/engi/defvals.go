@@ -63,10 +63,19 @@ type tDefVals struct {
 	BrakeChanceK         float64
 	OverheatAZK          float64
 	RadiAZK              float64
+	HitsToCounter        float64
+	RadiCockPitK         float64
+	MedRadiLevel         float64
 
 	MediLowCounterS int
 	MediMidTotalS   int
 	MediMidNeededS  int
+	MediOpts        MediOpts
+
+	AliceAddr  string
+	AlicePath  string
+	AlicePass  string
+	AliceLogin string
 }
 
 var DEFVAL tDefVals

@@ -76,7 +76,5 @@ func DoReq(location string, events Events) error {
 	if resp.StatusCode != 200 {
 		return errors.New(resp.Status)
 	}
-	r, _ := ioutil.ReadAll(resp.Body)
-	log.Println(string(r))
 	return nil
 }

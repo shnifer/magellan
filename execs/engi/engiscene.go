@@ -14,6 +14,8 @@ import (
 )
 
 type engiScene struct {
+	shipID string
+
 	ranma      *ranma.Ranma
 	background *graph.Sprite
 
@@ -45,9 +47,16 @@ func newEngiScene() *engiScene {
 }
 
 func (s *engiScene) Init() {
-	s.local = initLocal()
-
 	defer LogFunc("engiScene.Init")()
+
+	if s.shipID == Data.ShipID {
+		return
+	}
+	s.shipID = Data.ShipID
+
+	s.local = initLocal()
+	initMedi(Data.ShipID)
+
 	for sysN := 0; sysN < SysCount; sysN++ {
 		if s.ranma.GetIn(sysN) != Data.EngiData.InV[sysN] {
 			s.ranma.SetIn(sysN, Data.EngiData.InV[sysN])

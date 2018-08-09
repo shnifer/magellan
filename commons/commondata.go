@@ -64,6 +64,7 @@ type EngiCounters struct {
 	Calories   float64 `json:"t,omitempty"`
 	CO2        float64 `json:"co2,omitempty"`
 	FlightTime float64 `json:"ft,omitempty"`
+	Hitted     float64 `json:"ht,omitempty"`
 }
 
 type EngiData struct {
