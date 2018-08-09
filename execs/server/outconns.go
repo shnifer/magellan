@@ -8,6 +8,11 @@ import (
 	"github.com/Shnifer/magellan/static"
 	"github.com/Shnifer/magellan/storage"
 	"io/ioutil"
+	"net/http"
+	"time"
+	"fmt"
+	"strconv"
+	"log"
 )
 
 func (rd *roomServer) loadStateData(state State) (sd StateData, subscribe chan storage.Event) {
@@ -127,4 +132,42 @@ func saveDataExamples(path string) {
 	//bufGalaxy := bytes.Buffer{}
 	//json.Indent(&bufGalaxy, galaxyStr, "", "    ")
 	ioutil.WriteFile(path+"example_galaxy.json", galaxyStr, 0)
+}
+
+func RequestHyShip(shipID string) (data []byte, exist bool) {
+	shipN, err := strconv.Atoi(shipID)
+	if err != nil {
+		return nil, false
+	}
+
+	client := &http.Client{
+		Timeout: time.Second,
+	}
+	body := fmt.Sprintf("{\"flight_id\":%v}", shipN)
+	bodyBuf := bytes.NewBuffer([]byte(body))
+	req, err := http.NewRequest(http.MethodPost, DEFVAL.ShipsRequestHyServerAddr, bodyBuf)
+	if err != nil {
+		Log(LVL_ERROR, "can't request Hy flight data with request ", body, ":", err)
+		return nil, false
+	}
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		Log(LVL_ERROR, "can't request Hy flight data with request ", body, ":", err)
+		return nil, false
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode!=200{
+		return nil, false
+	}
+
+	data,err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		Log(LVL_ERROR, "can't read responce with request ", body, ":", err)
+		return nil, false
+	}
+	log.Println(string(data))
+	return data, true
 }

@@ -5,12 +5,10 @@ import (
 	. "github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
 	. "github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
-	"strconv"
 	"time"
 )
 
@@ -27,9 +25,9 @@ type LoginScene struct {
 	backT float64
 	dir   int
 
-	sonarHUD   *SonarHUD
+/*	sonarHUD   *SonarHUD
 	activeSigs [10]bool
-}
+*/}
 
 func NewLoginScene() *LoginScene {
 	const questionText = "Enter login ID (\"firefly\")"
@@ -53,7 +51,7 @@ func NewLoginScene() *LoginScene {
 		question: question,
 		errorMsg: errorMsg,
 		dir:      1,
-		sonarHUD: NewSonarHUD(graph.ScrP(0.3, 0.7), 500, graph.NoCam, graph.Z_HUD),
+//		sonarHUD: NewSonarHUD(graph.ScrP(0.3, 0.7), 500, graph.NoCam, graph.Z_HUD),
 	}
 }
 
@@ -89,12 +87,11 @@ func (p *LoginScene) Update(dt float64) {
 		p.text.SetPosPivot(graph.ScrP(0.5, 0.5), graph.Center())
 	}
 
-	for i := 0; i < 10; i++ {
+/*	for i := 0; i < 10; i++ {
 		if inpututil.IsKeyJustPressed(ebiten.Key0 + ebiten.Key(i)) {
 			p.activeSigs[i] = !p.activeSigs[i]
 		}
 	}
-
 	activeSigs := make([]Signature, 0, 10)
 	for i, active := range p.activeSigs {
 		if active {
@@ -105,6 +102,7 @@ func (p *LoginScene) Update(dt float64) {
 	}
 	p.sonarHUD.ActiveSignatures(activeSigs)
 	p.sonarHUD.Update(dt)
+*/
 }
 
 func (p *LoginScene) Draw(image *ebiten.Image) {
@@ -124,7 +122,7 @@ func (p *LoginScene) Draw(image *ebiten.Image) {
 		}
 	}
 
-	Q.Append(p.sonarHUD)
+//	Q.Append(p.sonarHUD)
 
 	Q.Run(image)
 }

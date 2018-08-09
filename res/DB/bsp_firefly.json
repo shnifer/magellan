@@ -86,13 +86,7 @@
         ]
     },
     "known_minerals": [
-        {
-            "id": 6,
-            "name": "Tilium"
-        },
-        {
-            "id": 9,
-            "name": "Unobtanium"
-        }
+        {"id": "m6", "name": "Tilium"},
+        {"id": "m7", "name": "Unobtanium"}
     ]
 }

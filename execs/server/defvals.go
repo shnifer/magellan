@@ -52,6 +52,8 @@ type tDefVals struct {
 	WormHoleExitVel   float64
 
 	NormPressure float64
+
+	ShipsRequestHyServerAddr string
 }
 
 var DEFVAL tDefVals

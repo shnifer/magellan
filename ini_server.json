@@ -5,7 +5,7 @@
     "LastSeenTimeout": 1000,
     "OtherShipsUpdatePeriod": 400,
     "NeededRoles": [
-        "Pilot", "Navi", "Engi"
+        "Pilot"
     ],
     "DoProf": true,
     "DebugPort": "8020",
@@ -28,5 +28,6 @@
     "LogExchPeriodMs": 0,
     "WormHoleExitDistK": 1.2,
     "WormHoleExitVel": 100,
-    "NormPressure": 750
+    "NormPressure": 750,
+    "ShipsRequestHyServerAddr":"https://technopark-backend.alice.magellan2018.ru/technopark/get_flight_params"
 }

@@ -48,6 +48,7 @@ func saveRec(s *roomServer, rec RestoreRec) {
 	s.restore.Write(key, rec.Encode())
 }
 
+//todo: any interface to run
 func (s *roomServer) loadRestorePoint(roomName string, ship string, n int) error{
 	cancel:=make(chan struct{})
 	defer close(cancel)
@@ -84,6 +85,7 @@ func (s *roomServer) loadRestorePoint(roomName string, ship string, n int) error
 	s.subscribes[roomName] = subscribe
 	s.subsMu.Unlock()
 
+	//todo:check for command queues
 	s.commonMu.Lock()
 	s.commonData[roomName] = rec.CommonData
 	s.commonMu.Unlock()

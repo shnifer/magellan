@@ -169,7 +169,12 @@ func (rd *roomServer) isValidFlyShip(roomName string, shipID string) bool {
 		}
 	}
 
-	return static.Exist("DB", "bsp_"+shipID+".json")
+	if static.Exist("DB", "bsp_"+shipID+".json") {
+		return true
+	}
+
+	_,ok:=RequestHyShip(shipID)
+	return ok
 }
 
 //run internal mutex call
