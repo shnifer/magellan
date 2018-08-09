@@ -422,6 +422,7 @@ func newCP(gp *commons.GalaxyPoint, param graph.CamParams, marks map[string]stri
 
 	if name != "" {
 		msg += name + "\n"
+		clr = captionColor
 	}
 
 	if marks != nil {

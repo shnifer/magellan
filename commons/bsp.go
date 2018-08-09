@@ -11,6 +11,27 @@ const (
 	SYS_LSS
 )
 
+//Rework CalcDegrade on change
+type BSP struct {
+	FlightID int    `json:"flight_id"`
+	Dock     int    `json:"dock"`
+	HyStatus string `json:"status"`
+
+	Ship struct {
+		Name      string  `json:"name"` //human name
+		NodesMass float64 `json:"nodes_weight"`
+	} `json:"ship"`
+
+	BSPParams `json:"params"`
+
+	BSPCargo `json:"cargo"`
+
+	KnownMinerals []struct {
+		ID       string `json:"id"`
+		UserName string `json:"name"`
+	} `json:"known_minerals"`
+}
+
 type BSPParams struct {
 	//0...100
 	March_engine struct {
@@ -113,27 +134,6 @@ type BSPCargo struct {
 		Owner  string  `json:"company"`
 		Planet string  `json:"planet_id"`
 	} `json:"modules"`
-}
-
-//Rework CalcDegrade on change
-type BSP struct {
-	FlightID int    `json:"flight_id"`
-	Dock     int    `json:"dock"`
-	HyStatus string `json:"status"`
-
-	Ship struct {
-		Name      string  `json:"name"` //human name
-		NodesMass float64 `json:"nodes_weight"`
-	} `json:"ship"`
-
-	BSPParams `json:"params"`
-
-	BSPCargo `json:"cargo"`
-
-	KnownMinerals []struct {
-		ID       string `json:"id"`
-		UserName string `json:"name"`
-	} `json:"known_minerals"`
 }
 
 func (base *BSP) CalcDegrade(degrade BSPDegrade) (result *BSP) {
