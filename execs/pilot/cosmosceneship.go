@@ -82,14 +82,3 @@ func (s *cosmoScene) procControlForward(dt float64) {
 	//to general gravity calc
 	//Data.PilotData.Ship.Vel.DoAddMul(accelV, dt)
 }
-
-func (s *cosmoScene) procEmissions(dt float64) {
-	emissions := CalculateEmissions(Data.Galaxy, Data.PilotData.Ship.Pos)
-	for emiType, emiVal := range emissions {
-		switch emiType {
-		case EMI_VEL_DOWN:
-			Data.PilotData.Ship.Vel =
-				Data.PilotData.Ship.Vel.Mul(1 - emiVal*dt/100)
-		}
-	}
-}

@@ -130,6 +130,7 @@ func (s *cosmoScene) Init() {
 	s.distTravaled = 0
 	s.heatBucket = 0
 	s.timerStart = time.Now()
+	s.cam.Scale = DEFVAL.DefCosmoCamScale
 	s.trail.Clear()
 
 	stateData := Data.GetStateData()
@@ -150,7 +151,7 @@ func (s *cosmoScene) Init() {
 func (s *cosmoScene) Update(dt float64) {
 	defer LogFunc("cosmoScene.Update")()
 
-	Data.PilotData.FlightTime+=dt
+	Data.PilotData.FlightTime += dt
 	//received new data about otherShips
 	if Data.ServerData.MsgID != s.lastServerID {
 		s.actualizeOtherShips()
@@ -215,7 +216,8 @@ func (s *cosmoScene) Update(dt float64) {
 		Data.PilotData.HeatProduction = Data.SP.March_engine.Heat_prod * s.thrustLevel *
 			Data.SP.March_engine.Thrust_max / 100
 	} else {
-		Data.PilotData.HeatProduction = 0
+		Data.PilotData.HeatProduction = Data.SP.March_engine.Heat_prod * (-s.thrustLevel) *
+			Data.SP.March_engine.Reverse_max / 100
 	}
 	Data.PilotData.HeatProduction += Data.SP.Shunter.Heat_prod * math.Abs(s.maneurLevel) *
 		Data.SP.Shunter.Turn_max / 100
@@ -298,8 +300,10 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		}
 	}
 
-	s.drawScale(Q)
-	s.drawGravity(Q)
+	if DEFVAL.DebugControl {
+		s.drawScale(Q)
+		s.drawGravity(Q)
+	}
 
 	fps := ebiten.CurrentFPS()
 	msg := fmt.Sprintf("FPS: %.0f\nHeat: %.0f/%v\nTravel: %.0f\nTimer: %.1f\nDraws: %v", fps, s.heatBucket/1000,
@@ -366,7 +370,7 @@ func (s *cosmoScene) updateDebugControl(dt float64) {
 	if ebiten.IsKeyPressed(ebiten.KeyE) {
 		s.cam.Scale /= 1 + dt
 	}
-	s.cam.Scale = Clamp(s.cam.Scale, 0.0001, 10000)
+	s.cam.Scale = Clamp(s.cam.Scale, 0.00001, 10000)
 }
 
 func (*cosmoScene) Destroy() {

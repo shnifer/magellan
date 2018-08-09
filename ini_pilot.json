@@ -6,10 +6,9 @@
     "FullScreen": false,
     "WinW": 1000,
     "WinH": 1000,
-    "VSync": true,
+    "VSync": false,
     "DebugControl":true,
     "DoProf": false,
-    "DebugPort": "8021",
     "LowQ": false,
     "GravityConst": 1,
     "WarpGravityConst": 1,
@@ -33,5 +32,8 @@
     "LogRetryMaxMs": 10000,
     "LogIP": "https://elasticsearch.alice.magellan2018.ru",
     "LogHostName": "room1noteAsus123",
-    "OtherShipElastic": 400
+    "OtherShipElastic": 400,
+
+    "DefWarpCamScale": 0.01,
+    "DefCosmoCamScale": 0.01
 }

@@ -93,7 +93,7 @@ func (s *warpScene) Init() {
 	s.fuelConsumed = 0
 	s.warpingOutT = 0
 	s.alreadyWarp = false
-	s.cam.Scale = 1
+	s.cam.Scale = DEFVAL.DefWarpCamScale
 
 	stateData := Data.GetStateData()
 
@@ -126,7 +126,7 @@ func (s *warpScene) Init() {
 func (s *warpScene) Update(dt float64) {
 	defer LogFunc("warpScene.Update")()
 
-	Data.PilotData.FlightTime+=dt
+	Data.PilotData.FlightTime += dt
 
 	ppos := Data.PilotData.Ship.Pos
 	UpdateWarpAndShip(Data, dt, DEFVAL.DT, DEFVAL.WarpGravPowN)
@@ -274,7 +274,7 @@ func (s *warpScene) debugControl() {
 	if ebiten.IsKeyPressed(ebiten.KeyE) {
 		s.cam.Scale /= (1 + dt)
 	}
-	s.cam.Scale = Clamp(s.cam.Scale, 0.0001, 10000)
+	s.cam.Scale = Clamp(s.cam.Scale, 0.00001, 10000)
 }
 
 func (s *warpScene) warpChecks() {

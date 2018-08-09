@@ -22,11 +22,11 @@ type tDefVals struct {
 	WinW, WinH     int
 	HalfResolution bool
 	LowQ           bool
-	VSync bool
+	VSync          bool
 
 	DebugControl bool
 	DoProf       bool
-	DebugPort string
+	DebugPort    string
 
 	GravityConst      float64
 	WarpGravityConst  float64
@@ -37,15 +37,15 @@ type tDefVals struct {
 	WarpGravPowN      float64
 
 	//predictors
-	CosmoPredictorUpdT float64
+	CosmoPredictorUpdT     float64
 	CosmoPredictorNumInSec int
 	CosmoPredictorGravEach int
 	CosmoPredictorTrackLen int
 	CosmoPredictorDrawMaxP int
-	WarpPredictorUpdT float64
-	WarpPredictorNumInSec int
-	WarpPredictorTrackLen int
-	WarpPredictorDrawMaxP int
+	WarpPredictorUpdT      float64
+	WarpPredictorNumInSec  int
+	WarpPredictorTrackLen  int
+	WarpPredictorDrawMaxP  int
 
 	//in ms
 	LogTimeoutMs  int
@@ -56,6 +56,9 @@ type tDefVals struct {
 
 	//inms
 	OtherShipElastic int
+
+	DefWarpCamScale  float64
+	DefCosmoCamScale float64
 }
 
 var DEFVAL tDefVals

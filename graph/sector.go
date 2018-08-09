@@ -87,7 +87,17 @@ func (s *Sector) DrawF() (DrawF, string) {
 
 func (s *Sector) recalcSprite() {
 	s.sprite.SetPos(s.center)
-	scale := s.radius / sectorLen
+	effRadius := s.radius
+	camScale := 1.0
+	if s.camParams.Cam != nil {
+		camScale = s.camParams.Cam.Scale
+	}
+	maxRadius := winW * 2 / camScale
+	if effRadius > maxRadius {
+		effRadius = maxRadius
+	}
+
+	scale := effRadius / sectorLen
 	s.sprite.SetScale(scale, scale)
 	s.sprite.SetColor(s.color)
 	s.sprite.SetAlpha(s.alpha)
