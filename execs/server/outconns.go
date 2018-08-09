@@ -3,16 +3,16 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/static"
 	"github.com/Shnifer/magellan/storage"
 	"io/ioutil"
-	"net/http"
-	"time"
-	"fmt"
-	"strconv"
 	"log"
+	"net/http"
+	"strconv"
+	"time"
 )
 
 func (rd *roomServer) loadStateData(state State) (sd StateData, subscribe chan storage.Event) {
@@ -37,17 +37,30 @@ func (rd *roomServer) loadStateData(state State) (sd StateData, subscribe chan s
 func loadShipState(shipID string) *BSP {
 	var res BSP
 
-	buf, err := static.Load("DB", "bsp_"+shipID+".json")
+	var buf []byte
+	var err error
+	if static.Exist("DB", "bsp_"+shipID+".json") {
+		buf, err = static.Load("DB", "bsp_"+shipID+".json")
 
-	if err != nil {
-		Log(LVL_ERROR, "Can't open file for ShipID ", shipID)
-		return nil
+		if err != nil {
+			Log(LVL_ERROR, "Can't open file for ShipID ", shipID)
+			return nil
+		}
+
+		err = json.Unmarshal(buf, &res)
+		if err != nil {
+			Log(LVL_ERROR, "can't unmarshal data for ship", shipID, err)
+			return nil
+		}
+	} else {
+		var exist bool
+		res, exist = RequestHyShip(shipID)
+		if !exist || buf == nil {
+			Log(LVL_ERROR, "Can't get Hy data for ShipID ", shipID)
+			return nil
+		}
 	}
-	err = json.Unmarshal(buf, &res)
-	if err != nil {
-		Log(LVL_ERROR, "can't unmarshal file for ship", shipID, err)
-		return nil
-	}
+	log.Println(res)
 	return &res
 }
 
@@ -134,10 +147,10 @@ func saveDataExamples(path string) {
 	ioutil.WriteFile(path+"example_galaxy.json", galaxyStr, 0)
 }
 
-func RequestHyShip(shipID string) (data []byte, exist bool) {
+func RequestHyShip(shipID string) (dat BSP, exist bool) {
 	shipN, err := strconv.Atoi(shipID)
 	if err != nil {
-		return nil, false
+		return BSP{}, false
 	}
 
 	client := &http.Client{
@@ -148,26 +161,35 @@ func RequestHyShip(shipID string) (data []byte, exist bool) {
 	req, err := http.NewRequest(http.MethodPost, DEFVAL.ShipsRequestHyServerAddr, bodyBuf)
 	if err != nil {
 		Log(LVL_ERROR, "can't request Hy flight data with request ", body, ":", err)
-		return nil, false
+		return BSP{}, false
 	}
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {
 		Log(LVL_ERROR, "can't request Hy flight data with request ", body, ":", err)
-		return nil, false
+		return BSP{}, false
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode!=200{
-		return nil, false
+	if resp.StatusCode != 200 {
+		return BSP{}, false
 	}
 
-	data,err = ioutil.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		Log(LVL_ERROR, "can't read responce with request ", body, ":", err)
-		return nil, false
+		return BSP{}, false
 	}
-	log.Println(string(data))
-	return data, true
+	err = json.Unmarshal(data, &dat)
+	if err != nil {
+		Log(LVL_ERROR, "can't unmarshal hy data for ship ", shipID, err)
+		return BSP{}, false
+	}
+	if dat.HyStatus != "freight" && !DEFVAL.DebugMode {
+		Log(LVL_ERROR, "ship is not freight! ", shipID, err)
+		return BSP{}, false
+	}
+
+	return dat, true
 }

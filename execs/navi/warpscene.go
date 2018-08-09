@@ -26,8 +26,12 @@ type warpScene struct {
 
 	sonarText string
 
+	compass    *graph.Sprite
+
 	q *graph.DrawQueue
 }
+
+const compassSize = 0.55
 
 func newWarpScene() *warpScene {
 	caption := graph.NewText("Navi warp scene", Fonts[Face_cap], colornames.Aliceblue)
@@ -46,6 +50,12 @@ func newWarpScene() *warpScene {
 
 	sonarSize:=0.8*float64(WinH)
 
+	compass := NewAtlasSprite(CompassAN, cam.FixS())
+	compassSize := float64(WinH) * compassSize
+	compass.SetSize(compassSize, compassSize)
+	compass.SetPos(graph.ScrP(0.5,0.5))
+	compass.SetAlpha(1)
+
 	return &warpScene{
 		caption: caption,
 		ship:    ship,
@@ -53,6 +63,7 @@ func newWarpScene() *warpScene {
 		sonar:   sonarSector,
 		sonarHUD: NewSonarHUD(graph.ScrP(0.5, 0.5), sonarSize, graph.NoCam, graph.Z_HUD),
 		q:       graph.NewDrawQueue(),
+		compass: compass,
 	}
 }
 
@@ -116,6 +127,8 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 	Q.Add(t, graph.Z_STAT_HUD)
 
 	Q.Append(s.sonarHUD)
+
+	Q.Add(s.compass, graph.Z_HUD)
 
 	Q.Run(image)
 }

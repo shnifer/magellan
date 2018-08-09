@@ -25,6 +25,7 @@ type tDefVals struct {
 
 	DoProf    bool
 	DebugPort string
+	DebugMode bool
 
 	StartWarpSpeed         float64
 	SolarStartLocationName string

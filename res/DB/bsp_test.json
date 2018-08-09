@@ -1,0 +1,67 @@
+{
+  "flight_id": 1,
+  "flight_start_time": "2018-08-20 12:00:00",
+  "status": "prepare",
+  "dock": 1,
+  "ship": {
+    "name": "\u041b\u0435\u043d\u0438\u043d\u0433\u0440\u0430\u0434-5-177",
+    "nodes_weight": 4067.0
+  },
+  "params": {
+    "scaner": {
+      "az_level": 100.0,
+      "drop_range": 14.4,
+      "drop_speed": 18.0,
+      "scan_range": 50.4,
+      "scan_speed": 13.8,
+      "volume": 218.0,
+      "weight": 104.0
+    },
+    "shields": {
+      "az_level": 100.0,
+      "desinfect_level": 56.3,
+      "heat_capacity": 509.0,
+      "heat_reflection": 7.2,
+      "heat_sink": 88.9,
+      "mechanical_def": 8.4,
+      "radiation_def": 9.48,
+      "volume": 476.0,
+      "weight": 343.0
+    },
+    "hull": {
+      "weight": 3620.0,
+      "volume": 3080.0,
+      "az_level": 115
+    }
+  },
+  "known_minerals": [
+    {
+      "code": "aluminium",
+      "name": "\u0410\u043b\u044e\u043c\u0438\u043d\u0438\u0439"
+    },
+    {
+      "code": "iron",
+      "name": "\u0416\u0435\u043b\u0435\u0437\u043e"
+    },
+    {
+      "code": "magnesium",
+      "name": "\u041c\u0430\u0433\u043d\u0438\u0439"
+    },
+    {
+      "code": "nickel",
+      "name": "\u041d\u0438\u043a\u0435\u043b\u044c"
+    },
+    {
+      "code": "titan",
+      "name": "\u0422\u0438\u0442\u0430\u043d"
+    }
+  ],
+  "cargo": {
+    "mines": [],
+    "beacons": {
+        "weight": 175.0,
+      "amount": 2
+    },
+    "modules": []
+  }
+}

@@ -13,9 +13,10 @@ import (
 	"golang.org/x/image/colornames"
 	"image/color"
 	"math"
+	"math/rand"
 	"sort"
 	"strconv"
-	"math/rand"
+	"strings"
 )
 
 const (
@@ -32,8 +33,11 @@ type scene struct {
 	objects   map[string]*CosmoPoint
 	objectsID []string
 
+	objectMarks map[string]map[string]string
+
 	//map[id]fullKey
 	objectNamesFK map[string]string
+	objectNames   map[string]string
 
 	q *graph.DrawQueue
 
@@ -49,8 +53,8 @@ type scene struct {
 	back *graph.Sprite
 
 	wormHolesT float64
-	usedNs map[int]struct{}
-	randomNs map[int]int
+	usedNs     map[int]struct{}
+	randomNs   map[int]int
 
 	showSignature bool
 	sigs          []commons.Signature
@@ -86,13 +90,15 @@ func newScene() *scene {
 		objects:       make(map[string]*CosmoPoint),
 		objectsID:     make([]string, 0),
 		objectNamesFK: make(map[string]string),
+		objectNames:   make(map[string]string),
 		q:             graph.NewDrawQueue(),
 		sonar:         sonar,
 		sonarBack:     sonarBack,
 		sonarPos:      sonarPos,
 		back:          back,
-		usedNs: make(map[int]struct{}),
-		randomNs: make(map[int]int),
+		usedNs:        make(map[int]struct{}),
+		randomNs:      make(map[int]int),
+		objectMarks:   make(map[string]map[string]string),
 	}
 
 	textPanel := NewAtlasSprite(commons.TextPanelAN, graph.NoCam)
@@ -109,6 +115,8 @@ func (s *scene) init() {
 	s.objects = make(map[string]*CosmoPoint, len(CurGalaxy.Ordered))
 	s.objectsID = make([]string, 0, len(CurGalaxy.Ordered))
 	s.objectNamesFK = make(map[string]string)
+	s.objectNames = make(map[string]string)
+	s.objectMarks = make(map[string]map[string]string)
 	s.focus = focus_main
 	s.showSignature = false
 	s.sigs = []commons.Signature{}
@@ -128,7 +136,7 @@ func (s *scene) init() {
 		if gp.IsVirtual {
 			continue
 		}
-		s.objects[gp.ID] = newCP(gp, s.cam.Phys())
+		s.objects[gp.ID] = newCP(gp, s.cam.Phys(), s.objectMarks[gp.ID], s.objectNames[gp.ID])
 		s.objectsID = append(s.objectsID, gp.ID)
 	}
 
@@ -170,8 +178,8 @@ func (s *scene) update(dt float64) {
 	}
 
 	if GalaxyName == commons.WARP_Galaxy_ID && DEFVAL.ShowWormHoles {
-		s.wormHolesT+=dt
-		if s.wormHolesT>10{
+		s.wormHolesT += dt
+		if s.wormHolesT > 10 {
 			s.wormHolesT = 0
 			s.setTopCaptions()
 		}
@@ -315,13 +323,13 @@ func (s *scene) onNameTextInput(text string, done bool) {
 }
 
 func (s *scene) requestNewName(galaxyName, objectID, newName string) {
-	s.objects[objectID].SetCaption(newName, captionColor)
 	if fk, ok := s.objectNamesFK[objectID]; ok {
 		objKey, err := storage.ReadKey(fk)
 		if err != nil {
 			Log(LVL_ERROR, "scene.objectNamesFK strange fullKey", fk, "error", err)
 		} else {
 			nameDisk.Remove(objKey)
+			delete(s.objectNamesFK, objectID)
 		}
 	}
 
@@ -335,60 +343,119 @@ func (s *scene) requestNewName(galaxyName, objectID, newName string) {
 
 func (s *scene) EventAddName(rec nameRec, fk string) {
 	s.objectNamesFK[rec.planetID] = fk
-	obj, ok := s.objects[rec.planetID]
+	_, ok := s.objects[rec.planetID]
 	if !ok {
 		Log(LVL_ERROR, "received name for non-exist planet ", rec.planetID)
 		return
 	}
-	obj.SetCaption(rec.name, captionColor)
+	s.objectNames[rec.planetID] = rec.name
+	s.remakePoint(rec.planetID)
 }
 
 func (s *scene) EventDelName(fk string) {
 	for id, key := range s.objectNamesFK {
 		if fk == key {
-			s.objects[id].SetCaption("", captionColor)
 			s.objectNamesFK[id] = ""
+			delete(s.objectNames, id)
+			s.remakePoint(id)
 		}
 	}
 }
 
 func (s *scene) EventAddBuilding(build commons.Building, fk string) {
-	if build.Type != commons.BUILDING_MINE {
-		return
+	switch build.Type {
+	case commons.BUILDING_MINE:
+		//for warp map we don't care of planet, Mines shown for systems
+		if GalaxyName == commons.WARP_Galaxy_ID {
+			build.PlanetID = build.GalaxyID
+			build.GalaxyID = commons.WARP_Galaxy_ID
+		}
+		if _, ok := CurGalaxy.Points[build.PlanetID]; !ok {
+			Log(LVL_ERROR, "mine on unknown target name ", build.PlanetID)
+		}
+		CurGalaxy.AddBuilding(build)
+	case commons.BUILDING_BEACON, commons.BUILDING_BLACKBOX:
+		if build.GalaxyID != GalaxyName {
+			return
+		}
+		if GalaxyName == commons.WARP_Galaxy_ID {
+			var msg string
+			if build.Type == commons.BUILDING_BEACON {
+				msg = "МАЯК: " + build.Message
+			} else {
+				msg = "ЧЯ: " + build.Message
+			}
+			if _, ok := s.objectMarks[build.PlanetID]; ok {
+				s.objectMarks[build.PlanetID][fk] = msg
+			} else {
+				s.objectMarks[build.PlanetID] = make(map[string]string)
+				s.objectMarks[build.PlanetID][fk] = msg
+			}
+
+		} else {
+			CurGalaxy.AddBuilding(build)
+		}
 	}
-	//for warp map we don't care of planet, Mines shown for systems
-	if GalaxyName == commons.WARP_Galaxy_ID {
-		build.PlanetID = build.GalaxyID
-		build.GalaxyID = commons.WARP_Galaxy_ID
-	}
-	if _, ok := CurGalaxy.Points[build.PlanetID]; !ok {
-		Log(LVL_ERROR, "mine on unknown target name ", build.PlanetID)
-	}
-	CurGalaxy.AddBuilding(build)
-	changeCP(s.objects, build.PlanetID,
-		newCP(CurGalaxy.Points[build.PlanetID], s.cam.Phys()))
+	s.remakePoint(build.PlanetID)
 }
 
 func (s *scene) EventDelBuilding(build commons.Building, fk string) {
-	CurGalaxy.DelBuilding(build)
-	changeCP(s.objects, build.PlanetID,
-		newCP(CurGalaxy.Points[build.PlanetID], s.cam.Phys()))
+	if GalaxyName == commons.WARP_Galaxy_ID {
+		if build.GalaxyID != GalaxyName {
+			return
+		}
+		_, ok := s.objectMarks[build.PlanetID]
+		if !ok {
+			return
+		}
+		delete(s.objectMarks[build.PlanetID], fk)
+	} else {
+		CurGalaxy.DelBuilding(build)
+	}
+	s.remakePoint(build.PlanetID)
 }
 
-func newCP(gp *commons.GalaxyPoint, param graph.CamParams) *CosmoPoint {
+func newCP(gp *commons.GalaxyPoint, param graph.CamParams, marks map[string]string, name string) *CosmoPoint {
 	res := NewCosmoPoint(gp, param)
-	if DEFVAL.DebugControl {
-		if GalaxyName == commons.WARP_Galaxy_ID {
-			msg := gp.ID
-			if len(gp.Minerals) > 0 {
-				msg = msg + " " + fmt.Sprint(gp.Minerals)
-			}
-			res.SetCaption(msg, color.White)
-		} else if len(gp.Minerals) > 0 {
-			res.SetCaption(fmt.Sprint(gp.Minerals), colornames.Red)
+	var msg string
+	var clr color.Color = color.White
+
+	if name != "" {
+		msg += name + "\n"
+	}
+
+	if marks != nil {
+		arr := make([]string, 0, len(marks))
+		for _, s := range marks {
+			arr = append(arr, s)
+		}
+		sort.Sort(sort.StringSlice(arr))
+		for _, s := range arr {
+			msg += s + "\n"
 		}
 	}
+
+	if DEFVAL.DebugControl {
+		if GalaxyName == commons.WARP_Galaxy_ID {
+			msg += "(" + gp.ID + ")"
+			if len(gp.Minerals) > 0 {
+				msg += msg + " " + fmt.Sprint(gp.Minerals)
+			}
+		} else if len(gp.Minerals) > 0 {
+			msg += fmt.Sprint(gp.Minerals)
+			clr = colornames.Red
+		}
+	}
+
+	msg = strings.TrimSuffix(msg, "\n")
+	res.SetCaption(msg, clr)
+
 	return res
+}
+
+func (s *scene) remakePoint(id string) {
+	changeCP(s.objects, id,
+		newCP(CurGalaxy.Points[id], s.cam.Phys(), s.objectMarks[id], s.objectNames[id]))
 }
 
 func changeCP(objs map[string]*CosmoPoint, id string, point *CosmoPoint) {
@@ -419,28 +486,28 @@ func drawWormHoleArrows(Q *graph.DrawQueue, cam *graph.Camera) {
 	}
 }
 
-func (s *scene) setTopCaptions(){
-	dirs:=commons.GetCurrentWormHoleDirectionN()
-	for sys, d:= range dirs {
-		dst:=d.Dest
-		if d.Dest==0{
-			dst=s.getRandomDest(d.Src)
+func (s *scene) setTopCaptions() {
+	dirs := commons.GetCurrentWormHoleDirectionN()
+	for sys, d := range dirs {
+		dst := d.Dest
+		if d.Dest == 0 {
+			dst = s.getRandomDest(d.Src)
 		} else {
 			s.randomNs[d.Src] = 0
 		}
-		msg:=fmt.Sprintf("ИЗЛУЧЕНИЕ:\n%05d%05d",d.Src, dst)
+		msg := fmt.Sprintf("ИЗЛУЧЕНИЕ:\n%05d%05d", d.Src, dst)
 		s.objects[sys].SetCaptionTop(msg, color.White)
 	}
 }
 func (s *scene) getRandomDest(whN int) int {
-	v:=s.randomNs[whN]
-	if v>0 {
+	v := s.randomNs[whN]
+	if v > 0 {
 		return v
 	}
 	var ok bool
-	for !ok{
-		v=rand.Intn(100000-100)+100
-		_,exist:=s.usedNs[v]
+	for !ok {
+		v = rand.Intn(100000-100) + 100
+		_, exist := s.usedNs[v]
 		ok = !exist
 	}
 	s.randomNs[whN] = v

@@ -117,8 +117,9 @@ type BSPCargo struct {
 
 //Rework CalcDegrade on change
 type BSP struct {
-	FlightID int `json:"flight_id"`
-	Dock     int `json:"dock"`
+	FlightID int    `json:"flight_id"`
+	Dock     int    `json:"dock"`
+	HyStatus string `json:"status"`
 
 	Ship struct {
 		Name      string  `json:"name"` //human name

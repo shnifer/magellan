@@ -78,6 +78,10 @@
         }
     },
     "cargo": {
+        "beacons":{
+          "weight":100,
+          "amount":2
+        },
         "mines": [
             {
                 "company": "mst",

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/log"
-	"strconv"
 	"github.com/pkg/errors"
+	"strconv"
 )
 
 type RestoreRec struct {
@@ -21,12 +21,12 @@ func (s *roomServer) saveRestorePoint(roomName string) {
 	defer s.commonMu.RUnlock()
 
 	state := s.curState[roomName]
-	if state.ShipID=="" || state.GalaxyID=="" {
+	if state.ShipID == "" || state.GalaxyID == "" {
 		return
 	}
 	rec.State = state
 	rec.CommonData = s.commonData[roomName].Copy()
-	rec.CommonData.ServerData.MsgID=0
+	rec.CommonData.ServerData.MsgID = 0
 	rec.CommonData.ServerData.OtherShips = nil
 
 	go saveRec(s, rec)
@@ -34,37 +34,37 @@ func (s *roomServer) saveRestorePoint(roomName string) {
 
 func saveRec(s *roomServer, rec RestoreRec) {
 	ship := rec.State.ShipID
-	i, ok :=1, false
-	for !ok{
-		ch:=s.restore.KeysPrefix(ship+" - "+strconv.Itoa(i),nil)
-		_,exist:=<-ch
-		if exist{
+	i, ok := 1, false
+	for !ok {
+		ch := s.restore.KeysPrefix(ship+" - "+strconv.Itoa(i)+" - ", nil)
+		_, exist := <-ch
+		if exist {
 			i++
 		} else {
 			ok = true
 		}
 	}
-	key := ship+" - "+strconv.Itoa(i)+" - "+rec.State.GalaxyID
+	key := ship + " - " + strconv.Itoa(i) + " - " + rec.State.GalaxyID
 	s.restore.Write(key, rec.Encode())
 }
 
 //todo: any interface to run
-func (s *roomServer) loadRestorePoint(roomName string, ship string, n int) error{
-	cancel:=make(chan struct{})
+func (s *roomServer) loadRestorePoint(roomName string, ship string, n int) error {
+	cancel := make(chan struct{})
 	defer close(cancel)
 
-	ch:=s.restore.KeysPrefix(ship+" - "+strconv.Itoa(n),cancel)
-	key, ok:=<-ch
+	ch := s.restore.KeysPrefix(ship+" - "+strconv.Itoa(n)+" - ", cancel)
+	key, ok := <-ch
 	if !ok {
 		return errors.New("no such file")
 	}
 
-	dat,err:=s.restore.Read(key)
-	if err!=nil{
+	dat, err := s.restore.Read(key)
+	if err != nil {
 		return err
 	}
-	rec, err:=RestoreRec{}.Decode(dat)
-	if err!=nil{
+	rec, err := RestoreRec{}.Decode(dat)
+	if err != nil {
 		return err
 	}
 
