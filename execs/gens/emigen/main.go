@@ -148,7 +148,7 @@ func emi(c EmiChance, t string) commons.Emission {
 		FarRange:  farRange,
 		FarValue:  0,
 		MainRange: closeRange,
-		MainValue: okr(commons.KDev(Opts.Dev)),
+		MainValue: okr(c.Force * commons.KDev(Opts.Dev)),
 	}
 }
 

@@ -9,6 +9,7 @@ import (
 type EmiChance struct {
 	First, More int
 	Far, Close  float64
+	Force       float64
 }
 
 //map[emiN]chanceBasePart
