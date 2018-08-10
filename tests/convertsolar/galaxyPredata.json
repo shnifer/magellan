@@ -1,5 +1,7 @@
 [
-{"ID":"sun","Parent":"", "Type": "STAR",		"Diameter":300,				"MaxGravity":0.95, "GravityR10":4200, "Color":{"R":255,"G":255,"B":128},"Count":1, "Emissions":[{"Type":"Heat", "MainRange": 200, "MainValue":100, "FarRange":400}]},
+{"ID":"sun","Parent":"", "Type": "STAR",		"Diameter":300,				"MaxGravity":0.95, "GravityR10":4200,  "Color":{"R":255,"G":255,"B":128},"Count":1,
+  "Emissions":[{"Type":"2", "MainRange": 200, "MainValue":100, "FarRange":400}],
+  "Signatures":[{"t":"X2"}]},
 
 {"ID":"mercury","Parent":"sun",	"Type": "HARDPLANET",	"Diameter":25,		"Distance":300, "MaxGravity":0.3,"GravityR10":400,	"OrbitPeriod":88.0,"Color":{"R":192,"G":192,"B":0},"Count":1,"StartAng":0},
 {"ID":"venus","Parent":"sun", "Type": "HARDPLANET",		"Diameter":50,		"Distance":450, "MaxGravity":0.4,"GravityR10":500,	"OrbitPeriod":224.7,"Color":{"R":128,"G":255,"B":128},"Count":1,"StartAng":90},

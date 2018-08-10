@@ -27,6 +27,7 @@ type fileData struct {
 	RadMassDev     float64
 	PeriodOrbitDev float64
 	Emissions      []commons.Emission
+	Signatures     []commons.Signature
 	TexName        string
 }
 
@@ -128,6 +129,10 @@ func createGP(v fileData) (*commons.GalaxyPoint, string) {
 	maxGrav := 1 - (1-v.MaxGravity)*Params.A_Mass
 	mass := maxGrav * zd * zd
 
+	for i:=range v.Signatures{
+		v.Signatures[i].Dev = v2.RandomInCircle(1)
+	}
+
 	gp := commons.GalaxyPoint{
 		ParentID:  v.Parent,
 		Pos:       v2.ZV,
@@ -141,6 +146,7 @@ func createGP(v fileData) (*commons.GalaxyPoint, string) {
 		GDepth:    okr(zd),
 		ScanData:  v.ID,
 		Emissions: v.Emissions,
+		Signatures: v.Signatures,
 	}
 	return &gp, v.ID
 }
