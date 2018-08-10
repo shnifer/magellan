@@ -17,7 +17,7 @@
     "R10": 3000,
     "Size": 300,
     "MaxG": 1.5,
-    "Radius":1000,
+    "Radius":3000,
     "Period": 10
   },
   "TripleStar":
@@ -25,27 +25,26 @@
     "R10": 3000,
     "Size": 300,
     "MaxG": 1.5,
-    "Radius":2000,
+    "Radius":5000,
     "Period": 30,
     "Pair":
     {
       "R10": 1000,
       "Size": 100,
       "MaxG": 0.8,
-      "Radius":300,
+      "Radius":1500,
       "Period": 8
     }
   },
 
-  "PlanetMinR":1000,
-  "ClosePeriod":20,
-  "DistStep":1.5,
-  "PeriodStep":1.5,
-  "StepDev": 15,
+  "PlanetMinR":1200,
+  "ClosePeriod":40,
+  "DistStep":3.0,
+  "PeriodStep":1.4,
+  "StepDev": 10,
   "DistStepLevel": 7000,
-  "DistFarStep":1.5,
-  "PeriodFarStep":1.5,
-
+  "DistFarStep":1.15,
+  "PeriodFarStep":1.15,
 
   "LastHardOnGasPercent":30,
   "MoveHardOnHardPercent":30,
@@ -59,10 +58,10 @@
   "AsteroidR10":100,
   "AsteroidG":0.1,
 
-  "BeltCount":50,
-  "BeltCountDev":60,
+  "BeltCount":30,
+  "BeltCountDev":20,
 
-  "PlanetOrbitDev":20,
+  "PlanetOrbitDev":10,
   "GasDev":30,
   "GasSize":200,
   "GasG":0.7,

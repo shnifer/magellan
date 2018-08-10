@@ -1,11 +1,13 @@
 package main
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/v2"
 	"io/ioutil"
+	"os"
 	"sort"
 )
 
@@ -66,6 +68,7 @@ func main() {
 	warpSignatures := make(map[string][]Signature)
 	warpMinerals := make(map[string][]int)
 
+	sdsOut := make(map[string]float64)
 	fmt.Println("files loaded")
 	for sysName, stat := range warpP {
 		pref := sysName + "-"
@@ -108,6 +111,8 @@ func main() {
 			Points:        points,
 			SpawnDistance: sd * 1.1,
 		}
+		sdsOut[sysName] = sd * 1.1
+
 		dat, err := json.Marshal(galaxy)
 		if err != nil {
 			panic(err)
@@ -150,4 +155,16 @@ func main() {
 	}
 
 	ioutil.WriteFile("galaxy_warp.json", wgDat, 0)
+
+	f, err := os.Create("systemsize.csv")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	w := csv.NewWriter(f)
+	w.UseCRLF = true
+	for sys, dia := range sdsOut {
+		w.Write([]string{sys, fmt.Sprint(dia)})
+	}
+	w.Flush()
 }

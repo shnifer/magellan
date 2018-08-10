@@ -25,7 +25,7 @@ func createPlanets(stat WarpStat, points map[string]*GalaxyPoint, pref string, p
 		if stat.StarCount == 2 {
 			minR = math.Max(points[pref+"S1"].Orbit, points[pref+"S2"].Orbit) + Opts.PlanetMinR
 		} else {
-			minR = math.Max(points[pref+"S1"].Orbit, points[pref+"sv2"].Orbit) + Opts.PlanetMinR
+			minR = 2*math.Max(points[pref+"S1"].Orbit, points[pref+"sv2"].Orbit) + Opts.PlanetMinR
 		}
 	}
 
@@ -48,7 +48,7 @@ func createPlanets(stat WarpStat, points map[string]*GalaxyPoint, pref string, p
 	var asteroidBelted bool
 
 	n := 0
-	k := KDev(Opts.StepDev)
+	k := math.Max(1, KDev(Opts.StepDev))
 	dist := minR * k
 	period := Opts.ClosePeriod * k
 	for n < len(planets) {
@@ -206,6 +206,9 @@ func asteroidSphs() [15]int {
 
 func nextDistPeriod(dist, period *float64) {
 	k := KDev(Opts.StepDev)
+	if k < 1 {
+		k = 1
+	}
 	if *dist < Opts.DistStepLevel {
 		*dist = *dist * ((Opts.DistStep-1)*k + 1)
 		*period = *period * ((Opts.PeriodStep-1)*k + 1)

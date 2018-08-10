@@ -20,7 +20,7 @@ func newCounter(o CounterOpts) *mediCounters {
 }
 
 func (c *mediCounters) AddValue(x float64) {
-	//not medium
+	//count medium timers if needed before early returns
 	if c.counterMidTotal > 0 {
 		c.counterMidTotal++
 		if c.counterMidTotal > DEFVAL.MediMidTotalS {

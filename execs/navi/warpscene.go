@@ -50,7 +50,7 @@ func newWarpScene() *warpScene {
 
 	sonarSize:=0.8*float64(WinH)
 
-	compass := NewAtlasSprite(CompassAN, cam.FixS())
+	compass := NewAtlasSprite(CompassAN, graph.NoCam)
 	compassSize := float64(WinH) * compassSize
 	compass.SetSize(compassSize, compassSize)
 	compass.SetPos(graph.ScrP(0.5,0.5))
