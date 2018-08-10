@@ -19,6 +19,7 @@ const (
 	pingPattern  = "/ping/"
 	statePattern = "/state/"
 	testPattern  = "/test/"
+	consolePattern = "/console/"
 
 	ClientDefaultTimeout    = time.Second / 30
 	ClientLargeTimeout      = time.Second * 5

@@ -29,6 +29,8 @@ type ServerOpts struct {
 
 	RoomUpdatePeriod time.Duration
 	LastSeenTimeout  time.Duration
+
+	ConsoleHandler func(w http.ResponseWriter, r *http.Request)
 }
 
 //Interface all-in-one for server implementation
@@ -108,6 +110,9 @@ func NewServer(opts ServerOpts) *Server {
 	}
 	srv.metric = newServerMetric(srv)
 
+	if opts.ConsoleHandler!=nil {
+		mux.Handle(consolePattern, consoleHandler(srv))
+	}
 	mux.Handle(testPattern, testHandler(srv))
 	mux.Handle(pingPattern, pingHandler(srv))
 	mux.Handle(roomPattern, roomHandler(srv))
@@ -259,6 +264,10 @@ func testHandler(srv *Server) http.Handler {
 	}
 
 	return http.HandlerFunc(f)
+}
+
+func consoleHandler(srv *Server) http.Handler {
+	return http.HandlerFunc(srv.opts.ConsoleHandler)
 }
 
 func (s *Server) Close() error {

@@ -7,6 +7,9 @@ import (
 	"github.com/peterbourgon/diskv"
 	"github.com/pkg/errors"
 	"strconv"
+	"strings"
+	"sort"
+	"time"
 )
 
 type RestoreRec struct {
@@ -54,6 +57,7 @@ func (rs *roomServer) loadRestorePoint(roomName string, ship string, n int) erro
 	defer close(cancel)
 
 	ch := rs.restore.KeysPrefix(ship+" - "+strconv.Itoa(n)+" - ", cancel)
+
 	key, ok := <-ch
 	if !ok {
 		return errors.New("no such file")
@@ -78,6 +82,60 @@ func (rs *roomServer) loadRestorePoint(roomName string, ship string, n int) erro
 	holder.rdyStateData(state, stateData, subscribe, false)
 	holder.setCommon(rec.CommonData)
 	return nil
+}
+
+type restorePoint struct{
+	restN int
+	memo string
+}
+
+func (rs *roomServer) getShipRestoreList(ship string) []restorePoint{
+	cancel := make(chan struct{})
+	defer close(cancel)
+
+	ArestN:=make([]int,0)
+	Memos:=make(map[int]string)
+	res:=make([]restorePoint,0)
+
+	ch := rs.restore.KeysPrefix(ship+" - ", cancel)
+
+	for key:=range ch {
+		restS := strings.TrimPrefix(key, ship+" - ")
+		ind:=strings.Index(restS, " - ")
+		if ind<0{
+			continue
+		}
+		restS = restS[:ind]
+		restN,err:=strconv.Atoi(restS)
+		if err!=nil{
+			Log(LVL_ERROR,"Wrong restore point key: ", key)
+			continue
+		}
+		dat,err:=rs.restore.Read(key)
+		if err!=nil{
+			Log(LVL_ERROR,"Can't read restore point key: ", key)
+			continue
+		}
+		rec, err:=RestoreRec{}.Decode(dat)
+		if err!=nil{
+			Log(LVL_ERROR,"Can't decode restore point rec: ", dat)
+			continue
+		}
+		st:=rec.CommonData.PilotData.SessionTime
+		t:=StartDateTime.Add(time.Duration(st)*time.Second)
+		Memos[restN] = rec.State.GalaxyID +" "+t.Format(time.ANSIC)
+		ArestN = append(ArestN, restN)
+	}
+	sort.Sort(sort.IntSlice(ArestN))
+
+	for _,n:=range ArestN{
+		res = append(res, restorePoint{
+			restN: n,
+			memo: Memos[n],
+		})
+	}
+
+	return res
 }
 
 func (r RestoreRec) Encode() []byte {
