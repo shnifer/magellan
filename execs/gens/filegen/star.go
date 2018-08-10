@@ -5,6 +5,7 @@ import . "github.com/Shnifer/magellan/commons"
 func createStars(stat WarpStat, points map[string]*GalaxyPoint, pref string) {
 	switch stat.StarCount {
 	case 1:
+		log("just a star")
 		points[pref+"S"] = pOpts{
 			t:    GPT_STAR,
 			r10:  Opts.SingleStar.R10,
@@ -20,6 +21,7 @@ func createStars(stat WarpStat, points map[string]*GalaxyPoint, pref string) {
 
 		kr := KDev(Opts.OrbitDevPercent)
 
+		log("2 stars, orbits: ", r*kr, ",", r/kr)
 		points[pref+"S1"] = pOpts{
 			t:      GPT_STAR,
 			parent: pref + "sv",
@@ -49,6 +51,7 @@ func createStars(stat WarpStat, points map[string]*GalaxyPoint, pref string) {
 
 		kr := KDev(Opts.OrbitDevPercent)
 
+		log("3 stars, orbits main pair: ", r*kr, ",", r/kr)
 		points[pref+"S1"] = pOpts{
 			t:      GPT_STAR,
 			parent: pref + "sv",
@@ -71,6 +74,7 @@ func createStars(stat WarpStat, points map[string]*GalaxyPoint, pref string) {
 		r = Opts.TripleStar.Pair.Radius * kOrbitPeriod
 		period = Opts.TripleStar.Pair.Period * kOrbitPeriod
 
+		log("orbits in pair: ", r*kr, ",", r/kr)
 		kr = KDev(Opts.OrbitDevPercent)
 		points[pref+"S2"] = pOpts{
 			t:      GPT_STAR,

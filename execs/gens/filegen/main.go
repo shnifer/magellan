@@ -38,6 +38,12 @@ type Planet struct {
 	Radiation   int
 }
 
+var logS string
+
+func log(a ...interface{}) {
+	logS += fmt.Sprint(a...) + "\r\n"
+}
+
 func main() {
 	buf, err := ioutil.ReadFile("warpnomi.json")
 	if err != nil {
@@ -75,6 +81,7 @@ func main() {
 		planets := allPlanet[sysName]
 		points := make(map[string]*GalaxyPoint)
 
+		log("System: ", sysName)
 		createStars(stat, points, pref)
 		createPlanets(stat, points, pref, planets)
 
@@ -167,4 +174,6 @@ func main() {
 		w.Write([]string{sys, fmt.Sprint(dia)})
 	}
 	w.Flush()
+
+	ioutil.WriteFile("filegenlog.txt", []byte(logS), 0)
 }

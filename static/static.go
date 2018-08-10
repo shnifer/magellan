@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"log"
 )
 
 //box path must be just a string to be parsed by
@@ -21,12 +22,13 @@ func init() {
 
 func Load(pack, filename string) ([]byte, error) {
 	fn := pack + "/" + filename
+	log.Println("fn:",fn)
 	if _, err := os.Stat(resFilePath + pack + "/" + filename); err == nil {
 		//commons.Log(commons.LVL_WARNING, "Load", pack, filename, "from external file")
 		return ioutil.ReadFile(resFilePath + pack + "/" + filename)
-	} else if resBox.Has(fn) {
+//	} else if resBox.Has(fn) {
 		//commons.Log(commons.LVL_WARNING, "Load", pack, filename, "from embedded")
-		return resBox.MustBytes(pack + "/" + filename)
+//		return resBox.MustBytes(pack + "/" + filename)
 	} else {
 		return nil, errors.New("static " + pack + " " + filename + " not found!")
 	}

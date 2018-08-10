@@ -51,16 +51,19 @@ func createPlanets(stat WarpStat, points map[string]*GalaxyPoint, pref string, p
 	k := math.Max(1, KDev(Opts.StepDev))
 	dist := minR * k
 	period := Opts.ClosePeriod * k
+	log("minR: ", minR, " dist: ", dist, " len(planets): ", len(planets))
 	for n < len(planets) {
 		//asteroid belts
 		if asteroidBelted {
 			if rand.Intn(100) < Opts.MoreBeltsPercent {
+				log("add more belt dist ", dist)
 				addBelt(points, parentID, dist, period, pref+strconv.Itoa(n)+"-")
 				nextDistPeriod(&dist, &period)
 				continue
 			}
 		} else {
 			if rand.Intn(100) < Opts.FirstBeltPercent {
+				log("add belt dist ", dist)
 				addBelt(points, parentID, dist, period, pref+strconv.Itoa(n)+"-")
 				nextDistPeriod(&dist, &period)
 				asteroidBelted = true
@@ -70,6 +73,7 @@ func createPlanets(stat WarpStat, points map[string]*GalaxyPoint, pref string, p
 
 		//move hard on hard
 		if moveHardOnHard == n {
+			log("add hard on hard dist ", dist)
 			addPlanetWithPlanet(points, parentID, dist, period, planets[n], planets[n+1], pref)
 			n += 2
 			nextDistPeriod(&dist, &period)
@@ -77,12 +81,14 @@ func createPlanets(stat WarpStat, points map[string]*GalaxyPoint, pref string, p
 		}
 
 		if moveLastHardOnGas == 1 && n == stat.HardPlanetsCount-1 {
+			log("add hard on gas dist ", dist)
 			addPlanetWithPlanet(points, parentID, dist, period, planets[n], planets[n+1], pref)
 			n += 2
 			nextDistPeriod(&dist, &period)
 			continue
 		}
 
+		log("add planet dist ", dist)
 		addPlanet(points, parentID, dist, period, planets[n], pref)
 		nextDistPeriod(&dist, &period)
 		n++
@@ -94,7 +100,10 @@ func addPlanetWithPlanet(points map[string]*GalaxyPoint, parent string, dist, pe
 
 	mainid := addPlanet(points, parent, dist, period, mainplanet, pref)
 	dist, period = satellite(dist, period)
-	addPlanet(points, mainid, dist, period, smallplanet, pref)
+	satid := addPlanet(points, mainid, dist, period, smallplanet, pref)
+	if points[satid].Size > points[mainid].Size {
+		points[satid].Size = points[mainid].Size * 0.8
+	}
 }
 
 func addPlanet(points map[string]*GalaxyPoint, parent string, dist, period float64, planet Planet, pref string) string {
@@ -219,8 +228,18 @@ func nextDistPeriod(dist, period *float64) {
 }
 
 func satellite(dist, period float64) (sdist, speriod float64) {
-	sdist = dist - (dist / Opts.DistStep)
+	if dist > Opts.DistStepLevel {
+		sdist = dist - (dist / Opts.DistFarStep)
+	} else {
+		sdist = dist - (dist / Opts.DistStep)
+	}
 	sdist /= Opts.SatelliteOrbitPart
+
+	if dist > Opts.DistStepLevel {
+		log("   satellite for big dist ", dist, "=", sdist)
+	} else {
+		log("   satellite for small dist ", dist, "=", sdist)
+	}
 
 	speriod = period / dist * sdist
 	return

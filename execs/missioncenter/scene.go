@@ -440,7 +440,7 @@ func newCP(gp *commons.GalaxyPoint, param graph.CamParams, marks map[string]stri
 		if GalaxyName == commons.WARP_Galaxy_ID {
 			msg += "(" + gp.ID + ")"
 			if len(gp.Minerals) > 0 {
-				msg += msg + " " + fmt.Sprint(gp.Minerals)
+				msg += " " + fmt.Sprint(gp.Minerals)
 			}
 		} else if len(gp.Minerals) > 0 {
 			msg += fmt.Sprint(gp.Minerals)
