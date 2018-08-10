@@ -70,6 +70,7 @@ type tDefVals struct {
 	MediLowCounterS int
 	MediMidTotalS   int
 	MediMidNeededS  int
+	MediHittedDropPeriodS int
 	MediOpts        MediOpts
 
 	AliceAddr  string

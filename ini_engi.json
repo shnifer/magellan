@@ -51,6 +51,7 @@
     "MediLowCounterS": 1800,
     "MediMidTotalS": 600,
     "MediMidNeededS": 300,
+    "MediHittedDropPeriodS": 900,
     "MediOpts":{
         "Radi":{
             "Levels":[100,350,1000],

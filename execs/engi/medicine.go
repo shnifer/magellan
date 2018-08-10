@@ -21,6 +21,7 @@ type CounterOpts struct {
 }
 
 var counters [8]*mediCounters
+var dropHittedCounter int
 
 func initMedi(shipId string) {
 	o := DEFVAL.MediOpts
@@ -32,9 +33,16 @@ func initMedi(shipId string) {
 	counters[MC_RadiTemp] = newCounter(o.RadiTemp)
 	counters[MC_RadiCO2] = newCounter(o.RadiCO2)
 	counters[MC_RadiAir] = newCounter(o.RadiAir)
+
+	dropHittedCounter = 0
 }
 
 func (s *engiScene) checkMedicine() {
+	dropHittedCounter++
+	if dropHittedCounter>DEFVAL.MediHittedDropPeriodS{
+		dropHittedCounter = 0
+	}
+
 	radiInCockpit := s.local.radiationSum * DEFVAL.RadiCockPitK
 	lostAir := DEFVAL.NormPressure - Data.EngiData.Counters.Air
 
