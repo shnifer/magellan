@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func (rd *roomServer) OnCommand(room, role, command string) {
+func (rs *roomServer) OnCommand(room, role, command string) {
 	Log(LVL_DEBUG, "room", room, "role", role, "command", command)
 
 	switch {
@@ -24,9 +24,9 @@ func (rd *roomServer) OnCommand(room, role, command string) {
 			return
 		}
 
-		key := b.Type + strconv.Itoa(rd.storage.NextID())
+		key := b.Type + strconv.Itoa(rs.storage.NextID())
 
-		err = rd.storage.Add(b.GalaxyID, key, buildStr)
+		err = rs.storage.Add(b.GalaxyID, key, buildStr)
 		if err != nil {
 			Log(LVL_ERROR, "OnCommand: room", room, "role", role, "command", command, ":", err)
 			return
@@ -38,7 +38,7 @@ func (rd *roomServer) OnCommand(room, role, command string) {
 			b.GalaxyID = WARP_Galaxy_ID
 			b.Period = 0
 			buildStr = string(b.Encode())
-			err = rd.storage.Add(b.GalaxyID, key, buildStr)
+			err = rs.storage.Add(b.GalaxyID, key, buildStr)
 			if err != nil {
 				Log(LVL_ERROR, "OnCommand: room", room, "role", role, "command", command, ":", err)
 				return
@@ -51,7 +51,7 @@ func (rd *roomServer) OnCommand(room, role, command string) {
 			Log(LVL_ERROR, err)
 			return
 		}
-		err = rd.storage.Remove(objKey)
+		err = rs.storage.Remove(objKey)
 		if err != nil {
 			Log(LVL_ERROR, err)
 			return
@@ -59,7 +59,7 @@ func (rd *roomServer) OnCommand(room, role, command string) {
 
 		//try to delete in warp, if never was -- okey, Keys are unique, we marked as deleted something that will never spawn
 		objKey.Area = WARP_Galaxy_ID
-		err = rd.storage.Remove(objKey)
+		err = rs.storage.Remove(objKey)
 		if err != nil {
 			Log(LVL_ERROR, err)
 			return

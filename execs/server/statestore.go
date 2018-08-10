@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/log"
+	"github.com/peterbourgon/diskv"
 	"github.com/pkg/errors"
 	"strconv"
 )
@@ -13,30 +14,29 @@ type RestoreRec struct {
 	CommonData CommonData
 }
 
-func (s *roomServer) saveRestorePoint(roomName string) {
+func (rh *roomHolder) saveRestorePoint(restore *diskv.Diskv) {
 	var rec RestoreRec
-	s.stateMu.RLock()
-	s.commonMu.RLock()
-	defer s.stateMu.RUnlock()
-	defer s.commonMu.RUnlock()
+	rh.stateMu.RLock()
+	rh.commonMu.RLock()
+	defer rh.stateMu.RUnlock()
+	defer rh.commonMu.RUnlock()
 
-	state := s.curState[roomName]
+	state := rh.curState
 	if state.ShipID == "" || state.GalaxyID == "" {
 		return
 	}
 	rec.State = state
-	rec.CommonData = s.commonData[roomName].Copy()
+	rec.CommonData = rh.commonData.Copy()
 	rec.CommonData.ServerData.MsgID = 0
 	rec.CommonData.ServerData.OtherShips = nil
-
-	go saveRec(s, rec)
+	go saveRec(restore, rec)
 }
 
-func saveRec(s *roomServer, rec RestoreRec) {
+func saveRec(restore *diskv.Diskv, rec RestoreRec) {
 	ship := rec.State.ShipID
 	i, ok := 1, false
 	for !ok {
-		ch := s.restore.KeysPrefix(ship+" - "+strconv.Itoa(i)+" - ", nil)
+		ch := restore.KeysPrefix(ship+" - "+strconv.Itoa(i)+" - ", nil)
 		_, exist := <-ch
 		if exist {
 			i++
@@ -45,21 +45,21 @@ func saveRec(s *roomServer, rec RestoreRec) {
 		}
 	}
 	key := ship + " - " + strconv.Itoa(i) + " - " + rec.State.GalaxyID
-	s.restore.Write(key, rec.Encode())
+	restore.Write(key, rec.Encode())
 }
 
 //todo: any interface to run
-func (s *roomServer) loadRestorePoint(roomName string, ship string, n int) error {
+func (rs *roomServer) loadRestorePoint(roomName string, ship string, n int) error {
 	cancel := make(chan struct{})
 	defer close(cancel)
 
-	ch := s.restore.KeysPrefix(ship+" - "+strconv.Itoa(n)+" - ", cancel)
+	ch := rs.restore.KeysPrefix(ship+" - "+strconv.Itoa(n)+" - ", cancel)
 	key, ok := <-ch
 	if !ok {
 		return errors.New("no such file")
 	}
 
-	dat, err := s.restore.Read(key)
+	dat, err := rs.restore.Read(key)
 	if err != nil {
 		return err
 	}
@@ -68,28 +68,15 @@ func (s *roomServer) loadRestorePoint(roomName string, ship string, n int) error
 		return err
 	}
 
-	s.stateMu.Lock()
-	s.curState[roomName] = rec.State
-	s.stateMu.Unlock()
-
-	stateData, subscribe := s.loadStateData(rec.State)
-
-	s.stateDataMu.Lock()
-	s.stateData[roomName] = stateData
-	s.stateDataMu.Unlock()
-
-	s.subsMu.Lock()
-	if s.subscribes[roomName] != nil {
-		s.storage.Unsubscribe(s.subscribes[roomName])
+	holder := rs.getHolder(roomName)
+	state := rec.State
+	if oldSub := holder.getSubscribe(); oldSub != nil {
+		rs.storage.Unsubscribe(oldSub)
 	}
-	s.subscribes[roomName] = subscribe
-	s.subsMu.Unlock()
 
-	//todo:check for command queues
-	s.commonMu.Lock()
-	s.commonData[roomName] = rec.CommonData
-	s.commonMu.Unlock()
-
+	stateData, subscribe := rs.loadStateData(state)
+	holder.rdyStateData(state, stateData, subscribe, false)
+	holder.setCommon(rec.CommonData)
 	return nil
 }
 

@@ -116,16 +116,14 @@ func toWarpCommonData(common CommonData, stateData StateData, newState, prevStat
 	return common
 }
 
-func (rd *roomServer) IsValidState(roomName string, stateStr string) bool {
+func (rs *roomServer) IsValidState(roomName string, stateStr string) bool {
 	var res bool
 	state := State{}.Decode(stateStr)
 	switch state.StateID {
 	case STATE_login:
 		res = state.GalaxyID == "" && state.ShipID == ""
-	case STATE_cosmo:
-		res = rd.isValidFlyShip(roomName, state.ShipID) && rd.isValidFlyGalaxy(state.GalaxyID)
-	case STATE_warp:
-		res = rd.isValidFlyShip(roomName, state.ShipID) && rd.isValidFlyGalaxy(state.GalaxyID)
+	case STATE_cosmo, STATE_warp:
+		res = rs.isValidFlyShip(roomName, state.ShipID) && rs.isValidFlyGalaxy(state.GalaxyID)
 	}
 
 	if !res {
@@ -155,16 +153,16 @@ func prepareStartCommon(common *CommonData, stateData StateData) {
 }
 
 //run internal mutex call
-func (rd *roomServer) isValidFlyShip(roomName string, shipID string) bool {
+func (rs *roomServer) isValidFlyShip(roomName string, shipID string) bool {
 	if roomName == "" || shipID == "" {
 		return false
 	}
 
-	rd.stateMu.RLock()
-	defer rd.stateMu.RUnlock()
+	rs.RLock()
+	defer rs.RUnlock()
 
-	for room, state := range rd.curState {
-		if room != roomName && state.ShipID == shipID {
+	for room, holder := range rs.holders {
+		if room != roomName && holder.getState().ShipID == shipID {
 			return false
 		}
 	}
@@ -173,12 +171,12 @@ func (rd *roomServer) isValidFlyShip(roomName string, shipID string) bool {
 		return true
 	}
 
-	_,ok:=RequestHyShip(shipID)
+	_, ok := RequestHyShip(shipID)
 	return ok
 }
 
 //run internal mutex call
-func (rd *roomServer) isValidFlyGalaxy(galaxyID string) bool {
+func (rs *roomServer) isValidFlyGalaxy(galaxyID string) bool {
 	if galaxyID == ZERO_Galaxy_ID {
 		return true
 	}
@@ -193,14 +191,16 @@ func daemonUpdateOtherShips(rs *roomServer, updatePeriodMs int) {
 }
 
 func doUpdateOtherShips(rs *roomServer) {
-	rs.stateMu.RLock()
-	defer rs.stateMu.RUnlock()
+	rs.RLock()
+	defer rs.RUnlock()
 
 	//map[galaxyName][]rooms
-	m := make(map[string][]string, len(rs.curState))
+	l := len(rs.holders)
+	m := make(map[string][]string, l)
 	//map[room]galaxyName
-	r := make(map[string]string, len(rs.curState))
-	for room, state := range rs.curState {
+	r := make(map[string]string, l)
+	for room, holder := range rs.holders {
+		state := holder.getState()
 		if (state.StateID != STATE_cosmo && state.StateID != STATE_warp) || state.GalaxyID == "" {
 			continue
 		}
@@ -215,49 +215,43 @@ func doUpdateOtherShips(rs *roomServer) {
 		}
 	}
 
-	rs.stateDataMu.RLock()
-	defer rs.stateDataMu.RUnlock()
-
-	rs.commonMu.Lock()
-	defer rs.commonMu.Unlock()
-
 	var otherShip OtherShipData
 	for room, galaxy := range r {
-		CD := rs.commonData[room]
-		CD.ServerData.MsgID++
-		CD.ServerData.OtherShips = CD.ServerData.OtherShips[:0]
+		holder := rs.getHolder(room)
+		ServerData := holder.getCommonServerData()
+		ServerData.MsgID++
+		ServerData.OtherShips = ServerData.OtherShips[:0]
 		otherRooms, ok := m[galaxy]
 		if !ok {
-			rs.commonData[room] = CD
+			holder.setCommonServerData(ServerData)
 			continue
 		}
 		for _, otherRoom := range otherRooms {
 			if otherRoom == room {
 				continue
 			}
-			sd, ok := rs.stateData[otherRoom]
-			if !ok {
-				continue
-			}
+			other := rs.getHolder(otherRoom)
+			sd := other.getStateData()
 			if sd.BSP == nil {
 				continue
 			}
-			ocd, ok := rs.commonData[otherRoom]
-			if !ok {
-				continue
-			}
+			ocd := other.getCommon()
 			if ocd.PilotData == nil {
 				continue
 			}
+			id := other.getState().ShipID
+			if id == "" {
+				continue
+			}
+
 			otherShip = OtherShipData{
-				Id:   rs.curState[otherRoom].ShipID,
+				Id:   id,
 				Name: sd.BSP.Ship.Name,
 				Ship: ocd.PilotData.Ship,
 			}
-			CD.ServerData.OtherShips = append(CD.ServerData.OtherShips, otherShip)
-
+			ServerData.OtherShips = append(ServerData.OtherShips, otherShip)
 		}
-		rs.commonData[room] = CD
+		holder.setCommonServerData(ServerData)
 	}
 }
 

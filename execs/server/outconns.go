@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func (rd *roomServer) loadStateData(state State) (sd StateData, subscribe chan storage.Event) {
+func (rs *roomServer) loadStateData(state State) (sd StateData, subscribe chan storage.Event) {
 	defer LogFunc("loadStateData")()
 
 	if state.ShipID != "" {
@@ -28,7 +28,7 @@ func (rd *roomServer) loadStateData(state State) (sd StateData, subscribe chan s
 		} else {
 			sd.Galaxy = loadGalaxyState(state.GalaxyID)
 		}
-		sd.Buildings, subscribe = loadBuildingsAndSubscribe(rd.storage, state.GalaxyID)
+		sd.Buildings, subscribe = loadBuildingsAndSubscribe(rs.storage, state.GalaxyID)
 	}
 
 	return sd, subscribe

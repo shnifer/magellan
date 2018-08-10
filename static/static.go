@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"log"
 )
 
 //box path must be just a string to be parsed by
@@ -21,8 +20,7 @@ func init() {
 }
 
 func Load(pack, filename string) ([]byte, error) {
-	fn := pack + "/" + filename
-	log.Println("fn:",fn)
+	//fn := pack + "/" + filename
 	if _, err := os.Stat(resFilePath + pack + "/" + filename); err == nil {
 		//commons.Log(commons.LVL_WARNING, "Load", pack, filename, "from external file")
 		return ioutil.ReadFile(resFilePath + pack + "/" + filename)
@@ -35,7 +33,8 @@ func Load(pack, filename string) ([]byte, error) {
 }
 
 func Exist(pack, filename string) bool {
-	inBox := resBox.Has(pack + "/" + filename)
+	//inBox := resBox.Has(pack + "/" + filename)
+	inBox :=false
 	if inBox {
 		return true
 	}
