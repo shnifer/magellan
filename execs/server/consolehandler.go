@@ -73,10 +73,10 @@ func (rs *roomServer) consoleRestore (cmd []string, w http.ResponseWriter, r *ht
 		rs.consoleRestoreSelectRoom(id,restoreN,w,r)
 		return
 	} else {
-		roomName:=params[2]
+		roomName=params[2]
 	}
 
-	fmt.Fprintln(w,"nice ",id, restoreN)
+	fmt.Fprintln(w,"nice ",id, restoreN, roomName)
 }
 
 //localhost:8010/console/restore/
@@ -120,5 +120,36 @@ func (rs *roomServer) consoleRestoreShipList(shipId string, w http.ResponseWrite
 
 	for _,p:=range list{
 		fmt.Fprintf(w, `<a href="./%v/%v">%v</a><br>`, shipId, p.restN, p.memo)
+	}
+}
+
+//localhost:8010/console/restore/Ship##/Restore##
+func (rs *roomServer) consoleRestoreSelectRoom(shipId string, restoreN int, w http.ResponseWriter, r *http.Request) {
+	rs.RLock()
+	defer rs.RUnlock()
+
+	curRoom := ""
+	list:=make([]string,0)
+
+	for roomName, holder:=range rs.holders{
+		if shipId == holder.getState().ShipID{
+			curRoom = roomName
+		} else {
+			list = append(list, roomName)
+		}
+	}
+
+	if len(list)==0 && curRoom==""{
+		fmt.Fprintln(w, "No room found on server")
+		return
+	}
+
+	if curRoom!="" {
+		fmt.Fprintf(w, `Ship %v is already on room %v, <a href="./%v/%v">restore point %v?</a><br>`,
+			shipId, curRoom, restoreN, curRoom, restoreN)
+	}
+
+	for _,room:=range list{
+		fmt.Fprintf(w, `<a href="./%v/%v">%v</a><br>`, restoreN, room, room)
 	}
 }
