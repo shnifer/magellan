@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+//localhost:8010/console/...
 func (rs *roomServer) consoleHandler (w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
@@ -38,12 +39,14 @@ func (rs *roomServer) consoleHandler (w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//localhost:8010/console/restore/...
 func (rs *roomServer) consoleRestore (cmd []string, w http.ResponseWriter, r *http.Request) {
 	params:=cmd[1:]
 
 	var id string
 	var err error
 
+	//localhost:8010/console/restore/
 	if len(params) == 0 {
 		rs.consoleRestoreList(w, r)
 		return
@@ -51,6 +54,7 @@ func (rs *roomServer) consoleRestore (cmd []string, w http.ResponseWriter, r *ht
 		id=params[0]
 	}
 
+	//localhost:8010/console/restore/flightN/
 	var restoreN int
 	if len(params) == 1{
 		rs.consoleRestoreShipList(id,w,r)
@@ -63,9 +67,19 @@ func (rs *roomServer) consoleRestore (cmd []string, w http.ResponseWriter, r *ht
 		}
 	}
 
+	var roomName string
+	//localhost:8010/console/restore/flightN/restoreN/
+	if len(params)==2{
+		rs.consoleRestoreSelectRoom(id,restoreN,w,r)
+		return
+	} else {
+		roomName:=params[2]
+	}
+
 	fmt.Fprintln(w,"nice ",id, restoreN)
 }
 
+//localhost:8010/console/restore/
 func (rs *roomServer) consoleRestoreList(w http.ResponseWriter, r *http.Request){
 	rs.RLock()
 	defer rs.RUnlock()
@@ -95,6 +109,7 @@ func (rs *roomServer) consoleRestoreList(w http.ResponseWriter, r *http.Request)
 	fmt.Fprintln(w, "or use /restore/#flightID")
 }
 
+//localhost:8010/console/restore/Ship##/
 func (rs *roomServer) consoleRestoreShipList(shipId string, w http.ResponseWriter, r *http.Request) {
 	list:=rs.getShipRestoreList(shipId)
 	if len(list)==0{
