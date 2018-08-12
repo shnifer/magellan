@@ -35,5 +35,7 @@
     "OtherShipElastic": 400,
 
     "DefWarpCamScale": 0.01,
-    "DefCosmoCamScale": 0.01
+    "DefCosmoCamScale": 0.01,
+    "EMIVelUpK": 1,
+    "EmiVelDownK": 1
 }

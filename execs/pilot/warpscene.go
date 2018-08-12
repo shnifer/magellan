@@ -231,9 +231,9 @@ func (s *warpScene) warpedOut() {
 	sys := Data.Galaxy.Points[systemID]
 	dist := ship.Sub(sys.Pos).Len()
 	if dist <= sys.WarpRedOutDist {
-		log.Println("hard damage")
+		Client.SendRoomBroadcast("GDmgHard")
 	} else if dist < sys.WarpGreenInDist || dist > sys.WarpGreenOutDist {
-		log.Println("medium damage")
+		Client.SendRoomBroadcast("GDmgMedium")
 	}
 	s.toCosmo(systemID)
 }

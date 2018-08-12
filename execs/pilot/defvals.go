@@ -59,6 +59,9 @@ type tDefVals struct {
 
 	DefWarpCamScale  float64
 	DefCosmoCamScale float64
+
+	EMIVelUpK   float64
+	EmiVelDownK float64
 }
 
 var DEFVAL tDefVals

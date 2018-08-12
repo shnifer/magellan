@@ -66,12 +66,16 @@ type tDefVals struct {
 	HitsToCounter        float64
 	RadiCockPitK         float64
 	MedRadiLevel         float64
+	HardGDmg             float64
+	HardGDmgRepeats      int
+	MediumGDmg           float64
+	MediumGDmgRepeats    int
 
-	MediLowCounterS int
-	MediMidTotalS   int
-	MediMidNeededS  int
+	MediLowCounterS       int
+	MediMidTotalS         int
+	MediMidNeededS        int
 	MediHittedDropPeriodS int
-	MediOpts        MediOpts
+	MediOpts              MediOpts
 
 	AliceAddr  string
 	AlicePath  string

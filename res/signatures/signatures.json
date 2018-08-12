@@ -175,7 +175,7 @@
   "X27": {"ParticleName": "s15","Color": {"R": 255,"G": 100,"B": 0,"A": 255},
     "SpawnPeriod": 0.5,"LifeTime": 1, "SizeStr": "upAndDown 70", "VelAndSpawnStr": "linearFloat 0.5",
     "AngStr":"linear 1 360 0"},
-  "X28": {"ParticleName": "s16","Color": {"R": 255,"G": 100,"B": 0,"A": 255},
+  "X28": {"ParticleName": "s5","Color": {"R": 255,"G": 100,"B": 0,"A": 255},
     "SpawnPeriod": 0.5,"LifeTime": 1, "SizeStr": "upAndDown 70", "VelAndSpawnStr": "rotation 2 0.7",
     "AngStr":"linear 1 360 0"}
 }

@@ -171,7 +171,7 @@ func NewCosmoPoint(pd *GalaxyPoint, params graph.CamParams) *CosmoPoint {
 		Type:           pd.Type,
 		glyphs:         glyphs,
 		caption:        captionText,
-		captionTop: captionText,
+		captionTop:     captionText,
 		cam:            params.Cam,
 		EmiDist:        emiDist,
 	}
@@ -250,6 +250,9 @@ func (cp *CosmoPoint) Req(Q *graph.DrawQueue) {
 	cp.recalcSprite()
 
 	markAlpha, spriteAlpha := MarkAlpha(cp.Size*2/cp.markLevelScale, cp.cam)
+	if cp.WarpSize > cp.Size {
+		markAlpha, spriteAlpha = MarkAlpha(cp.WarpSize*2/cp.markLevelScale, cp.cam)
+	}
 
 	if markAlpha > 0 && cp.MarkSprite != nil {
 		cp.MarkSprite.SetAlpha(markAlpha)

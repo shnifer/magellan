@@ -179,6 +179,9 @@ func (s *cosmoScene) Update(dt float64) {
 		if s.heatBucket < 0 {
 			s.heatBucket = 0
 		}
+
+		//EMISSIONS
+		procVelEmi(dt)
 	} else {
 		Data.PilotData.SessionTime += dt
 		Data.Galaxy.Update(Data.PilotData.SessionTime)
@@ -300,14 +303,15 @@ func (s *cosmoScene) Draw(image *ebiten.Image) {
 		}
 	}
 
+	fps := ebiten.CurrentFPS()
+	msg := fmt.Sprintf("FPS: %.0f", fps)
 	if DEFVAL.DebugControl {
 		s.drawScale(Q)
 		s.drawGravity(Q)
+		msg = fmt.Sprintf("FPS: %.0f\nHeat: %.0f/%v\nTravel: %.0f\nTimer: %.1f\nDraws: %v", fps, s.heatBucket/1000,
+			Data.SP.Shields.Heat_capacity, s.distTravaled, time.Since(s.timerStart).Seconds(), Q.Len())
 	}
 
-	fps := ebiten.CurrentFPS()
-	msg := fmt.Sprintf("FPS: %.0f\nHeat: %.0f/%v\nTravel: %.0f\nTimer: %.1f\nDraws: %v", fps, s.heatBucket/1000,
-		Data.SP.Shields.Heat_capacity, s.distTravaled, time.Since(s.timerStart).Seconds(), Q.Len())
 	fpsText = graph.NewText(msg, Fonts[Face_list], colornames.Cyan)
 	fpsText.SetPosPivot(graph.ScrP(0.1, 0.1), v2.ZV)
 	Q.Add(fpsText, graph.Z_STAT_HUD+10)
@@ -452,4 +456,18 @@ func (s *cosmoScene) drawGravity(Q *graph.DrawQueue) {
 	drawv(s.gravityAcc, colornames.Lightblue)
 	drawv(Data.PilotData.ThrustVector, colornames.Darkolivegreen)
 	drawv(thrust.Add(s.gravityAcc), colornames.White)
+}
+
+func procVelEmi(dt float64) {
+	velUp := Data.EngiData.Emissions[EMI_VEL_UP] - Data.EngiData.Emissions[EMI_VEL_DOWN]
+	if velUp == 0 {
+		return
+	}
+	k := 0.0
+	if velUp > 0 {
+		k = 1 + velUp*DEFVAL.EMIVelUpK*dt
+	} else {
+		k = 1 / (1 + velUp*DEFVAL.EmiVelDownK*dt)
+	}
+	Data.PilotData.Ship.Vel = Data.PilotData.Ship.Vel.Mul(k)
 }

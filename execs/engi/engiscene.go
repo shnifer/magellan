@@ -88,7 +88,9 @@ func (s *engiScene) Update(dt float64) {
 
 	select {
 	case <-s.tick:
-		s.procTick()
+		if !Data.NaviData.IsOrbiting {
+			s.procTick()
+		}
 	default:
 	}
 
@@ -108,6 +110,14 @@ func (s *engiScene) Draw(image *ebiten.Image) {
 }
 
 func (s *engiScene) OnCommand(command string) {
+	switch command {
+	case "GDmgHard":
+		s.doAZDamage(DEFVAL.HardGDmgRepeats, DEFVAL.HardGDmg)
+	case "GDmgMedium":
+		s.doAZDamage(DEFVAL.MediumGDmgRepeats, DEFVAL.MediumGDmg)
+	default:
+
+	}
 }
 
 func (*engiScene) Destroy() {
@@ -134,6 +144,7 @@ func (s *engiScene) checkForWormHole() {
 	}
 
 	if target == WarmHoleYouDIE {
+		//fixme: implement
 		Log(LVL_INFO, "Die by wormhole")
 		return
 	}
