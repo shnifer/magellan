@@ -14,6 +14,16 @@ func roomHandler(srv *Server) http.Handler {
 
 		roomName, roleName := roomRole(r)
 
+		srv.mu.RLock()
+		defer srv.mu.RUnlock()
+
+		room, ok := srv.roomsState[roomName]
+		if !ok {
+			sendErr(w, "roomHandler can't found srv.roomsState")
+			Log(LVL_WARN, "roomHandler can't found srv.roomsState ", room)
+			return
+		}
+
 		reqBuf, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			sendErr(w, "CANT readAll r.body")
@@ -44,10 +54,6 @@ func roomHandler(srv *Server) http.Handler {
 			sendErr(w, "CANT GET in stateHandler for room"+roomName+err.Error())
 			return
 		}
-
-		srv.mu.RLock()
-		room := srv.roomsState[roomName]
-		srv.mu.RUnlock()
 
 		room.mu.Lock()
 		defer room.mu.Unlock()
@@ -120,7 +126,7 @@ func serverReceiveCommands(srv *Server, req CommonReq, room *servRoomState, room
 		case COMMAND_REQUESTSTATE:
 			dropCommands := command[:1] == "+"
 			command := command[1:]
-			setNewState(srv, room, roomName, command, dropCommands)
+			srv.setNewState(room, roomName, command, dropCommands)
 			//non valid states reported by implementation
 			/*stateChanged :=
 			if !stateChanged {

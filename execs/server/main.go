@@ -12,6 +12,8 @@ import (
 )
 
 var server *network.Server
+var startState commons.State
+var startStateEnc string
 
 //todo: gamemaster control
 //todo: drop send, recv state on restore
@@ -54,16 +56,17 @@ func main() {
 
 	roomServ := newRoomServer(disk, diskRestore)
 
-	startState := commons.State{
+	startState = commons.State{
 		StateID: commons.STATE_login,
 	}
+	startStateEnc = startState.Encode()
 
 	opts := network.ServerOpts{
 		Addr:             DEFVAL.Port,
 		RoomUpdatePeriod: time.Duration(DEFVAL.RoomUpdatePeriod) * time.Millisecond,
 		LastSeenTimeout:  time.Duration(DEFVAL.LastSeenTimeout) * time.Millisecond,
 		RoomServ:         roomServ,
-		StartState:       startState.Encode(),
+		StartState:       startStateEnc,
 		NeededRoles:      DEFVAL.NeededRoles,
 		ConsoleHandler:   roomServ.consoleHandler,
 	}

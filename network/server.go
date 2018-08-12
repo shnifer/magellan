@@ -12,6 +12,7 @@ import (
 	"fmt"
 	. "github.com/Shnifer/magellan/log"
 	"github.com/Shnifer/magellan/wrnt"
+	"github.com/pkg/errors"
 	"net/http"
 	"sync"
 	"time"
@@ -43,6 +44,7 @@ type RoomCheckGetSetter interface {
 	GetStateData(room string) []byte
 
 	OnCommand(room string, role string, command string)
+	OnKillRoom(roomname string)
 }
 
 //network.server data for one room
@@ -110,7 +112,7 @@ func NewServer(opts ServerOpts) *Server {
 	}
 	srv.metric = newServerMetric(srv)
 
-	if opts.ConsoleHandler!=nil {
+	if opts.ConsoleHandler != nil {
 		mux.Handle(consolePattern, consoleHandler(srv))
 	}
 	mux.Handle(testPattern, testHandler(srv))
@@ -153,8 +155,11 @@ func requestStateData(srv *Server, roomName string, newState string) {
 	srv.opts.RoomServ.RdyStateData(roomName, newState)
 
 	srv.mu.RLock()
-	room := srv.roomsState[roomName]
+	room, ok := srv.roomsState[roomName]
 	room.mu.Lock()
+	if !ok {
+		Log(LVL_WARN, "requestStateData get data but srv.roomsState is not found for room ", roomName)
+	}
 
 	room.state.RdyServData = true
 
@@ -172,7 +177,12 @@ func stateHandler(srv *Server) http.Handler {
 		srv.mu.RLock()
 		defer srv.mu.RUnlock()
 
-		room := srv.roomsState[roomName]
+		room, ok := srv.roomsState[roomName]
+		if !ok {
+			sendErr(w, "stateHandler do not found it's srv.roomsState")
+			Log(LVL_WARN, "stateHandler do not found it's srv.roomsState for room ", roomName)
+			return
+		}
 		room.mu.Lock()
 		if !room.state.RdyServData {
 			sendErr(w, "Serv state Data is not Ready")
@@ -203,8 +213,23 @@ func stateHandler(srv *Server) http.Handler {
 	return http.HandlerFunc(f)
 }
 
+func (srv *Server) SetNewState(roomName, newState string, dropCommands bool) bool {
+	srv.mu.RLock()
+	defer srv.mu.RUnlock()
+
+	room, ok := srv.roomsState[roomName]
+	if !ok {
+		Log(LVL_ERROR, "SetNewState can't find room", roomName)
+		return false
+	}
+
+	room.mu.Lock()
+	defer room.mu.Unlock()
+	return srv.setNewState(room, roomName, newState, dropCommands)
+}
+
 //room.mu must be already locked
-func setNewState(srv *Server, room *servRoomState, roomName, newState string, dropCommands bool) bool {
+func (srv *Server) setNewState(room *servRoomState, roomName, newState string, dropCommands bool) bool {
 	if !room.state.IsCoherent {
 		Log(LVL_ERROR, "already changing state!", newState)
 		return false
@@ -283,4 +308,17 @@ func roomRole(r *http.Request) (room, role string) {
 func sendErr(w http.ResponseWriter, err string) {
 	w.Header().Set("error", "1")
 	w.Write([]byte(err))
+}
+
+func (s *Server) KillRoom(roomName string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if _, exist := s.roomsState[roomName]; !exist {
+		return errors.New("killRoom do not found room " + roomName)
+	}
+
+	delete(s.roomsState, roomName)
+	s.opts.RoomServ.OnKillRoom(roomName)
+	return nil
 }

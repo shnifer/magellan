@@ -35,6 +35,7 @@ type tDefVals struct {
 	StoragePath     string
 	LocalLogPath    string
 	RestorePath     string
+	RestoreTimeoutS int
 	LogLogTimeoutMs int
 	LogRetryMinMs   int
 	LogRetryMaxMs   int
