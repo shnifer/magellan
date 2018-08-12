@@ -225,5 +225,5 @@ func doLoadDaemonCheck(rs *roomServer, roomName string, state State) bool {
 		return false
 	}
 
-	return server.SetNewState(roomName, startStateEnc, true)
+	return server.SetNewState(roomName, state.Encode(), true)
 }

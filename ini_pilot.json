@@ -6,7 +6,7 @@
     "FullScreen": false,
     "WinW": 1000,
     "WinH": 1000,
-    "VSync": false,
+    "VSync": true,
     "DebugControl":true,
     "DoProf": false,
     "LowQ": false,

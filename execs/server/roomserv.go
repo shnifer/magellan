@@ -33,9 +33,10 @@ type roomServer struct {
 
 func newRoomServer(disk *storage.Storage, restore *diskv.Diskv) *roomServer {
 	roomServ := &roomServer{
-		holders: make(map[string]*roomHolder),
-		storage: disk,
-		restore: restore,
+		holders:   make(map[string]*roomHolder),
+		storage:   disk,
+		restore:   restore,
+		loadPlans: make(map[string]loadPlan),
 	}
 	return roomServ
 }

@@ -235,7 +235,7 @@ func (srv *Server) setNewState(room *servRoomState, roomName, newState string, d
 		return false
 	}
 	if room.state.Wanted == newState {
-		Log(LVL_ERROR, "state is the same")
+		Log(LVL_ERROR, "state is the same: ", newState)
 		return false
 	}
 	if !srv.opts.RoomServ.IsValidState(roomName, newState) {

@@ -14,6 +14,7 @@
     "StoragePath":"xstore/buildings",
     "LocalLogPath":"xstore/gamelog",
     "RestorePath":"xstore/restore",
+    "RestoreTimeoutS": 5,
     "DiskRefreshPeriod": 5,
     "LogLogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
