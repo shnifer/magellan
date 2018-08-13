@@ -46,8 +46,8 @@ type GalaxyPoint struct {
 
 	Pos v2.V2
 
-	Orbit  float64 `json:"orb,omitempty"`
-	Period float64 `json:"per,omitempty"`
+	Orbit    float64 `json:"orb,omitempty"`
+	Period   float64 `json:"per,omitempty"`
 	AngPhase float64 `json:"ang,omitempty"`
 
 	Type     string  `json:"t,omitempty"`
@@ -78,7 +78,7 @@ type GalaxyPoint struct {
 	//updated on Decode or add|del building
 	//map[ownerName][]fullkey
 	Mines      map[string][]string `json:"mns,omitempty"`
-	FishHouses map[string]string `json:"fhs,omitempty"`
+	FishHouses map[string]string   `json:"fhs,omitempty"`
 
 	//for warp points
 	//map[fullKey]message
@@ -99,4 +99,20 @@ func (gp GalaxyPoint) MarshalJSON() ([]byte, error) {
 	buf = bytes.Replace(buf, []byte(`{"R":0,"G":0,"B":0,"A":0}`), []byte("{}"), -1)
 
 	return buf, nil
+}
+
+func (gp *GalaxyPoint) Copy() (res *GalaxyPoint) {
+	res = new(GalaxyPoint)
+	*res = *gp
+	res.Minerals = make([]int, len(gp.Minerals))
+	copy(res.Minerals, gp.Minerals)
+	res.Emissions = make([]Emission, len(gp.Emissions))
+	copy(res.Emissions, gp.Emissions)
+	res.Signatures = make([]Signature, len(gp.Signatures))
+	copy(res.Signatures, gp.Signatures)
+	res.Mines = nil
+	res.FishHouses = nil
+	res.Beacons = nil
+	res.BlackBoxes = nil
+	return res
 }

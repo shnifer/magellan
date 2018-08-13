@@ -9,7 +9,6 @@ import (
 	"github.com/Shnifer/magellan/static"
 	"github.com/Shnifer/magellan/storage"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -60,7 +59,6 @@ func loadShipState(shipID string) *BSP {
 			return nil
 		}
 	}
-	log.Println(res)
 	return &res
 }
 

@@ -50,7 +50,7 @@ func (sd StateData) Copy() (res StateData) {
 		val.Points = make(map[string]*GalaxyPoint, len(sd.Galaxy.Points))
 		val.Ordered = nil
 		for k, v := range sd.Galaxy.Points {
-			val.Points[k] = v
+			val.Points[k] = v.Copy()
 		}
 		val.RecalcLvls()
 		res.Galaxy = &val

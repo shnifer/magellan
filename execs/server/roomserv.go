@@ -106,7 +106,6 @@ func (rs *roomServer) RdyStateData(room string, stateStr string) {
 	holder := rs.getHolder(room)
 	rs.loadMu.Lock()
 	plan, ok := rs.loadPlans[room]
-	delete(rs.loadPlans, room)
 	rs.loadMu.Unlock()
 
 	if ok && time.Now().Before(plan.timeout) && plan.state.Encode() == stateStr {

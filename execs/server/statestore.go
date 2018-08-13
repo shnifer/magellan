@@ -169,7 +169,7 @@ func (rs *roomServer) saveRoom(roomName string) {
 
 	holder, ok := rs.holders[roomName]
 	if !ok {
-		Log(LVL_ERROR, "DoLoadRestore runned for not found holder room ", roomName)
+		Log(LVL_ERROR, "saveRoom runned for not found holder room ", roomName)
 		return
 	}
 	holder.saveRestorePoint(rs.restore)
