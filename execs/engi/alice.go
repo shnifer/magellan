@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Shnifer/magellan/alice"
 	. "github.com/Shnifer/magellan/log"
+	"github.com/shnifer/magellan/commons"
 	"strconv"
 	"time"
 )
@@ -21,6 +22,8 @@ const TryCount = 10
 const PauseS = 5
 
 func sendAlice(bioInf, nucleo [7]int) {
+	commons.ClientLogGame(Client, "alice", bioInf, nucleo)
+
 	events := make(alice.Events, 0)
 	if bioInf != [7]int{} {
 		events = append(events, alice.Event{

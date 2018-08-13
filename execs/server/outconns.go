@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/log"
@@ -145,40 +146,53 @@ func saveDataExamples(path string) {
 	ioutil.WriteFile(path+"example_galaxy.json", galaxyStr, 0)
 }
 
+var client *http.Client
+
+func init() {
+	client = &http.Client{
+		Timeout: time.Second,
+	}
+}
+
+func doReq(Method string, addr string, body []byte) (respBody []byte, err error) {
+	client := &http.Client{
+		Timeout: time.Second,
+	}
+	bodyBuf := bytes.NewBuffer(body)
+	req, err := http.NewRequest(http.MethodPost, addr, bodyBuf)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return nil, errors.New(resp.Status)
+	}
+	respBody, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return respBody, nil
+}
+
 func RequestHyShip(shipID string) (dat BSP, exist bool) {
 	shipN, err := strconv.Atoi(shipID)
 	if err != nil {
 		return BSP{}, false
 	}
 
-	client := &http.Client{
-		Timeout: time.Second,
-	}
 	body := fmt.Sprintf("{\"flight_id\":%v}", shipN)
-	bodyBuf := bytes.NewBuffer([]byte(body))
-	req, err := http.NewRequest(http.MethodPost, DEFVAL.ShipsRequestHyServerAddr, bodyBuf)
+	data, err := doReq(http.MethodPost, DEFVAL.ShipsRequestHyServerAddr, []byte(body))
 	if err != nil {
-		Log(LVL_ERROR, "can't request Hy flight data with request ", body, ":", err)
-		return BSP{}, false
-	}
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
-	resp, err := client.Do(req)
-	if err != nil {
-		Log(LVL_ERROR, "can't request Hy flight data with request ", body, ":", err)
-		return BSP{}, false
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
+		Log(LVL_ERROR, "can't request Hy flight data with request ", body, " err: ", err)
 		return BSP{}, false
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		Log(LVL_ERROR, "can't read responce with request ", body, ":", err)
-		return BSP{}, false
-	}
 	err = json.Unmarshal(data, &dat)
 	if err != nil {
 		Log(LVL_ERROR, "can't unmarshal hy data for ship ", shipID, err)
@@ -190,4 +204,37 @@ func RequestHyShip(shipID string) (dat BSP, exist bool) {
 	}
 
 	return dat, true
+}
+
+func reportHyDead(flightId int) {
+	body := fmt.Sprintf(`{"flight_id": %v}`, flightId)
+	_, err := doReq(http.MethodPost, DEFVAL.ShipDeadRequestHyServerAddr, []byte(body))
+	if err != nil {
+		LogGame("failedReqs", false, err, DEFVAL.ShipDeadRequestHyServerAddr, body)
+	}
+}
+
+func reportHyAlive(flightId int, flightTime float64, startAZ, endAZ [8]float64) {
+	var AZ [8]float64
+	for i := 0; i < 8; i++ {
+		AZ[i] = startAZ[i] - endAZ[i]
+	}
+	body := fmt.Sprintf(`{
+	"flight_id": %v,
+	"flight_time": %v,
+	"az_damage":{
+	"march_engine": %v,
+	"shunter": %v,
+	"warp_engine": %v,
+	"shields": %v,
+	"radar": %v,
+	"scaner": %v,
+	"fuel_tank": %v,
+	"lss": %v
+	}
+	}`, flightId, int(flightTime), AZ[0], AZ[1], AZ[2], AZ[3], AZ[4], AZ[5], AZ[6], AZ[7])
+	_, err := doReq(http.MethodPost, DEFVAL.ShipReturnedRequestHyServerAddr, []byte(body))
+	if err != nil {
+		LogGame("failedReqs", false, err, DEFVAL.ShipReturnedRequestHyServerAddr, body)
+	}
 }

@@ -55,7 +55,9 @@ type tDefVals struct {
 
 	NormPressure float64
 
-	ShipsRequestHyServerAddr string
+	ShipsRequestHyServerAddr        string
+	ShipDeadRequestHyServerAddr     string
+	ShipReturnedRequestHyServerAddr string
 }
 
 var DEFVAL tDefVals

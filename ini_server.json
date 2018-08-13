@@ -30,5 +30,7 @@
     "WormHoleExitDistK": 1.2,
     "WormHoleExitVel": 100,
     "NormPressure": 750,
-    "ShipsRequestHyServerAddr":"https://technopark-backend.alice.magellan2018.ru/technopark/get_flight_params"
+    "ShipsRequestHyServerAddr":"https://technopark-backend.alice.magellan2018.ru/technopark/get_flight_params",
+    "ShipDeadRequestHyServerAddr":"https://technopark-backend.alice.magellan2018.ru/mcc/flight_died",
+    "ShipReturnedRequestHyServerAddr":"https://technopark-backend.alice.magellan2018.ru//mcc/flight_returned"
 }

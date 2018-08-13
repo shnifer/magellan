@@ -69,7 +69,7 @@ func Log(lvl int, args ...interface{}) {
 	log(lvl, entry, args...)
 }
 
-func LogGame(key string, args ...interface{}) {
+func LogGame(key string, showMaster bool, args ...interface{}) {
 	if logger == nil {
 		native.Println("key = ", key, args)
 		return
@@ -78,7 +78,7 @@ func LogGame(key string, args ...interface{}) {
 		sfmu.RLock()
 		entry = entry.WithFields(stateFields)
 		sfmu.RUnlock()
-		entry = entry.WithField(ShowMasterKey, true)
+		entry = entry.WithField(ShowMasterKey, showMaster)
 		entry = entry.WithField(GameEventKey, key)
 		entry.Info(args...)
 	}

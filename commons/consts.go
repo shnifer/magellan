@@ -29,6 +29,8 @@ const (
 	CMD_ADDBUILDREQ     = "AddBuildingReq"    //from client to server
 	CMD_DELBUILDREQ     = "DeleteBuildingReq" //from client to server
 	CMD_LOGGAMEEVENT    = "LogGameEvent"      //from client to server
+	CMD_GRACEENDDIE     = "GraceEndDie"       //from client to server
+	CMD_GRACEENDRETURN  = "GraceEndReturn"    //from client to server
 )
 
 const (

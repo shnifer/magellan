@@ -15,8 +15,6 @@ var server *network.Server
 var startState commons.State
 var startStateEnc string
 
-//todo: gamemaster control
-//todo: drop send, recv state on restore
 func main() {
 	log.Start(time.Duration(DEFVAL.LogLogTimeoutMs)*time.Millisecond,
 		time.Duration(DEFVAL.LogRetryMinMs)*time.Millisecond,

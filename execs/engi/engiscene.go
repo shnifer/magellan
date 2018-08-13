@@ -28,6 +28,8 @@ type engiScene struct {
 	wormOut string
 
 	local localCounters
+
+	dieTimeout float64
 }
 
 func newEngiScene() *engiScene {
@@ -69,6 +71,12 @@ func (s *engiScene) Init() {
 func (s *engiScene) Update(dt float64) {
 	defer LogFunc("engiScene.Update")()
 
+	if s.dieTimeout > 0 {
+		s.dieTimeout -= dt
+	}
+	if s.dieTimeout < 0 {
+		s.dieTimeout = 0
+	}
 	Data.Galaxy.Update(Data.PilotData.SessionTime)
 
 	x, y := ebiten.CursorPosition()
@@ -143,9 +151,10 @@ func (s *engiScene) checkForWormHole() {
 		return
 	}
 
-	if target == WarmHoleYouDIE {
-		//fixme: implement
-		Log(LVL_INFO, "Die by wormhole")
+	if target == WarmHoleYouDIE && s.dieTimeout == 0 {
+		s.dieTimeout = 2
+		ClientLogGame(Client, "ship", "Die by wormhole")
+		Client.SendRequest(CMD_GRACEENDDIE)
 		return
 	}
 
