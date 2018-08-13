@@ -67,6 +67,12 @@ type EngiCounters struct {
 	Hitted     float64 `json:"ht,omitempty"`
 }
 
+type Boost struct {
+	SysN     int
+	LeftTime float64
+	Power    float64
+}
+
 type EngiData struct {
 	//[0.0 - 1.0]
 	//0 for fully OKEY, 1 - for totally DEGRADED
@@ -77,6 +83,7 @@ type EngiData struct {
 
 	//Counters
 	Counters EngiCounters `json:"c,omitempty"`
+	Boosts   []Boost      `json:"b,omitempty"`
 }
 
 //Rework CalcDegrade on change
@@ -167,7 +174,7 @@ func (CommonData) Empty() CommonData {
 	return CommonData{
 		PilotData:  &PilotData{},
 		NaviData:   &NaviData{Mines: []string{}, Landing: []string{}},
-		EngiData:   &EngiData{Emissions: make(map[string]float64), BSPDegrade: emptyDegrade()},
+		EngiData:   &EngiData{Emissions: make(map[string]float64), BSPDegrade: emptyDegrade(), Boosts: make([]Boost, 0)},
 		ServerData: &ServerData{OtherShips: []OtherShipData{}},
 	}
 }
@@ -191,6 +198,14 @@ func (cd CommonData) Copy() (res CommonData) {
 	}
 	if cd.EngiData != nil {
 		val := *cd.EngiData
+		emi := make(map[string]float64, len(cd.EngiData.Emissions))
+		boosts := make([]Boost, len(cd.EngiData.Boosts))
+		for k, v := range cd.EngiData.Emissions {
+			emi[k] = v
+		}
+		copy(boosts, cd.EngiData.Boosts)
+		val.Boosts = boosts
+		val.Emissions = emi
 		res.EngiData = &val
 	}
 	if cd.ServerData != nil {

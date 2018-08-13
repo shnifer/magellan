@@ -20,8 +20,9 @@ type systemsMonitor struct {
 	sprites map[string]*Sprite
 	sysNvs  [SysCount]v2.V2
 
-	isEmid [8]bool
-	isDmgd [8]bool
+	isEmid    [8]bool
+	isDmgd    [8]bool
+	isBoosted [8]bool
 }
 
 func newSystemsMonitor() *systemsMonitor {
@@ -65,23 +66,36 @@ func (s *systemsMonitor) update(dt float64, ranma *ranma.Ranma) {
 	for i := 0; i < SysCount; i++ {
 		s.isDmgd[i] = ranma.GetOut(i) > 0
 	}
+
+	for i := 0; i < SysCount; i++ {
+		s.isBoosted[i] = false
+	}
+	for _, b := range Data.EngiData.Boosts {
+		if b.LeftTime > 0 && b.Power > 0 {
+			s.isBoosted[b.SysN] = true
+		}
+	}
 }
 
 func (s *systemsMonitor) Req(Q *DrawQueue) {
 	Q.Add(s.sprites["all"], Z_GAME_OBJECT-1)
 	Q.Add(s.sprites["upp"], Z_GAME_OBJECT+2)
+
+	t := float64(time.Now().Nanosecond()) / 1000000000
+	a := math.Sin(t*2*math.Pi)*0.5 + 0.5
+
 	for i := 0; i < SysCount; i++ {
 		sprite := s.sprites[strconv.Itoa(i)]
 		var clr color.Color
-		if s.isDmgd[i] {
+		if s.isBoosted[i] {
+			clr = colornames.Lightblue
+		} else if s.isDmgd[i] {
 			clr = colornames.Darkgray
 		} else {
 			clr = sysColor(Data.EngiData.AZ[i] / 100)
 		}
 		sprite.SetColor(clr)
 		if s.isEmid[i] {
-			t := float64(time.Now().Nanosecond()) / 1000000000
-			a := math.Sin(t*2*math.Pi)*0.5 + 0.5
 			sprite.SetAlpha(a)
 		} else {
 			sprite.SetAlpha(1)

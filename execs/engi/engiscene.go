@@ -9,8 +9,14 @@ import (
 	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
+	"golang.org/x/image/colornames"
 	"log"
 	"time"
+)
+
+const (
+	focus_main = iota
+	focus_enterBoost
 )
 
 type engiScene struct {
@@ -29,6 +35,9 @@ type engiScene struct {
 
 	local localCounters
 
+	focus      int
+	boostInput *TextInput
+
 	dieTimeout float64
 }
 
@@ -37,15 +46,24 @@ func newEngiScene() *engiScene {
 	back.SetSize(float64(WinW), float64(WinH))
 	back.SetPivot(graph.TopLeft())
 
-	//ranma:= ranma.NewRanma(DEFVAL.RanmaAddr, DEFVAL.DropOnRepair, DEFVAL.RanmaTimeoutMs, DEFVAL.RanmaHistoryDepth)
-	ranma := &ranma.Ranma{}
-	return &engiScene{
-		ranma:          ranma,
+	r := ranma.NewRanma(DEFVAL.RanmaAddr, DEFVAL.DropOnRepair, DEFVAL.RanmaTimeoutMs, DEFVAL.RanmaHistoryDepth)
+
+	res := engiScene{
+		ranma:          r,
 		background:     back,
 		systemsMonitor: newSystemsMonitor(),
 		q:              graph.NewDrawQueue(),
 		tick:           time.Tick(time.Second),
 	}
+
+	textPanel := NewAtlasSprite(TextPanelAN, graph.NoCam)
+	textPanel.SetPos(graph.ScrP(0.5, 0))
+	textPanel.SetPivot(graph.TopMiddle())
+	size := graph.ScrP(0.6, 0.1)
+	textPanel.SetSize(size.X, size.Y)
+	res.boostInput = NewTextInput(textPanel, Fonts[Face_cap], colornames.White, graph.Z_HUD+1, res.onBoostTextInput)
+
+	return &res
 }
 
 func (s *engiScene) Init() {
@@ -58,6 +76,7 @@ func (s *engiScene) Init() {
 
 	s.local = initLocal()
 	initMedi(Data.ShipID)
+	s.focus = focus_main
 
 	for sysN := 0; sysN < SysCount; sysN++ {
 		if s.ranma.GetIn(sysN) != Data.EngiData.InV[sysN] {
@@ -78,6 +97,16 @@ func (s *engiScene) Update(dt float64) {
 		s.dieTimeout = 0
 	}
 	Data.Galaxy.Update(Data.PilotData.SessionTime)
+	updateBoosts(dt)
+
+	if s.focus == focus_enterBoost {
+		s.boostInput.Update(dt)
+	}
+
+	if s.focus == focus_main && inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
+		s.boostInput.SetText("")
+		s.focus = focus_enterBoost
+	}
 
 	x, y := ebiten.CursorPosition()
 	mouse := v2.V2{X: float64(x), Y: float64(y)}
@@ -112,6 +141,9 @@ func (s *engiScene) Draw(image *ebiten.Image) {
 	Q := s.q
 	Q.Clear()
 
+	if s.focus == focus_enterBoost {
+		s.q.Append(s.boostInput)
+	}
 	Q.Append(s.systemsMonitor)
 
 	Q.Run(image)
@@ -132,6 +164,7 @@ func (*engiScene) Destroy() {
 }
 
 func (s *engiScene) showSystemInfo(n int) {
+	//fixme
 	log.Println("show system info #", n)
 }
 
@@ -163,4 +196,30 @@ func (s *engiScene) checkForWormHole() {
 	state.StateID = STATE_cosmo
 	state.GalaxyID = target
 	Client.RequestNewState(state.Encode(), false)
+}
+
+func (s *engiScene) onBoostTextInput(text string, done bool) {
+	s.focus = focus_main
+	if done {
+		s.tryBoost(text)
+	}
+}
+
+func (s *engiScene) tryBoost(boostPass string) {
+	//fixme: implement
+	return
+	Data.EngiData.Boosts = append(Data.EngiData.Boosts, Boost{})
+}
+
+func updateBoosts(dt float64) {
+	for i, v := range Data.EngiData.Boosts {
+		lt := v.LeftTime
+		if lt > 0 {
+			lt -= dt
+			if lt < 0 {
+				lt = 0
+			}
+			Data.EngiData.Boosts[i].LeftTime = lt
+		}
+	}
 }

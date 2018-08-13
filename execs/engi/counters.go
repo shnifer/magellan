@@ -2,9 +2,9 @@ package main
 
 import (
 	. "github.com/Shnifer/magellan/commons"
+	. "github.com/Shnifer/magellan/log"
 	"math"
 	"math/rand"
-	."github.com/Shnifer/magellan/log"
 )
 
 /*type EngiCounters struct {
@@ -38,7 +38,7 @@ func calcHeat(dt float64) float64 {
 
 func calcCO2(dt float64) float64 {
 	const NormalCo2 = 0.04
-	target := (700 - Data.BSP.Lss.Co2_level) / 33.3
+	target := (700 - Data.BSP.Lss.Co2_level*getBoostPow(SYS_LSS)) / 33.3
 	target *= e(EMI_CO2)
 	N := Data.EngiData.BSPDegrade.Lss.Co2_level
 	target = (target-NormalCo2)/8*N + NormalCo2
@@ -92,7 +92,7 @@ func (s *engiScene) CalculateLocalCounters() {
 
 	outRadi := Data.EngiData.Emissions[EMI_DMG_RADI] * (100 - Data.SP.Shields.Radiation_def) / 100 * DEFVAL.OutRadiK
 	tankRadi := DEFVAL.TankRadiBase + DEFVAL.TankRadiK*Data.EngiData.Counters.Fuel
-	pointUndef := (240 - 0.4*Data.BSP.Fuel_tank.Radiation_def) / 1600
+	pointUndef := (240 - 0.4*Data.BSP.Fuel_tank.Radiation_def*getBoostPow(SYS_FUEL)) / 1600
 	totalUndef := Data.EngiData.BSPDegrade.Fuel_tank.Radiation_def * pointUndef
 	if totalUndef > 1 {
 		totalUndef = 1
@@ -222,7 +222,7 @@ func getRandomSysByValue() int {
 		Data.BSP.Lss.Volume +
 		Data.BSP.Fuel_tank.Volume
 
-	if sum==0{
+	if sum == 0 {
 		Log(LVL_ERROR, "Zero ship .Volumes!")
 		return 0
 	}
