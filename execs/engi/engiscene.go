@@ -29,6 +29,8 @@ type BoostParams struct {
 	Password   string  `json:"password"`
 }
 
+var boostList map[string]BoostParams
+
 type engiScene struct {
 	shipID string
 
@@ -50,8 +52,11 @@ type engiScene struct {
 
 	dieTimeout float64
 
-	boostList   map[string]BoostParams
 	wrongBoostT float64
+}
+
+func init() {
+	boostList = loadHyBoostList()
 }
 
 func newEngiScene() *engiScene {
@@ -67,7 +72,6 @@ func newEngiScene() *engiScene {
 		systemsMonitor: newSystemsMonitor(),
 		q:              graph.NewDrawQueue(),
 		tick:           time.Tick(time.Second),
-		boostList:      make(map[string]BoostParams),
 	}
 
 	textPanel := NewAtlasSprite(TextPanelAN, graph.NoCam)
@@ -99,7 +103,6 @@ func (s *engiScene) Init() {
 	}
 
 	s.wormOut = ""
-	s.boostList = loadHyBoostList()
 }
 
 func (s *engiScene) Update(dt float64) {

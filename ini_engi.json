@@ -52,6 +52,8 @@
     "AlicePath":"location_events",
     "AlicePass":"admin",
     "AliceLogin":"admin",
+    "RequestHyBoostListAddr":"",
+    "RequestHyBoostUseAddr":"",
     "MediLowCounterS": 1800,
     "MediMidTotalS": 600,
     "MediMidNeededS": 300,
