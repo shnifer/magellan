@@ -74,6 +74,8 @@ func (rs *roomServer) getRestorePoint(ship string, restoreN int) (RestoreRec, er
 }
 
 func (rs *roomServer) loadRestorePoint(roomName string, ship string, restoreN int) error {
+	rs.RLock()
+	defer rs.RUnlock()
 
 	rec, err := rs.getRestorePoint(ship, restoreN)
 	if err != nil {

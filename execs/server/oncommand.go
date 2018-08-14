@@ -87,6 +87,9 @@ func (rs *roomServer) DelBuildCommand(command string) {
 }
 
 func (rs *roomServer) GraceDie(room string, alive bool) {
+	rs.RLock()
+	defer rs.RUnlock()
+
 	holder := rs.getHolder(room)
 	sd := holder.getStateData()
 	cd := holder.getCommon()

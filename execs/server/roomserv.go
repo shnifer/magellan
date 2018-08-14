@@ -57,28 +57,32 @@ func doUpdateSubscribes(rs *roomServer, server *network.Server) {
 	}
 }
 
-//under w/out rs.RLock
+//under rs.RLock
 func (rs *roomServer) getHolder(roomName string) *roomHolder {
-	rs.RLock()
-	if holder, ok := rs.holders[roomName]; ok {
+	for {
+		if holder, ok := rs.holders[roomName]; ok && holder != nil {
+			return holder
+		}
+
 		rs.RUnlock()
-		return holder
+		rs.Lock()
+		if h, ok := rs.holders[roomName]; ok && h != nil {
+			rs.Unlock()
+			rs.RLock()
+			continue
+		}
+		holder := newRoomHolder(roomName)
+		rs.holders[roomName] = holder
+		rs.Unlock()
+		rs.RLock()
 	}
-	rs.RUnlock()
-
-	rs.Lock()
-	defer rs.Unlock()
-
-	if holder, ok := rs.holders[roomName]; ok {
-		return holder
-	}
-	holder := newRoomHolder(roomName)
-	rs.holders[roomName] = holder
-	return holder
 }
 
 func (rs *roomServer) GetRoomCommon(room string) ([]byte, error) {
 	defer LogFunc("GetRoomCommon")()
+	rs.RLock()
+	defer rs.RUnlock()
+
 	commonData := rs.getHolder(room).getCommon()
 	msg := commonData.Encode()
 	return msg, nil
@@ -87,6 +91,8 @@ func (rs *roomServer) GetRoomCommon(room string) ([]byte, error) {
 
 func (rs *roomServer) SetRoomCommon(room string, data []byte) error {
 	defer LogFunc("SetRoomCommon")()
+	rs.RLock()
+	defer rs.RUnlock()
 
 	cd, err := CommonData{}.Decode(data)
 	if err != nil {
@@ -102,6 +108,8 @@ func (rs *roomServer) SetRoomCommon(room string, data []byte) error {
 
 func (rs *roomServer) RdyStateData(room string, stateStr string) {
 	defer LogFunc("RdyStateData")()
+	rs.RLock()
+	defer rs.RUnlock()
 
 	holder := rs.getHolder(room)
 	rs.loadMu.Lock()
@@ -125,6 +133,8 @@ func (rs *roomServer) RdyStateData(room string, stateStr string) {
 
 func (rs *roomServer) GetStateData(room string) []byte {
 	defer LogFunc("GetStateData")()
+	rs.RLock()
+	defer rs.RUnlock()
 
 	stateData := rs.getHolder(room).getStateData()
 	msg := stateData.Encode()
