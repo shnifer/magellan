@@ -8,11 +8,11 @@
 
     "Room": "room101",
 
-    "FullScreen": true,
+    "FullScreen": false,
 
-    "WinW": 800,
+    "WinW": 600,
 
-    "WinH": 800,
+    "WinH": 600,
 
     "VSync": true,
 

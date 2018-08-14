@@ -30,6 +30,8 @@ type tDefVals struct {
 
 	GravityConst      float64
 	WarpGravityConst  float64
+	ThrustVectorK     float64
+	DistortionK       float64
 	DT                float64
 	MinDistortion     float64
 	VelDistWarpK      float64

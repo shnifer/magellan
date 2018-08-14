@@ -7,7 +7,7 @@
 
     "Room": "room101",
 
-    "FullScreen": true,
+    "FullScreen": false,
 
     "WinW": 600,
 
@@ -24,6 +24,10 @@
     "GravityConst": 1,
 
     "WarpGravityConst": 1,
+
+    "ThrustVectorK": 1,
+
+    "DistortionK": 1,
 
     "VelDistWarpK": 1,
 
