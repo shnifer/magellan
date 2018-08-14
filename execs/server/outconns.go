@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	. "github.com/Shnifer/magellan/commons"
 	. "github.com/Shnifer/magellan/log"
@@ -12,7 +11,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 func (rs *roomServer) loadStateData(state State) (sd StateData, subscribe chan storage.Event) {
@@ -146,40 +144,6 @@ func saveDataExamples(path string) {
 	ioutil.WriteFile(path+"example_galaxy.json", galaxyStr, 0)
 }
 
-var client *http.Client
-
-func init() {
-	client = &http.Client{
-		Timeout: time.Second,
-	}
-}
-
-func doReq(Method string, addr string, body []byte) (respBody []byte, err error) {
-	client := &http.Client{
-		Timeout: time.Second,
-	}
-	bodyBuf := bytes.NewBuffer(body)
-	req, err := http.NewRequest(http.MethodPost, addr, bodyBuf)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		return nil, errors.New(resp.Status)
-	}
-	respBody, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	return respBody, nil
-}
-
 func RequestHyShip(shipID string) (dat BSP, exist bool) {
 	shipN, err := strconv.Atoi(shipID)
 	if err != nil {
@@ -187,9 +151,9 @@ func RequestHyShip(shipID string) (dat BSP, exist bool) {
 	}
 
 	body := fmt.Sprintf("{\"flight_id\":%v}", shipN)
-	data, err := doReq(http.MethodPost, DEFVAL.ShipsRequestHyServerAddr, []byte(body))
+	data, err := DoReq(http.MethodPost, DEFVAL.ShipsRequestHyServerAddr, []byte(body))
 	if err != nil {
-		Log(LVL_ERROR, "can't request Hy flight data with request ", body, " err: ", err)
+		LogGame("failedReqs", false, "can't request Hy flight data with request ", body, " err: ", err)
 		return BSP{}, false
 	}
 
@@ -208,7 +172,7 @@ func RequestHyShip(shipID string) (dat BSP, exist bool) {
 
 func reportHyDead(flightId int) {
 	body := fmt.Sprintf(`{"flight_id": %v}`, flightId)
-	_, err := doReq(http.MethodPost, DEFVAL.ShipDeadRequestHyServerAddr, []byte(body))
+	_, err := DoReq(http.MethodPost, DEFVAL.ShipDeadRequestHyServerAddr, []byte(body))
 	if err != nil {
 		LogGame("failedReqs", false, err, DEFVAL.ShipDeadRequestHyServerAddr, body)
 	}
@@ -233,7 +197,7 @@ func reportHyAlive(flightId int, flightTime float64, startAZ, endAZ [8]float64) 
 	"lss": %v
 	}
 	}`, flightId, int(flightTime), AZ[0], AZ[1], AZ[2], AZ[3], AZ[4], AZ[5], AZ[6], AZ[7])
-	_, err := doReq(http.MethodPost, DEFVAL.ShipReturnedRequestHyServerAddr, []byte(body))
+	_, err := DoReq(http.MethodPost, DEFVAL.ShipReturnedRequestHyServerAddr, []byte(body))
 	if err != nil {
 		LogGame("failedReqs", false, err, DEFVAL.ShipReturnedRequestHyServerAddr, body)
 	}

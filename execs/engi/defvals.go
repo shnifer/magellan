@@ -81,6 +81,9 @@ type tDefVals struct {
 	AlicePath  string
 	AlicePass  string
 	AliceLogin string
+
+	RequestHyBoostListAddr string
+	RequestHyBoostUseAddr  string
 }
 
 var DEFVAL tDefVals

@@ -19,6 +19,16 @@ const (
 	focus_enterBoost
 )
 
+type BoostParams struct {
+	NodeType   string  `json:"node_type"`
+	BaseTime   float64 `json:"base_time"`
+	AZBonus    float64 `json:"az_bonus"`
+	AZDmg      float64 `json:"az_damage"`
+	BoostPower float64 `json:"boost_percent"`
+	Code       string  `json:"code"`
+	Password   string  `json:"password"`
+}
+
 type engiScene struct {
 	shipID string
 
@@ -39,6 +49,9 @@ type engiScene struct {
 	boostInput *TextInput
 
 	dieTimeout float64
+
+	boostList   map[string]BoostParams
+	wrongBoostT float64
 }
 
 func newEngiScene() *engiScene {
@@ -54,6 +67,7 @@ func newEngiScene() *engiScene {
 		systemsMonitor: newSystemsMonitor(),
 		q:              graph.NewDrawQueue(),
 		tick:           time.Tick(time.Second),
+		boostList:      make(map[string]BoostParams),
 	}
 
 	textPanel := NewAtlasSprite(TextPanelAN, graph.NoCam)
@@ -85,17 +99,21 @@ func (s *engiScene) Init() {
 	}
 
 	s.wormOut = ""
+	s.boostList = loadHyBoostList()
 }
 
 func (s *engiScene) Update(dt float64) {
 	defer LogFunc("engiScene.Update")()
 
-	if s.dieTimeout > 0 {
-		s.dieTimeout -= dt
-	}
+	s.dieTimeout -= dt
 	if s.dieTimeout < 0 {
 		s.dieTimeout = 0
 	}
+	s.wrongBoostT -= dt
+	if s.wrongBoostT < 0 {
+		s.wrongBoostT = 0
+	}
+
 	Data.Galaxy.Update(Data.PilotData.SessionTime)
 	updateBoosts(dt)
 
@@ -143,6 +161,11 @@ func (s *engiScene) Draw(image *ebiten.Image) {
 
 	if s.focus == focus_enterBoost {
 		s.q.Append(s.boostInput)
+	}
+	if s.wrongBoostT > 0 {
+		wrongBoostMsg := graph.NewText("WRONG BOOST!", Fonts[Face_cap], colornames.Darkred)
+		wrongBoostMsg.SetPosPivot(graph.ScrP(0.5, 0), graph.TopMiddle())
+		s.q.Add(wrongBoostMsg, graph.Z_HUD)
 	}
 	Q.Append(s.systemsMonitor)
 
@@ -201,25 +224,9 @@ func (s *engiScene) checkForWormHole() {
 func (s *engiScene) onBoostTextInput(text string, done bool) {
 	s.focus = focus_main
 	if done {
-		s.tryBoost(text)
-	}
-}
-
-func (s *engiScene) tryBoost(boostPass string) {
-	//fixme: implement
-	return
-	Data.EngiData.Boosts = append(Data.EngiData.Boosts, Boost{})
-}
-
-func updateBoosts(dt float64) {
-	for i, v := range Data.EngiData.Boosts {
-		lt := v.LeftTime
-		if lt > 0 {
-			lt -= dt
-			if lt < 0 {
-				lt = 0
-			}
-			Data.EngiData.Boosts[i].LeftTime = lt
+		ok := s.tryBoost(text)
+		if !ok {
+			s.wrongBoostT = 2
 		}
 	}
 }
