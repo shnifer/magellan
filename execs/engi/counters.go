@@ -153,6 +153,7 @@ func (s *engiScene) procPhys() {
 		countSys = 3
 	}
 
+	Log(LVL_WARN, "Phys damage")
 	s.doAZDamage(countSys, Data.EngiData.Counters.HoleSize*DEFVAL.HoleAZK)
 	if doMedical {
 		s.procPhysMedicine(Data.EngiData.Emissions[EMI_DMG_MECH])
@@ -170,6 +171,7 @@ func (s *engiScene) procOverHeat(overheat float64) {
 	case 7:
 		countSys = 3
 	}
+	Log(LVL_WARN, "Heat damage")
 	s.doAZDamage(countSys, overheat*DEFVAL.OverheatAZK)
 }
 
@@ -184,6 +186,7 @@ func (s *engiScene) procRadiation(radiation float64) {
 	case 7:
 		countSys = 3
 	}
+	Log(LVL_WARN, "Radi damage")
 	s.doAZDamage(countSys, radiation*DEFVAL.RadiAZK)
 }
 
@@ -210,6 +213,7 @@ func (s *engiScene) doAZDamage(repeats int, dmg float64) {
 	}
 
 	for sysN := range brakeSystems {
+		Log(LVL_WARN, "we brake sys#", sysN)
 		v := uint16(rand.Intn(65536))
 		s.ranma.SetIn(sysN, v)
 	}
@@ -229,6 +233,7 @@ func (s *engiScene) doTargetAZDamage(sysN int, dmg float64) {
 	}
 	Data.EngiData.AZ[sysN] -= dmg
 	if rand.Float64() < brakeChance {
+		Log(LVL_WARN, "we brake sys#", sysN)
 		v := uint16(rand.Intn(65536))
 		s.ranma.SetIn(sysN, v)
 	}

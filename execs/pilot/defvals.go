@@ -59,6 +59,10 @@ type tDefVals struct {
 
 	DefWarpCamScale  float64
 	DefCosmoCamScale float64
+	MinScaleWarp     float64
+	MaxScaleWarp     float64
+	MinScaleCosmo    float64
+	MaxScaleCosmo    float64
 
 	EMIVelUpK   float64
 	EmiVelDownK float64

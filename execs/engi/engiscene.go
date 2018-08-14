@@ -10,6 +10,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
+	"log"
 	"time"
 )
 
@@ -107,8 +108,10 @@ func (s *engiScene) Init() {
 	initMedi(Data.ShipID)
 	s.focus = focus_main
 
+	log.Println("engi scene init with InV: ", Data.EngiData.InV)
 	for sysN := 0; sysN < SysCount; sysN++ {
 		if s.ranma.GetIn(sysN) != Data.EngiData.InV[sysN] {
+			log.Panicln("Sys #", sysN, " was ", s.ranma.GetIn(sysN), " set ", Data.EngiData.InV[sysN])
 			s.ranma.SetIn(sysN, Data.EngiData.InV[sysN])
 		}
 	}
@@ -197,8 +200,10 @@ func (s *engiScene) Draw(image *ebiten.Image) {
 func (s *engiScene) OnCommand(command string) {
 	switch command {
 	case "GDmgHard":
+		Log(LVL_WARN, "GDmgHard")
 		s.doAZDamage(DEFVAL.HardGDmgRepeats, DEFVAL.HardGDmg)
 	case "GDmgMedium":
+		Log(LVL_WARN, "GDmgMedium")
 		s.doAZDamage(DEFVAL.MediumGDmgRepeats, DEFVAL.MediumGDmg)
 	default:
 

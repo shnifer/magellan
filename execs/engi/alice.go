@@ -8,10 +8,10 @@ import (
 	"time"
 )
 
-func init() {
+func initAlice() {
 	opts := alice.Opts{
 		Addr:     DEFVAL.AliceAddr,
-		Path:     DEFVAL.AlicePass,
+		Path:     DEFVAL.AlicePath,
 		Password: DEFVAL.AlicePass,
 		Login:    DEFVAL.AliceLogin,
 	}

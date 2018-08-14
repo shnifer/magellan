@@ -81,6 +81,7 @@ func main() {
 	Data = commons.NewData()
 
 	initClient()
+	initAlice()
 	commons.InitWormHoles()
 	commons.SetGravityConsts(DEFVAL.GravityConst, 0)
 

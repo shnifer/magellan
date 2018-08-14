@@ -1,23 +1,45 @@
 {
-    "Port": "http://localhost:8010",
+
+    "Port": "http://192.168.1.29:8010",
+
     "Timeout":100,
+
     "PingPeriod": 100,
+
     "Room": "room101",
-    "FullScreen": false,
+
+    "FullScreen": true,
+
     "WinW": 800,
+
     "WinH": 800,
-    "VSync": false,
+
+    "VSync": true,
+
     "DoProf": false,
+
     "GravityConst": 1,
+
     "CosmoPredictorUpdT":0.1,
+
     "CosmoPredictorNumInSec":10,
+
     "CosmoPredictorGravEach":2,
+
     "CosmoPredictorTrackLen":30,
+
     "CosmoPredictorDrawMaxP":120,
+
     "LogTimeoutMs": 1000,
+
     "LogRetryMinMs": 10,
+
     "LogRetryMaxMs": 10000,
+
     "LogIP": "https://elasticsearch.alice.magellan2018.ru",
-    "LogHostName": "room1noteAsus123",
-    "ReportHyMineAddr": "127.0.0.1:8500/economics/set_mine"
+
+    "LogHostName": "room1Navi",
+
+    "ReportHyMineAddr": "https://technopark-backend.alice.magellan2018.ru/economics/set_mine"
+
 }

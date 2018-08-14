@@ -144,6 +144,14 @@ func (s *warpScene) Update(dt float64) {
 	}
 	s.updateShipControl(dt)
 
+	if ebiten.IsKeyPressed(ebiten.KeyQ) {
+		s.cam.Scale *= (1 + dt)
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyE) {
+		s.cam.Scale /= (1 + dt)
+	}
+	s.cam.Scale = Clamp(s.cam.Scale, DEFVAL.MinScaleWarp, DEFVAL.MaxScaleWarp)
+
 	if DEFVAL.DebugControl {
 		s.debugControl()
 	}

@@ -1,41 +1,84 @@
 {
-    "Port": "http://localhost:8010",
+    "Port": "http://192.168.1.29:8010",
+
     "Timeout":100,
+
     "PingPeriod": 100,
+
     "Room": "room101",
-    "FullScreen": false,
+
+    "FullScreen": true,
+
     "WinW": 600,
+
     "WinH": 600,
+
     "VSync": true,
-    "DebugControl":true,
+
+    "DebugControl":false,
+
     "DoProf": false,
+
     "LowQ": false,
+
     "GravityConst": 1,
+
     "WarpGravityConst": 1,
+
     "VelDistWarpK": 1,
+
     "WarpGravPowN": 3,
+
     "WarpGravThreshold":0,
+
     "DT":0.001,
+
     "MinDistortion":300,
+
     "CosmoPredictorUpdT":0.1,
+
     "CosmoPredictorNumInSec":10,
+
     "CosmoPredictorGravEach":2,
+
     "CosmoPredictorTrackLen":20,
+
     "CosmoPredictorDrawMaxP":60,
+
     "WarpPredictorUpdT":0.1,
+
     "WarpPredictorNumInSec":10,
+
     "WarpPredictorTrackLen":20,
+
     "WarpPredictorDrawMaxP":60,
+
 
     "LogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
+
     "LogRetryMaxMs": 10000,
+
     "LogIP": "https://elasticsearch.alice.magellan2018.ru",
-    "LogHostName": "room1noteAsus123",
+
+    "LogHostName": "room1Pilot",
+
     "OtherShipElastic": 400,
 
+
     "DefWarpCamScale": 0.01,
+
     "DefCosmoCamScale": 0.01,
+
+    "MinScaleWarp": 0.001,
+
+    "MaxScaleWarp": 1,
+
+    "MinScaleCosmo": 0.001,
+
+    "MaxScaleCosmo": 1,
+
     "EMIVelUpK": 1,
+
     "EmiVelDownK": 1
 }

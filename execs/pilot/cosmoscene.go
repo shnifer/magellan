@@ -209,6 +209,14 @@ func (s *cosmoScene) Update(dt float64) {
 		0.02)
 	s.warpEngine.gravityAcc = s.gravityAcc
 
+	if ebiten.IsKeyPressed(ebiten.KeyQ) {
+		s.cam.Scale *= 1 + dt
+	}
+	if ebiten.IsKeyPressed(ebiten.KeyE) {
+		s.cam.Scale /= 1 + dt
+	}
+	s.cam.Scale = Clamp(s.cam.Scale, DEFVAL.MinScaleCosmo, DEFVAL.MaxScaleCosmo)
+
 	if DEFVAL.DebugControl {
 		s.updateDebugControl(dt)
 	}

@@ -15,7 +15,8 @@
             "slowdown": 300,
             "slowdown_rev": 300,
             "heat_prod": 45,
-            "az_level":115
+            "az_level":115,
+            "volume":1
         },
         "shunter": {
             "turn": 540,
@@ -25,7 +26,8 @@
             "turn_slow": 300,
             "strafe_slow": 300,
             "heat_prod": 40,
-            "az_level":115
+            "az_level":115,
+            "volume":1
         },
         "warp_engine": {
             "distort": 2000,
@@ -35,14 +37,16 @@
             "consumption": 0.03,
  			"turn_speed": 45,
             "turn_consumption": 0.25,
-            "az_level":100
+            "az_level":100,
+            "volume":1
         },
         "scaner": {
             "drop_range": 1300,
             "drop_speed": 1,
             "scan_range": 10000,
             "scan_speed": 1,
-            "az_level":100
+            "az_level":100,
+            "volume":1
         },
         "radar": {
             "range_max": 100000,
@@ -51,13 +55,15 @@
             "angle_change": 5,
             "range_change": 20000,
             "rotate_speed": 90,
-            "az_level":100
+            "az_level":100,
+            "volume":1
         },
         "fuel_tank": {
             "fuel_volume": 2500,
             "fuel_protection": 70,
             "radiation_def": 400,
-            "az_level":100
+            "az_level":100,
+            "volume":3
         },
         "lss": {
             "thermal_def": 60,
@@ -65,7 +71,8 @@
             "air_volume": 10000,
             "air_speed": 50,
             "lightness": 20,
-            "az_level":100
+            "az_level":100,
+            "volume":1
         },
         "shields": {
             "radiation_def": 45,
@@ -74,7 +81,8 @@
             "heat_reflection": 50,
             "heat_capacity": 2200,
             "heat_sink": 500,
-            "az_level":100
+            "az_level":100,
+            "volume":2
         }
     },
     "cargo": {

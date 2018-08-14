@@ -5,7 +5,7 @@
     "PingPeriod": 100,
     "FullScreen": false,
     "VSync": false,
-    "WinW": 600,
+    "WinW": 1200,
     "WinH": 600,
     "DoProf": false,
     "LogLogTimeoutMs": 1000,
