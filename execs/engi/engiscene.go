@@ -10,7 +10,6 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
-	"log"
 	"time"
 )
 
@@ -53,6 +52,10 @@ type engiScene struct {
 	dieTimeout float64
 
 	wrongBoostT float64
+
+	infoPanel    *graph.Sprite
+	showInfo     bool
+	showInfoSysN int
 }
 
 func init() {
@@ -66,12 +69,20 @@ func newEngiScene() *engiScene {
 
 	r := ranma.NewRanma(DEFVAL.RanmaAddr, DEFVAL.DropOnRepair, DEFVAL.RanmaTimeoutMs, DEFVAL.RanmaHistoryDepth)
 
+	infoPanel := NewAtlasSprite(TextPanelAN, graph.NoCam)
+	infoPanel.SetPos(graph.ScrP(0.2, 0))
+	infoPanel.SetPivot(graph.TopLeft())
+	infoPanelSize := graph.ScrP(0.6, 1)
+	infoPanel.SetSize(infoPanelSize.X, infoPanelSize.Y)
+	infoPanel.SetAlpha(0.8)
+
 	res := engiScene{
 		ranma:          r,
 		background:     back,
 		systemsMonitor: newSystemsMonitor(),
 		q:              graph.NewDrawQueue(),
 		tick:           time.Tick(time.Second),
+		infoPanel:      infoPanel,
 	}
 
 	textPanel := NewAtlasSprite(TextPanelAN, graph.NoCam)
@@ -135,7 +146,10 @@ func (s *engiScene) Update(dt float64) {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		sysN, ok := s.systemsMonitor.mouseOverSystem(mouse)
 		if ok {
-			s.showSystemInfo(sysN)
+			s.showInfo = true
+			s.showInfoSysN = sysN
+		} else {
+			s.showInfo = false
 		}
 	}
 
@@ -172,6 +186,11 @@ func (s *engiScene) Draw(image *ebiten.Image) {
 	}
 	Q.Append(s.systemsMonitor)
 
+	if s.showInfo {
+		Q.Add(s.infoPanel, graph.Z_HUD-1)
+		Q.Add(s.systemInfo(s.showInfoSysN), graph.Z_HUD)
+	}
+
 	Q.Run(image)
 }
 
@@ -187,11 +206,6 @@ func (s *engiScene) OnCommand(command string) {
 }
 
 func (*engiScene) Destroy() {
-}
-
-func (s *engiScene) showSystemInfo(n int) {
-	//fixme
-	log.Println("show system info #", n)
 }
 
 func (s *engiScene) procTick() {

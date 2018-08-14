@@ -51,7 +51,7 @@ func ReqHyBoost(pass string) bool {
 
 func (s *engiScene) tryBoost(boostPass string) bool {
 	boostK := normBoostN(boostPass)
-	bp, ok := s.boostList[boostK]
+	bp, ok := boostList[boostK]
 	if !ok {
 		return false
 	}
@@ -90,8 +90,9 @@ func (s *engiScene) tryBoost(boostPass string) bool {
 		return false
 	}
 
-	delete(s.boostList, boostK)
+	delete(boostList, boostK)
 	Data.EngiData.Boosts = append(Data.EngiData.Boosts, boost)
+	s.doTargetAZDamage(sysN, bp.AZDmg)
 	return true
 }
 

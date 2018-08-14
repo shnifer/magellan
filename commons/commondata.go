@@ -21,6 +21,7 @@ type PilotData struct {
 	ThrustVector v2.V2 `json:"tv,omitempty"`
 	//for warp
 	Distortion float64 `json:"wd,omitempty"`
+	DistTurn   float64 `json:"dt,omitempty"`
 	Dir        float64 `json:"dr,omitempty"`
 	//warp position for return from zero system
 	WarpPos v2.V2 `json:"wp,omitempty"`

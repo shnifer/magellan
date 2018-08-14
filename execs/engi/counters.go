@@ -53,7 +53,9 @@ func calcFuel(dt float64) float64 {
 		return Data.EngiData.Counters.Fuel
 	}
 
-	return Data.EngiData.Counters.Fuel - Data.PilotData.Distortion*Data.SP.Warp_engine.Consumption*dt
+	return Data.EngiData.Counters.Fuel -
+		Data.PilotData.Distortion*Data.SP.Warp_engine.Consumption*dt -
+		Data.PilotData.DistTurn*Data.SP.Warp_engine.Turn_consumption*dt
 }
 
 func calcHolePressureAir(dt float64) {
@@ -201,12 +203,32 @@ func (s *engiScene) doAZDamage(repeats int, dmg float64) {
 		} else {
 			brakeChance = dmg / Data.EngiData.AZ[sysN] * DEFVAL.BrakeChanceK
 		}
+		Data.EngiData.AZ[sysN] -= dmg
 		if rand.Float64() < brakeChance {
 			brakeSystems[sysN] = struct{}{}
 		}
 	}
 
 	for sysN := range brakeSystems {
+		v := uint16(rand.Intn(65536))
+		s.ranma.SetIn(sysN, v)
+	}
+}
+
+func (s *engiScene) doTargetAZDamage(sysN int, dmg float64) {
+	if dmg == 0 || sysN > SysCount || sysN < 0 {
+		return
+	}
+
+	dmg = math.Min(dmg, Data.EngiData.AZ[sysN])
+	var brakeChance float64
+	if Data.EngiData.AZ[sysN] == 0 {
+		brakeChance = 1
+	} else {
+		brakeChance = dmg / Data.EngiData.AZ[sysN] * DEFVAL.BrakeChanceK
+	}
+	Data.EngiData.AZ[sysN] -= dmg
+	if rand.Float64() < brakeChance {
 		v := uint16(rand.Intn(65536))
 		s.ranma.SetIn(sysN, v)
 	}

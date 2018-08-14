@@ -43,6 +43,12 @@ func (h *cosmoSceneWarpEngine) update(dt float64) {
 }
 
 func toWarp() {
+	if Data.EngiData.Counters.Fuel < Data.SP.Warp_engine.Warp_enter_consumption {
+		return
+	}
+
+	Data.EngiData.Counters.Fuel -= Data.SP.Warp_engine.Warp_enter_consumption
+
 	state := Data.State
 	state.StateID = STATE_warp
 	state.GalaxyID = WARP_Galaxy_ID

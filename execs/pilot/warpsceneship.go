@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/input"
+	"math"
 )
 
 func (s *warpScene) updateShipControl(dt float64) {
@@ -34,4 +35,5 @@ func (s *warpScene) procControlTurn(dt float64) {
 	turnInput := input.GetF("turn")
 	s.maneurLevel = turnInput
 	Data.PilotData.Ship.AngVel = turnInput * Data.SP.Warp_engine.Turn_speed
+	Data.PilotData.DistTurn = math.Abs(Data.PilotData.Ship.AngVel)
 }
