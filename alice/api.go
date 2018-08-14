@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"github.com/pkg/errors"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
