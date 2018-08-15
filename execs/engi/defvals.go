@@ -70,6 +70,7 @@ type tDefVals struct {
 	HardGDmgRepeats      int
 	MediumGDmg           float64
 	MediumGDmgRepeats    int
+	KillCO2Mins          float64
 
 	MediLowCounterS       int
 	MediMidTotalS         int

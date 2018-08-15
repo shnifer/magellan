@@ -122,6 +122,7 @@ func (s *scene) init() {
 	s.sigs = []commons.Signature{}
 	s.usedNs = commons.GetWormHolesNs()
 	s.randomNs = make(map[int]int)
+	s.wormHolesT = 10
 
 	if GalaxyName == commons.WARP_Galaxy_ID {
 		s.cam.Scale = 0.001

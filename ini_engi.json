@@ -48,6 +48,7 @@
     "HitsToCounter": 10,
     "RadiCockPitK": 1,
     "MedRadiLevel": 500,
+    "KillCO2Mins": 90,
     "AliceAddr":"https://api.alice.magellan2018.ru",
     "AlicePath":"location_events",
     "AlicePass":"admin",

@@ -42,6 +42,12 @@ func calcCO2(dt float64) float64 {
 	target *= e(EMI_CO2)
 	N := Data.EngiData.BSPDegrade.Lss.Co2_level
 	target = (target-NormalCo2)/8*N + NormalCo2
+
+	//kill after 90min
+	if Data.EngiData.Counters.FlightTime > DEFVAL.KillCO2Mins*60 {
+		target = 20
+	}
+
 	current := Data.EngiData.Counters.CO2
 
 	delta := target - current
