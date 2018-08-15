@@ -42,16 +42,16 @@ func (p *PauseScene) Update(float64) {
 		var captionColor color.Color
 		switch {
 		case reason.PingLost:
-			str = "PING LOST!"
+			str = "СИСТЕМА РАБОТАЕТ ШТАТНО!"
 			captionColor = colornames.Red
 		case !reason.IsFull:
-			str = "other DISCONNECTED"
+			str = "другой терминал работает ШТАТНО"
 			captionColor = colornames.Yellow
 		case reason.WantState != reason.CurState:
-			str = "Loading new data..."
+			str = "Загрузка данных..."
 			captionColor = colornames.Yellowgreen
 		case !reason.IsCoherent:
-			str = "waiting other loading..."
+			str = "Ожидание загрузки..."
 			captionColor = colornames.Green
 		default:
 			str = ""

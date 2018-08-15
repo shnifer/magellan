@@ -22,6 +22,8 @@ type CounterOpts struct {
 
 var counters [8]*mediCounters
 var dropHittedCounter int
+var physDmgOpts CounterOpts
+var physUsed [3]bool
 
 func initMedi(shipId string) {
 	o := DEFVAL.MediOpts
@@ -29,7 +31,9 @@ func initMedi(shipId string) {
 	counters[MC_Temp] = newCounter(o.Temp)
 	counters[MC_CO2] = newCounter(o.CO2)
 	counters[MC_Air] = newCounter(o.Air)
-	counters[MC_Hit] = newCounter(o.Hit)
+	//	counters[MC_Hit] = newCounter(o.Hit)
+	physDmgOpts = o.Hit
+	physUsed = [3]bool{}
 	counters[MC_RadiTemp] = newCounter(o.RadiTemp)
 	counters[MC_RadiCO2] = newCounter(o.RadiCO2)
 	counters[MC_RadiAir] = newCounter(o.RadiAir)
@@ -39,7 +43,7 @@ func initMedi(shipId string) {
 
 func (s *engiScene) checkMedicine() {
 	dropHittedCounter++
-	if dropHittedCounter>DEFVAL.MediHittedDropPeriodS{
+	if dropHittedCounter > DEFVAL.MediHittedDropPeriodS {
 		dropHittedCounter = 0
 	}
 
@@ -50,7 +54,7 @@ func (s *engiScene) checkMedicine() {
 	counters[MC_Temp].AddValue(s.local.temperature)
 	counters[MC_CO2].AddValue(Data.EngiData.Counters.CO2)
 	counters[MC_Air].AddValue(lostAir)
-	counters[MC_Hit].AddValue(Data.EngiData.Counters.Hitted)
+	//counters[MC_Hit].AddValue(Data.EngiData.Counters.Hitted)
 	if radiInCockpit > DEFVAL.MedRadiLevel {
 		counters[MC_RadiTemp].AddValue(Data.EngiData.Counters.CO2)
 		counters[MC_RadiCO2].AddValue(lostAir)
@@ -59,6 +63,21 @@ func (s *engiScene) checkMedicine() {
 }
 
 func (s *engiScene) procPhysMedicine(emiLvl float64) {
-	//todo: some other way
-	Data.EngiData.Counters.Hitted += emiLvl * DEFVAL.HitsToCounter
+	lvl := -1
+	switch {
+	case emiLvl > physDmgOpts.Levels[2]:
+		lvl = 2
+	case emiLvl > physDmgOpts.Levels[1]:
+		lvl = 1
+	case emiLvl > physDmgOpts.Levels[0]:
+		lvl = 0
+	}
+	if lvl < 0 {
+		return
+	}
+	if physUsed[lvl] {
+		return
+	}
+	physUsed[lvl] = true
+	go sendAlice(physDmgOpts.BioInf[lvl], physDmgOpts.Nucleo[lvl])
 }

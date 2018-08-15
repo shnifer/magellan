@@ -69,7 +69,6 @@ func newEngiScene() *engiScene {
 	back.SetPivot(graph.TopLeft())
 
 	r := ranma.NewRanma(DEFVAL.RanmaAddr, DEFVAL.DropOnRepair, DEFVAL.RanmaTimeoutMs, DEFVAL.RanmaHistoryDepth)
-
 	infoPanel := NewAtlasSprite(TextPanelAN, graph.NoCam)
 	infoPanel.SetPos(graph.ScrP(0.2, 0))
 	infoPanel.SetPivot(graph.TopLeft())
@@ -227,10 +226,10 @@ func (s *engiScene) checkForWormHole() {
 	target, err := GetWormHoleTarget(Data.State.GalaxyID)
 	if err != nil {
 		Log(LVL_ERROR, err)
-		return
+		target = WormHoleYouDIE
 	}
 
-	if target == WarmHoleYouDIE && s.dieTimeout == 0 {
+	if target == WormHoleYouDIE && s.dieTimeout == 0 {
 		s.dieTimeout = 2
 		ClientLogGame(Client, "ship", "Die by wormhole")
 		Client.SendRequest(CMD_GRACEENDDIE)

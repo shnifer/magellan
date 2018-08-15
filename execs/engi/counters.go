@@ -153,8 +153,8 @@ func (s *engiScene) procPhys() {
 		countSys = 3
 	}
 
-	Log(LVL_WARN, "Phys damage")
-	s.doAZDamage(countSys, Data.EngiData.Counters.HoleSize*DEFVAL.HoleAZK)
+	Log(LVL_WARN, "Phys damage ", countSys, "x", Data.EngiData.Counters.HoleSize*DEFVAL.HoleAZK)
+	s.doAZDamage(countSys, makeHole*DEFVAL.HoleAZK)
 	if doMedical {
 		s.procPhysMedicine(Data.EngiData.Emissions[EMI_DMG_MECH])
 	}

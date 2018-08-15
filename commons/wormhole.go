@@ -15,7 +15,7 @@ type WormHole struct {
 	TimePlan []int
 }
 
-const WarmHoleYouDIE = "DIE!"
+const WormHoleYouDIE = "DIE!"
 
 const WormHoleFN = "wormholes.json"
 
@@ -59,7 +59,7 @@ func GetWormHoleTarget(src string) (string, error) {
 	}
 	targetId := wh.getTarget()
 	if targetId <= 0 {
-		return WarmHoleYouDIE, nil
+		return WormHoleYouDIE, nil
 	}
 	target, ok := wormHoles[targetId]
 	if !ok {
@@ -79,12 +79,11 @@ func GetCurrentWormHoleDirectionSys() []WormHoleDirSys {
 	return res
 }
 
-
 func GetCurrentWormHoleDirectionN() map[string]WormHoleDirN {
 	res := make(map[string]WormHoleDirN)
 	for src, wh := range wormHoles {
 		dest := wh.getTarget()
-		res[wh.System]= WormHoleDirN{Src: src, Dest: dest}
+		res[wh.System] = WormHoleDirN{Src: src, Dest: dest}
 	}
 	return res
 }
@@ -99,9 +98,9 @@ func (wh WormHole) getTarget() int {
 }
 
 func GetWormHolesNs() map[int]struct{} {
-	res:=make(map[int]struct{})
-	for i:=range wormHoles{
-		res[i]= struct{}{}
+	res := make(map[int]struct{})
+	for i := range wormHoles {
+		res[i] = struct{}{}
 	}
 	return res
 }
