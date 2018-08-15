@@ -256,6 +256,9 @@ func doUpdateOtherShips(rs *roomServer) {
 }
 
 func getStartAZ(sd StateData) [8]float64 {
+	if sd.BSP == nil {
+		return [8]float64{}
+	}
 	return [8]float64{
 		sd.BSP.March_engine.AZ,
 		sd.BSP.Shunter.AZ,

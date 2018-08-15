@@ -36,7 +36,7 @@ type tDefVals struct {
 	LocalLogPath    string
 	RestorePath     string
 	RestoreTimeoutS int
-	LogLogTimeoutMs int
+	LogTimeoutMs    int
 	LogRetryMinMs   int
 	LogRetryMaxMs   int
 	LogIP           string
@@ -73,7 +73,7 @@ func setDefDef() {
 		NodeName:               "storage01",
 		SubscribeUpdatePeriod:  250,
 		OtherShipsUpdatePeriod: 1000,
-		LogLogTimeoutMs:        1000,
+		LogTimeoutMs:           1000,
 		LogRetryMinMs:          10,
 		LogRetryMaxMs:          60000,
 		DiskRefreshPeriod:      30,

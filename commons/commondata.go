@@ -55,6 +55,8 @@ type NaviData struct {
 	SonarDir   float64 `json:"sd,omitempty"`
 	SonarRange float64 `json:"sr,omitempty"`
 	SonarWide  float64 `json:"sw,omitempty"`
+
+	CanLandhome bool
 }
 
 type EngiCounters struct {

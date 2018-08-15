@@ -53,6 +53,8 @@ type cosmoScene struct {
 	textInput  *TextInput
 
 	q *graph.DrawQueue
+
+	doingHome bool
 }
 
 func newCosmoScene() *cosmoScene {
@@ -124,6 +126,7 @@ func (s *cosmoScene) Init() {
 	s.objIDs = make([]string, 0)
 	s.lastServerID = 0
 	s.isCamToShip = true
+	s.doingHome = false
 	s.scanner = newScanner(s.cam, s.scanState)
 	s.shipRB = commons.NewRBFollower(float64(DEFVAL.PingPeriod) / 1000)
 	s.sessionTime = commons.NewSessionTime(Data.PilotData.SessionTime)

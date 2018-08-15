@@ -11,13 +11,13 @@ import (
 )
 
 type cosmoPanels struct {
-	leftB, leftM, leftL int
-	left, top, right    *ButtonsPanel
+	leftB, leftM, leftL    int
+	left, top, right, back *ButtonsPanel
 
 	showSignature bool
 	sigs          []commons.Signature
 	sonar         *SonarHUD
-	sonarBack *graph.Sprite
+	sonarBack     *graph.Sprite
 	sonarPos      v2.V2
 	sonarSize     float64
 	sonarName     string
@@ -64,14 +64,38 @@ func newCosmoPanels() *cosmoPanels {
 
 	topPanel := NewButtonsPanel(panelOpts)
 
+	panelOpts = ButtonsPanelOpts{
+		PivotP:       graph.ScrP(1, 0),
+		PivotV:       graph.TopRight(),
+		BorderSpace:  20 * graph.GS(),
+		ButtonSpace:  10 * graph.GS(),
+		ButtonLayer:  graph.Z_STAT_HUD + 100,
+		ButtonSize:   v2.V2{X: 150, Y: 50}.Mul(graph.GS()),
+		CaptionLayer: graph.Z_STAT_HUD + 101,
+		SlideT:       0.5,
+		SlideV:       v2.V2{X: 0, Y: 1},
+	}
+
+	tex := GetAtlasTex(commons.ButtonAN)
+	backPanel := NewButtonsPanel(panelOpts)
+	bo := ButtonOpts{
+		Tex:     tex,
+		Face:    Fonts[Face_mono],
+		CapClr:  color.White,
+		Clr:     color.White,
+		Caption: "Домой!",
+		Tags:    button_home,
+	}
+	backPanel.AddButton(bo)
+
 	sonarSize := float64(WinH / 3)
-	offset:=float64(WinH / 10)
+	offset := float64(WinH / 10)
 	sonarPos := graph.ScrP(1, 0).AddMul(v2.V2{X: -1, Y: 1}, sonarSize/2+offset)
 	sonar := NewSonarHUD(sonarPos, sonarSize, graph.NoCam, graph.Z_HUD)
 
-	sonarBack:=graph.NewSprite(graph.CircleTex(),graph.NoCam)
+	sonarBack := graph.NewSprite(graph.CircleTex(), graph.NoCam)
 	sonarBack.SetPos(sonarPos)
-	sonarBack.SetSize(sonarSize,sonarSize)
+	sonarBack.SetSize(sonarSize, sonarSize)
 	sonarBack.SetColor(color.Black)
 	sonarBack.SetAlpha(0.8)
 
@@ -79,6 +103,7 @@ func newCosmoPanels() *cosmoPanels {
 		left:  leftPanel,
 		right: rightPanel,
 		top:   topPanel,
+		back:  backPanel,
 
 		sonar:     sonar,
 		sonarPos:  sonarPos,
@@ -193,10 +218,13 @@ func (p *cosmoPanels) recalcTop() {
 func (p *cosmoPanels) update(dt float64) {
 	p.recalcLeft()
 	p.recalcTop()
+	canHome := Data.NaviData.CanLandhome && Data.GalaxyID == commons.START_Galaxy_ID
+	p.back.SetActive(canHome)
 
 	p.left.Update(dt)
 	p.right.Update(dt)
 	p.top.Update(dt)
+	p.back.Update(dt)
 
 	p.sonar.ActiveSignatures(p.sigs)
 	p.sonar.Update(dt)
@@ -213,6 +241,7 @@ func (p *cosmoPanels) Req(Q *graph.DrawQueue) {
 	Q.Append(p.left)
 	Q.Append(p.right)
 	Q.Append(p.top)
+	Q.Append(p.back)
 
 	if p.showSignature {
 		Q.Add(p.sonarBack, graph.Z_HUD-1)

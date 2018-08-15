@@ -29,9 +29,11 @@ type warpSceneHUD struct {
 	arrowSize     float64
 	rulerSize     float64
 
-	compass    *graph.Sprite
-	distCircle *graph.CircleLine
+	compass     *graph.Sprite
+	distCircle  *graph.CircleLine
 	physRadText *graph.Text
+
+	f9 *graph.Frame9HUD
 }
 
 func newWarpSceneHUD(cam *graph.Camera) warpSceneHUD {
@@ -88,6 +90,8 @@ func newWarpSceneHUD(cam *graph.Camera) warpSceneHUD {
 	rulerV.SetSizeProportion(rulerSize * rulerWideK)
 	rulerV.SetPos(graph.ScrP(rulerX, 0.5))
 
+	f9 := NewAtlasFrame9HUD(Frame9AN, WinW, WinH, graph.Z_HUD-1)
+
 	return warpSceneHUD{
 		back:          background,
 		trail:         trail,
@@ -102,6 +106,7 @@ func newWarpSceneHUD(cam *graph.Camera) warpSceneHUD {
 		rulerSize:     rulerSize,
 		rulerV:        rulerV,
 		rulerH:        rulerH,
+		f9:            f9,
 	}
 }
 
@@ -163,6 +168,7 @@ func (h warpSceneHUD) Req(Q *graph.DrawQueue) {
 	Q.Add(h.compass, graph.Z_HUD)
 	Q.Add(h.rulerV, graph.Z_HUD)
 	Q.Add(h.rulerH, graph.Z_HUD)
+	Q.Append(h.f9)
 
 	//Q.Add(h.caption, graph.Z_STAT_HUD)
 	Q.Append(h.distCircle)

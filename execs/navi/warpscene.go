@@ -11,6 +11,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
+	"log"
 	"math"
 	"strings"
 )
@@ -22,11 +23,13 @@ type warpScene struct {
 
 	sonar *graph.Sector
 
-	sonarHUD   *SonarHUD
+	sonarHUD *SonarHUD
 
 	sonarText string
 
-	compass    *graph.Sprite
+	compass *graph.Sprite
+
+	f9 *graph.Frame9HUD
 
 	q *graph.DrawQueue
 }
@@ -48,31 +51,36 @@ func newWarpScene() *warpScene {
 	sonarSector := graph.NewSector(cam.Phys())
 	sonarSector.SetColor(colornames.Indigo)
 
-	sonarSize:=0.8*float64(WinH)
+	sonarSize := 0.8 * float64(WinH)
 
 	compass := NewAtlasSprite(CompassAN, graph.NoCam)
 	compassSize := float64(WinH) * compassSize
 	compass.SetSize(compassSize, compassSize)
-	compass.SetPos(graph.ScrP(0.5,0.5))
+	compass.SetPos(graph.ScrP(0.5, 0.5))
 	compass.SetAlpha(1)
 
+	f9 := NewAtlasFrame9HUD(Frame9AN, WinW, WinH, graph.Z_HUD-1)
+
 	return &warpScene{
-		caption: caption,
-		ship:    ship,
-		cam:     cam,
-		sonar:   sonarSector,
+		caption:  caption,
+		ship:     ship,
+		cam:      cam,
+		sonar:    sonarSector,
 		sonarHUD: NewSonarHUD(graph.ScrP(0.5, 0.5), sonarSize, graph.NoCam, graph.Z_HUD),
-		q:       graph.NewDrawQueue(),
-		compass: compass,
+		q:        graph.NewDrawQueue(),
+		compass:  compass,
+		f9:       f9,
 	}
 }
 
 func (s *warpScene) Init() {
 	defer LogFunc("cosmoScene.Init")()
-
 }
 
 func (s *warpScene) Update(dt float64) {
+	log.Println("w", Data.NaviData.CanLandhome)
+	Data.NaviData.CanLandhome = true
+
 	defer LogFunc("cosmoScene.Update")()
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		mousex, mousey := ebiten.CursorPosition()
@@ -99,7 +107,7 @@ func (s *warpScene) Update(dt float64) {
 
 	s.ship.SetAng(Data.PilotData.Ship.Ang)
 
-	var activeSigs[]Signature
+	var activeSigs []Signature
 	activeSigs, s.sonarText = sonarSigs()
 	s.sonarHUD.ActiveSignatures(activeSigs)
 	s.sonarHUD.Update(dt)
@@ -122,46 +130,47 @@ func (s *warpScene) Draw(image *ebiten.Image) {
 	Q.Add(stats, graph.Z_HUD)
 	Q.Add(s.caption, graph.Z_STAT_HUD)
 
-	t:=graph.NewText(s.sonarText, Fonts[Face_cap], colornames.White)
-	t.SetPosPivot(graph.ScrP(0.5,0.5),graph.Center())
+	t := graph.NewText(s.sonarText, Fonts[Face_cap], colornames.White)
+	t.SetPosPivot(graph.ScrP(0.5, 0.5), graph.Center())
 	Q.Add(t, graph.Z_STAT_HUD)
 
 	Q.Append(s.sonarHUD)
+	Q.Append(s.f9)
 
 	Q.Add(s.compass, graph.Z_HUD)
 
 	Q.Run(image)
 }
 
-func sonarSigs() ([]Signature, string){
-	res:=make([]Signature,0)
+func sonarSigs() ([]Signature, string) {
+	res := make([]Signature, 0)
 	var text string
 
-	ship:=Data.PilotData.Ship.Pos
-	range2:=Data.NaviData.SonarRange * Data.NaviData.SonarRange
-	for _,p:=range Data.Galaxy.Ordered{
-		v:=p.Pos.Sub(ship)
-		if v.LenSqr()>range2{
+	ship := Data.PilotData.Ship.Pos
+	range2 := Data.NaviData.SonarRange * Data.NaviData.SonarRange
+	for _, p := range Data.Galaxy.Ordered {
+		v := p.Pos.Sub(ship)
+		if v.LenSqr() > range2 {
 			continue
 		}
-		angD:=math.Abs(AngDiff(Data.NaviData.SonarDir,v.Dir()))
-		if angD>Data.NaviData.SonarWide/2{
+		angD := math.Abs(AngDiff(Data.NaviData.SonarDir, v.Dir()))
+		if angD > Data.NaviData.SonarWide/2 {
 			continue
 		}
 		res = append(res, p.Signatures...)
 
-		for _,s:=range p.BlackBoxes{
-			if s!=""{
-				text  = text  + "ЧЯ: "+s+"\n"
+		for _, s := range p.BlackBoxes {
+			if s != "" {
+				text = text + "ЧЯ: " + s + "\n"
 			}
 		}
-		for _,s:=range p.Beacons{
-			if s!=""{
-				text  = text +"Маяк: "+s+"\n"
+		for _, s := range p.Beacons {
+			if s != "" {
+				text = text + "Маяк: " + s + "\n"
 			}
 		}
 	}
-	strings.TrimRight(text,"\n")
+	strings.TrimRight(text, "\n")
 	return res, text
 }
 
@@ -174,8 +183,8 @@ func (s *warpScene) OnCommand(command string) {
 func (*warpScene) Destroy() {
 }
 
-func AngDiff(a,b float64) float64 {
-	angle:=a-b
+func AngDiff(a, b float64) float64 {
+	angle := a - b
 	for angle < -180 {
 		angle += 360
 	}

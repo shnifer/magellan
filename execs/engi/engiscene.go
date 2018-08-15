@@ -57,6 +57,8 @@ type engiScene struct {
 	infoPanel    *graph.Sprite
 	showInfo     bool
 	showInfoSysN int
+
+	f9 *graph.Frame9HUD
 }
 
 func init() {
@@ -76,6 +78,8 @@ func newEngiScene() *engiScene {
 	infoPanel.SetSize(infoPanelSize.X, infoPanelSize.Y)
 	infoPanel.SetAlpha(0.8)
 
+	f9 := NewAtlasFrame9HUD(Frame9AN, WinW, WinH, graph.Z_HUD-1)
+
 	res := engiScene{
 		ranma:          r,
 		background:     back,
@@ -83,6 +87,7 @@ func newEngiScene() *engiScene {
 		q:              graph.NewDrawQueue(),
 		tick:           time.Tick(time.Second),
 		infoPanel:      infoPanel,
+		f9:             f9,
 	}
 
 	textPanel := NewAtlasSprite(TextPanelAN, graph.NoCam)
@@ -188,6 +193,7 @@ func (s *engiScene) Draw(image *ebiten.Image) {
 		s.q.Add(wrongBoostMsg, graph.Z_HUD)
 	}
 	Q.Append(s.systemsMonitor)
+	Q.Append(s.f9)
 
 	if s.showInfo {
 		Q.Add(s.infoPanel, graph.Z_HUD-1)

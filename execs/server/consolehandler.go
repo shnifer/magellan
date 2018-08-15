@@ -36,6 +36,8 @@ func (rs *roomServer) consoleHandler(w http.ResponseWriter, r *http.Request) {
 		rs.consoleRestore(cmd, w, r)
 	case "hardkill":
 		rs.consoleHardKill(cmd, w, r)
+	case "teleport":
+		rs.consoleTeleport(cmd, w, r)
 	default:
 		fmt.Fprintln(w, "unknown command ", cmd[0])
 	}
@@ -170,4 +172,71 @@ func (rs *roomServer) consoleHardKill(cmd []string, w http.ResponseWriter, r *ht
 	} else {
 		fmt.Fprintln(w, "room ", roomName, "killed and restarted")
 	}
+}
+
+func (rs *roomServer) consoleTeleport(cmd []string, w http.ResponseWriter, r *http.Request) {
+	cmd = cmd[1:]
+	if len(cmd) == 0 {
+		rs.consoleTeleportList(w, r)
+		return
+	}
+
+	roomName := cmd[0]
+	if len(cmd) == 1 {
+		rs.consoleTeleportChoose(roomName, w, r)
+		return
+	}
+
+	aliveS := cmd[1]
+	switch aliveS {
+	case "alive":
+		fmt.Fprintln(w, "Flight in room ", roomName, " recalled home ALIVE")
+		go rs.GraceDie(roomName, true)
+	case "dead":
+		fmt.Fprintln(w, "flight in room ", roomName, " was sacrificed for Khorn!")
+		go rs.GraceDie(roomName, false)
+	default:
+		fmt.Fprintln(w, "error teleporting room ", roomName, " unknown state ", aliveS)
+	}
+}
+
+func (rs *roomServer) consoleTeleportList(w http.ResponseWriter, r *http.Request) {
+	rs.RLock()
+	defer rs.RUnlock()
+
+	inFlight := make(map[string]string)
+	for roomName, holder := range rs.holders {
+		state := holder.getState()
+		if (state.StateID != commons.STATE_cosmo && state.StateID != commons.STATE_warp) ||
+			state.ShipID == "" || state.GalaxyID == "" {
+			continue
+		}
+		id := state.ShipID
+		if id == "" {
+			continue
+		}
+		inFlight[roomName] = id
+	}
+
+	if len(inFlight) == 0 {
+		fmt.Fprintln(w, "in flight: NONE<br>")
+	} else {
+		fmt.Fprintln(w, "in flight:<br>")
+	}
+	for room, flightID := range inFlight {
+		fmt.Fprintf(w, `<a href="./%v"> Room: %v Flight: %v </a><br>`, room, room, flightID)
+	}
+}
+
+func (rs *roomServer) consoleTeleportChoose(room string, w http.ResponseWriter, r *http.Request) {
+	rs.RLock()
+	defer rs.RUnlock()
+
+	if _, ok := rs.holders[room]; !ok {
+		fmt.Fprintln(w, "Room ", room, " not found!")
+		return
+	}
+
+	fmt.Fprintf(w, `<a href="./%v/alive">Alive, Gods save us</a><br><br><a href="./%v/dead">Dead bodies!</a>`,
+		room, room)
 }

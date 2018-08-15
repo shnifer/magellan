@@ -16,7 +16,7 @@ var startState commons.State
 var startStateEnc string
 
 func main() {
-	log.Start(time.Duration(DEFVAL.LogLogTimeoutMs)*time.Millisecond,
+	log.Start(time.Duration(DEFVAL.LogTimeoutMs)*time.Millisecond,
 		time.Duration(DEFVAL.LogRetryMinMs)*time.Millisecond,
 		time.Duration(DEFVAL.LogRetryMaxMs)*time.Millisecond,
 		DEFVAL.LogIP, DEFVAL.LogHostName)

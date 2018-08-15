@@ -86,7 +86,7 @@ func (rs *roomServer) DelBuildCommand(command string) {
 	}
 }
 
-func (rs *roomServer) GraceDie(room string, alive bool) {
+func (rs *roomServer) reportGraceDieToHy(room string, alive bool) {
 	rs.RLock()
 	defer rs.RUnlock()
 
@@ -100,5 +100,9 @@ func (rs *roomServer) GraceDie(room string, alive bool) {
 	} else {
 		reportHyAlive(flightId, cd.EngiData.Counters.FlightTime, startAZ, cd.EngiData.AZ)
 	}
-	server.KillRoom(room)
+}
+
+func (rs *roomServer) GraceDie(room string, alive bool) {
+	rs.reportGraceDieToHy(room, alive)
+	go server.KillRoom(room)
 }

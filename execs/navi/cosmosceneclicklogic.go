@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	. "github.com/Shnifer/magellan/commons"
 	"github.com/Shnifer/magellan/draw"
 	"github.com/Shnifer/magellan/graph"
@@ -10,7 +11,6 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"golang.org/x/image/colornames"
 	"strings"
-	"fmt"
 )
 
 const (
@@ -21,6 +21,7 @@ const (
 	button_beacon     = "button_beacon"
 	button_orbit      = "button_orbit"
 	button_leaveorbit = "button_leaveorbit"
+	button_home       = "button_home"
 )
 
 func (s *cosmoScene) updateControl(dt float64) {
@@ -53,6 +54,10 @@ func (s *cosmoScene) procMouseClick(x, y int) {
 			return
 		}
 		if tag, ok := s.cosmoPanels.top.ProcMouse(x, y); ok {
+			s.procButtonClick(tag)
+			return
+		}
+		if tag, ok := s.cosmoPanels.back.ProcMouse(x, y); ok {
 			s.procButtonClick(tag)
 			return
 		}
@@ -97,8 +102,8 @@ func (s *cosmoScene) procButtonClick(tag string) {
 			Data.NaviData.IsOrbiting = true
 			Data.NaviData.OrbitObjectID = s.scanner.obj.ID
 			ClientLogGame(Client, "landing", s.scanner.obj.ID)
-			for _,v:=range Data.BSP.Modules{
-				if v.Planet == s.scanner.obj.ID{
+			for _, v := range Data.BSP.Modules {
+				if v.Planet == s.scanner.obj.ID {
 					s.doneMine(v.Owner, true)
 				}
 			}
@@ -119,6 +124,11 @@ func (s *cosmoScene) procButtonClick(tag string) {
 	case button_leaveorbit:
 		Data.NaviData.IsOrbiting = false
 		s.scanner.stateZero()
+	case button_home:
+		if !s.doingHome {
+			s.doingHome = true
+			Client.SendRequest(CMD_GRACEENDRETURN)
+		}
 	//сброс шахт отдельная проверка по префиксу
 	default:
 		if strings.HasPrefix(tag, minecorptagprefix) {
@@ -213,14 +223,14 @@ func (s *cosmoScene) doneScan() {
 
 func (s *cosmoScene) doneMine(corp string, byLanding bool) {
 	AddMine(Data, Client, s.scanner.obj.ID, corp)
-	msg := "planet " + s.scanner.obj.ID + " corp " + CompanyNameByOwner(corp)+" "
-	mins:=Data.Galaxy.Points[s.scanner.obj.ID].Minerals
-	if len(mins)>0{
-		msg+=fmt.Sprint("minerals",mins)
+	msg := "planet " + s.scanner.obj.ID + " corp " + CompanyNameByOwner(corp) + " "
+	mins := Data.Galaxy.Points[s.scanner.obj.ID].Minerals
+	if len(mins) > 0 {
+		msg += fmt.Sprint("minerals", mins)
 	}
 
 	var key string
-	if byLanding{
+	if byLanding {
 		key = "mine land"
 	} else {
 		key = "mine drop"
@@ -264,7 +274,7 @@ func (s *cosmoScene) checkMine() (msg string, ok bool) {
 	for _, has := range gp.Minerals {
 		know = false
 		for _, known := range Data.BSP.KnownMinerals {
-			if fmt.Sprintf("m%v",has) == known.ID {
+			if fmt.Sprintf("m%v", has) == known.ID {
 				know = true
 				hasknown = append(hasknown, known.UserName)
 				break

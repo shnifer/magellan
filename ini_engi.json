@@ -8,7 +8,7 @@
     "WinW": 1200,
     "WinH": 600,
     "DoProf": false,
-    "LogLogTimeoutMs": 1000,
+    "LogTimeoutMs": 1000,
     "LogRetryMinMs": 10,
     "LogRetryMaxMs": 10000,
     "LogIP": "https://elasticsearch.alice.magellan2018.ru",

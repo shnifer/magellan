@@ -32,7 +32,7 @@
 
     "DiskRefreshPeriod": 5,
 
-    "LogLogTimeoutMs": 1000,
+    "LogTimeoutMs": 1000,
 
     "LogRetryMinMs": 10,
 

@@ -25,11 +25,11 @@ type tDefVals struct {
 	DebugPort string
 
 	//in ms
-	LogLogTimeoutMs int
-	LogRetryMinMs   int
-	LogRetryMaxMs   int
-	LogIP           string
-	LogHostName     string
+	LogTimeoutMs  int
+	LogRetryMinMs int
+	LogRetryMaxMs int
+	LogIP         string
+	LogHostName   string
 
 	SpriteSizeW,
 	SpriteSizeH int
@@ -91,16 +91,16 @@ var DEFVAL tDefVals
 
 func setDefDef() {
 	DEFVAL = tDefVals{
-		Port:            "http://localhost:8000",
-		Timeout:         100,
-		PingPeriod:      100,
-		Room:            "room101",
-		Role:            commons.ROLE_Engi,
-		WinW:            1024,
-		WinH:            768,
-		LogLogTimeoutMs: 1000,
-		LogRetryMinMs:   10,
-		LogRetryMaxMs:   60000,
+		Port:          "http://localhost:8000",
+		Timeout:       100,
+		PingPeriod:    100,
+		Room:          "room101",
+		Role:          commons.ROLE_Engi,
+		WinW:          1024,
+		WinH:          768,
+		LogTimeoutMs:  1000,
+		LogRetryMinMs: 10,
+		LogRetryMaxMs: 60000,
 	}
 }
 

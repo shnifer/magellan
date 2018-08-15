@@ -3,6 +3,7 @@ package commons
 import (
 	"bytes"
 	"errors"
+	. "github.com/Shnifer/magellan/log"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -17,9 +18,8 @@ func init() {
 }
 
 func DoReq(Method string, addr string, body []byte) (respBody []byte, err error) {
-	client := &http.Client{
-		Timeout: time.Second,
-	}
+	LogGame("tryReqs", false, Method, addr, string(body))
+
 	bodyBuf := bytes.NewBuffer(body)
 	req, err := http.NewRequest(http.MethodPost, addr, bodyBuf)
 	if err != nil {
