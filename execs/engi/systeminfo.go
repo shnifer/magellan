@@ -18,6 +18,7 @@ func (s *engiScene) systemInfo(n int) *graph.Text {
 	af := func(name string, v float64) {
 		if v == 1 {
 			a(name + ": РАБОТАЕТ ШТАТНО")
+			return
 		}
 		a(fmt.Sprintf("%v: %.1f", name, v*100))
 	}
@@ -106,6 +107,6 @@ func (s *engiScene) systemInfo(n int) *graph.Text {
 
 	msg = strings.TrimSuffix(msg, "\n")
 	res := graph.NewText(msg, draw.Fonts[draw.Face_cap], colornames.White)
-	res.SetPosPivot(graph.ScrP(0.25, 0.05), graph.TopLeft())
+	res.SetPosPivot(graph.ScrP(0.25, 0.25), graph.TopLeft())
 	return res
 }

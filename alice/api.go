@@ -40,6 +40,7 @@ func InitAlice(initOpts Opts) {
 
 	opts.logPass64 = b.String()
 	opts.url = opts.Addr + "/" + opts.Path + "/"
+	log.Println(opts.logPass64)
 
 	client = &http.Client{
 		Timeout: time.Second,

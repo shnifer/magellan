@@ -51,7 +51,7 @@
     "AliceAddr":"https://api.alice.magellan2018.ru",
     "AlicePath":"location_events",
     "AlicePass":"admin",
-    "AliceLogin":"admin",
+    "AliceLogin":"WillTravel",
     "RequestHyBoostListAddr":"",
     "RequestHyBoostUseAddr":"",
     "MediLowCounterS": 1800,

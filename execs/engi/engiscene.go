@@ -164,6 +164,7 @@ func (s *engiScene) Update(dt float64) {
 	select {
 	case <-s.tick:
 		if !Data.NaviData.IsOrbiting {
+			log.Println(Data.EngiData.Emissions)
 			s.procTick()
 		}
 	default:
