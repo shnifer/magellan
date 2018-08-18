@@ -2,6 +2,8 @@
 
 Space flight imitation for LARP game.
 
+Game is over and this project is finished.
+
 Using [ebiten engine](https://github.com/hajimehoshi/ebiten). Thanks you, Hajime Hoshi!
 
 Using [diskv](https://github.com/peterbourgon/diskv) for disk storage and [packr](https://github.com/gobuffalo/packr) for embedding static data
