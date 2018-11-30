@@ -2,9 +2,9 @@ package commons
 
 import (
 	"encoding/json"
-	. "github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/static"
 	"github.com/pkg/errors"
+	. "github.com/shnifer/magellan/log"
+	"github.com/shnifer/magellan/static"
 	"strconv"
 	"time"
 )

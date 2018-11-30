@@ -4,7 +4,7 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"github.com/Shnifer/magellan/v2"
+	"github.com/shnifer/magellan/v2"
 	"io/ioutil"
 	"log"
 	"math/rand"

@@ -2,8 +2,8 @@ package commons
 
 import (
 	"encoding/json"
-	. "github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/v2"
+	. "github.com/shnifer/magellan/log"
+	"github.com/shnifer/magellan/v2"
 )
 
 type CommonData struct {

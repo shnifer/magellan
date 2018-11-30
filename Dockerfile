@@ -1,6 +1,6 @@
 FROM golang:1.10
 
-WORKDIR /go/src/github.com/Shnifer/magellan
+WORKDIR /go/src/github.com/shnifer/magellan
 
 # Build dependencies
 RUN go get bytes

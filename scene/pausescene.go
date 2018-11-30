@@ -1,10 +1,10 @@
 package scene
 
 import (
-	"github.com/Shnifer/magellan/graph"
-	. "github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/network"
 	"github.com/hajimehoshi/ebiten"
+	"github.com/shnifer/magellan/graph"
+	. "github.com/shnifer/magellan/log"
+	"github.com/shnifer/magellan/network"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
 	"image/color"

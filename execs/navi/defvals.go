@@ -3,8 +3,8 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/Shnifer/magellan/commons"
-	. "github.com/Shnifer/magellan/log"
+	"github.com/shnifer/magellan/commons"
+	. "github.com/shnifer/magellan/log"
 	"io/ioutil"
 )
 
@@ -21,16 +21,16 @@ type tDefVals struct {
 	WinW, WinH     int
 	HalfResolution bool
 	LowQ           bool
-	VSync bool
+	VSync          bool
 
 	DebugPort string
-	DoProf bool
+	DoProf    bool
 
 	NaviMarketDuration float64
 	GravityConst       float64
 
 	//predictors
-	CosmoPredictorUpdT float64
+	CosmoPredictorUpdT     float64
 	CosmoPredictorNumInSec int
 	CosmoPredictorGravEach int
 	CosmoPredictorTrackLen int

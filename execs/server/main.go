@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/network"
-	"github.com/Shnifer/magellan/storage"
 	"github.com/peterbourgon/diskv"
+	"github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/log"
+	"github.com/shnifer/magellan/network"
+	"github.com/shnifer/magellan/storage"
 	"os"
 	"os/signal"
 	"time"

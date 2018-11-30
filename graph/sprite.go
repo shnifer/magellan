@@ -2,8 +2,8 @@ package graph
 
 import (
 	"bytes"
-	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
+	"github.com/shnifer/magellan/v2"
 	"image"
 	"image/color"
 	"io"

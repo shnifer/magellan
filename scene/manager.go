@@ -2,8 +2,8 @@ package scene
 
 import (
 	"fmt"
-	. "github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
+	. "github.com/shnifer/magellan/log"
 	"sync"
 )
 

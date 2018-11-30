@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/Shnifer/magellan/graph"
-	"github.com/Shnifer/magellan/graph/flow"
-	. "github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/hajimehoshi/ebiten/inpututil"
+	"github.com/shnifer/magellan/graph"
+	"github.com/shnifer/magellan/graph/flow"
+	. "github.com/shnifer/magellan/v2"
 	"log"
 	"math"
 	"math/rand"

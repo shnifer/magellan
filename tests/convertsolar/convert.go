@@ -3,8 +3,8 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/v2"
+	"github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/v2"
 	"image/color"
 	"io/ioutil"
 	"strconv"
@@ -129,23 +129,23 @@ func createGP(v fileData) (*commons.GalaxyPoint, string) {
 	maxGrav := 1 - (1-v.MaxGravity)*Params.A_Mass
 	mass := maxGrav * zd * zd
 
-	for i:=range v.Signatures{
+	for i := range v.Signatures {
 		v.Signatures[i].Dev = v2.RandomInCircle(1)
 	}
 
 	gp := commons.GalaxyPoint{
-		ParentID:  v.Parent,
-		Pos:       v2.ZV,
-		Orbit:     okr(v.Distance * Params.K_Radius),
-		Period:    okr(v.OrbitPeriod * Params.K_OrbitPeriod),
-		Type:      v.Type,
-		SpriteAN:  texName,
-		Size:      okr(v.Diameter / 2 * Params.K_Size),
-		Color:     clr,
-		Mass:      okr(mass * Params.K_Mass),
-		GDepth:    okr(zd),
-		ScanData:  v.ID,
-		Emissions: v.Emissions,
+		ParentID:   v.Parent,
+		Pos:        v2.ZV,
+		Orbit:      okr(v.Distance * Params.K_Radius),
+		Period:     okr(v.OrbitPeriod * Params.K_OrbitPeriod),
+		Type:       v.Type,
+		SpriteAN:   texName,
+		Size:       okr(v.Diameter / 2 * Params.K_Size),
+		Color:      clr,
+		Mass:       okr(mass * Params.K_Mass),
+		GDepth:     okr(zd),
+		ScanData:   v.ID,
+		Emissions:  v.Emissions,
 		Signatures: v.Signatures,
 	}
 	return &gp, v.ID

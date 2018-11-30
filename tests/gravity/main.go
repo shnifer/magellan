@@ -1,10 +1,10 @@
 package main
 
 import (
-	. "github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/graph"
-	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
+	. "github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/graph"
+	"github.com/shnifer/magellan/v2"
 	"golang.org/x/image/colornames"
 	"image/color"
 	"log"
@@ -70,13 +70,15 @@ func run(window *ebiten.Image) error {
 		calcShip(n, dt)
 	}
 
+	Q := graph.NewDrawQueue()
 	for n := 0; n < 3; n++ {
-		graph.Line(cam, lastP[n], ships[n].Pos, colors[n]).Draw(img)
+		graph.Line(Q, cam, lastP[n], ships[n].Pos, colors[n], 0)
 		sprite.SetPos(ships[n].Pos)
 		lastP[n] = ships[n].Pos
 		sprite.SetColor(colors[n])
 		sprite.Draw(img)
 	}
+	Q.Run(img)
 
 	window.DrawImage(img, &ebiten.DrawImageOptions{})
 

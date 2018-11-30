@@ -1,9 +1,9 @@
 package graph
 
 import (
-	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	et "github.com/hajimehoshi/ebiten/text"
+	"github.com/shnifer/magellan/v2"
 	"golang.org/x/image/font"
 	"image"
 	"image/color"
@@ -111,8 +111,8 @@ func (t *Text) Draw(dst *ebiten.Image) {
 }
 
 func (t *Text) DrawF() (DrawF, string) {
-	if len(t.text)==0{
-		return nil,""
+	if len(t.text) == 0 {
+		return nil, ""
 	}
 	return t.Draw, "~text"
 }

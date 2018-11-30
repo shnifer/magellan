@@ -3,8 +3,8 @@ package commons
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/Shnifer/magellan/static"
-	"github.com/Shnifer/magellan/v2"
+	"github.com/shnifer/magellan/static"
+	"github.com/shnifer/magellan/v2"
 	"image/color"
 	"io/ioutil"
 	"log"

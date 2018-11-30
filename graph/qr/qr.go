@@ -1,9 +1,9 @@
 package qr
 
 import (
-	"github.com/Shnifer/magellan/graph"
-	. "github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
+	"github.com/shnifer/magellan/graph"
+	. "github.com/shnifer/magellan/log"
 	"github.com/skip2/go-qrcode"
 )
 

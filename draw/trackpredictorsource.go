@@ -1,8 +1,8 @@
 package draw
 
 import (
-	. "github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/v2"
+	. "github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/v2"
 	"math"
 )
 
@@ -13,7 +13,7 @@ type gravGalaxyP struct {
 	pos       v2.V2
 	orbit     float64
 	period    float64
-	angPhase float64
+	angPhase  float64
 	mass      float64
 	gDepth    float64
 }
@@ -108,13 +108,13 @@ func newGravGalaxy(galaxy *Galaxy) gravGalaxyT {
 			continue
 		}
 		p := gravGalaxyP{
-			id:     obj.ID,
-			pos:    obj.Pos,
-			orbit:  obj.Orbit,
-			period: obj.Period,
+			id:       obj.ID,
+			pos:      obj.Pos,
+			orbit:    obj.Orbit,
+			period:   obj.Period,
 			angPhase: obj.AngPhase,
-			mass:   obj.Mass,
-			gDepth: obj.GDepth,
+			mass:     obj.Mass,
+			gDepth:   obj.GDepth,
 		}
 		if obj.ParentID == "" {
 			p.parentInd = -1
@@ -146,7 +146,7 @@ func (gg gravGalaxyT) calc(sessionTime float64) gravImage {
 			continue
 		}
 		parent = gg[p.parentInd].pos
-		angle := (360 / p.period) * sessionTime + p.angPhase
+		angle := (360/p.period)*sessionTime + p.angPhase
 		pos = parent.AddMul(v2.InDir(angle), p.orbit)
 		gg[i].pos = pos
 		res[i] = gravP{

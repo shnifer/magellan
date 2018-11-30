@@ -1,8 +1,8 @@
 package main
 
 import (
-	. "github.com/Shnifer/magellan/commons"
 	hls "github.com/gerow/go-color"
+	. "github.com/shnifer/magellan/commons"
 	"golang.org/x/image/colornames"
 	"image/color"
 	"math/rand"

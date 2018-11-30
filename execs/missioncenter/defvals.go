@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	. "github.com/Shnifer/magellan/log"
+	. "github.com/shnifer/magellan/log"
 	"io/ioutil"
 )
 

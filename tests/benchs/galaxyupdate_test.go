@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	. "github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/v2"
+	. "github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/v2"
 	"io/ioutil"
 	"testing"
 )

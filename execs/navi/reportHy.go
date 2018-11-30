@@ -1,13 +1,13 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	. "github.com/Shnifer/magellan/log"
 	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
+	. "github.com/shnifer/magellan/log"
 	"net/http"
 	"time"
-	"errors"
 )
 
 const TriesCount = 10
@@ -33,15 +33,15 @@ func reportHyMine(planet string, corp string, mins []int) {
 		Log(LVL_ERROR, err)
 		return
 	}
-	pause:=time.Second
-	for i:=0;i<TriesCount;i++{
-		err:=doReq(dat, DEFVAL.ReportHyMineAddr)
-		if err==nil{
+	pause := time.Second
+	for i := 0; i < TriesCount; i++ {
+		err := doReq(dat, DEFVAL.ReportHyMineAddr)
+		if err == nil {
 			break
 		}
-		Log(LVL_WARN, "Report hy mine request error: ",err)
+		Log(LVL_WARN, "Report hy mine request error: ", err)
 		time.Sleep(pause)
-		pause*=2
+		pause *= 2
 	}
 }
 

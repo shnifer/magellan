@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/Shnifer/magellan/alice"
-	. "github.com/Shnifer/magellan/commons"
-	. "github.com/Shnifer/magellan/log"
+	"github.com/shnifer/magellan/alice"
+	. "github.com/shnifer/magellan/commons"
+	. "github.com/shnifer/magellan/log"
 	"strconv"
 	"time"
 )

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Shnifer/magellan/commons"
+	"github.com/shnifer/magellan/commons"
 	"log"
 	"net/http"
 	"strconv"

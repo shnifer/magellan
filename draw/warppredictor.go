@@ -1,14 +1,14 @@
 package draw
 
 import (
-	. "github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/graph"
-	"github.com/Shnifer/magellan/v2"
+	. "github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/graph"
+	"github.com/shnifer/magellan/v2"
 	"image/color"
 	"math"
+	"runtime"
 	"sync"
 	"time"
-	"runtime"
 )
 
 type WarpPredictorOpts struct {
@@ -114,8 +114,8 @@ func (wp *WarpPredictor) drawPoints(Q *graph.DrawQueue) {
 		return
 	}
 
-	var drawEach =1
-	if wp.opts.DrawMaxP>0 {
+	var drawEach = 1
+	if wp.opts.DrawMaxP > 0 {
 		drawEach := drawCount/wp.opts.DrawMaxP + 1
 		if drawEach > 10 {
 			drawEach = 10

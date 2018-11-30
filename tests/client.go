@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/Shnifer/magellan/network"
+	"github.com/shnifer/magellan/network"
 	"io/ioutil"
 	"log"
 	"strconv"
@@ -34,7 +34,7 @@ func commonSend() []byte {
 	return []byte(conf.Role + " " + strconv.Itoa(FrameN))
 }
 
-func commonRecv(buf []byte) {
+func commonRecv(buf []byte, readOwn bool) {
 	//log.Println("commonRecv", string(buf))
 }
 

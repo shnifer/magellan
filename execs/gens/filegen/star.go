@@ -1,6 +1,6 @@
 package main
 
-import . "github.com/Shnifer/magellan/commons"
+import . "github.com/shnifer/magellan/commons"
 
 func createStars(stat WarpStat, points map[string]*GalaxyPoint, pref string) {
 	switch stat.StarCount {

@@ -26,7 +26,7 @@ go install github.com/gobuffalo/packr
 ```
 ## generate static
 
-_%UserName%/go/src/github.com/Shnifer/magellan/_
+_%UserName%/go/src/github.com/shnifer/magellan/_
 ```
 packr clean
 packr
@@ -36,19 +36,19 @@ packr
 
 use command to get server part:
 
-`go get -u -v github.com/Shnifer/magellan/execs/server/...`
+`go get -u -v github.com/shnifer/magellan/execs/server/...`
 
 or use to get all project:
 
-`go get -u -v github.com/Shnifer/magellan/...`
+`go get -u -v github.com/shnifer/magellan/...`
 
 then run
 
 ```
-go install github.com/Shnifer/magellan/execs/server/
-go install github.com/Shnifer/magellan/execs/pilot/
-go install github.com/Shnifer/magellan/execs/navi/
-go install github.com/Shnifer/magellan/execs/engi/
+go install github.com/shnifer/magellan/execs/server/
+go install github.com/shnifer/magellan/execs/pilot/
+go install github.com/shnifer/magellan/execs/navi/
+go install github.com/shnifer/magellan/execs/engi/
 ```
 
 Congratulations! You got your exes in _%UserName%/go/bin/_

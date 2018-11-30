@@ -1,7 +1,7 @@
 package graph
 
 import (
-	"github.com/Shnifer/magellan/v2"
+	"github.com/shnifer/magellan/v2"
 	"image/color"
 )
 

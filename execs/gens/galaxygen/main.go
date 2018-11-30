@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Shnifer/magellan/v2"
+	"github.com/shnifer/magellan/v2"
 	"golang.org/x/image/colornames"
 	"image"
 	"image/color"

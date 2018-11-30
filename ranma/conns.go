@@ -3,7 +3,7 @@ package ranma
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/Shnifer/magellan/log"
+	. "github.com/shnifer/magellan/log"
 	"io/ioutil"
 	"strconv"
 	"strings"

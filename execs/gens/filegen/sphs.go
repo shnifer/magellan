@@ -1,10 +1,10 @@
 package main
 
 import (
-	. "github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/v2"
-	"strconv"
+	. "github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/v2"
 	"math"
+	"strconv"
 )
 
 func sphs2sigs(s [15]int) []Signature {
@@ -13,7 +13,7 @@ func sphs2sigs(s [15]int) []Signature {
 	add := func(a, b int) {
 		res = append(res, Signature{
 			TypeName: strconv.Itoa(a) + "-" + strconv.Itoa(b),
-			Dev:       okrV2(v2.RandomInCircle(1)),
+			Dev:      okrV2(v2.RandomInCircle(1)),
 		})
 	}
 
@@ -95,8 +95,7 @@ const (
 	BIO
 )
 
-
-func okrV2(v v2.V2) v2.V2{
+func okrV2(v v2.V2) v2.V2 {
 	return v2.V2{
 		X: okr(v.X),
 		Y: okr(v.Y),

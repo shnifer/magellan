@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/Shnifer/magellan/commons"
-	. "github.com/Shnifer/magellan/draw"
-	"github.com/Shnifer/magellan/graph"
-	"github.com/Shnifer/magellan/input"
-	"github.com/Shnifer/magellan/v2"
+	"github.com/shnifer/magellan/commons"
+	. "github.com/shnifer/magellan/draw"
+	"github.com/shnifer/magellan/graph"
+	"github.com/shnifer/magellan/input"
+	"github.com/shnifer/magellan/v2"
 	"golang.org/x/image/colornames"
 )
 

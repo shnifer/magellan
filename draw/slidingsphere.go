@@ -1,8 +1,8 @@
 package draw
 
 import (
-	"github.com/Shnifer/magellan/graph"
 	"github.com/hajimehoshi/ebiten"
+	"github.com/shnifer/magellan/graph"
 )
 
 var mixerTemp *ebiten.Image

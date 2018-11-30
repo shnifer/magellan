@@ -1,7 +1,7 @@
 package flow
 
 import (
-	. "github.com/Shnifer/magellan/v2"
+	. "github.com/shnifer/magellan/v2"
 	"math"
 	"math/rand"
 )

@@ -1,6 +1,6 @@
 package draw
 
-import "github.com/Shnifer/magellan/graph"
+import "github.com/shnifer/magellan/graph"
 
 const (
 	Mark_size   = 50

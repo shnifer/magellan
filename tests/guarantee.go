@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Shnifer/magellan/wrnt"
+	"github.com/shnifer/magellan/wrnt"
 	"log"
 	"math/rand"
 	"strconv"

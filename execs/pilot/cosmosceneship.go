@@ -1,9 +1,9 @@
 package main
 
 import (
-	. "github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/input"
-	"github.com/Shnifer/magellan/v2"
+	. "github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/input"
+	"github.com/shnifer/magellan/v2"
 )
 
 const maneurDetailK = 5

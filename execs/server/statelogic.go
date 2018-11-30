@@ -1,10 +1,10 @@
 package main
 
 import (
-	. "github.com/Shnifer/magellan/commons"
-	. "github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/static"
-	"github.com/Shnifer/magellan/v2"
+	. "github.com/shnifer/magellan/commons"
+	. "github.com/shnifer/magellan/log"
+	"github.com/shnifer/magellan/static"
+	"github.com/shnifer/magellan/v2"
 	"time"
 )
 

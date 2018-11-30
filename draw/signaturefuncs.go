@@ -1,10 +1,10 @@
 package draw
 
 import (
-	"github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/graph/flow"
-	. "github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/v2"
+	"github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/graph/flow"
+	. "github.com/shnifer/magellan/log"
+	"github.com/shnifer/magellan/v2"
 	"math"
 	"strconv"
 	"strings"

@@ -2,7 +2,7 @@ package network
 
 import (
 	"fmt"
-	"github.com/Shnifer/magellan/wrnt"
+	"github.com/shnifer/magellan/wrnt"
 	"net/http"
 	"time"
 )
@@ -15,10 +15,10 @@ const (
 	roleAttr  = "role"
 	stateAttr = "state"
 
-	roomPattern  = "/room/"
-	pingPattern  = "/ping/"
-	statePattern = "/state/"
-	testPattern  = "/test/"
+	roomPattern    = "/room/"
+	pingPattern    = "/ping/"
+	statePattern   = "/state/"
+	testPattern    = "/test/"
 	consolePattern = "/console/"
 
 	ClientDefaultTimeout    = time.Second / 30

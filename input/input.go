@@ -3,10 +3,10 @@ package input
 import (
 	"bytes"
 	"encoding/json"
-	. "github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/pkg/errors"
+	. "github.com/shnifer/magellan/log"
 	"io/ioutil"
 	"math"
 	"strconv"

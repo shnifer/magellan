@@ -3,8 +3,8 @@ package commons
 import (
 	"encoding/json"
 	"fmt"
-	. "github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/network"
+	. "github.com/shnifer/magellan/log"
+	"github.com/shnifer/magellan/network"
 )
 
 type LogGameEvent struct {

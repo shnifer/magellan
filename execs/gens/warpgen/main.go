@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/v2"
+	"github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/v2"
 	"golang.org/x/image/colornames"
 	"image/color"
 	"io/ioutil"
@@ -20,13 +20,13 @@ type Options struct {
 	PosScale float64
 
 	Size float64
-	R10 float64
+	R10  float64
 	Mass float64
 
 	DevPercent float64
 
-	RedR float64
-	DR float64
+	RedR      float64
+	DR        float64
 	SpawnOutK float64
 }
 
@@ -52,22 +52,22 @@ func main() {
 	var gal commons.Galaxy
 	gal.Points = make(map[string]*commons.GalaxyPoint)
 	for id, pt := range pts {
-		kMass:=commons.KDev(Opts.DevPercent)
-		kR:=commons.KDev(Opts.DevPercent)
-		r := Opts.RedR*kR
-		kR=commons.KDev(Opts.DevPercent)
-		dr := Opts.DR*kR
+		kMass := commons.KDev(Opts.DevPercent)
+		kR := commons.KDev(Opts.DevPercent)
+		r := Opts.RedR * kR
+		kR = commons.KDev(Opts.DevPercent)
+		dr := Opts.DR * kR
 		p := commons.GalaxyPoint{
 			Pos:               okrV2(pt.Mul(Opts.PosScale)),
 			Type:              commons.GPT_WARP,
-			Size:              okr(Opts.Size*kMass),
-			Mass:              okr(Opts.Mass*kMass),
-			GDepth:            okr(Opts.R10/3*kMass),
+			Size:              okr(Opts.Size * kMass),
+			Mass:              okr(Opts.Mass * kMass),
+			GDepth:            okr(Opts.R10 / 3 * kMass),
 			WarpRedOutDist:    okr(r),
 			WarpGreenInDist:   okr(r + dr),
 			WarpGreenOutDist:  okr(r + 2*dr),
 			WarpYellowOutDist: okr(r + 3*dr),
-			WarpSpawnDistance: okr((r + 3*dr)*Opts.SpawnOutK),
+			WarpSpawnDistance: okr((r + 3*dr) * Opts.SpawnOutK),
 			GreenColor:        colornames.White,
 			InnerColor:        randomColor(),
 			OuterColor:        randomColor(),
@@ -102,7 +102,7 @@ func randomColor() color.RGBA {
 	}
 }
 
-func okrV2(v v2.V2) v2.V2{
+func okrV2(v v2.V2) v2.V2 {
 	return v2.V2{
 		X: okr(v.X),
 		Y: okr(v.Y),

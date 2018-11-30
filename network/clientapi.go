@@ -1,7 +1,7 @@
 package network
 
 import (
-	. "github.com/Shnifer/magellan/log"
+	. "github.com/shnifer/magellan/log"
 	"strings"
 	"time"
 )

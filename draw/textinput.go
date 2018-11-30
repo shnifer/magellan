@@ -1,12 +1,12 @@
 package draw
 
 import (
-	"github.com/Shnifer/magellan/graph"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
+	"github.com/shnifer/magellan/graph"
+	"github.com/shnifer/magellan/v2"
 	"golang.org/x/image/font"
 	"image/color"
-	"github.com/Shnifer/magellan/v2"
 )
 
 const showUnderscore = 0.2
@@ -42,13 +42,13 @@ func (ti *TextInput) Update(dt float64) {
 		inpututil.IsKeyJustPressed(ebiten.KeyKPEnter)
 
 	esc := inpututil.IsKeyJustPressed(ebiten.KeyEscape)
-	cs:=ti.underT<showUnderscore
-	ti.underT +=dt
-	for ti.underT>totalUnderscore{
-		ti.underT-=totalUnderscore
+	cs := ti.underT < showUnderscore
+	ti.underT += dt
+	for ti.underT > totalUnderscore {
+		ti.underT -= totalUnderscore
 	}
-	ns:=ti.underT<showUnderscore
-	if len(input) == 0 && ti.gText != nil && !back && !enter && !esc && ns==cs{
+	ns := ti.underT < showUnderscore
+	if len(input) == 0 && ti.gText != nil && !back && !enter && !esc && ns == cs {
 		return
 	}
 	ti.text += string(input)
@@ -71,23 +71,23 @@ func (ti *TextInput) Req(Q *graph.DrawQueue) {
 	Q.Add(ti.gText, ti.layer+1)
 }
 
-func (ti *TextInput) recalcGText(){
+func (ti *TextInput) recalcGText() {
 	r := ti.sprite.GetRect()
 	h := r.Max.Y - r.Min.Y
 	p := v2.V2{X: float64(r.Min.X), Y: float64(r.Min.Y)}.AddMul(v2.V2{X: 1, Y: 1}, float64(h/2))
-	us:=""
-	if ti.underT<showUnderscore{
-		us="."
+	us := ""
+	if ti.underT < showUnderscore {
+		us = "."
 	}
 	ti.gText = graph.NewText(ti.text+us, ti.face, ti.clr)
 	ti.gText.SetPosPivot(p, graph.MidLeft())
 }
 
-func (ti *TextInput) GetText() string{
+func (ti *TextInput) GetText() string {
 	return ti.text
 }
 
-func (ti *TextInput) SetText(text string){
+func (ti *TextInput) SetText(text string) {
 	ti.text = text
 	ti.recalcGText()
 }

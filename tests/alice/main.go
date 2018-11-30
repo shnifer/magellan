@@ -1,6 +1,6 @@
 package main
 
-import "github.com/Shnifer/magellan/alice"
+import "github.com/shnifer/magellan/alice"
 
 func main() {
 	opts := alice.Opts{

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/input"
+	"github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/input"
 	"math"
 )
 

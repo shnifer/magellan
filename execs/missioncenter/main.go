@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/draw"
-	"github.com/Shnifer/magellan/graph"
-	"github.com/Shnifer/magellan/log"
 	"github.com/hajimehoshi/ebiten"
+	"github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/draw"
+	"github.com/shnifer/magellan/graph"
+	"github.com/shnifer/magellan/log"
 	"time"
 )
 

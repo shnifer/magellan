@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/Shnifer/magellan/draw"
-	"github.com/Shnifer/magellan/graph"
-	"github.com/Shnifer/magellan/ranma"
-	"github.com/Shnifer/magellan/v2"
+	"encoding/json"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
-	"io/ioutil"
-	"encoding/json"
+	"github.com/shnifer/magellan/draw"
+	"github.com/shnifer/magellan/graph"
+	"github.com/shnifer/magellan/ranma"
+	"github.com/shnifer/magellan/v2"
 	"golang.org/x/image/colornames"
+	"io/ioutil"
 )
 
 var (
@@ -33,16 +33,16 @@ func run(image *ebiten.Image) error {
 }
 
 func main() {
-	inid,err:=ioutil.ReadFile("engi_ini.json")
-	if err!=nil{
+	inid, err := ioutil.ReadFile("engi_ini.json")
+	if err != nil {
 		panic(err)
 	}
-	var ini struct{Addr string}
-	err = json.Unmarshal(inid,&ini)
-	if err!=nil{
+	var ini struct{ Addr string }
+	err = json.Unmarshal(inid, &ini)
+	if err != nil {
 		panic(err)
 	}
-	addr:=ini.Addr
+	addr := ini.Addr
 
 	draw.InitTexAtlas()
 

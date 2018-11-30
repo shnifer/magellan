@@ -1,8 +1,8 @@
 package draw
 
 import (
-	"github.com/Shnifer/magellan/graph"
-	"github.com/Shnifer/magellan/v2"
+	"github.com/shnifer/magellan/graph"
+	"github.com/shnifer/magellan/v2"
 	"golang.org/x/image/font"
 	"image"
 	"image/color"

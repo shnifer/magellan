@@ -3,7 +3,7 @@ package commons
 import (
 	"bytes"
 	"errors"
-	. "github.com/Shnifer/magellan/log"
+	. "github.com/shnifer/magellan/log"
 	"io/ioutil"
 	"net/http"
 	"time"

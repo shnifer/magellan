@@ -1,17 +1,17 @@
 package graph
 
 import (
-	"github.com/Shnifer/magellan/v2"
+	"crypto/md5"
+	"github.com/shnifer/magellan/v2"
 	"math"
 	"math/rand"
-	"crypto/md5"
 )
 
 type WavedCircleOpts struct {
-	Sprite *Sprite
-	Params CamParams
-	Layer  int
-	PCount int
+	Sprite  *Sprite
+	Params  CamParams
+	Layer   int
+	PCount  int
 	RandGen string
 }
 
@@ -34,15 +34,15 @@ type WavedCircle struct {
 }
 
 func defWaveParams(randgen string) waveParams {
-	hash:=md5.Sum([]byte(randgen))
+	hash := md5.Sum([]byte(randgen))
 	var seed int64
-	seed+=int64(hash[0])
-	seed = seed<<8
-	seed+=int64(hash[1])
-	seed = seed<<8
-	seed+=int64(hash[2])
-	seed = seed<<8
-	seed+=int64(hash[3])
+	seed += int64(hash[0])
+	seed = seed << 8
+	seed += int64(hash[1])
+	seed = seed << 8
+	seed += int64(hash[2])
+	seed = seed << 8
+	seed += int64(hash[3])
 	rand.Seed(seed)
 	rSign1 := float64(rand.Intn(2)*2 - 1)
 	rSign2 := float64(rand.Intn(2)*2 - 1)

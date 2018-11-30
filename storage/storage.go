@@ -1,8 +1,8 @@
 package storage
 
 import (
-	. "github.com/Shnifer/magellan/log"
 	"github.com/peterbourgon/diskv"
+	. "github.com/shnifer/magellan/log"
 	"sync"
 )
 

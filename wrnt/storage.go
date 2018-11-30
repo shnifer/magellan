@@ -1,7 +1,7 @@
 package wrnt
 
 import (
-	. "github.com/Shnifer/magellan/log"
+	. "github.com/shnifer/magellan/log"
 	"sync"
 )
 

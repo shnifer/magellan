@@ -1,8 +1,8 @@
 package commons
 
 import (
-	. "github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/v2"
+	. "github.com/shnifer/magellan/log"
+	"github.com/shnifer/magellan/v2"
 )
 
 //Used by Pilot to carefully calculate gravity
@@ -86,7 +86,7 @@ func moveMasses(galaxy *Galaxy, sessionTime float64, moveList map[string]struct{
 		}
 
 		parent = galaxy.Points[obj.ParentID].Pos
-		angle := (360 / obj.Period) * sessionTime + obj.AngPhase
+		angle := (360/obj.Period)*sessionTime + obj.AngPhase
 		obj.Pos = parent.AddMul(v2.InDir(angle), obj.Orbit)
 	}
 }

@@ -1,8 +1,8 @@
 package commons
 
 import (
-	. "github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/v2"
+	. "github.com/shnifer/magellan/log"
+	"github.com/shnifer/magellan/v2"
 )
 
 //fixed
@@ -128,7 +128,7 @@ func (galaxy *Galaxy) Update(sessionTime float64) {
 			parent = galaxy.Points[obj.ParentID].Pos
 			posMap[obj.ParentID] = parent
 		}
-		angle := (360 / obj.Period) * sessionTime + obj.AngPhase
+		angle := (360/obj.Period)*sessionTime + obj.AngPhase
 		obj.Pos = parent.AddMul(v2.InDir(angle), obj.Orbit)
 	}
 }
@@ -150,14 +150,14 @@ func (galaxy *Galaxy) AddBuilding(b Building) {
 			return
 		}
 		if _, exist := gp.Mines[b.OwnerID]; exist {
-			for _,v:=range gp.Mines[b.OwnerID]{
-				if v==fullKey{
-					Log(LVL_ERROR, "trying to add mine on planet ", b.PlanetID, " but already has mine with fk ",fullKey)
+			for _, v := range gp.Mines[b.OwnerID] {
+				if v == fullKey {
+					Log(LVL_ERROR, "trying to add mine on planet ", b.PlanetID, " but already has mine with fk ", fullKey)
 					return
 				}
 			}
 		}
-		gp.Mines[b.OwnerID] = append(gp.Mines[b.OwnerID],fullKey)
+		gp.Mines[b.OwnerID] = append(gp.Mines[b.OwnerID], fullKey)
 	case BUILDING_FISHHOUSE:
 		gp, ok := galaxy.Points[b.PlanetID]
 		if !ok {
@@ -233,21 +233,21 @@ func (galaxy *Galaxy) DelBuilding(b Building) {
 			Log(LVL_ERROR, "trying to del mine on planet", b.PlanetID, "but do not has mine")
 			return
 		}
-		fks:=gp.Mines[b.OwnerID]
-		found:=false
-		for i,v:=range fks{
-			if v==b.FullKey{
+		fks := gp.Mines[b.OwnerID]
+		found := false
+		for i, v := range fks {
+			if v == b.FullKey {
 				fks = append(fks[:i], fks[i+1:]...)
 				found = true
 				break
 			}
 		}
-		if !found{
+		if !found {
 			Log(LVL_ERROR, "trying to del mine on planet", b.PlanetID,
 				"but it do not has mine with fk ", b.FullKey)
 			return
 		}
-		if len(fks)==0 {
+		if len(fks) == 0 {
 			delete(gp.Mines, b.OwnerID)
 		} else {
 			gp.Mines[b.OwnerID] = fks

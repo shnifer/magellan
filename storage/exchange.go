@@ -2,7 +2,7 @@ package storage
 
 import (
 	"bytes"
-	. "github.com/Shnifer/magellan/log"
+	. "github.com/shnifer/magellan/log"
 	"io/ioutil"
 	"net/http"
 	"sort"

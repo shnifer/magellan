@@ -1,8 +1,8 @@
 package scene
 
 import (
-	"github.com/Shnifer/magellan/graph"
 	"github.com/hajimehoshi/ebiten"
+	"github.com/shnifer/magellan/graph"
 	"golang.org/x/image/font"
 	"image/color"
 )

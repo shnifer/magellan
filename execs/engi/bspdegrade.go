@@ -1,8 +1,8 @@
 package main
 
 import (
-	. "github.com/Shnifer/magellan/commons"
-	"github.com/Shnifer/magellan/ranma"
+	. "github.com/shnifer/magellan/commons"
+	"github.com/shnifer/magellan/ranma"
 )
 
 func e(emi string) float64 {

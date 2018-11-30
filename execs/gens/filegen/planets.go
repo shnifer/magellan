@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/Shnifer/magellan/commons"
+	. "github.com/shnifer/magellan/commons"
 	"math"
 	"math/rand"
 	"strconv"

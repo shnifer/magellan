@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	. "github.com/Shnifer/magellan/commons"
-	. "github.com/Shnifer/magellan/draw"
-	"github.com/Shnifer/magellan/graph"
-	. "github.com/Shnifer/magellan/log"
-	"github.com/Shnifer/magellan/v2"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/inpututil"
+	. "github.com/shnifer/magellan/commons"
+	. "github.com/shnifer/magellan/draw"
+	"github.com/shnifer/magellan/graph"
+	. "github.com/shnifer/magellan/log"
+	"github.com/shnifer/magellan/v2"
 	"golang.org/x/image/colornames"
 	"image/color"
 	"log"
