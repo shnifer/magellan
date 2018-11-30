@@ -11,12 +11,12 @@
     "OtherShipsUpdatePeriod": 400,
 
     "NeededRoles": [
-"Pilot", "Navi", "Engi"
+"Pilot", "Navi"
 ],
 
-    "DoProf": true,
+    "DoProf": false,
 
-    "DebugMode": true,
+    "DebugMode": false,
 
     "SolarStartLocationName": "magellan",
 
