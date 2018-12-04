@@ -1,5 +1,5 @@
 {
-    "Port": "http://192.168.1.29:8010",
+    "Port": "http://localhost:8010",
 
     "Timeout":200,
 
