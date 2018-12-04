@@ -3,6 +3,7 @@ package draw
 import (
 	. "github.com/shnifer/magellan/commons"
 	"github.com/shnifer/magellan/v2"
+	"log"
 	"runtime"
 	"sync"
 )

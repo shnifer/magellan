@@ -11,7 +11,7 @@
     "OtherShipsUpdatePeriod": 400,
 
     "NeededRoles": [
-"Pilot", "Navi"
+"Pilot"
 ],
 
     "DoProf": false,

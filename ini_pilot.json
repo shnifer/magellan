@@ -21,7 +21,7 @@
 
     "LowQ": false,
 
-    "GravityConst": 1,
+    "GravityConst": 100,
 
     "WarpGravityConst": 1,
 
